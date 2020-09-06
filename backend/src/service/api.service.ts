@@ -1,5 +1,5 @@
 export const BASE_URL =
-  "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
+  'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
 
 export interface Scoreboard {
   events: NFLEvent[];
@@ -18,7 +18,7 @@ export interface League {
   calendar: Calendar[];
   calendarEndDate: string;
   calendarIsWhiteList: boolean;
-  calendarStratDate: string;
+  calendarStartDate: string;
   calendarType: string;
   id: string;
   name: string;
@@ -121,7 +121,7 @@ export interface Status {
 }
 
 export interface Competitors {
-  homeAway: "home" | "away";
+  homeAway: 'home' | 'away';
   id: string;
   linescores: Array<{ value: number }>;
   order: number;
@@ -153,7 +153,7 @@ export interface Team {
 }
 
 export interface Records {
-  name: "YTD" | "Home" | "Road";
+  name: 'YTD' | 'Home' | 'Road';
   abbreviation?: string;
   summary: string;
   type: string;
