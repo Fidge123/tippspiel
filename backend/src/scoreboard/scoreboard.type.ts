@@ -175,6 +175,7 @@ export class League {
 
 export class Week {
   number: number;
+  teamsOnBye: Team[];
 }
 
 export class Scoreboard {
