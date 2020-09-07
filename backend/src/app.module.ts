@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scoreboard } from './scoreboard/scoreboard.entity';
 import { Tipp } from './tipp/tipp.entity';
 import { ScoreboardModule } from './scoreboard/scoreboard.module';
+import { TippModule } from './tipp/tipp.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ScoreboardModule } from './scoreboard/scoreboard.module';
       synchronize: true,
     }),
     ScoreboardModule,
+    TippModule,
   ],
   controllers: [],
   providers: [],
