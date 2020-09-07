@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tipp } from './tipp.entity';
-import axios from 'axios';
 
 @Injectable()
 export class TippService {

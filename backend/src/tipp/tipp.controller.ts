@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { TippService } from './tipp.service';
 import { Tipp } from './tipp.entity';
 
-@Controller()
+@Controller('tipp')
 export class TippController {
   constructor(private readonly tippService: TippService) {}
 

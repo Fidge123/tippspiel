@@ -2,7 +2,8 @@ import { env } from 'process';
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Scoreboard } from './scoreboard/scoreboard.entity';
+
+import { ScoreboardEntity } from './scoreboard/scoreboard.entity';
 import { Tipp } from './tipp/tipp.entity';
 import { ScoreboardModule } from './scoreboard/scoreboard.module';
 import { TippModule } from './tipp/tipp.module';
@@ -12,7 +13,7 @@ import { TippModule } from './tipp/tipp.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: env.DATABASE_URL,
-      entities: [Scoreboard, Tipp],
+      entities: [ScoreboardEntity, Tipp],
       synchronize: true,
     }),
     ScoreboardModule,

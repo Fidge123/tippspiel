@@ -1,33 +1,54 @@
+import { stringify } from 'querystring';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Scoreboard } from './scoreboard.entity';
-import { Scoreboard as SB } from './scoreboard.type';
+import { ScoreboardEntity } from './scoreboard.entity';
+import { Scoreboard, BASE_URL } from './scoreboard.type';
 import axios from 'axios';
 
 @Injectable()
 export class ScoreboardService {
   constructor(
-    @InjectRepository(Scoreboard)
-    private sbRepo: Repository<Scoreboard>,
+    @InjectRepository(ScoreboardEntity)
+    private sbRepo: Repository<ScoreboardEntity>,
   ) {}
 
-  findAll(): Promise<Scoreboard[]> {
+  findAll(): Promise<ScoreboardEntity[]> {
     return this.sbRepo.find();
   }
 
-  findOne(url: string): Promise<Scoreboard> {
-    return this.sbRepo.findOne(url);
+  findOne(
+    dates: number,
+    seasontype: number,
+    week: number,
+  ): Promise<ScoreboardEntity> {
+    return this.sbRepo.findOne({ dates, seasontype, week });
   }
 
-  async add(url: string): Promise<SB> {
-    const exists = await this.findOne(url);
-    if (!exists) {
-      console.log(url);
-      const res = await axios.get<SB>(url);
-      console.log(res.data);
+  async update(
+    dates: number,
+    seasontype: number,
+    week: number,
+  ): Promise<Scoreboard> {
+    const url = `${BASE_URL}?${stringify({
+      dates,
+      seasontype,
+      week,
+    })}`;
+    const response = (await axios.get<Scoreboard>(url)).data;
 
-      const sb = this.sbRepo.create({ url, response: res.data });
+    if (response.events) {
+      let sb = await this.findOne(dates, seasontype, week);
+      if (!sb) {
+        sb = this.sbRepo.create({
+          dates,
+          seasontype,
+          week,
+          response,
+        });
+      } else {
+        sb.response = response;
+      }
       return (await this.sbRepo.save(sb)).response;
     }
   }

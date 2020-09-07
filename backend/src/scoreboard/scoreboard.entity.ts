@@ -1,14 +1,29 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
-import { Scoreboard as SB } from './scoreboard.type';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Scoreboard } from './scoreboard.type';
 
-@Entity()
-export class Scoreboard {
+@Entity({ name: 'scoreboard' })
+export class ScoreboardEntity {
   @PrimaryColumn()
-  url: string;
+  dates: number;
+
+  @PrimaryColumn()
+  seasontype: number;
+
+  @PrimaryColumn()
+  week: number;
 
   @CreateDateColumn()
-  date: Date;
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column('jsonb')
-  response: SB;
+  response: Scoreboard;
 }
