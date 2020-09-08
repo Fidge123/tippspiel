@@ -1,1 +1,1 @@
-# nfl-tippspiel
+# tippspiel

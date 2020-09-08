@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const options = new DocumentBuilder()
-    .setTitle('NFL Tippspiel')
+    .setTitle('API Overview')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
