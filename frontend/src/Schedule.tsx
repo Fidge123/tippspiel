@@ -11,9 +11,6 @@ function Schedule() {
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [selected, setSelected] = useState<Selected>({});
 
-  // Note: the empty deps array [] means
-  // this useEffect will run once
-  // similar to componentDidMount()
   useEffect(() => {
     fetch("https://nfl-tippspiel.herokuapp.com/scoreboard/2020")
       .then((res) => res.json())
@@ -22,9 +19,6 @@ function Schedule() {
           // setIsLoaded(true);
           setWeeks(result);
         },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
         (error) => {
           // setIsLoaded(true);
           // setError(error);
@@ -72,7 +66,7 @@ function Schedule() {
 
 function styleByTeam(team: Team, selected: boolean) {
   return {
-    border: "2px solid #" + team.color2,
+    border: `2px solid #${team.color2}${selected ? "ff" : "66"}`,
     backgroundColor: `#${team.color}${selected ? "99" : "22"}`,
     color: "#333",
     fontWeight: 600,
