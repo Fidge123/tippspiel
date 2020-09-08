@@ -15,13 +15,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.use(helmet());
-  app.enableCors({
-    origin: [
-      /^http:\/\/localhost:3000\//,
-      /^https:\/\/fidge123.github.io\/tippspiel/,
-    ],
-    credentials: true,
-  });
+  app.enableCors();
+
   await app.listen(env.PORT || 3000);
 }
 bootstrap();
