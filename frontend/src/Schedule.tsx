@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 // import { useAuth0 } from "@auth0/auth0-react";
 
@@ -33,13 +34,26 @@ function Schedule() {
   return (
     <section className="schedule">
       {weeks.map((week) => (
-        <article>
-          <span>week.label</span>
-          {week.teamsOnBye && <span>week.teamsOnBye.join(', ')</span>}
-          {week.games.map((game) => (
-            <span>
-              {game.away.name} @ {game.home.name}
-            </span>
+        <article key={week.label}>
+          <div className="label">{week.label}</div>
+          {week.teamsOnBye.length > 0 && (
+            <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
+          )}
+          {splitByDate(week.games).map((time, idx) => (
+            <div key={time[0].date}>
+              <div className="time">{formatDate(time[0].date)}</div>
+              {time.map((g, idx) => (
+                <div key={idx} className="game">
+                  <Button className="away" style={styleByTeam(g.away, true)}>
+                    {g.away.name}
+                  </Button>
+                  <span className="at">@</span>
+                  <Button className="home" style={styleByTeam(g.home, false)}>
+                    {g.home.name}
+                  </Button>
+                </div>
+              ))}
+            </div>
           ))}
         </article>
       ))}
@@ -47,17 +61,45 @@ function Schedule() {
   );
 }
 
+function styleByTeam(team: Team, selected: boolean) {
+  return {
+    border: "2px solid #" + team.color2,
+    backgroundColor: `#${team.color}${selected ? "99" : "22"}`,
+    color: "#333",
+    fontWeight: 600,
+  };
+}
+
+function splitByDate(games: Game[]) {
+  const result: Game[][] = [];
+  return games.reduce((res, game) => {
+    const idx = res.findIndex((sub) => sub[0].date === game.date);
+    if (idx === -1) {
+      res.push([game]);
+    } else {
+      res[idx].push(game);
+    }
+    return res;
+  }, result);
+}
+
+function formatDate(date: string) {
+  const d = new Date(date);
+  return d.toLocaleString("de-DE");
+}
+
+interface Team {
+  name: string;
+  color: string;
+  color2: string;
+  score: string;
+}
+
 interface Game {
   date: string;
   status: string;
-  home: {
-    name: string;
-    score: string;
-  };
-  away: {
-    name: string;
-    score: string;
-  };
+  home: Team;
+  away: Team;
 }
 
 interface Week {

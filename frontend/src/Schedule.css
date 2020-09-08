@@ -1,0 +1,35 @@
+.schedule {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+}
+
+.label {
+  font-size: 1.5rem;
+}
+
+.time {
+  color: #999;
+  padding-top: 8px;
+}
+
+.game {
+  min-width: 500px;
+  min-height: 32px;
+  padding: 4px;
+  display: flex;
+}
+
+.home {
+  min-width: 220px;
+}
+
+.away {
+  min-width: 220px;
+}
+
+.at {
+  text-align: center;
+  min-width: 32px;
+  line-height: 40px;
+}
