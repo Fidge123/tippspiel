@@ -9,6 +9,7 @@ function Schedule() {
   // const [error, setError] = useState(null);
   // const [isLoaded, setIsLoaded] = useState(false);
   const [weeks, setWeeks] = useState<Week[]>([]);
+  const [selected, setSelected] = useState<Selected>({});
 
   // Note: the empty deps array [] means
   // this useEffect will run once
@@ -44,11 +45,19 @@ function Schedule() {
               <div className="time">{formatDate(time[0].date)}</div>
               {time.map((g, idx) => (
                 <div key={idx} className="game">
-                  <Button className="away" style={styleByTeam(g.away, true)}>
+                  <Button
+                    className="away"
+                    style={styleByTeam(g.away, selected[g.id] === "away")}
+                    onClick={() => setSelected({ ...selected, [g.id]: "away" })}
+                  >
                     {g.away.name}
                   </Button>
                   <span className="at">@</span>
-                  <Button className="home" style={styleByTeam(g.home, false)}>
+                  <Button
+                    className="home"
+                    style={styleByTeam(g.home, selected[g.id] === "home")}
+                    onClick={() => setSelected({ ...selected, [g.id]: "home" })}
+                  >
                     {g.home.name}
                   </Button>
                 </div>
@@ -88,6 +97,8 @@ function formatDate(date: string) {
   return d.toLocaleString("de-DE");
 }
 
+type Selected = { [gameId: string]: "home" | "away" };
+
 interface Team {
   name: string;
   color: string;
@@ -96,6 +107,7 @@ interface Team {
 }
 
 interface Game {
+  id: string;
   date: string;
   status: string;
   home: Team;

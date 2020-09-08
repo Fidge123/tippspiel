@@ -22,6 +22,7 @@ export class ScoreboardController {
               event.competitions[0].competitors,
             );
             return {
+              id: event.competitions[0].id,
               date: new Date(event.competitions[0].date),
               status: event.competitions[0].status.type.name,
               home: {
