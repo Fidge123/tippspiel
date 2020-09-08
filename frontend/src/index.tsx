@@ -9,7 +9,7 @@ ReactDOM.render(
   <Auth0Provider
     domain="withered-salad-9484.eu.auth0.com"
     clientId="VvT2n6cFCwL1pCTAxWdmZJuVPDwOGl3r"
-    redirectUri={window.location.origin}
+    redirectUri={window.location.href}
   >
     <React.StrictMode>
       <App />
