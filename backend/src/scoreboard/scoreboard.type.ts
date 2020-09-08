@@ -54,19 +54,19 @@ export class TeamVenue {
 
 export class Team {
   abbreviation: string;
-  alternateColor: string;
-  color: string;
+  alternateColor?: string;
+  color?: string;
   displayName: string;
   id: string;
   isActive: boolean;
 
   links: any[];
   location: string;
-  logo: string;
+  logo?: string;
   name: string;
   shortDisplayName: string;
   uid: string;
-  venue: TeamVenue;
+  venue?: TeamVenue;
 }
 
 export class LineScore {
@@ -76,9 +76,9 @@ export class LineScore {
 export class Competitors {
   homeAway: 'home' | 'away';
   id: string;
-  linescores: LineScore[];
+  linescores?: LineScore[];
   order: number;
-  records: Records[];
+  records?: Records[];
   score: string;
 
   statistics: any[];
