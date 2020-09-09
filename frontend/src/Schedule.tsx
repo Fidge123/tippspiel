@@ -10,6 +10,16 @@ function Schedule() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [selected, setSelected] = useState<Selected>({});
+  const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
+
+  useEffect(() => {
+    function handleResize() {
+      setIsCompact(window.innerWidth < 900);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetch("https://nfl-tippspiel.herokuapp.com/scoreboard/2020")
@@ -57,7 +67,7 @@ function Schedule() {
                         })
                       }
                     >
-                      {g.away.name}
+                      {isCompact ? g.away.shortName : g.away.name}
                     </Button>
                     <input
                       className="input"
@@ -116,7 +126,7 @@ function Schedule() {
                         })
                       }
                     >
-                      {g.home.name}
+                      {isCompact ? g.home.shortName : g.home.name}
                     </Button>
                   </div>
                 ))}
@@ -167,6 +177,7 @@ type GameTipp = {
 
 interface Team {
   name: string;
+  shortName: string;
   color: string;
   color2: string;
   score: string;

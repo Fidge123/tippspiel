@@ -21,9 +21,6 @@ function App() {
           <Button onClick={() => loginWithRedirect()}>Log In</Button>
         )}
       </header>
-      <section className="schedule">
-        <Schedule></Schedule>
-      </section>
       <aside className="leaderboard">
         {isAuthenticated ? (
           <Leaderboard></Leaderboard>
@@ -31,6 +28,9 @@ function App() {
           <span>Please log in!</span>
         )}
       </aside>
+      <section className="schedule">
+        <Schedule></Schedule>
+      </section>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 .App-header {
   position: sticky;
-  grid-area: header;
   font-size: 1.5rem;
   color: white;
   background-color: #282c34;
@@ -12,18 +11,24 @@
   justify-content: space-between;
 }
 
-.leaderboard {
-  position: fixed;
-  top: 6rem;
-  right: 0;
-  min-width: 10rem;
-  grid-area: sidebar;
-}
-
 .schedule {
   height: 100vh;
   overflow-y: scroll;
-  min-width: 34rem;
+  min-width: 22rem;
   grid-area: content;
-  padding: 0 10rem 0 1rem;
+  padding: 0 0.25rem;
+}
+
+@media screen and (min-width: 900px) {
+  .leaderboard {
+    position: fixed;
+    top: 6rem;
+    right: 0;
+    min-width: 10rem;
+  }
+
+  .schedule {
+    min-width: 34rem;
+    padding-right: 10rem;
+  }
 }
