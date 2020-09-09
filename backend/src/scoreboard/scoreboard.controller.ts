@@ -27,12 +27,14 @@ export class ScoreboardController {
               status: event.competitions[0].status.type.name,
               home: {
                 name: home.team.displayName,
+                shortName: home.team.shortDisplayName,
                 color: home.team.color,
                 color2: home.team.alternateColor,
                 score: home.score,
               },
               away: {
                 name: away.team.displayName,
+                shortName: away.team.shortDisplayName,
                 color: away.team.color,
                 color2: away.team.alternateColor,
                 score: away.score,
