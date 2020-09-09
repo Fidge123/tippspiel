@@ -6,8 +6,8 @@ import "./Schedule.css";
 function Schedule() {
   // const { user, isAuthenticated } = useAuth0();
 
-  // const [error, setError] = useState(null);
-  // const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [selected, setSelected] = useState<Selected>({});
 
@@ -16,52 +16,119 @@ function Schedule() {
       .then((res) => res.json())
       .then(
         (result) => {
-          // setIsLoaded(true);
+          setIsLoaded(true);
           setWeeks(result);
         },
         (error) => {
-          // setIsLoaded(true);
-          // setError(error);
+          setIsLoaded(true);
+          setError(error);
         }
       );
   }, []);
 
-  return (
-    <section className="schedule-inner">
-      {weeks.map((week) => (
-        <article className="week" key={week.label}>
-          <div className="label">{week.label}</div>
-          {week.teamsOnBye.length > 0 && (
-            <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
-          )}
-          {splitByDate(week.games).map((time, idx) => (
-            <div key={time[0].date}>
-              <div className="time">{formatDate(time[0].date)}</div>
-              {time.map((g, idx) => (
-                <div key={idx} className="game">
-                  <Button
-                    className="away"
-                    style={styleByTeam(g.away, selected[g.id] === "away")}
-                    onClick={() => setSelected({ ...selected, [g.id]: "away" })}
-                  >
-                    {g.away.name}
-                  </Button>
-                  <span className="at">@</span>
-                  <Button
-                    className="home"
-                    style={styleByTeam(g.home, selected[g.id] === "home")}
-                    onClick={() => setSelected({ ...selected, [g.id]: "home" })}
-                  >
-                    {g.home.name}
-                  </Button>
-                </div>
-              ))}
-            </div>
-          ))}
-        </article>
-      ))}
-    </section>
-  );
+  if (isLoaded) {
+    if (error) {
+      window.location.reload();
+    }
+    return (
+      <section className="schedule-inner">
+        {weeks.map((week) => (
+          <article className="week" key={week.label}>
+            <div className="label">{week.label}</div>
+            {week.teamsOnBye.length > 0 && (
+              <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
+            )}
+            {splitByDate(week.games).map((time, idx) => (
+              <div key={time[0].date}>
+                <div className="time">{formatDate(time[0].date)}</div>
+                {time.map((g, idx) => (
+                  <div key={idx} className="game">
+                    <Button
+                      className="away"
+                      disabled={new Date(g.date) < new Date()}
+                      style={styleByTeam(
+                        g.away,
+                        selected[g.id]?.homeAway === "away"
+                      )}
+                      onClick={() =>
+                        setSelected({
+                          ...selected,
+                          [g.id]: { homeAway: "away" },
+                        })
+                      }
+                    >
+                      {g.away.name}
+                    </Button>
+                    <input
+                      className="input"
+                      disabled={
+                        selected[g.id]?.homeAway !== "away" ||
+                        new Date(g.date) < new Date()
+                      }
+                      value={
+                        selected[g.id]?.homeAway === "away"
+                          ? selected[g.id]?.points?.toString()
+                          : ""
+                      }
+                      onChange={(ev) =>
+                        setSelected({
+                          ...selected,
+                          [g.id]: {
+                            homeAway: "away",
+                            points: ev.target.value,
+                          },
+                        })
+                      }
+                    ></input>
+                    <span className="at">@</span>
+                    <input
+                      className="input"
+                      disabled={
+                        selected[g.id]?.homeAway !== "home" ||
+                        new Date(g.date) < new Date()
+                      }
+                      value={
+                        selected[g.id]?.homeAway === "home"
+                          ? selected[g.id]?.points?.toString()
+                          : ""
+                      }
+                      onChange={(ev) =>
+                        setSelected({
+                          ...selected,
+                          [g.id]: {
+                            homeAway: "home",
+                            points: ev.target.value,
+                          },
+                        })
+                      }
+                    ></input>
+                    <Button
+                      className="home"
+                      disabled={new Date(g.date) < new Date()}
+                      style={styleByTeam(
+                        g.home,
+                        selected[g.id]?.homeAway === "home"
+                      )}
+                      onClick={() =>
+                        setSelected({
+                          ...selected,
+                          [g.id]: { homeAway: "home" },
+                        })
+                      }
+                    >
+                      {g.home.name}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </article>
+        ))}
+      </section>
+    );
+  } else {
+    return <div>Loading...</div>;
+  }
 }
 
 function styleByTeam(team: Team, selected: boolean) {
@@ -70,6 +137,7 @@ function styleByTeam(team: Team, selected: boolean) {
     backgroundColor: `#${team.color}${selected ? "99" : "11"}`,
     color: "#333",
     fontWeight: 600,
+    boxShadow: "none",
   };
 }
 
@@ -91,7 +159,11 @@ function formatDate(date: string) {
   return d.toLocaleString("de-DE");
 }
 
-type Selected = { [gameId: string]: "home" | "away" };
+type Selected = { [gameId: string]: GameTipp };
+type GameTipp = {
+  homeAway: "home" | "away";
+  points?: string;
+};
 
 interface Team {
   name: string;

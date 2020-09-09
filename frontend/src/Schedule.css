@@ -32,8 +32,14 @@
   min-width: 220px;
 }
 
+.input {
+  width: 32px;
+  margin: 0 4px;
+  text-align: center;
+}
+
 .at {
   text-align: center;
-  min-width: 32px;
+  min-width: 30px;
   line-height: 40px;
 }
