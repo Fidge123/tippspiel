@@ -16,7 +16,7 @@
   position: fixed;
   top: 6rem;
   right: 0;
-  min-width: 18rem;
+  min-width: 10rem;
   grid-area: sidebar;
 }
 
@@ -25,5 +25,5 @@
   overflow-y: scroll;
   min-width: 34rem;
   grid-area: content;
-  padding: 0 18rem 0 1rem;
+  padding: 0 10rem 0 1rem;
 }
