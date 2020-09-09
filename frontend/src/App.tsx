@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Leaderboard from "./Leaderboard";
+// import Leaderboard from "./Leaderboard";
 import Schedule from "./Schedule";
 
 function App() {
@@ -25,13 +25,13 @@ function App() {
           </Button>
         )}
       </header>
-      <aside className="leaderboard">
+      {/* <aside className="leaderboard">
         {isAuthenticated ? (
           <Leaderboard></Leaderboard>
         ) : (
           <span>Please log in!</span>
         )}
-      </aside>
+      </aside> */}
       <section className="schedule">
         <Schedule></Schedule>
       </section>

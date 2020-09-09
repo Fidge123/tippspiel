@@ -8,15 +8,15 @@ import { CreateTippDto } from './tipp.dto';
 export class TippService {
   constructor(
     @InjectRepository(Tipp)
-    private sbRepo: Repository<Tipp>,
+    private tRepo: Repository<Tipp>,
   ) {}
 
   findAll(): Promise<Tipp[]> {
-    return this.sbRepo.find();
+    return this.tRepo.find();
   }
 
   findOne(user: string, game: string): Promise<Tipp> {
-    return this.sbRepo.findOne({ game, user });
+    return this.tRepo.findOne({ game, user });
   }
 
   async update({
@@ -25,23 +25,16 @@ export class TippService {
     user,
     winner,
   }: CreateTippDto): Promise<Tipp> {
-    let tipp = await this.findOne(game, user);
-    if (!tipp) {
-      tipp = this.sbRepo.create({
-        user,
-        game,
-        pointDiff,
-        winner,
-      });
-    } else {
-      tipp.winner = winner;
-      tipp.pointDiff = pointDiff;
-    }
-
-    return this.sbRepo.save(tipp);
+    const tipp = this.tRepo.create({
+      user,
+      game,
+      pointDiff,
+      winner,
+    });
+    return this.tRepo.save(tipp);
   }
 
   async remove(id: string): Promise<void> {
-    await this.sbRepo.delete(id);
+    await this.tRepo.delete(id);
   }
 }

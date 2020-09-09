@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import "./Schedule.css";
-// import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function Schedule() {
-  // const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -20,6 +20,62 @@ function Schedule() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch("https://nfl-tippspiel.herokuapp.com/tipp")
+        .then((res) => res.json())
+        .then(
+          (result) => {
+            const r = result
+              .filter((r: Tipp) => isAuthenticated && r.user === user?.email)
+              .reduce(
+                (r: Selected, c: Tipp) => ({
+                  ...r,
+                  [c.game]: {
+                    homeAway: c.winner,
+                    points: c.pointDiff.toString(),
+                  },
+                }),
+                {}
+              );
+            setSelected(r);
+          },
+          (error) => {}
+        );
+    }
+  }, [isAuthenticated, user]);
+
+  function updateTipp(
+    user: string,
+    game: string,
+    homeAway: "home" | "away",
+    points: string
+  ) {
+    if (isAuthenticated) {
+      const payload = {
+        user,
+        game,
+        winner: homeAway,
+        pointDiff: parseInt(points, 10) || 0,
+      };
+      fetch("https://nfl-tippspiel.herokuapp.com/tipp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }).then(() =>
+        setSelected({
+          ...selected,
+          [game]: {
+            homeAway,
+            points: points,
+          },
+        })
+      );
+    }
+  }
 
   useEffect(() => {
     fetch("https://nfl-tippspiel.herokuapp.com/scoreboard/2020")
@@ -82,13 +138,7 @@ function Schedule() {
                           : ""
                       }
                       onChange={(ev) =>
-                        setSelected({
-                          ...selected,
-                          [g.id]: {
-                            homeAway: "away",
-                            points: ev.target.value,
-                          },
-                        })
+                        updateTipp(user.email, g.id, "away", ev.target.value)
                       }
                     ></input>
                     <span className="at">@</span>
@@ -105,13 +155,7 @@ function Schedule() {
                           : ""
                       }
                       onChange={(ev) =>
-                        setSelected({
-                          ...selected,
-                          [g.id]: {
-                            homeAway: "home",
-                            points: ev.target.value,
-                          },
-                        })
+                        updateTipp(user.email, g.id, "home", ev.target.value)
                       }
                     ></input>
                     <Button
@@ -176,6 +220,13 @@ type GameTipp = {
   homeAway: "home" | "away";
   points?: string;
 };
+
+interface Tipp {
+  user: string;
+  game: string;
+  winner: "home" | "away";
+  pointDiff: number;
+}
 
 interface Team {
   name: string;
