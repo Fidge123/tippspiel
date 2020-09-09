@@ -16,9 +16,13 @@ function App() {
       <header className="App-header">
         <span className="title">Tippspiel</span>
         {isAuthenticated ? (
-          <Button onClick={() => logout({ returnTo })}>Log Out</Button>
+          <Button size="sm" onClick={() => logout({ returnTo })}>
+            Log Out
+          </Button>
         ) : (
-          <Button onClick={() => loginWithRedirect()}>Log In</Button>
+          <Button size="sm" onClick={() => loginWithRedirect()}>
+            Log In
+          </Button>
         )}
       </header>
       <aside className="leaderboard">

@@ -1,9 +1,8 @@
 .App-header {
   position: sticky;
-  font-size: 1.5rem;
   color: white;
   background-color: #282c34;
-  height: 4rem;
+  height: 2rem;
   padding: 0 1rem;
 
   display: flex;
@@ -20,6 +19,11 @@
 }
 
 @media screen and (min-width: 900px) {
+  .App-header {
+    font-size: 1.5rem;
+    height: 4rem;
+  }
+
   .leaderboard {
     position: fixed;
     top: 6rem;
