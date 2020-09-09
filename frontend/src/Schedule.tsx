@@ -71,6 +71,7 @@ function Schedule() {
                     </Button>
                     <input
                       className="input"
+                      type="number"
                       disabled={
                         selected[g.id]?.homeAway !== "away" ||
                         new Date(g.date) < new Date()
@@ -93,6 +94,7 @@ function Schedule() {
                     <span className="at">@</span>
                     <input
                       className="input"
+                      type="number"
                       disabled={
                         selected[g.id]?.homeAway !== "home" ||
                         new Date(g.date) < new Date()
