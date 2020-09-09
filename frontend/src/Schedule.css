@@ -1,7 +1,11 @@
-.schedule {
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
+.schedule-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  grid-gap: 1rem;
+}
+
+.week {
+  padding-top: 2rem;
 }
 
 .label {

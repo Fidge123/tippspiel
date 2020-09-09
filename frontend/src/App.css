@@ -1,13 +1,5 @@
-.App {
-  display: grid;
-  grid-gap: 16px;
-  grid-template-columns: 0px 450px auto 300px 0px;
-  grid-template-areas:
-    "header header header header header"
-    "... content content sidebar ...";
-}
-
 .App-header {
+  position: sticky;
   grid-area: header;
   font-size: 1.5rem;
   color: white;
@@ -21,9 +13,17 @@
 }
 
 .leaderboard {
+  position: fixed;
+  top: 96px;
+  right: 0;
+  min-width: 300px;
   grid-area: sidebar;
 }
 
 .schedule {
+  height: 100vh;
+  overflow-y: scroll;
+  min-width: 550px;
   grid-area: content;
+  padding: 0 300px 0 16px;
 }

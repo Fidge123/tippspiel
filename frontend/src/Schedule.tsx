@@ -27,9 +27,9 @@ function Schedule() {
   }, []);
 
   return (
-    <section className="schedule">
+    <section className="schedule-inner">
       {weeks.map((week) => (
-        <article key={week.label}>
+        <article className="week" key={week.label}>
           <div className="label">{week.label}</div>
           {week.teamsOnBye.length > 0 && (
             <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
@@ -66,8 +66,8 @@ function Schedule() {
 
 function styleByTeam(team: Team, selected: boolean) {
   return {
-    border: `2px solid #${team.color2}${selected ? "ff" : "66"}`,
-    backgroundColor: `#${team.color}${selected ? "99" : "22"}`,
+    border: `2px solid #${team.color2}${selected ? "ff" : "55"}`,
+    backgroundColor: `#${team.color}${selected ? "99" : "11"}`,
     color: "#333",
     fontWeight: 600,
   };
