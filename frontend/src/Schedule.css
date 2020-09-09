@@ -57,12 +57,12 @@ input[type="number"] {
 
 @media screen and (min-width: 900px) {
   .schedule-inner {
-    grid-template-columns: repeat(auto-fill, minmax(34rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(35rem, 1fr));
     grid-gap: 1rem;
   }
 
   .game {
-    min-width: 34rem;
+    min-width: 35rem;
     min-height: 2rem;
     padding: 0.25rem;
     display: flex;
