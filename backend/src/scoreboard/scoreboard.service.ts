@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ScoreboardEntity } from './scoreboard.entity';
-import { Scoreboard, BASE_URL } from './scoreboard.type';
+import { Scoreboard, BASE_URL, Competition } from './scoreboard.type';
 import axios from 'axios';
 
 @Injectable()
@@ -13,16 +13,27 @@ export class ScoreboardService {
     private sbRepo: Repository<ScoreboardEntity>,
   ) {}
 
-  findAll(): Promise<ScoreboardEntity[]> {
+  async findAll(): Promise<ScoreboardEntity[]> {
     return this.sbRepo.find();
   }
 
-  findOne(
+  async findOne(
     dates: number,
     seasontype: number,
     week: number,
   ): Promise<ScoreboardEntity> {
     return this.sbRepo.findOne({ dates, seasontype, week });
+  }
+
+  async competitionById(gameId: string): Promise<Competition> {
+    const weeks = await this.sbRepo.find({ select: ['response'] });
+    for (const week of weeks) {
+      for (const event of week.response.events) {
+        if (event.id === gameId) {
+          return event.competitions[0];
+        }
+      }
+    }
   }
 
   async update(

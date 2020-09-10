@@ -58,7 +58,7 @@ function Schedule() {
         console.error(e);
       }
     })();
-  }, [getAccessTokenSilently, isAuthenticated, user]);
+  }, [isAuthenticated, getAccessTokenSilently, user]);
 
   async function updateTipp(
     user: string,

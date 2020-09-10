@@ -3,19 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tipp } from './tipp.entity';
 import { CreateTippDto } from './tipp.dto';
+import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
 
 @Injectable()
 export class TippService {
   constructor(
     @InjectRepository(Tipp)
     private tRepo: Repository<Tipp>,
+    private readonly sbService: ScoreboardService,
   ) {}
 
-  findAll(): Promise<Tipp[]> {
+  async findAll(): Promise<Tipp[]> {
     return this.tRepo.find();
   }
 
-  findOne(user: string, game: string): Promise<Tipp> {
+  async findOne(user: string, game: string): Promise<Tipp> {
     return this.tRepo.findOne({ game, user });
   }
 
@@ -23,13 +25,17 @@ export class TippService {
     { game, pointDiff, winner }: CreateTippDto,
     user: string,
   ): Promise<Tipp> {
-    const tipp = this.tRepo.create({
-      user,
-      game,
-      pointDiff,
-      winner,
-    });
-    return this.tRepo.save(tipp);
+    const c = await this.sbService.competitionById(game);
+    console.log(c.startDate);
+    if (new Date() < new Date(c.startDate)) {
+      const tipp = this.tRepo.create({
+        user,
+        game,
+        pointDiff,
+        winner,
+      });
+      return this.tRepo.save(tipp);
+    }
   }
 
   async remove(id: string): Promise<void> {
