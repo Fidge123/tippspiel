@@ -68,7 +68,6 @@ function Schedule() {
   ) {
     if (isAuthenticated) {
       const payload = {
-        user,
         game,
         winner: homeAway,
         pointDiff: parseInt(points, 10) || 0,
