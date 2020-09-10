@@ -25,9 +25,9 @@ export class TippController {
   @Permissions('write:tipp')
   async setTipp(
     @Body() createTipp: CreateTippDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: any,
   ): Promise<Tipp> {
-    console.log(JSON.stringify(user));
+    console.log(JSON.stringify(user.user));
     return this.tippService.update(createTipp);
   }
 }
