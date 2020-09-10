@@ -3,8 +3,10 @@ import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 
+const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
+
 function Schedule() {
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -22,31 +24,43 @@ function Schedule() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetch("https://nfl-tippspiel.herokuapp.com/tipp")
-        .then((res) => res.json())
-        .then(
-          (result) => {
-            const r = result
-              .filter((r: Tipp) => isAuthenticated && r.user === user?.email)
-              .reduce(
-                (r: Selected, c: Tipp) => ({
-                  ...r,
-                  [c.game]: {
-                    homeAway: c.winner,
-                    points: c.pointDiff.toString(),
-                  },
-                }),
-                {}
-              );
-            setSelected(r);
-          },
-          (error) => {}
-        );
-    }
-  }, [isAuthenticated, user]);
+    (async () => {
+      try {
+        if (!isAuthenticated) {
+          return;
+        }
 
-  function updateTipp(
+        const token = await getAccessTokenSilently({
+          audience: "https://nfl-tippspiel.herokuapp.com/auth",
+          scope: "read:tipp",
+        });
+        const response = await fetch(BASE_URL + "tipp", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const tipps: Tipp[] = await response.json();
+        setSelected(
+          tipps
+            .filter((r) => isAuthenticated && r.user === user?.email)
+            .reduce(
+              (r, c) => ({
+                ...r,
+                [c.game]: {
+                  homeAway: c.winner,
+                  points: c.pointDiff.toString(),
+                },
+              }),
+              {} as Selected
+            )
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [getAccessTokenSilently, isAuthenticated, user]);
+
+  async function updateTipp(
     user: string,
     game: string,
     homeAway: "home" | "away",
@@ -59,21 +73,27 @@ function Schedule() {
         winner: homeAway,
         pointDiff: parseInt(points, 10) || 0,
       };
-      fetch("https://nfl-tippspiel.herokuapp.com/tipp", {
+      const token = await getAccessTokenSilently({
+        audience: "https://nfl-tippspiel.herokuapp.com/auth",
+        scope: "write:tipp",
+      });
+
+      await fetch("https://nfl-tippspiel.herokuapp.com/tipp", {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      }).then(() =>
-        setSelected({
-          ...selected,
-          [game]: {
-            homeAway,
-            points: points,
-          },
-        })
-      );
+      });
+
+      setSelected({
+        ...selected,
+        [game]: {
+          homeAway,
+          points: points,
+        },
+      });
     }
   }
 

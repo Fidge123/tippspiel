@@ -7,6 +7,7 @@ import { ScoreboardEntity } from './scoreboard/scoreboard.entity';
 import { Tipp } from './tipp/tipp.entity';
 import { ScoreboardModule } from './scoreboard/scoreboard.module';
 import { TippModule } from './tipp/tipp.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TippModule } from './tipp/tipp.module';
     }),
     ScoreboardModule,
     TippModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

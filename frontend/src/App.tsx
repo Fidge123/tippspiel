@@ -20,7 +20,14 @@ function App() {
             Log Out
           </Button>
         ) : (
-          <Button size="sm" onClick={() => loginWithRedirect()}>
+          <Button
+            size="sm"
+            onClick={() =>
+              loginWithRedirect({
+                audience: "https://nfl-tippspiel.herokuapp.com/auth",
+              })
+            }
+          >
             Log In
           </Button>
         )}

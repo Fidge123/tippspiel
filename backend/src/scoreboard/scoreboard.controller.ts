@@ -1,4 +1,9 @@
-import { Controller, Get, Post, Query, Param } from '@nestjs/common';
+import { Controller, Get, Post, Query, Param, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+import { Permissions } from '../permissions.decorator';
+import { PermissionsGuard } from '../permissions.guard';
+
 import { ScoreboardService } from './scoreboard.service';
 import { Scoreboard, Competitors } from './scoreboard.type';
 import { UpdateScoreboard } from './scoreboard.dto';
@@ -53,7 +58,9 @@ export class ScoreboardController {
       .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
   }
 
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Post()
+  @Permissions('write:schedule')
   async load(
     @Query() { season, type, week }: UpdateScoreboard,
   ): Promise<Scoreboard> {
