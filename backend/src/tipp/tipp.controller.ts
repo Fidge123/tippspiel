@@ -27,7 +27,7 @@ export class TippController {
     @Body() createTipp: CreateTippDto,
     @CurrentUser() user: User,
   ): Promise<Tipp> {
-    console.log(JSON.stringify(Object.keys(user), null));
+    console.log(JSON.stringify(user));
     return this.tippService.update(createTipp);
   }
 }
