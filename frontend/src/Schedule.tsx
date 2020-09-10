@@ -4,6 +4,7 @@ import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
+// const BASE_URL = "http://localhost:5000/";
 
 function Schedule() {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
