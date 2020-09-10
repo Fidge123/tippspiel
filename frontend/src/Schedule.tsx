@@ -3,20 +3,22 @@ import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
-// const BASE_URL = "http://localhost:5000/";
+// const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
+const BASE_URL = "http://localhost:5000/";
 
 function MatchUp({ game, tipp, handleTipp }: Props) {
   const [selected, setSelected] = useState<"home" | "away" | undefined>();
   const [away, setAway] = useState<string>("");
   const [home, setHome] = useState<string>("");
+  const [votes, setVotes] = useState<Votes>({ home: 0, away: 0 });
   const [update, setUpdate] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
 
   useEffect(() => {
     if (tipp) {
-      setSelected(tipp.selected || selected);
+      setVotes({ home: tipp.votes.home || 0, away: tipp.votes.away || 0 });
+      setSelected(tipp.selected);
       if (tipp.selected === "away") {
         setAway(tipp.points?.toString() || "");
       }
@@ -24,7 +26,7 @@ function MatchUp({ game, tipp, handleTipp }: Props) {
         setHome(tipp.points?.toString() || "");
       }
     }
-  }, [selected, tipp]);
+  }, [tipp]);
 
   useEffect(() => {
     function handleResize() {
@@ -75,17 +77,31 @@ function MatchUp({ game, tipp, handleTipp }: Props) {
     }
   }, [selected, update, handleTipp, home, away, game.id, tipp, lastUpdate]);
 
+  function select(homeAway: "home" | "away") {
+    const v = { ...votes };
+    if (selected && selected !== homeAway) {
+      v[selected] -= 1;
+    }
+    v[homeAway] += 1;
+    setVotes(v);
+    setSelected(homeAway);
+  }
+
   return (
     <div className="game">
-      <Button
-        className="away"
-        disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(game.away, selected === "away")}
-        onClick={() => setSelected("away")}
-      >
-        {isCompact ? game.away.shortName : game.away.name}
-        {gameResults(game.status, game.away, game.home)}
-      </Button>
+      <div className="selector">
+        <Button
+          className="away"
+          disabled={new Date(game.date) < new Date()}
+          style={styleByTeam(game.away, selected === "away")}
+          onClick={() => select("away")}
+        >
+          {isCompact ? game.away.shortName : game.away.name}
+          {gameResults(game.status, game.away, game.home)}
+        </Button>
+        {votes.away > 0 && <div className="votes">{votes.away}</div>}
+      </div>
+
       <input
         className="input"
         type="number"
@@ -101,15 +117,19 @@ function MatchUp({ game, tipp, handleTipp }: Props) {
         value={home}
         onChange={(ev) => setHome(ev.target.value)}
       ></input>
-      <Button
-        className="home"
-        disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(game.home, selected === "home")}
-        onClick={() => setSelected("home")}
-      >
-        {isCompact ? game.home.shortName : game.home.name}
-        {gameResults(game.status, game.home, game.away)}
-      </Button>
+      <div className="selector">
+        <Button
+          className="home"
+          disabled={new Date(game.date) < new Date()}
+          style={styleByTeam(game.home, selected === "home")}
+          onClick={() => select("home")}
+        >
+          {isCompact ? game.home.shortName : game.home.name}
+          {gameResults(game.status, game.home, game.away)}
+        </Button>
+
+        {votes.home > 0 && <div className="votes">{votes.home}</div>}
+      </div>
     </div>
   );
 }
@@ -258,12 +278,14 @@ interface Tipps {
 }
 
 interface Tipp {
-  votes: {
-    home: number;
-    away: number;
-  };
+  votes: Votes;
   selected?: "home" | "away";
   points?: number;
+}
+
+interface Votes {
+  home: number;
+  away: number;
 }
 
 interface Team {

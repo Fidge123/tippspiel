@@ -30,6 +30,8 @@
 }
 
 .home {
+  top: 0;
+  left: 0;
   width: 8rem;
   overflow: hidden;
   white-space: nowrap;
@@ -65,10 +67,36 @@ input[type="number"] {
   line-height: 2.5rem;
 }
 
+.selector {
+  width: 8rem;
+  height: 2rem;
+  position: relative;
+}
+
+.votes {
+  position: absolute;
+  top: -0.2rem;
+  right: -0.2rem;
+  border: 1px solid #000;
+  border-radius: 1rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  font-size: 0.75rem;
+  line-height: 1.2rem;
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+}
+
 @media screen and (min-width: 900px) {
   .schedule-inner {
     grid-template-columns: repeat(auto-fill, minmax(39rem, 1fr));
     grid-gap: 1rem;
+  }
+
+  .selector {
+    width: 16rem;
+    height: 2rem;
   }
 
   .game {

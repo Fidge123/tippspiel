@@ -23,8 +23,10 @@ export class TippController {
       (response: any, count: any) => ({
         ...response,
         [count.game]: {
+          ...response[count.game],
           votes: {
-            [count.winner]: count.count,
+            ...response[count.game]?.votes,
+            [count.winner]: parseInt(count.count, 10),
           },
           selected:
             response[count.game]?.selected ||
