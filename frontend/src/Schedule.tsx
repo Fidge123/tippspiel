@@ -3,8 +3,8 @@ import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 
-// const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
-const BASE_URL = "http://localhost:5000/";
+const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
+// const BASE_URL = "http://localhost:5000/";
 
 function MatchUp({ game, tipp, handleTipp }: Props) {
   const [selected, setSelected] = useState<"home" | "away" | undefined>();
