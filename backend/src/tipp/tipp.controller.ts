@@ -16,8 +16,26 @@ export class TippController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get()
   @Permissions('read:tipp')
-  async getAll(): Promise<Tipp[]> {
-    return this.tippService.findAll();
+  async getAll(@CurrentUser() user: User): Promise<any> {
+    const tipps = await this.tippService.findAll(user.email);
+    const counts = await this.tippService.votesPerGame();
+    return counts.reduce(
+      (response: any, count: any) => ({
+        ...response,
+        [count.game]: {
+          votes: {
+            [count.winner]: count.count,
+          },
+          selected:
+            response[count.game]?.selected ||
+            tipps.find(t => t.game === count.game)?.winner,
+          points:
+            response[count.game]?.points ||
+            tipps.find(t => t.game === count.game)?.pointDiff,
+        },
+      }),
+      {},
+    );
   }
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)

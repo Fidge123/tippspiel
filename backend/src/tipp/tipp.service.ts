@@ -13,8 +13,16 @@ export class TippService {
     private readonly sbService: ScoreboardService,
   ) {}
 
-  async findAll(): Promise<Tipp[]> {
-    return this.tRepo.find();
+  async findAll(user: string): Promise<Tipp[]> {
+    return this.tRepo.find({ where: { user } });
+  }
+
+  async votesPerGame(): Promise<any> {
+    return this.tRepo
+      .createQueryBuilder('tipp')
+      .select('game, winner, COUNT(tipp.user)')
+      .groupBy('game, winner')
+      .getRawMany();
   }
 
   async findOne(user: string, game: string): Promise<Tipp> {

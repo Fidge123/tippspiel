@@ -6,95 +6,121 @@ import { useAuth0 } from "@auth0/auth0-react";
 const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
 // const BASE_URL = "http://localhost:5000/";
 
+function MatchUp({ game, tipp, handleTipp }: Props) {
+  const [selected, setSelected] = useState<"home" | "away" | undefined>();
+  const [away, setAway] = useState<string>("");
+  const [home, setHome] = useState<string>("");
+  const [update, setUpdate] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState<string>("");
+  const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
+
+  useEffect(() => {
+    if (tipp) {
+      setSelected(tipp.selected || selected);
+      if (tipp.selected === "away") {
+        setAway(tipp.points?.toString() || "");
+      }
+      if (tipp.selected === "home") {
+        setHome(tipp.points?.toString() || "");
+      }
+    }
+  }, [selected, tipp]);
+
+  useEffect(() => {
+    function handleResize() {
+      setIsCompact(window.innerWidth < 900);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (selected === "home") {
+      setAway("");
+    }
+    if (selected === "away") {
+      setHome("");
+    }
+  }, [selected]);
+
+  useEffect(() => {
+    setTimeout(() => setUpdate(true), 1500);
+  }, [home, away, selected]);
+
+  useEffect(() => {
+    const points = {
+      home: parseInt(home, 10) || 0,
+      away: parseInt(away, 10) || 0,
+    };
+    const payload = JSON.stringify({
+      game: game.id,
+      winner: selected,
+      pointDiff: selected ? points[selected] : 0,
+    });
+    if (!update || lastUpdate === payload) {
+      return;
+    }
+    setUpdate(false);
+    if (selected === "home") {
+      if (tipp?.points?.toString() !== home || tipp?.selected !== selected) {
+        setLastUpdate(payload);
+        handleTipp(payload);
+      }
+    }
+    if (selected === "away") {
+      if (tipp?.points?.toString() !== away || tipp?.selected !== selected) {
+        setLastUpdate(payload);
+        handleTipp(payload);
+      }
+    }
+  }, [selected, update, handleTipp, home, away, game.id, tipp, lastUpdate]);
+
+  return (
+    <div className="game">
+      <Button
+        className="away"
+        disabled={new Date(game.date) < new Date()}
+        style={styleByTeam(game.away, selected === "away")}
+        onClick={() => setSelected("away")}
+      >
+        {isCompact ? game.away.shortName : game.away.name}
+        {gameResults(game.status, game.away, game.home)}
+      </Button>
+      <input
+        className="input"
+        type="number"
+        disabled={selected !== "away" || new Date(game.date) < new Date()}
+        value={away}
+        onChange={(ev) => setAway(ev.target.value)}
+      ></input>
+      <span className="at">@</span>
+      <input
+        className="input"
+        type="number"
+        disabled={selected !== "home" || new Date(game.date) < new Date()}
+        value={home}
+        onChange={(ev) => setHome(ev.target.value)}
+      ></input>
+      <Button
+        className="home"
+        disabled={new Date(game.date) < new Date()}
+        style={styleByTeam(game.home, selected === "home")}
+        onClick={() => setSelected("home")}
+      >
+        {isCompact ? game.home.shortName : game.home.name}
+        {gameResults(game.status, game.home, game.away)}
+      </Button>
+    </div>
+  );
+}
+
 function Schedule() {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [weeks, setWeeks] = useState<Week[]>([]);
-  const [selected, setSelected] = useState<Selected>({});
-  const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
-
-  useEffect(() => {
-    function handleResize() {
-      setIsCompact(window.innerWidth < 900);
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        if (!isAuthenticated) {
-          return;
-        }
-
-        const token = await getAccessTokenSilently({
-          audience: "https://nfl-tippspiel.herokuapp.com/auth",
-          scope: "read:tipp",
-        });
-        const response = await fetch(BASE_URL + "tipp", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const tipps: Tipp[] = await response.json();
-        setSelected(
-          tipps
-            .filter((r) => isAuthenticated && r.user === user?.email)
-            .reduce(
-              (r, c) => ({
-                ...r,
-                [c.game]: {
-                  homeAway: c.winner,
-                  points: c.pointDiff.toString(),
-                },
-              }),
-              {} as Selected
-            )
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [isAuthenticated, getAccessTokenSilently, user]);
-
-  async function updateTipp(
-    game: string,
-    homeAway: "home" | "away",
-    points: string
-  ) {
-    if (isAuthenticated) {
-      const payload = {
-        game,
-        winner: homeAway,
-        pointDiff: parseInt(points, 10) || 0,
-      };
-      const token = await getAccessTokenSilently({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
-        scope: "write:tipp",
-      });
-
-      await fetch(BASE_URL + "tipp", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      setSelected({
-        ...selected,
-        [game]: {
-          homeAway,
-          points: points,
-        },
-      });
-    }
-  }
+  const [tipps, setTipps] = useState<Tipps>({});
 
   useEffect(() => {
     fetch(BASE_URL + "scoreboard/2020")
@@ -110,6 +136,41 @@ function Schedule() {
         }
       );
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!isAuthenticated) {
+        return;
+      }
+
+      const token = await getAccessTokenSilently({
+        audience: "https://nfl-tippspiel.herokuapp.com/auth",
+        scope: "read:tipp",
+      });
+      const response = await fetch(BASE_URL + "tipp", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTipps(await response.json());
+    })();
+  }, [isAuthenticated, getAccessTokenSilently, user]);
+
+  async function postTipp(payload: string) {
+    const token = await getAccessTokenSilently({
+      audience: "https://nfl-tippspiel.herokuapp.com/auth",
+      scope: "write:tipp",
+    });
+
+    await fetch(BASE_URL + "tipp", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: payload,
+    });
+  }
 
   if (isLoaded) {
     if (error) {
@@ -127,75 +188,12 @@ function Schedule() {
               <div key={time[0].date}>
                 <div className="time">{formatDate(time[0].date)}</div>
                 {time.map((g, idx) => (
-                  <div key={idx} className="game">
-                    <Button
-                      className="away"
-                      disabled={new Date(g.date) < new Date()}
-                      style={styleByTeam(
-                        g.away,
-                        selected[g.id]?.homeAway === "away"
-                      )}
-                      onClick={() =>
-                        setSelected({
-                          ...selected,
-                          [g.id]: { homeAway: "away" },
-                        })
-                      }
-                    >
-                      {isCompact ? g.away.shortName : g.away.name}
-                      {gameResults(g.status, g.away, g.home)}
-                    </Button>
-                    <input
-                      className="input"
-                      type="number"
-                      disabled={
-                        selected[g.id]?.homeAway !== "away" ||
-                        new Date(g.date) < new Date()
-                      }
-                      value={
-                        selected[g.id]?.homeAway === "away"
-                          ? selected[g.id]?.points?.toString()
-                          : ""
-                      }
-                      onChange={(ev) =>
-                        updateTipp(g.id, "away", ev.target.value)
-                      }
-                    ></input>
-                    <span className="at">@</span>
-                    <input
-                      className="input"
-                      type="number"
-                      disabled={
-                        selected[g.id]?.homeAway !== "home" ||
-                        new Date(g.date) < new Date()
-                      }
-                      value={
-                        selected[g.id]?.homeAway === "home"
-                          ? selected[g.id]?.points?.toString()
-                          : ""
-                      }
-                      onChange={(ev) =>
-                        updateTipp(g.id, "home", ev.target.value)
-                      }
-                    ></input>
-                    <Button
-                      className="home"
-                      disabled={new Date(g.date) < new Date()}
-                      style={styleByTeam(
-                        g.home,
-                        selected[g.id]?.homeAway === "home"
-                      )}
-                      onClick={() =>
-                        setSelected({
-                          ...selected,
-                          [g.id]: { homeAway: "home" },
-                        })
-                      }
-                    >
-                      {isCompact ? g.home.shortName : g.home.name}
-                      {gameResults(g.status, g.home, g.away)}
-                    </Button>
-                  </div>
+                  <MatchUp
+                    key={idx}
+                    game={g}
+                    tipp={tipps[g.id]}
+                    handleTipp={postTipp}
+                  ></MatchUp>
                 ))}
               </div>
             ))}
@@ -249,17 +247,23 @@ function formatDate(date: string) {
   return d.toLocaleString("de-DE");
 }
 
-type Selected = { [gameId: string]: GameTipp };
-type GameTipp = {
-  homeAway: "home" | "away";
-  points?: string;
-};
+interface Props {
+  game: Game;
+  tipp?: Tipp;
+  handleTipp: (payload: string) => void;
+}
+
+interface Tipps {
+  [gameId: string]: Tipp;
+}
 
 interface Tipp {
-  user: string;
-  game: string;
-  winner: "home" | "away";
-  pointDiff: number;
+  votes: {
+    home: number;
+    away: number;
+  };
+  selected?: "home" | "away";
+  points?: number;
 }
 
 interface Team {
