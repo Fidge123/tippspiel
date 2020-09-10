@@ -19,12 +19,10 @@ export class TippService {
     return this.tRepo.findOne({ game, user });
   }
 
-  async update({
-    game,
-    pointDiff,
-    user,
-    winner,
-  }: CreateTippDto): Promise<Tipp> {
+  async update(
+    { game, pointDiff, winner }: CreateTippDto,
+    user: string,
+  ): Promise<Tipp> {
     const tipp = this.tRepo.create({
       user,
       game,

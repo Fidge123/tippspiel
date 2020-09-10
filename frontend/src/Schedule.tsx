@@ -78,7 +78,7 @@ function Schedule() {
         scope: "write:tipp",
       });
 
-      await fetch("https://nfl-tippspiel.herokuapp.com/tipp", {
+      await fetch(BASE_URL + "tipp", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ function Schedule() {
   }
 
   useEffect(() => {
-    fetch("https://nfl-tippspiel.herokuapp.com/scoreboard/2020")
+    fetch(BASE_URL + "scoreboard/2020")
       .then((res) => res.json())
       .then(
         (result) => {
