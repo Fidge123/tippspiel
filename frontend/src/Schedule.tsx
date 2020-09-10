@@ -142,6 +142,7 @@ function Schedule() {
                       }
                     >
                       {isCompact ? g.away.shortName : g.away.name}
+                      {gameResults(g.status, g.away, g.home)}
                     </Button>
                     <input
                       className="input"
@@ -191,6 +192,7 @@ function Schedule() {
                       }
                     >
                       {isCompact ? g.home.shortName : g.home.name}
+                      {gameResults(g.status, g.home, g.away)}
                     </Button>
                   </div>
                 ))}
@@ -203,6 +205,19 @@ function Schedule() {
   } else {
     return <div>Loading...</div>;
   }
+}
+
+function gameResults(status: string, team: Team, oppo: Team) {
+  let result = " ";
+
+  if (status === "STATUS_FINAL") {
+    result += team.score;
+
+    if (parseInt(team.score) > parseInt(oppo.score)) {
+      result += " 👑";
+    }
+  }
+  return result;
 }
 
 function styleByTeam(team: Team, selected: boolean) {
