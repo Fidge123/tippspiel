@@ -8,5 +8,6 @@ import { ScoreboardEntity } from './scoreboard.entity';
   imports: [TypeOrmModule.forFeature([ScoreboardEntity])],
   providers: [ScoreboardService],
   controllers: [ScoreboardController],
+  exports: [ScoreboardService],
 })
 export class ScoreboardModule {}

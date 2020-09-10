@@ -61,7 +61,6 @@ function Schedule() {
   }, [isAuthenticated, getAccessTokenSilently, user]);
 
   async function updateTipp(
-    user: string,
     game: string,
     homeAway: "home" | "away",
     points: string
@@ -157,7 +156,7 @@ function Schedule() {
                           : ""
                       }
                       onChange={(ev) =>
-                        updateTipp(user.email, g.id, "away", ev.target.value)
+                        updateTipp(g.id, "away", ev.target.value)
                       }
                     ></input>
                     <span className="at">@</span>
@@ -174,7 +173,7 @@ function Schedule() {
                           : ""
                       }
                       onChange={(ev) =>
-                        updateTipp(user.email, g.id, "home", ev.target.value)
+                        updateTipp(g.id, "home", ev.target.value)
                       }
                     ></input>
                     <Button

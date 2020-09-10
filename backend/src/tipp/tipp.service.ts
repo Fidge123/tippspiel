@@ -26,7 +26,6 @@ export class TippService {
     user: string,
   ): Promise<Tipp> {
     const c = await this.sbService.competitionById(game);
-    console.log(c.startDate);
     if (new Date() < new Date(c.startDate)) {
       const tipp = this.tRepo.create({
         user,
