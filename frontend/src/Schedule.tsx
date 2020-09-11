@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -137,6 +137,7 @@ function MatchUp({ game, tipp, handleTipp }: Props) {
 
 function Schedule() {
   const {
+    error: authError,
     user,
     isLoading,
     isAuthenticated,
@@ -149,6 +150,23 @@ function Schedule() {
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [tipps, setTipps] = useState<Tipps>({});
   const [admin, setAdmin] = useState(false);
+
+  const getAccessToken = useCallback(
+    (scope: string) => {
+      try {
+        return getAccessTokenSilently({
+          audience: "https://nfl-tippspiel.herokuapp.com/auth",
+          scope,
+        });
+      } catch (e) {
+        return getAccessTokenWithPopup({
+          audience: "https://nfl-tippspiel.herokuapp.com/auth",
+          scope,
+        });
+      }
+    },
+    [getAccessTokenSilently, getAccessTokenWithPopup]
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -175,14 +193,11 @@ function Schedule() {
 
   useEffect(() => {
     (async () => {
-      if (!isAuthenticated) {
+      if (isLoading || !isAuthenticated) {
         return;
       }
 
-      const token = await getAccessTokenSilently({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
-        scope: "read:tipp",
-      });
+      const token = await getAccessToken("read:tipp");
       const response = await fetch(BASE_URL + "tipp", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -190,13 +205,10 @@ function Schedule() {
       });
       setTipps(await response.json());
     })();
-  }, [isLoading, isAuthenticated, getAccessTokenSilently]);
+  }, [isLoading, isAuthenticated, getAccessToken]);
 
   async function postTipp(payload: string) {
-    const token = await getAccessTokenSilently({
-      audience: "https://nfl-tippspiel.herokuapp.com/auth",
-      scope: "write:tipp",
-    });
+    const token = await getAccessToken("write:tipp");
 
     await fetch(BASE_URL + "tipp", {
       method: "POST",
@@ -209,18 +221,7 @@ function Schedule() {
   }
 
   async function reloadWeek(week: number, seasontype: number) {
-    let token;
-    try {
-      token = await getAccessTokenSilently({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
-        scope: "write:schedule",
-      });
-    } catch (e) {
-      token = await getAccessTokenWithPopup({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
-        scope: "write:schedule",
-      });
-    }
+    const token = await getAccessToken("write:schedule");
 
     await fetch(
       `${BASE_URL}scoreboard?${stringify({
