@@ -6,11 +6,13 @@ import { PermissionsGuard } from '../permissions.guard';
 
 import { TippService } from './tipp.service';
 import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('leaderboard')
 export class LeaderboardController {
   constructor(
     private readonly tippService: TippService,
+    private readonly userService: UserService,
     private readonly sbService: ScoreboardService,
   ) {}
 
@@ -19,6 +21,7 @@ export class LeaderboardController {
   @Permissions('read:tipp')
   async getAll(@Param('season') season: string): Promise<any> {
     const games = await this.sbService.findFinished(parseInt(season, 10));
+    const users = await this.userService.findAll();
     return games.reduce(async (lb, game) => {
       const tipps = await this.tippService.findGame(game.id);
       const winner =
@@ -40,20 +43,22 @@ export class LeaderboardController {
 
       let prev: any;
       correct.forEach((t, i) => {
-        lb[t.user] = lb[t.user] || {};
-        lb[t.user][game.id] = 1 + Math.max(3 - i, 0);
+        const user = users.find(u => u.email === t.user)?.name || t.user;
+        lb[user] = lb[user] || {};
+        lb[user][game.id] = 1 + Math.max(3 - i, 0);
         const temp = {
-          points: lb[t.user][game.id],
+          points: lb[user][game.id],
           diff: Math.abs(t.pointDiff - pointDiff),
         };
         if (prev && prev.diff === temp.diff) {
-          lb[t.user][game.id] = lb[correct[i - 1].user][game.id];
+          lb[user][game.id] = lb[correct[i - 1].user][game.id];
         }
         prev = temp;
       });
       incorrect.forEach(t => {
-        lb[t.user] = lb[t.user] || {};
-        lb[t.user][game.id] = 0;
+        const user = users.find(u => u.email === t.user)?.name || t.user;
+        lb[user] = lb[user] || {};
+        lb[user][game.id] = 0;
       });
       return lb;
     }, {} as any);
