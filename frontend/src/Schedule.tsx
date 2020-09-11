@@ -83,7 +83,9 @@ function MatchUp({ game, tipp, handleTipp }: Props) {
     if (selected && selected !== homeAway) {
       v[selected] -= 1;
     }
-    v[homeAway] += 1;
+    if (selected !== homeAway) {
+      v[homeAway] += 1;
+    }
     setVotes(v);
     setSelected(homeAway);
   }
