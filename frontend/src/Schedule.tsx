@@ -303,7 +303,7 @@ function styleByTeam(team: Team, selected: boolean) {
   return {
     border: `2px solid #${team.color2}${selected ? "ff" : "55"}`,
     backgroundColor: `#${team.color}${selected ? "99" : "11"}`,
-    color: "#333",
+    color: selected ? "#222" : "#888",
     fontWeight: 600,
     boxShadow: "none",
   };
