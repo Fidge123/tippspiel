@@ -12,24 +12,18 @@ function App() {
   const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const returnTo = window.location.href;
 
-  function login() {
-    try {
-      loginWithRedirect();
-    } catch (e) {
-      logout({ returnTo });
-    }
-  }
-
   return (
     <div className="App">
       <header className="App-header">
         <span className="title">Tippspiel</span>
-        {!isLoading && isAuthenticated ? (
+        {isLoading ? (
+          <span className="loading">loading...</span>
+        ) : isAuthenticated ? (
           <Button size="sm" onClick={() => logout({ returnTo })}>
             Log Out
           </Button>
         ) : (
-          <Button size="sm" onClick={() => login()}>
+          <Button size="sm" onClick={() => loginWithRedirect()}>
             Log In
           </Button>
         )}

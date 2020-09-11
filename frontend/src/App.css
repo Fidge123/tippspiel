@@ -18,6 +18,10 @@
   padding: 0 0.25rem 2rem 0.25rem;
 }
 
+.loading {
+  font-size: 0.5rem;
+}
+
 @media screen and (min-width: 900px) {
   .App-header {
     font-size: 1.5rem;
