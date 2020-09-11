@@ -32,35 +32,34 @@ export class LeaderboardController {
       const pointDiff =
         parseInt(game.competitors[0].score, 10) -
         parseInt(game.competitors[1].score, 10);
-      const correct = tipps
-        .filter(t => t.winner === winner)
-        .sort(
-          (a, b) =>
+      const points = tipps
+        .sort((a, b) => {
+          if (
+            a.winner === winner &&
             Math.abs(a.pointDiff - pointDiff) -
-            Math.abs(b.pointDiff - pointDiff),
-        );
-      const incorrect = tipps.filter(t => t.winner !== winner);
+              Math.abs(b.pointDiff - pointDiff)
+          ) {
+            return -1;
+          } else {
+            return 1;
+          }
+        })
+        .map((t, i) => ({
+          user: users.find(u => u.email === t.user)?.name || t.user,
+          pointDiff: Math.abs(t.pointDiff - pointDiff),
+          points: t.winner === winner ? 1 + Math.max(3 - i, 0) : 0,
+        }));
 
-      let prev: any;
-      correct.forEach((t, i) => {
-        const user = users.find(u => u.email === t.user)?.name || t.user;
-        lb[user] = lb[user] || {};
-        lb[user][game.id] = 1 + Math.max(3 - i, 0);
-        const temp = {
-          points: lb[user][game.id],
-          diff: Math.abs(t.pointDiff - pointDiff),
-        };
-        if (prev && prev.diff === temp.diff) {
-          lb[user][game.id] = lb[correct[i - 1].user][game.id];
+      points.forEach((t, i) => {
+        if (i > 0 && t.pointDiff === points[i].pointDiff) {
+          t.points = points[i].points;
         }
-        prev = temp;
       });
-      incorrect.forEach(t => {
-        const user = users.find(u => u.email === t.user)?.name || t.user;
-        lb[user] = lb[user] || {};
-        lb[user][game.id] = 0;
-      });
-      return lb;
+
+      return points.reduce((r, c) => {
+        lb[c.user] = { ...lb[c.user], [game.id]: c.points };
+        return lb;
+      }, {});
     }, {} as any);
   }
 }
