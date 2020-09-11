@@ -48,6 +48,8 @@ export class ScoreboardController {
           })
           .sort((a, b) => a.date.getTime() - b.date.getTime());
         return {
+          id: week,
+          seasontype,
           label,
           teamsOnBye: response.week.teamsOnBye?.map(t => t.displayName) || [],
           startDate: new Date(startDate),

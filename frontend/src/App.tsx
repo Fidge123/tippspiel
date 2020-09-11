@@ -9,13 +9,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Schedule from "./Schedule";
 
 function App() {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const returnTo = window.location.href;
+
   return (
     <div className="App">
       <header className="App-header">
         <span className="title">Tippspiel</span>
-        {isAuthenticated ? (
+        {!isLoading && isAuthenticated ? (
           <Button size="sm" onClick={() => logout({ returnTo })}>
             Log Out
           </Button>

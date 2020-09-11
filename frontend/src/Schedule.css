@@ -9,6 +9,11 @@
   max-width: 39rem;
 }
 
+.weekHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
 .week {
   padding-top: 2rem;
 }
@@ -86,6 +91,13 @@ input[type="number"] {
   text-align: center;
   background-color: #ffffffdd;
   color: #424242dd;
+}
+
+.reload {
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #424242dd;
+  box-shadow: "none";
 }
 
 @media screen and (min-width: 900px) {

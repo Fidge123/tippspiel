@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
+import { stringify } from "querystring";
 
 const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
 // const BASE_URL = "http://localhost:5000/";
@@ -135,12 +136,27 @@ function MatchUp({ game, tipp, handleTipp }: Props) {
 }
 
 function Schedule() {
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const {
+    user,
+    isLoading,
+    isAuthenticated,
+    getAccessTokenSilently,
+    getAccessTokenWithPopup,
+  } = useAuth0();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [tipps, setTipps] = useState<Tipps>({});
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setAdmin(
+        user["https://nfl-tippspiel.herokuapp.com/auth/roles"].includes("Admin")
+      );
+    }
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     fetch(BASE_URL + "scoreboard/2020")
@@ -174,7 +190,7 @@ function Schedule() {
       });
       setTipps(await response.json());
     })();
-  }, [isAuthenticated, getAccessTokenSilently, user]);
+  }, [isLoading, isAuthenticated, getAccessTokenSilently]);
 
   async function postTipp(payload: string) {
     const token = await getAccessTokenSilently({
@@ -192,15 +208,59 @@ function Schedule() {
     });
   }
 
+  async function reloadWeek(week: number, seasontype: number) {
+    let token;
+    try {
+      token = await getAccessTokenSilently({
+        audience: "https://nfl-tippspiel.herokuapp.com/auth",
+        scope: "write:schedule",
+      });
+    } catch (e) {
+      token = await getAccessTokenWithPopup({
+        audience: "https://nfl-tippspiel.herokuapp.com/auth",
+        scope: "write:schedule",
+      });
+    }
+
+    await fetch(
+      `${BASE_URL}scoreboard?${stringify({
+        dates: 2020,
+        seasontype,
+        week,
+      })}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    window.location.reload();
+  }
+
   if (isLoaded) {
     if (error) {
-      window.location.reload();
+      return <span>Error occured... please reload!</span>;
     }
     return (
       <section className="schedule-inner">
         {weeks.map((week) => (
           <article className="week" key={week.label}>
-            <div className="label">{week.label}</div>
+            <div className="weekHeader">
+              <span className="label">{week.label}</span>
+              {admin && (
+                <Button
+                  className="reload"
+                  size="sm"
+                  onClick={() => {
+                    reloadWeek(week.id, week.seasontype);
+                  }}
+                >
+                  Reload
+                </Button>
+              )}
+            </div>
             {week.teamsOnBye.length > 0 && (
               <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
             )}
@@ -305,6 +365,8 @@ interface Game {
 }
 
 interface Week {
+  id: number;
+  seasontype: number;
   label: string;
   teamsOnBye: string[];
   startDate: string;
