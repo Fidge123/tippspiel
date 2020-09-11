@@ -180,7 +180,6 @@ function Schedule() {
       }
 
       const token = await getAccessTokenSilently({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
         scope: "read:tipp",
       });
       const response = await fetch(BASE_URL + "tipp", {
@@ -194,7 +193,6 @@ function Schedule() {
 
   async function postTipp(payload: string) {
     const token = await getAccessTokenSilently({
-      audience: "https://nfl-tippspiel.herokuapp.com/auth",
       scope: "write:tipp",
     });
 
@@ -212,12 +210,10 @@ function Schedule() {
     let token;
     try {
       token = await getAccessTokenSilently({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
         scope: "write:schedule",
       });
     } catch (e) {
       token = await getAccessTokenWithPopup({
-        audience: "https://nfl-tippspiel.herokuapp.com/auth",
         scope: "write:schedule",
       });
     }

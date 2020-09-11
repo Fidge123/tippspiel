@@ -10,6 +10,7 @@ ReactDOM.render(
     domain="withered-salad-9484.eu.auth0.com"
     clientId="VvT2n6cFCwL1pCTAxWdmZJuVPDwOGl3r"
     redirectUri={window.location.href}
+    audience="https://nfl-tippspiel.herokuapp.com/auth"
   >
     <React.StrictMode>
       <App />

@@ -12,6 +12,14 @@ function App() {
   const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const returnTo = window.location.href;
 
+  function login() {
+    try {
+      loginWithRedirect();
+    } catch (e) {
+      logout({ returnTo });
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -21,14 +29,7 @@ function App() {
             Log Out
           </Button>
         ) : (
-          <Button
-            size="sm"
-            onClick={() =>
-              loginWithRedirect({
-                audience: "https://nfl-tippspiel.herokuapp.com/auth",
-              })
-            }
-          >
+          <Button size="sm" onClick={() => login()}>
             Log In
           </Button>
         )}
