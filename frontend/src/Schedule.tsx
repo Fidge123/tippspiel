@@ -154,10 +154,14 @@ function Schedule() {
   const getAccessToken = useCallback(
     (scope: string) => {
       try {
-        return getAccessTokenSilently({
+        const token = getAccessTokenSilently({
           audience: "https://nfl-tippspiel.herokuapp.com/auth",
           scope,
         });
+        if (authError || !token) {
+          throw Error("Error getting Token!");
+        }
+        return token;
       } catch (e) {
         return getAccessTokenWithPopup({
           audience: "https://nfl-tippspiel.herokuapp.com/auth",
@@ -165,7 +169,7 @@ function Schedule() {
         });
       }
     },
-    [getAccessTokenSilently, getAccessTokenWithPopup]
+    [authError, getAccessTokenSilently, getAccessTokenWithPopup]
   );
 
   useEffect(() => {
