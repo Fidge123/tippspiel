@@ -17,7 +17,7 @@ export class TippController {
   @Get()
   @Permissions('read:tipp')
   async getAll(@CurrentUser() user: User): Promise<any> {
-    const tipps = await this.tippService.findAll(user.email);
+    const tipps = await this.tippService.findUser(user.email);
     const counts = await this.tippService.votesPerGame();
     return counts.reduce(
       (response: any, count: any) => ({
