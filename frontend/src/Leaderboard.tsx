@@ -61,13 +61,16 @@ function Leaderboard() {
   }, [isLoading, isAuthenticated, getAccessToken]);
 
   return (
-    <ol>
-      {leaderboard.map((l) => (
-        <li>
-          {l.name} {l.points}
-        </li>
-      ))}
-    </ol>
+    <div className="lbParent">
+      <div>Leaderboard:</div>
+      <ol>
+        {leaderboard.map((l) => (
+          <li>
+            {l.name} {l.points}
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
 

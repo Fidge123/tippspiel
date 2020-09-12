@@ -28,16 +28,18 @@ function App() {
           </Button>
         )}
       </header>
-      <aside className="leaderboard">
-        {isAuthenticated ? (
-          <Leaderboard></Leaderboard>
-        ) : (
-          <span>Please log in!</span>
-        )}
-      </aside>
-      <section className="schedule">
-        <Schedule></Schedule>
-      </section>
+      <main className="content">
+        <aside className="leaderboard">
+          {isAuthenticated ? (
+            <Leaderboard></Leaderboard>
+          ) : (
+            <span>Please log in!</span>
+          )}
+        </aside>
+        <section className="schedule">
+          <Schedule></Schedule>
+        </section>
+      </main>
     </div>
   );
 }
