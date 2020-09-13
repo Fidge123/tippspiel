@@ -28,7 +28,9 @@ export class LeaderboardController {
     const finished = await this.sbService.findFinished(parseInt(season, 10));
     const games = [...started, ...finished];
 
-    return games.reduce(async (result, game) => {
+    const result: any = {};
+
+    for (const game of games) {
       const tipps = await this.tippService.findGame(game.id);
 
       return {
@@ -45,7 +47,8 @@ export class LeaderboardController {
           };
         }, {} as any),
       };
-    }, {} as any);
+    }
+    return result;
   }
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
@@ -54,7 +57,8 @@ export class LeaderboardController {
   async getAll(@Param('season') season: string): Promise<any> {
     const games = await this.sbService.findFinished(parseInt(season, 10));
     const users = await this.userService.findAll();
-    return games.reduce(async (lb, game) => {
+    const lb: any = {};
+    for (const game of games) {
       const tipps = await this.tippService.findGame(game.id);
       const points = calculatePoints(game, tipps, users);
 
@@ -65,9 +69,8 @@ export class LeaderboardController {
             : c.points;
         lb[c.user] = { ...lb[c.user], [game.id]: p };
       });
-
-      return lb;
-    }, {} as any);
+    }
+    return lb;
   }
 }
 
