@@ -85,7 +85,9 @@ function calculatePoints(game: Competition, tipps: Tipp[], users: User[]) {
     parseInt(game.competitors[1].score, 10);
   return tipps
     .sort((a, b) => {
-      if (a.winner === winner) {
+      if (a.winner === winner && b.winner !== winner) {
+        return -1;
+      } else if (a.winner === winner && b.winner === winner) {
         return (
           Math.abs(a.pointDiff - pointDiff) - Math.abs(b.pointDiff - pointDiff)
         );
