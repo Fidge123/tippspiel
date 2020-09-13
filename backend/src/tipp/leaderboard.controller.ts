@@ -16,9 +16,9 @@ export class LeaderboardController {
     private readonly sbService: ScoreboardService,
   ) {}
 
-  // @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get(':season')
-  // @Permissions('read:tipp')
+  @Permissions('read:tipp')
   async getAll(@Param('season') season: string): Promise<any> {
     const games = await this.sbService.findFinished(parseInt(season, 10));
     const users = await this.userService.findAll();
