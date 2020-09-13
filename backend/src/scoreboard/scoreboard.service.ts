@@ -17,6 +17,23 @@ export class ScoreboardService {
     return this.sbRepo.find();
   }
 
+  async findStarted(dates: number): Promise<Competition[]> {
+    const weeks = await this.sbRepo.find({ where: { dates } });
+    return weeks
+      .reduce(
+        (events: NFLEvent[], week) => [
+          ...events,
+          ...week.response.events.filter(
+            e =>
+              new Date(e.date) < new Date() &&
+              e.status.type.name !== 'STATUS_FINAL',
+          ),
+        ],
+        [],
+      )
+      .map(ev => ev.competitions[0]);
+  }
+
   async findFinished(dates: number): Promise<Competition[]> {
     const weeks = await this.sbRepo.find({ where: { dates } });
     return weeks
