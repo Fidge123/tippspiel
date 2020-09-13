@@ -75,14 +75,13 @@ export class LeaderboardController {
 }
 
 function calculatePoints(game: Competition, tipps: Tipp[], users: User[]) {
+  const score0 = parseInt(game.competitors[0].score, 10);
+  const score1 = parseInt(game.competitors[1].score, 10);
   const winner =
-    parseInt(game.competitors[0].score, 10) >
-    parseInt(game.competitors[1].score, 10)
+    score0 > score1
       ? game.competitors[0].homeAway
       : game.competitors[1].homeAway;
-  const pointDiff =
-    parseInt(game.competitors[0].score, 10) -
-    parseInt(game.competitors[1].score, 10);
+  const pointDiff = Math.abs(score0 - score1);
   return tipps
     .sort((a, b) => {
       if (a.winner === winner && b.winner !== winner) {
