@@ -52,10 +52,12 @@ function Leaderboard() {
       const res: LBResponse = await response.json();
 
       setLeaderboard(
-        Object.entries(res).map(([key, value]) => ({
-          name: key,
-          points: Object.values(value).reduce((a, b) => a + b),
-        }))
+        Object.entries(res)
+          .map(([key, value]) => ({
+            name: key,
+            points: Object.values(value).reduce((a, b) => a + b),
+          }))
+          .sort((a, b) => b.points - a.points)
       );
     })();
   }, [isLoading, isAuthenticated, getAccessToken]);
