@@ -3,139 +3,10 @@ import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import { stringify } from "querystring";
+import MatchUp from "./Matchup";
 
 const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
 // const BASE_URL = "http://localhost:5000/";
-
-function MatchUp({ game, tipp, handleTipp }: Props) {
-  const [selected, setSelected] = useState<"home" | "away" | undefined>();
-  const [away, setAway] = useState<string>("");
-  const [home, setHome] = useState<string>("");
-  const [votes, setVotes] = useState<Votes>({ home: 0, away: 0 });
-  const [update, setUpdate] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<string>("");
-  const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
-
-  useEffect(() => {
-    if (tipp) {
-      setVotes({ home: tipp.votes.home || 0, away: tipp.votes.away || 0 });
-      setSelected(tipp.selected);
-      if (tipp.selected === "away") {
-        setAway(tipp.points?.toString() || "");
-      }
-      if (tipp.selected === "home") {
-        setHome(tipp.points?.toString() || "");
-      }
-    }
-  }, [tipp]);
-
-  useEffect(() => {
-    function handleResize() {
-      setIsCompact(window.innerWidth < 900);
-    }
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (selected === "home") {
-      setAway("");
-    }
-    if (selected === "away") {
-      setHome("");
-    }
-  }, [selected]);
-
-  useEffect(() => {
-    setTimeout(() => setUpdate(true), 1500);
-  }, [home, away, selected]);
-
-  useEffect(() => {
-    const points = {
-      home: parseInt(home, 10) || 0,
-      away: parseInt(away, 10) || 0,
-    };
-    const payload = JSON.stringify({
-      game: game.id,
-      winner: selected,
-      pointDiff: selected ? points[selected] : 0,
-    });
-    if (!update || lastUpdate === payload) {
-      return;
-    }
-    setUpdate(false);
-    if (selected === "home") {
-      if (tipp?.points?.toString() !== home || tipp?.selected !== selected) {
-        setLastUpdate(payload);
-        handleTipp(payload);
-      }
-    }
-    if (selected === "away") {
-      if (tipp?.points?.toString() !== away || tipp?.selected !== selected) {
-        setLastUpdate(payload);
-        handleTipp(payload);
-      }
-    }
-  }, [selected, update, handleTipp, home, away, game.id, tipp, lastUpdate]);
-
-  function select(homeAway: "home" | "away") {
-    const v = { ...votes };
-    if (selected && selected !== homeAway) {
-      v[selected] -= 1;
-    }
-    if (selected !== homeAway) {
-      v[homeAway] += 1;
-    }
-    setVotes(v);
-    setSelected(homeAway);
-  }
-
-  return (
-    <div className="game">
-      <div className="selector">
-        <Button
-          className="away"
-          disabled={new Date(game.date) < new Date()}
-          style={styleByTeam(game.away, selected === "away")}
-          onClick={() => select("away")}
-        >
-          {isCompact ? game.away.shortName : game.away.name}
-          {gameResults(game.status, game.away, game.home)}
-        </Button>
-        {votes.away > 0 && <div className="votes">{votes.away}</div>}
-      </div>
-
-      <input
-        className="input"
-        type="number"
-        disabled={selected !== "away" || new Date(game.date) < new Date()}
-        value={away}
-        onChange={(ev) => setAway(ev.target.value)}
-      ></input>
-      <span className="at">@</span>
-      <input
-        className="input"
-        type="number"
-        disabled={selected !== "home" || new Date(game.date) < new Date()}
-        value={home}
-        onChange={(ev) => setHome(ev.target.value)}
-      ></input>
-      <div className="selector">
-        <Button
-          className="home"
-          disabled={new Date(game.date) < new Date()}
-          style={styleByTeam(game.home, selected === "home")}
-          onClick={() => select("home")}
-        >
-          {isCompact ? game.home.shortName : game.home.name}
-          {gameResults(game.status, game.home, game.away)}
-        </Button>
-
-        {votes.home > 0 && <div className="votes">{votes.home}</div>}
-      </div>
-    </div>
-  );
-}
 
 function Schedule() {
   const {
@@ -151,6 +22,7 @@ function Schedule() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [tipps, setTipps] = useState<Tipps>({});
+  const [stats, setStats] = useState<any>({});
   const [admin, setAdmin] = useState(false);
 
   const getAccessToken = useCallback(
@@ -196,6 +68,22 @@ function Schedule() {
         }
       );
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (isLoading || !isAuthenticated) {
+        return;
+      }
+
+      const token = await getAccessToken("read:tipp");
+      const response = await fetch(BASE_URL + "leaderboard/games?season=2020", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setStats(await response.json());
+    })();
+  }, [isLoading, isAuthenticated, getAccessToken]);
 
   useEffect(() => {
     (async () => {
@@ -278,6 +166,7 @@ function Schedule() {
                   <MatchUp
                     key={idx}
                     game={g}
+                    stats={stats[g.id]}
                     tipp={tipps[g.id]}
                     handleTipp={postTipp}
                   ></MatchUp>
@@ -291,29 +180,6 @@ function Schedule() {
   } else {
     return <div>Loading...</div>;
   }
-}
-
-function gameResults(status: string, team: Team, oppo: Team) {
-  let result = " ";
-
-  if (status === "STATUS_FINAL") {
-    result += team.score;
-
-    if (parseInt(team.score) > parseInt(oppo.score)) {
-      result += " 👑";
-    }
-  }
-  return result;
-}
-
-function styleByTeam(team: Team, selected: boolean) {
-  return {
-    border: `2px solid #${team.color2}${selected ? "ff" : "55"}`,
-    backgroundColor: `#${team.color}${selected ? "99" : "11"}`,
-    color: selected ? "#222" : "#888",
-    fontWeight: 600,
-    boxShadow: "none",
-  };
 }
 
 function splitByDate(games: Game[]) {
@@ -332,12 +198,6 @@ function splitByDate(games: Game[]) {
 function formatDate(date: string) {
   const d = new Date(date);
   return d.toLocaleString("de-DE");
-}
-
-interface Props {
-  game: Game;
-  tipp?: Tipp;
-  handleTipp: (payload: string) => void;
 }
 
 interface Tipps {

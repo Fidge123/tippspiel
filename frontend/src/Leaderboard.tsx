@@ -67,7 +67,7 @@ function Leaderboard() {
       <div>Leaderboard:</div>
       <ol>
         {leaderboard.map((l) => (
-          <li>
+          <li key={l.name}>
             {l.name} {l.points}
           </li>
         ))}

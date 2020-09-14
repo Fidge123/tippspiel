@@ -1,0 +1,135 @@
+.game {
+  width: 23rem;
+  padding: 0.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.away,
+.home {
+  width: 7rem;
+  padding: 6px 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.input {
+  margin-left: 0.25rem;
+  width: 2.75rem;
+  text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.scores {
+  display: flex;
+  width: 4rem;
+  align-items: center;
+  margin: 0 0.25rem;
+}
+
+.scores > div {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.scores > div:first-child > span {
+  margin: auto;
+}
+
+.scores > div:last-child > span {
+  margin: auto;
+}
+
+.more {
+  text-align: center;
+  font-size: 0.5rem;
+}
+
+button.home:disabled,
+button.away:disabled {
+  opacity: 0.75;
+}
+
+.panel-indicator {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  padding: 0.25rem;
+  width: 1.5rem;
+  height: 2.5rem;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  height: 0.5rem;
+  width: 0.5rem;
+  padding: 3px;
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.stats {
+  display: flex;
+}
+
+.stats .scores {
+  justify-content: center;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-row * {
+  width: 2rem;
+  font-size: 0.75rem;
+}
+
+.stat-row *:first-child {
+  width: 4rem;
+}
+
+@media screen and (min-width: 900px) {
+  .game {
+    width: 39rem;
+    display: flex;
+  }
+
+  .home,
+  .away {
+    width: 14.5rem;
+  }
+
+  .scores {
+    display: flex;
+    width: 5rem;
+    align-items: center;
+  }
+
+  .stat-row * {
+    width: 5rem;
+  }
+}
