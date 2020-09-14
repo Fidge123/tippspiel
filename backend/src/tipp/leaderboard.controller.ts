@@ -7,7 +7,7 @@ import { PermissionsGuard } from '../permissions.guard';
 import { TippService } from './tipp.service';
 import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
 import { UserService } from 'src/user/user.service';
-import { Competition } from 'src/scoreboard/scoreboard.type';
+import { Competition, Competitors } from 'src/scoreboard/scoreboard.type';
 import { Tipp } from './tipp.entity';
 import { User } from 'src/user/user.entity';
 
@@ -28,12 +28,12 @@ export class LeaderboardController {
     const finished = await this.sbService.findFinished(parseInt(season, 10));
     const games = [...started, ...finished];
 
-    const result: any = {};
+    let result: any = {};
 
     for (const game of games) {
       const tipps = await this.tippService.findGame(game.id);
 
-      return {
+      result = {
         ...result,
         [game.id]: tipps.reduce((res, t) => {
           const user = users.find(u => u.email === t.user)?.name || t.user;
@@ -62,42 +62,48 @@ export class LeaderboardController {
       const tipps = await this.tippService.findGame(game.id);
       const points = calculatePoints(game, tipps, users);
 
-      points.forEach((c, i) => {
-        const p =
-          i > 0 && c.points > 0 && c.pointDiff === points[i - 1].pointDiff
-            ? points[i - 1].points
-            : c.points;
-        lb[c.user] = { ...lb[c.user], [game.id]: p };
+      points.forEach(c => {
+        lb[c.user] = { ...lb[c.user], [game.id]: c.points };
       });
     }
     return lb;
   }
 }
 
+function getWinner(comp: Competitors[]): 'home' | 'away' | undefined {
+  const winners = comp.filter(team => team.winner);
+  if (winners.length === 1) {
+    return winners[0].homeAway;
+  }
+}
+
+function calcBonus(
+  correctDiff: number,
+  winner: 'home' | 'away',
+  tipp: Tipp,
+  tipps: Tipp[],
+) {
+  return Math.max(
+    tipps.reduce((a, b) => {
+      const closerToCorrect =
+        Math.abs(correctDiff - b.pointDiff) <
+        Math.abs(correctDiff - tipp.pointDiff);
+
+      return b.winner === winner && closerToCorrect ? a - 1 : a;
+    }, 3),
+    0,
+  );
+}
+
 function calculatePoints(game: Competition, tipps: Tipp[], users: User[]) {
   const score0 = parseInt(game.competitors[0].score, 10);
   const score1 = parseInt(game.competitors[1].score, 10);
-  const winner =
-    score0 > score1
-      ? game.competitors[0].homeAway
-      : game.competitors[1].homeAway;
-  const pointDiff = Math.abs(score0 - score1);
-  return tipps
-    .sort((a, b) => {
-      if (a.winner === winner && b.winner !== winner) {
-        return -1;
-      } else if (a.winner === winner && b.winner === winner) {
-        return (
-          Math.abs(a.pointDiff - pointDiff) - Math.abs(b.pointDiff - pointDiff)
-        );
-      } else {
-        return 1;
-      }
-    })
-    .map((t, i) => ({
-      winner: t.winner,
-      user: users.find(u => u.email === t.user)?.name || t.user,
-      pointDiff: Math.abs(t.pointDiff - pointDiff),
-      points: t.winner === winner ? 1 + Math.max(3 - i, 0) : 0,
-    }));
+  const correctDiff = Math.abs(score0 - score1);
+  const winner = getWinner(game.competitors);
+
+  return tipps.map(t => ({
+    user: users.find(u => u.email === t.user)?.name || t.user,
+    points:
+      t.winner === winner ? 1 + calcBonus(correctDiff, winner, t, tipps) : 0,
+  }));
 }
