@@ -17,21 +17,15 @@ function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
 
   const getAccessToken = useCallback(
-    (scope: string) => {
+    async (scope: string) => {
       try {
-        const token = getAccessTokenSilently({
-          audience: "https://nfl-tippspiel.herokuapp.com/auth",
-          scope,
-        });
+        const token = await getAccessTokenSilently({ scope });
         if (authError || !token) {
           throw Error("Error getting Token!");
         }
         return token;
       } catch (e) {
-        return getAccessTokenWithPopup({
-          audience: "https://nfl-tippspiel.herokuapp.com/auth",
-          scope,
-        });
+        return getAccessTokenWithPopup({ scope });
       }
     },
     [authError, getAccessTokenSilently, getAccessTokenWithPopup]

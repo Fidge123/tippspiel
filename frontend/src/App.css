@@ -23,7 +23,6 @@ main.content {
 }
 
 .schedule {
-  overflow-y: scroll;
   min-width: 23rem;
   grid-area: content;
   padding: 0 0.25rem 2rem 0.25rem;
