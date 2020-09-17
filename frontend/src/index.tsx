@@ -9,7 +9,7 @@ ReactDOM.render(
     domain="withered-salad-9484.eu.auth0.com"
     clientId="VvT2n6cFCwL1pCTAxWdmZJuVPDwOGl3r"
     cacheLocation="localstorage"
-    scope="openid email profile read:tipp write:tipp"
+    scope="openid email profile read:tipp write:tipp write:schedule"
     useRefreshTokens
     redirectUri={window.location.href}
     audience="https://nfl-tippspiel.herokuapp.com/auth"
