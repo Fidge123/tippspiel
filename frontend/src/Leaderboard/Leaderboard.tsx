@@ -55,7 +55,7 @@ function Leaderboard() {
   }, [isLoading, isAuthenticated, getAccessToken]);
 
   return (
-    <aside className="leaderboard">
+    <aside className="lb">
       <div>Leaderboard:</div>
       <ol>
         {leaderboard.map((l) => (
