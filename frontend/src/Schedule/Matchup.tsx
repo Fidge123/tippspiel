@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import "./Matchup.css";
 import Scores from "./Scores";
 import Stats from "./Stats";
-import { Votes, Props, Team } from "./types";
+import { Votes, Team, Game, IStats, Tipp } from "./types";
 
 function MatchUp({ game, tipp, handleTipp, stats }: Props) {
   const [selected, setSelected] = useState<"home" | "away" | undefined>();
@@ -119,6 +119,13 @@ function styleByTeam(team: Team, selected: boolean) {
     fontWeight: 600,
     boxShadow: "none",
   };
+}
+
+interface Props {
+  game: Game;
+  stats: IStats;
+  tipp?: Tipp;
+  handleTipp: (payload: string) => void;
 }
 
 export default MatchUp;

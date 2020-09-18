@@ -29,7 +29,7 @@ export interface Game {
   away: Team;
 }
 
-export interface Week {
+export interface IWeek {
   id: number;
   seasontype: number;
   label: string;
@@ -37,6 +37,10 @@ export interface Week {
   startDate: string;
   endDate: string;
   games: Game[];
+}
+
+export interface AllStats {
+  [game: string]: IStats;
 }
 
 export interface IStats {
@@ -51,11 +55,4 @@ export interface StatProps {
   stats: IStats;
   votes: Votes;
   isCompact: boolean;
-}
-
-export interface Props {
-  game: Game;
-  stats: IStats;
-  tipp?: Tipp;
-  handleTipp: (payload: string) => void;
 }

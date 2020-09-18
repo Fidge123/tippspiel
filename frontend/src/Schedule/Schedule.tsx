@@ -1,18 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
-import Button from "react-bootstrap/Button";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
-import { stringify } from "querystring";
-import MatchUp from "./Matchup";
-import { Week, Tipps, Game } from "./types";
 
-const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
-// const BASE_URL = "http://localhost:5000/";
+import { IWeek, Tipps, AllStats } from "./types";
+import { BASE_URL } from "../api";
+import Week from "./Week";
 
 function Schedule() {
   const {
     error: authError,
-    user,
     isLoading,
     isAuthenticated,
     getAccessTokenSilently,
@@ -21,10 +17,9 @@ function Schedule() {
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [weeks, setWeeks] = useState<Week[]>([]);
   const [tipps, setTipps] = useState<Tipps>({});
-  const [stats, setStats] = useState<any>({});
-  const [admin, setAdmin] = useState(false);
+  const [stats, setStats] = useState<AllStats>({});
+  const [weeks, setWeeks] = useState<IWeek[]>([]);
 
   const getAccessToken = useCallback(
     async (scope: string) => {
@@ -40,14 +35,6 @@ function Schedule() {
     },
     [authError, getAccessTokenSilently, getAccessTokenWithPopup]
   );
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      setAdmin(
-        user["https://nfl-tippspiel.herokuapp.com/auth/roles"].includes("Admin")
-      );
-    }
-  }, [isAuthenticated, user]);
 
   useEffect(() => {
     fetch(BASE_URL + "scoreboard/2020")
@@ -96,39 +83,6 @@ function Schedule() {
     })();
   }, [isLoading, isAuthenticated, getAccessToken]);
 
-  async function postTipp(payload: string) {
-    const token = await getAccessToken("write:tipp");
-
-    await fetch(BASE_URL + "tipp", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: payload,
-    });
-  }
-
-  async function reloadWeek(week: number, seasontype: number) {
-    const token = await getAccessToken("write:schedule");
-
-    await fetch(
-      `${BASE_URL}scoreboard?${stringify({
-        dates: 2020,
-        seasontype,
-        week,
-      })}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    window.location.reload();
-  }
-
   if (isLoaded) {
     if (error) {
       return <span>Error occured... please reload!</span>;
@@ -136,63 +90,13 @@ function Schedule() {
     return (
       <section className="schedule-inner">
         {weeks.map((week) => (
-          <article className="week" key={week.label}>
-            <div className="weekHeader">
-              <span className="label">{week.label}</span>
-              {admin && (
-                <Button
-                  className="reload"
-                  size="sm"
-                  onClick={() => {
-                    reloadWeek(week.id, week.seasontype);
-                  }}
-                >
-                  Reload
-                </Button>
-              )}
-            </div>
-            {week.teamsOnBye.length > 0 && (
-              <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
-            )}
-            {splitByDate(week.games).map((time, idx) => (
-              <div key={time[0].date}>
-                <div className="time">{formatDate(time[0].date)}</div>
-                {time.map((g, idx) => (
-                  <MatchUp
-                    key={idx}
-                    game={g}
-                    stats={stats[g.id]}
-                    tipp={tipps[g.id]}
-                    handleTipp={postTipp}
-                  ></MatchUp>
-                ))}
-              </div>
-            ))}
-          </article>
+          <Week week={week} stats={stats} tipps={tipps} key={week.id}></Week>
         ))}
       </section>
     );
   } else {
     return <div>Loading...</div>;
   }
-}
-
-function splitByDate(games: Game[]) {
-  const result: Game[][] = [];
-  return games.reduce((res, game) => {
-    const idx = res.findIndex((sub) => sub[0].date === game.date);
-    if (idx === -1) {
-      res.push([game]);
-    } else {
-      res[idx].push(game);
-    }
-    return res;
-  }, result);
-}
-
-function formatDate(date: string) {
-  const d = new Date(date);
-  return d.toLocaleString("de-DE");
 }
 
 export default Schedule;

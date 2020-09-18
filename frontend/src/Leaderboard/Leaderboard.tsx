@@ -1,9 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import "./Leaderboard.css";
 import { useAuth0 } from "@auth0/auth0-react";
-
-const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
-// const BASE_URL = "http://localhost:5000/";
+import { BASE_URL } from "../api";
 
 function Leaderboard() {
   const {
