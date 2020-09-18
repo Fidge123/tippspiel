@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "68a52872c796d6470d1d770a523fe1bd",
+    "revision": "72d003f1165e13dbf1f658ef7b690403",
     "url": "/tippspiel/index.html"
   },
   {
@@ -8,8 +8,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/tippspiel/static/css/2.d9ad5f5c.chunk.css"
   },
   {
-    "revision": "cb7bed6c9f27463e3bf0",
-    "url": "/tippspiel/static/css/main.134efe9f.chunk.css"
+    "revision": "4408b0f677272cecd852",
+    "url": "/tippspiel/static/css/main.3ad3d22b.chunk.css"
   },
   {
     "revision": "e579d3d0cc9daa4df8f9",
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/tippspiel/static/js/2.3c434b2f.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "cb7bed6c9f27463e3bf0",
-    "url": "/tippspiel/static/js/main.e188a4db.chunk.js"
+    "revision": "4408b0f677272cecd852",
+    "url": "/tippspiel/static/js/main.7f6bcced.chunk.js"
   },
   {
     "revision": "14ca355c90f43e6d9185",

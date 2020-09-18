@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/tippspiel/static/css/main.134efe9f.chunk.css",
-    "main.js": "/tippspiel/static/js/main.e188a4db.chunk.js",
-    "main.js.map": "/tippspiel/static/js/main.e188a4db.chunk.js.map",
+    "main.css": "/tippspiel/static/css/main.3ad3d22b.chunk.css",
+    "main.js": "/tippspiel/static/js/main.7f6bcced.chunk.js",
+    "main.js.map": "/tippspiel/static/js/main.7f6bcced.chunk.js.map",
     "runtime-main.js": "/tippspiel/static/js/runtime-main.f64af798.js",
     "runtime-main.js.map": "/tippspiel/static/js/runtime-main.f64af798.js.map",
     "static/css/2.d9ad5f5c.chunk.css": "/tippspiel/static/css/2.d9ad5f5c.chunk.css",
     "static/js/2.3c434b2f.chunk.js": "/tippspiel/static/js/2.3c434b2f.chunk.js",
     "static/js/2.3c434b2f.chunk.js.map": "/tippspiel/static/js/2.3c434b2f.chunk.js.map",
     "index.html": "/tippspiel/index.html",
-    "precache-manifest.0c5945deabf2794dd2b0a3f4c4433849.js": "/tippspiel/precache-manifest.0c5945deabf2794dd2b0a3f4c4433849.js",
+    "precache-manifest.e033b5be52daa25577d00194b1da05e6.js": "/tippspiel/precache-manifest.e033b5be52daa25577d00194b1da05e6.js",
     "service-worker.js": "/tippspiel/service-worker.js",
     "static/css/2.d9ad5f5c.chunk.css.map": "/tippspiel/static/css/2.d9ad5f5c.chunk.css.map",
-    "static/css/main.134efe9f.chunk.css.map": "/tippspiel/static/css/main.134efe9f.chunk.css.map",
+    "static/css/main.3ad3d22b.chunk.css.map": "/tippspiel/static/css/main.3ad3d22b.chunk.css.map",
     "static/js/2.3c434b2f.chunk.js.LICENSE.txt": "/tippspiel/static/js/2.3c434b2f.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.f64af798.js",
     "static/css/2.d9ad5f5c.chunk.css",
     "static/js/2.3c434b2f.chunk.js",
-    "static/css/main.134efe9f.chunk.css",
-    "static/js/main.e188a4db.chunk.js"
+    "static/css/main.3ad3d22b.chunk.css",
+    "static/js/main.7f6bcced.chunk.js"
   ]
 }
