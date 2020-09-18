@@ -19,7 +19,7 @@
 
 main.content {
   padding-top: 2rem;
-  height: calc(100vh - 2rem);
+  height: 100vh;
 }
 
 .schedule {
@@ -40,7 +40,6 @@ main.content {
 
   main.content {
     padding-top: 4rem;
-    height: calc(100vh - 4rem);
   }
 
   .leaderboard {

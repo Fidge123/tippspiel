@@ -88,9 +88,14 @@ function Schedule() {
       return <span>Error occured... please reload!</span>;
     }
     return (
-      <section className="schedule-inner">
-        {weeks.map((week) => (
-          <Week week={week} stats={stats} tipps={tipps} key={week.id}></Week>
+      <section className="schedule">
+        {weeks.map((week, i) => (
+          <Week
+            week={week}
+            stats={stats}
+            tipps={tipps}
+            key={`Week-${i}`}
+          ></Week>
         ))}
       </section>
     );

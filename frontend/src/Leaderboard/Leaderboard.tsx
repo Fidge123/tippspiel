@@ -55,16 +55,16 @@ function Leaderboard() {
   }, [isLoading, isAuthenticated, getAccessToken]);
 
   return (
-    <div className="lbParent">
+    <aside className="leaderboard">
       <div>Leaderboard:</div>
       <ol>
         {leaderboard.map((l) => (
-          <li key={l.name}>
+          <li key={`LB-${l.name}`}>
             {l.name} {l.points}
           </li>
         ))}
       </ol>
-    </div>
+    </aside>
   );
 }
 

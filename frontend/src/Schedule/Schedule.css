@@ -1,4 +1,4 @@
-.schedule-inner {
+.schedule {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(23rem, 1fr));
   grid-gap: 0.5rem;
@@ -35,7 +35,7 @@
 }
 
 @media screen and (min-width: 900px) {
-  .schedule-inner {
+  .schedule {
     grid-template-columns: repeat(auto-fill, minmax(39rem, 1fr));
     grid-gap: 1rem;
   }
