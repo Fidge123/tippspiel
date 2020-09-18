@@ -5,8 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import Leaderboard from "./Leaderboard";
-import Schedule from "./Schedule";
+import Leaderboard from "./Leaderboard/Leaderboard";
+import Schedule from "./Schedule/Schedule";
 
 function App() {
   const { isLoading, isAuthenticated, loginWithRedirect, logout } = useAuth0();

@@ -4,6 +4,7 @@ import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import { stringify } from "querystring";
 import MatchUp from "./Matchup";
+import { Week, Tipps, Game } from "./types";
 
 const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
 // const BASE_URL = "http://localhost:5000/";
@@ -192,47 +193,6 @@ function splitByDate(games: Game[]) {
 function formatDate(date: string) {
   const d = new Date(date);
   return d.toLocaleString("de-DE");
-}
-
-interface Tipps {
-  [gameId: string]: Tipp;
-}
-
-interface Tipp {
-  votes: Votes;
-  selected?: "home" | "away";
-  points?: number;
-}
-
-interface Votes {
-  home: number;
-  away: number;
-}
-
-interface Team {
-  name: string;
-  shortName: string;
-  color: string;
-  color2: string;
-  score: string;
-}
-
-interface Game {
-  id: string;
-  date: string;
-  status: string;
-  home: Team;
-  away: Team;
-}
-
-interface Week {
-  id: number;
-  seasontype: number;
-  label: string;
-  teamsOnBye: string[];
-  startDate: string;
-  endDate: string;
-  games: Game[];
 }
 
 export default Schedule;
