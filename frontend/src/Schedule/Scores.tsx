@@ -1,4 +1,5 @@
 import React from "react";
+import "./Scores.css";
 import { Game } from "./types";
 
 function Scores({ game, selected }: Props) {
@@ -22,7 +23,7 @@ function Scores({ game, selected }: Props) {
         )}
       </div>
       <div>
-        <span className="at">@</span>
+        <span>@</span>
       </div>
       <div>
         {final && (

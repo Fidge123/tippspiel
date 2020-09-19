@@ -1,4 +1,5 @@
 import React from "react";
+import "./Stats.css";
 import { StatProps } from "./types";
 
 function Stats({ stats, game, votes, isCompact }: StatProps) {

@@ -1,0 +1,27 @@
+.stats {
+  display: flex;
+}
+
+.stats .scores {
+  justify-content: center;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-row * {
+  width: 2rem;
+  font-size: 0.75rem;
+}
+
+.stat-row *:first-child {
+  width: 4rem;
+}
+
+@media screen and (min-width: 900px) {
+  .stat-row * {
+    width: 5rem;
+  }
+}

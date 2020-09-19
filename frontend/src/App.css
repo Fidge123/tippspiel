@@ -1,16 +1,20 @@
 .App {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
   height: 100vh;
+  width: 100vw;
 }
 
 .App-header {
-  position: fixed;
-  top: 0;
+  flex-shrink: 0;
   color: white;
   background-color: #282c34;
   height: 2rem;
   width: 100vw;
   padding: 0 1rem;
   z-index: 100;
+  font-weight: 600;
 
   display: flex;
   align-items: center;
@@ -18,8 +22,9 @@
 }
 
 main.content {
-  padding-top: 2rem;
-  height: 100vh;
+  flex-grow: 1;
+  overflow: auto;
+  min-height: 6rem;
 }
 
 .schedule {
@@ -36,10 +41,6 @@ main.content {
   .App-header {
     font-size: 1.5rem;
     height: 4rem;
-  }
-
-  main.content {
-    padding-top: 4rem;
   }
 
   .lb {

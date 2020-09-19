@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { stringify } from "querystring";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "react-bootstrap";
@@ -16,6 +16,16 @@ function Week({ week, stats, tipps }: Props) {
     getAccessTokenWithPopup,
   } = useAuth0();
   const [admin, setAdmin] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (
+      new Date(week.startDate) < new Date() &&
+      new Date() < new Date(week.endDate)
+    ) {
+      ref.current?.scrollIntoView();
+    }
+  }, [week.endDate, week.startDate]);
 
   const getAccessToken = useCallback(
     async (scope: string) => {
@@ -74,7 +84,7 @@ function Week({ week, stats, tipps }: Props) {
   }
 
   return (
-    <article className="week" key={week.label}>
+    <article className="week" key={week.label} ref={ref}>
       <div className="weekHeader">
         <span className="label">{week.label}</span>
         {admin && (
