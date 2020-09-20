@@ -9,6 +9,7 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
   const [selected, setSelected] = useState<"home" | "away" | undefined>();
   const [winBy, setWinBy] = useState<string>("");
   const [votes, setVotes] = useState<Votes>({ home: 0, away: 0 });
+  const [busy, setBusy] = useState(false);
   const [update, setUpdate] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>("");
   const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
@@ -31,8 +32,15 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
   }, []);
 
   useEffect(() => {
+    if (
+      selected &&
+      winBy &&
+      (tipp?.points?.toString() !== winBy || tipp?.selected !== selected)
+    ) {
+      setBusy(true);
+    }
     setTimeout(() => setUpdate(true), 1500);
-  }, [winBy, selected]);
+  }, [winBy, selected, tipp]);
 
   useEffect(() => {
     const payload = JSON.stringify({
@@ -49,6 +57,7 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
       winBy &&
       (tipp?.points?.toString() !== winBy || tipp?.selected !== selected)
     ) {
+      setBusy(false);
       setLastUpdate(payload);
       handleTipp(payload);
     }
@@ -87,6 +96,7 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
       </Button>
       <input
         className="input"
+        style={{ color: busy ? "#d73" : "#000" }}
         type="number"
         disabled={!selected || new Date(game.date) < new Date()}
         value={winBy}
