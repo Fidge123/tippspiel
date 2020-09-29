@@ -1,0 +1,8 @@
+.weekHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.week {
+  padding-top: 3rem;
+}

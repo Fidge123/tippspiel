@@ -9,15 +9,6 @@
   max-width: 23rem;
 }
 
-.weekHeader {
-  display: flex;
-  justify-content: space-between;
-}
-
-.week {
-  padding-top: 2rem;
-}
-
 .label {
   font-size: 1.5rem;
 }

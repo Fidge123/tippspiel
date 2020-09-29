@@ -14,8 +14,8 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <span className="title">Tippspiel</span>
+      <header className="header">
+        <span>Tippspiel</span>
         {isLoading ? (
           <span className="loading">loading...</span>
         ) : isAuthenticated ? (
@@ -28,12 +28,8 @@ function App() {
           </Button>
         )}
       </header>
-      <main className="content">
-        {isAuthenticated ? (
-          <Leaderboard></Leaderboard>
-        ) : (
-          <span>Please log in!</span>
-        )}
+      <main>
+        {isAuthenticated ? <Leaderboard></Leaderboard> : <p>Please log in!</p>}
         <Schedule></Schedule>
       </main>
     </div>
