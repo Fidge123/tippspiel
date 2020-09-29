@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App">
       <header className="header">
-        <span>Tippspiel</span>
+        Tippspiel
         {isLoading ? (
           <span className="loading">loading...</span>
         ) : isAuthenticated ? (
