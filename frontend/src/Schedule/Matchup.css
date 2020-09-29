@@ -12,9 +12,18 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+button.home,
+button.away {
   font-size: 1rem;
   line-height: 1.5rem;
   height: 2.5rem;
+}
+
+button.home:disabled,
+button.away:disabled {
+  opacity: 0.75;
 }
 
 .input {
@@ -37,11 +46,6 @@ input[type="number"] {
 .more {
   text-align: center;
   font-size: 0.5rem;
-}
-
-button.home:disabled,
-button.away:disabled {
-  opacity: 0.75;
 }
 
 .panel-indicator {
