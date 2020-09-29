@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Button from "react-bootstrap/Button";
 import "./Matchup.css";
 import Scores from "./Scores";
 import Stats from "./Stats";
@@ -77,23 +76,23 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
 
   return (
     <div className="game">
-      <Button
+      <button
         className="away"
         disabled={new Date(game.date) < new Date()}
         style={styleByTeam(game.away, selected === "away")}
         onClick={() => select("away")}
       >
         {isCompact ? game.away.shortName : game.away.name}
-      </Button>
+      </button>
       <Scores game={game} selected={selected}></Scores>
-      <Button
+      <button
         className="home"
         disabled={new Date(game.date) < new Date()}
         style={styleByTeam(game.home, selected === "home")}
         onClick={() => select("home")}
       >
         {isCompact ? game.home.shortName : game.home.name}
-      </Button>
+      </button>
       <input
         className="input"
         style={{ color: busy ? "#d73" : "#000" }}

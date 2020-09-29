@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./Week.css";
 import { stringify } from "querystring";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button } from "react-bootstrap";
 
 import MatchUp from "./Matchup";
 import { AllStats, Game, Tipps, IWeek } from "./types";
@@ -89,15 +88,14 @@ function Week({ week, stats, tipps }: Props) {
       <div className="weekHeader">
         <span className="label">{week.label}</span>
         {admin && (
-          <Button
+          <button
             className="reload"
-            size="sm"
             onClick={() => {
               reloadWeek(week.id, week.seasontype);
             }}
           >
             Reload
-          </Button>
+          </button>
         )}
       </div>
       {week.teamsOnBye.length > 0 && (

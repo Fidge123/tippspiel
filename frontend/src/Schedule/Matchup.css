@@ -12,12 +12,16 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  height: 2.5rem;
 }
 
 .input {
   margin-left: 0.25rem;
   width: 2.75rem;
   text-align: center;
+  font-size: 1rem;
 }
 
 input::-webkit-outer-spin-button,

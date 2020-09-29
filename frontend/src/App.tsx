@@ -1,8 +1,5 @@
 import React from "react";
 import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import Button from "react-bootstrap/Button";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import Leaderboard from "./Leaderboard/Leaderboard";
@@ -19,13 +16,9 @@ function App() {
         {isLoading ? (
           <span className="loading">loading...</span>
         ) : isAuthenticated ? (
-          <Button size="sm" onClick={() => logout({ returnTo })}>
-            Log Out
-          </Button>
+          <button onClick={() => logout({ returnTo })}>Log Out</button>
         ) : (
-          <Button size="sm" onClick={() => loginWithRedirect()}>
-            Log In
-          </Button>
+          <button onClick={() => loginWithRedirect()}>Log In</button>
         )}
       </header>
       <main>
