@@ -4,29 +4,16 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { BASE_URL } from "../api";
 
 function Leaderboard() {
-  const {
-    isLoading,
-    isAuthenticated,
-    getAccessTokenSilently,
-    getAccessTokenWithPopup,
-    error: authError,
-  } = useAuth0();
-
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
 
-  const getAccessToken = useCallback(
-    async (scope: string) => {
-      try {
-        const token = await getAccessTokenSilently({ scope });
-        if (authError || !token) {
-          throw Error("Error getting Token!");
-        }
-        return token;
-      } catch (e) {
-        return getAccessTokenWithPopup({ scope });
-      }
+  const getAuthHeader = useCallback(
+    async (scope: string): Promise<{ Authorization: string }> => {
+      return {
+        Authorization: `Bearer ${await getAccessTokenSilently({ scope })}`,
+      };
     },
-    [authError, getAccessTokenSilently, getAccessTokenWithPopup]
+    [getAccessTokenSilently]
   );
 
   useEffect(() => {
@@ -35,11 +22,8 @@ function Leaderboard() {
         return;
       }
 
-      const token = await getAccessToken("read:tipp");
       const response = await fetch(BASE_URL + "leaderboard/2020", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: await getAuthHeader("read:tipp"),
       });
       const res: LBResponse = await response.json();
 
@@ -52,7 +36,7 @@ function Leaderboard() {
           .sort((a, b) => b.points - a.points)
       );
     })();
-  }, [isLoading, isAuthenticated, getAccessToken]);
+  }, [isLoading, isAuthenticated, getAuthHeader]);
 
   return (
     <aside className="lb">

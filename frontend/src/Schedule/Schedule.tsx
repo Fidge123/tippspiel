@@ -7,13 +7,7 @@ import { BASE_URL } from "../api";
 import Week from "./Week";
 
 function Schedule() {
-  const {
-    error: authError,
-    isLoading,
-    isAuthenticated,
-    getAccessTokenSilently,
-    getAccessTokenWithPopup,
-  } = useAuth0();
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -21,19 +15,13 @@ function Schedule() {
   const [stats, setStats] = useState<AllStats>({});
   const [weeks, setWeeks] = useState<IWeek[]>([]);
 
-  const getAccessToken = useCallback(
-    async (scope: string) => {
-      try {
-        const token = await getAccessTokenSilently({ scope });
-        if (authError || !token) {
-          throw Error("Error getting Token!");
-        }
-        return token;
-      } catch (e) {
-        return getAccessTokenWithPopup({ scope });
-      }
+  const getAuthHeader = useCallback(
+    async (scope: string): Promise<{ Authorization: string }> => {
+      return {
+        Authorization: `Bearer ${await getAccessTokenSilently({ scope })}`,
+      };
     },
-    [authError, getAccessTokenSilently, getAccessTokenWithPopup]
+    [getAccessTokenSilently]
   );
 
   useEffect(() => {
@@ -57,15 +45,12 @@ function Schedule() {
         return;
       }
 
-      const token = await getAccessToken("read:tipp");
       const response = await fetch(BASE_URL + "leaderboard/games?season=2020", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: await getAuthHeader("read:tipp"),
       });
       setStats(await response.json());
     })();
-  }, [isLoading, isAuthenticated, getAccessToken]);
+  }, [isLoading, isAuthenticated, getAuthHeader]);
 
   useEffect(() => {
     (async () => {
@@ -73,19 +58,16 @@ function Schedule() {
         return;
       }
 
-      const token = await getAccessToken("read:tipp");
       const response = await fetch(BASE_URL + "tipp", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: await getAuthHeader("read:tipp"),
       });
       setTipps(await response.json());
     })();
-  }, [isLoading, isAuthenticated, getAccessToken]);
+  }, [isLoading, isAuthenticated, getAuthHeader]);
 
   if (isLoaded) {
     if (error) {
-      return <span>Error occured... please reload!</span>;
+      return <div>Error occured... please reload!</div>;
     }
     return (
       <section className="schedule">

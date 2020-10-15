@@ -8,13 +8,7 @@ import { AllStats, Game, Tipps, IWeek } from "./types";
 import { BASE_URL } from "../api";
 
 function Week({ week, stats, tipps }: Props) {
-  const {
-    error: authError,
-    user,
-    isAuthenticated,
-    getAccessTokenSilently,
-    getAccessTokenWithPopup,
-  } = useAuth0();
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [admin, setAdmin] = useState(false);
   const ref = useRef<HTMLElement>(null);
 
@@ -27,19 +21,14 @@ function Week({ week, stats, tipps }: Props) {
     }
   }, [week.endDate, week.startDate]);
 
-  const getAccessToken = useCallback(
-    async (scope: string) => {
-      try {
-        const token = await getAccessTokenSilently({ scope });
-        if (authError || !token) {
-          throw Error("Error getting Token!");
-        }
-        return token;
-      } catch (e) {
-        return getAccessTokenWithPopup({ scope });
-      }
+  const getHeaders = useCallback(
+    async (scope: string): Promise<{ [header: string]: string }> => {
+      return {
+        Authorization: `Bearer ${await getAccessTokenSilently({ scope })}`,
+        "Content-Type": "application/json",
+      };
     },
-    [authError, getAccessTokenSilently, getAccessTokenWithPopup]
+    [getAccessTokenSilently]
   );
 
   useEffect(() => {
@@ -51,21 +40,14 @@ function Week({ week, stats, tipps }: Props) {
   }, [isAuthenticated, user]);
 
   async function postTipp(payload: string) {
-    const token = await getAccessToken("write:tipp");
-
-    await fetch(BASE_URL + "tipp", {
+    await fetch(`${BASE_URL}tipp`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+      headers: await getHeaders("read:tipp"),
       body: payload,
     });
   }
 
   async function reloadWeek(week: number, seasontype: number) {
-    const token = await getAccessToken("write:schedule");
-
     await fetch(
       `${BASE_URL}scoreboard?${stringify({
         dates: 2020,
@@ -74,10 +56,7 @@ function Week({ week, stats, tipps }: Props) {
       })}`,
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: await getHeaders("read:tipp"),
       }
     );
     window.location.reload();
