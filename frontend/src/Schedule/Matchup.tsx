@@ -82,7 +82,12 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
         style={styleByTeam(game.away, selected === "away")}
         onClick={() => select("away")}
       >
-        {isCompact ? game.away.shortName : game.away.name}
+        {game.away.logo && (
+          <img src={game.away.logo} className="logo" alt="logo home team"></img>
+        )}
+        <span className={selected === "away" ? "selected" : ""}>
+          {isCompact ? game.away.shortName : game.away.name}
+        </span>
       </button>
       <Scores game={game} selected={selected}></Scores>
       <button
@@ -91,7 +96,12 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
         style={styleByTeam(game.home, selected === "home")}
         onClick={() => select("home")}
       >
-        {isCompact ? game.home.shortName : game.home.name}
+        {game.home.logo && (
+          <img src={game.home.logo} className="logo" alt="logo home team"></img>
+        )}
+        <span className={selected === "home" ? "selected" : ""}>
+          {isCompact ? game.home.shortName : game.home.name}
+        </span>
       </button>
       <input
         className="input"
@@ -122,10 +132,10 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
 
 function styleByTeam(team: Team, selected: boolean) {
   return {
-    border: `2px solid #${team.color2 || "000000"}${selected ? "ff" : "55"}`,
-    backgroundColor: `#${team.color || "ffffff"}${selected ? "99" : "11"}`,
-    color: selected ? "#222" : "#888",
-    fontWeight: 600,
+    border: `2px solid #${selected ? team.color2 : team.color || "000000"}${
+      selected ? "ff" : "55"
+    }`,
+    backgroundColor: selected ? `#${team.color}aa` : "#fff",
     boxShadow: "none",
   };
 }

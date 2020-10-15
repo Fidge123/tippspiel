@@ -18,6 +18,7 @@ export interface Team {
   shortName: string;
   color: string;
   color2: string;
+  logo: string;
   score: string;
 }
 
