@@ -80,7 +80,7 @@ function Week({ week, stats, tipps }: Props) {
       {week.teamsOnBye.length > 0 && (
         <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
       )}
-      {splitByDate(week.games).map((time, idx) => (
+      {splitByDate(week.games).map((time) => (
         <div key={time[0].date}>
           <div className="time">{formatDate(time[0].date)}</div>
           {time.map((g, idx) => (
