@@ -15,13 +15,14 @@ export interface APITipp {
 }
 
 export interface Votes {
-  home: number;
-  away: number;
+  home?: number;
+  away?: number;
 }
 
 export interface Team {
   name: string;
   shortName: string;
+  record: string;
   color: string;
   color2: string;
   logo: string;

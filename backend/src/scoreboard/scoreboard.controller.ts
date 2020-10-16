@@ -33,6 +33,7 @@ export class ScoreboardController {
               home: {
                 name: home.team.displayName,
                 shortName: home.team.abbreviation,
+                record: home.records?.find(r => r.type === 'total')?.summary,
                 logo: home.team.logo,
                 color: home.team.color,
                 color2: home.team.alternateColor,
@@ -41,6 +42,7 @@ export class ScoreboardController {
               away: {
                 name: away.team.displayName,
                 shortName: away.team.abbreviation,
+                record: away.records?.find(r => r.type === 'total')?.summary,
                 logo: away.team.logo,
                 color: away.team.color,
                 color2: away.team.alternateColor,

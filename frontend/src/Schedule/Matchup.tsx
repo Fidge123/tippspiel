@@ -51,10 +51,10 @@ function MatchUp({ game }: Props) {
   function select(homeAway: "home" | "away") {
     const v = { ...tipp.votes };
     if (tipp.selected && tipp.selected !== homeAway) {
-      v[tipp.selected] -= 1;
+      v[tipp.selected] = (v[tipp.selected] || 0) - 1;
     }
     if (tipp.selected !== homeAway) {
-      v[homeAway] += 1;
+      v[homeAway] = (v[homeAway] || 0) + 1;
     }
     setTipp({ ...tipp, votes: v, selected: homeAway });
   }
