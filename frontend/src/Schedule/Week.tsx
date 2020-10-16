@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Week.css";
 import { stringify } from "querystring";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import MatchUp from "./Matchup";
-import { AllStats, Game, Tipps, IWeek } from "./types";
+import { Game, IWeek } from "./types";
 import { BASE_URL } from "../api";
 
-function Week({ week, stats, tipps }: Props) {
+function Week({ week }: Props) {
   const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [admin, setAdmin] = useState(false);
   const ref = useRef<HTMLElement>(null);
@@ -21,16 +21,6 @@ function Week({ week, stats, tipps }: Props) {
     }
   }, [week.endDate, week.startDate]);
 
-  const getHeaders = useCallback(
-    async (scope: string): Promise<{ [header: string]: string }> => {
-      return {
-        Authorization: `Bearer ${await getAccessTokenSilently({ scope })}`,
-        "Content-Type": "application/json",
-      };
-    },
-    [getAccessTokenSilently]
-  );
-
   useEffect(() => {
     if (isAuthenticated) {
       setAdmin(
@@ -39,26 +29,17 @@ function Week({ week, stats, tipps }: Props) {
     }
   }, [isAuthenticated, user]);
 
-  async function postTipp(payload: string) {
-    await fetch(`${BASE_URL}tipp`, {
-      method: "POST",
-      headers: await getHeaders("read:tipp"),
-      body: payload,
-    });
-  }
-
   async function reloadWeek(week: number, seasontype: number) {
-    await fetch(
-      `${BASE_URL}scoreboard?${stringify({
-        dates: 2020,
-        seasontype,
-        week,
-      })}`,
-      {
-        method: "POST",
-        headers: await getHeaders("read:tipp"),
-      }
-    );
+    const param = stringify({ dates: 2020, seasontype, week });
+    await fetch(`${BASE_URL}scoreboard?${param}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${await getAccessTokenSilently({
+          scope: "write:schedule",
+        })}`,
+        "Content-Type": "application/json",
+      },
+    });
     window.location.reload();
   }
 
@@ -84,13 +65,7 @@ function Week({ week, stats, tipps }: Props) {
         <div key={time[0].date}>
           <div className="time">{formatDate(time[0].date)}</div>
           {time.map((g, idx) => (
-            <MatchUp
-              key={idx}
-              game={g}
-              stats={stats[g.id]}
-              tipp={tipps[g.id]}
-              handleTipp={postTipp}
-            ></MatchUp>
+            <MatchUp key={idx} game={g}></MatchUp>
           ))}
         </div>
       ))}
@@ -118,8 +93,6 @@ function formatDate(date: string) {
 
 interface Props {
   week: IWeek;
-  stats: AllStats;
-  tipps: Tipps;
 }
 
 export default Week;

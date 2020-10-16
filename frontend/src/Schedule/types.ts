@@ -8,6 +8,12 @@ export interface Tipp {
   points?: number;
 }
 
+export interface APITipp {
+  game: string;
+  winner?: "home" | "away";
+  pointDiff?: number;
+}
+
 export interface Votes {
   home: number;
   away: number;
@@ -53,7 +59,11 @@ export interface IStats {
 
 export interface StatProps {
   game: Game;
-  stats: IStats;
   votes: Votes;
   isCompact: boolean;
+}
+
+export interface Action {
+  type: string;
+  payload?: any;
 }

@@ -1,18 +1,30 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useReducer } from "react";
 import "./Schedule.css";
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { IWeek, Tipps, AllStats } from "./types";
+import { IWeek } from "./types";
 import { BASE_URL } from "../api";
 import Week from "./Week";
+import {
+  statsReducer,
+  initialStats,
+  StatDispatch,
+  StatValues,
+} from "./reducers/stats.reducer";
+import {
+  tippsReducer,
+  initialTipps,
+  TippDispatch,
+  TippValues,
+} from "./reducers/tipps.reducer";
 
 function Schedule() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [tipps, setTipps] = useState<Tipps>({});
-  const [stats, setStats] = useState<AllStats>({});
+  const [tipps, dispatchTipps] = useReducer(tippsReducer, initialTipps);
+  const [stats, dispatchStats] = useReducer(statsReducer, initialStats);
   const [weeks, setWeeks] = useState<IWeek[]>([]);
 
   const getAuthHeader = useCallback(
@@ -41,27 +53,23 @@ function Schedule() {
 
   useEffect(() => {
     (async () => {
-      if (isLoading || !isAuthenticated) {
-        return;
+      if (!isLoading && isAuthenticated) {
+        const res = await fetch(BASE_URL + "leaderboard/games?season=2020", {
+          headers: await getAuthHeader("read:tipp"),
+        });
+        dispatchStats({ type: "init", payload: await res.json() });
       }
-
-      const response = await fetch(BASE_URL + "leaderboard/games?season=2020", {
-        headers: await getAuthHeader("read:tipp"),
-      });
-      setStats(await response.json());
     })();
   }, [isLoading, isAuthenticated, getAuthHeader]);
 
   useEffect(() => {
     (async () => {
-      if (isLoading || !isAuthenticated) {
-        return;
+      if (!isLoading && isAuthenticated) {
+        const res = await fetch(BASE_URL + "tipp", {
+          headers: await getAuthHeader("read:tipp"),
+        });
+        dispatchTipps({ type: "init", payload: await res.json() });
       }
-
-      const response = await fetch(BASE_URL + "tipp", {
-        headers: await getAuthHeader("read:tipp"),
-      });
-      setTipps(await response.json());
     })();
   }, [isLoading, isAuthenticated, getAuthHeader]);
 
@@ -71,14 +79,17 @@ function Schedule() {
     }
     return (
       <section className="schedule">
-        {weeks.map((week, i) => (
-          <Week
-            week={week}
-            stats={stats}
-            tipps={tipps}
-            key={`Week-${i}`}
-          ></Week>
-        ))}
+        <StatDispatch.Provider value={dispatchStats}>
+          <StatValues.Provider value={stats}>
+            <TippDispatch.Provider value={dispatchTipps}>
+              <TippValues.Provider value={tipps}>
+                {weeks.map((week, i) => (
+                  <Week week={week} key={`Week-${i}`}></Week>
+                ))}
+              </TippValues.Provider>
+            </TippDispatch.Provider>
+          </StatValues.Provider>
+        </StatDispatch.Provider>
       </section>
     );
   } else {

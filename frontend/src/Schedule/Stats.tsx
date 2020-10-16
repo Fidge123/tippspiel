@@ -1,8 +1,11 @@
 import React from "react";
+import { useStats } from "./reducers/stats.reducer";
 import "./Stats.css";
 import { StatProps } from "./types";
 
-function Stats({ stats, game, votes, isCompact }: StatProps) {
+function Stats({ game, votes, isCompact }: StatProps) {
+  const [stats] = useStats(game.id);
+
   if (new Date(game.date) < new Date() && stats) {
     const finished = game.status === "STATUS_FINAL";
     const homeScore = parseInt(game.home.score, 10) || 0;

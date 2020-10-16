@@ -1,26 +1,20 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
+import { BASE_URL } from "../api";
 import "./Matchup.css";
+import { useTipps } from "./reducers/tipps.reducer";
 import Scores from "./Scores";
 import Stats from "./Stats";
-import { Votes, Team, Game, IStats, Tipp } from "./types";
+import { Team, Game, APITipp } from "./types";
 
-function MatchUp({ game, tipp, handleTipp, stats }: Props) {
-  const [selected, setSelected] = useState<"home" | "away" | undefined>();
-  const [winBy, setWinBy] = useState<string>("");
-  const [votes, setVotes] = useState<Votes>({ home: 0, away: 0 });
+function MatchUp({ game }: Props) {
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+
+  const [tipp, setTipp] = useTipps(game.id, handleTipp);
+  const [timeoutID, setTimeoutID] = useState<any>();
   const [busy, setBusy] = useState(false);
-  const [update, setUpdate] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState<string>("");
   const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (tipp) {
-      setVotes({ home: tipp.votes.home || 0, away: tipp.votes.away || 0 });
-      setSelected(tipp.selected);
-      setWinBy(tipp.points?.toString() || "");
-    }
-  }, [tipp]);
 
   useEffect(() => {
     function handleResize() {
@@ -30,76 +24,67 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    if (
-      selected &&
-      winBy &&
-      (tipp?.points?.toString() !== winBy || tipp?.selected !== selected)
-    ) {
-      setBusy(true);
+  async function handleTipp(payload: APITipp) {
+    if (timeoutID) {
+      clearTimeout(timeoutID);
     }
-    setTimeout(() => setUpdate(true), 1500);
-  }, [winBy, selected, tipp]);
-
-  useEffect(() => {
-    const payload = JSON.stringify({
-      game: game.id,
-      winner: selected,
-      pointDiff: parseInt(winBy, 10) || 0,
-    });
-    if (!update || lastUpdate === payload) {
-      return;
-    }
-    setUpdate(false);
-    if (
-      selected &&
-      winBy &&
-      (tipp?.points?.toString() !== winBy || tipp?.selected !== selected)
-    ) {
-      setBusy(false);
-      setLastUpdate(payload);
-      handleTipp(payload);
-    }
-  }, [selected, update, handleTipp, winBy, game.id, tipp, lastUpdate]);
+    setBusy(true);
+    setTimeoutID(
+      setTimeout(async () => {
+        if (payload.pointDiff && payload.winner) {
+          await fetch(`${BASE_URL}tipp`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${await getAccessTokenSilently({
+                scope: "write:tipp",
+              })}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+          setBusy(false);
+        }
+      }, 1500)
+    );
+  }
 
   function select(homeAway: "home" | "away") {
-    const v = { ...votes };
-    if (selected && selected !== homeAway) {
-      v[selected] -= 1;
+    const v = { ...tipp.votes };
+    if (tipp.selected && tipp.selected !== homeAway) {
+      v[tipp.selected] -= 1;
     }
-    if (selected !== homeAway) {
+    if (tipp.selected !== homeAway) {
       v[homeAway] += 1;
     }
-    setVotes(v);
-    setSelected(homeAway);
+    setTipp({ ...tipp, votes: v, selected: homeAway });
   }
 
   return (
     <div className="game">
       <button
         className="away"
-        disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(game.away, selected === "away")}
+        disabled={new Date(game.date) < new Date() || !isAuthenticated}
+        style={styleByTeam(game.away, tipp.selected === "away")}
         onClick={() => select("away")}
       >
         {game.away.logo && (
           <img src={game.away.logo} className="logo" alt="logo home team"></img>
         )}
-        <span className={selected === "away" ? "selected" : ""}>
+        <span className={tipp.selected === "away" ? "selected" : ""}>
           {isCompact ? game.away.shortName : game.away.name}
         </span>
       </button>
-      <Scores game={game} selected={selected}></Scores>
+      <Scores game={game} selected={tipp.selected}></Scores>
       <button
         className="home"
-        disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(game.home, selected === "home")}
+        disabled={new Date(game.date) < new Date() || !isAuthenticated}
+        style={styleByTeam(game.home, tipp.selected === "home")}
         onClick={() => select("home")}
       >
         {game.home.logo && (
           <img src={game.home.logo} className="logo" alt="logo home team"></img>
         )}
-        <span className={selected === "home" ? "selected" : ""}>
+        <span className={tipp.selected === "home" ? "selected" : ""}>
           {isCompact ? game.home.shortName : game.home.name}
         </span>
       </button>
@@ -107,9 +92,16 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
         className="input"
         style={{ color: busy ? "#d73" : "#000" }}
         type="number"
-        disabled={!selected || new Date(game.date) < new Date()}
-        value={winBy}
-        onChange={(ev) => setWinBy(ev.target.value)}
+        disabled={
+          !tipp.selected || !isAuthenticated || new Date(game.date) < new Date()
+        }
+        value={tipp.points}
+        onChange={(ev) =>
+          setTipp({
+            ...tipp,
+            points: parseInt(ev.target.value, 10) || 0,
+          })
+        }
       ></input>
       <div
         role="button"
@@ -119,12 +111,7 @@ function MatchUp({ game, tipp, handleTipp, stats }: Props) {
         <div className={open ? "arrow up" : "arrow down"}></div>
       </div>
       {open && (
-        <Stats
-          stats={stats}
-          game={game}
-          votes={votes}
-          isCompact={isCompact}
-        ></Stats>
+        <Stats game={game} votes={tipp.votes} isCompact={isCompact}></Stats>
       )}
     </div>
   );
@@ -142,9 +129,6 @@ function styleByTeam(team: Team, selected: boolean) {
 
 interface Props {
   game: Game;
-  stats: IStats;
-  tipp?: Tipp;
-  handleTipp: (payload: string) => void;
 }
 
 export default MatchUp;
