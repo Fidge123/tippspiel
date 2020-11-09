@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/tippspiel/static/css/main.77baf0c5.chunk.css",
-    "main.js": "/tippspiel/static/js/main.103ce0d8.chunk.js",
-    "main.js.map": "/tippspiel/static/js/main.103ce0d8.chunk.js.map",
+    "main.js": "/tippspiel/static/js/main.3e7a3b2b.chunk.js",
+    "main.js.map": "/tippspiel/static/js/main.3e7a3b2b.chunk.js.map",
     "runtime-main.js": "/tippspiel/static/js/runtime-main.f64af798.js",
     "runtime-main.js.map": "/tippspiel/static/js/runtime-main.f64af798.js.map",
     "static/js/2.dee6323f.chunk.js": "/tippspiel/static/js/2.dee6323f.chunk.js",
     "static/js/2.dee6323f.chunk.js.map": "/tippspiel/static/js/2.dee6323f.chunk.js.map",
     "index.html": "/tippspiel/index.html",
-    "precache-manifest.49fdbe578bb7605aa90f9876f0c16bd1.js": "/tippspiel/precache-manifest.49fdbe578bb7605aa90f9876f0c16bd1.js",
+    "precache-manifest.a0c2608b02e18b8fd4e37efb91d8b12e.js": "/tippspiel/precache-manifest.a0c2608b02e18b8fd4e37efb91d8b12e.js",
     "service-worker.js": "/tippspiel/service-worker.js",
     "static/css/main.77baf0c5.chunk.css.map": "/tippspiel/static/css/main.77baf0c5.chunk.css.map",
     "static/js/2.dee6323f.chunk.js.LICENSE.txt": "/tippspiel/static/js/2.dee6323f.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.f64af798.js",
     "static/js/2.dee6323f.chunk.js",
     "static/css/main.77baf0c5.chunk.css",
-    "static/js/main.103ce0d8.chunk.js"
+    "static/js/main.3e7a3b2b.chunk.js"
   ]
 }
