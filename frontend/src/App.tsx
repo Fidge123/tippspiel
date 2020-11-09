@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import Leaderboard from "./Leaderboard/Leaderboard";
@@ -10,22 +11,41 @@ function App() {
   const returnTo = window.location.href;
 
   return (
-    <div className="App">
-      <header className="header">
-        Tippspiel
-        {isLoading ? (
-          <span className="loading">loading...</span>
-        ) : isAuthenticated ? (
-          <button onClick={() => logout({ returnTo })}>Log Out</button>
-        ) : (
-          <button onClick={() => loginWithRedirect()}>Log In</button>
-        )}
-      </header>
-      <main>
-        {isAuthenticated ? <Leaderboard></Leaderboard> : <p>Please log in!</p>}
-        <Schedule></Schedule>
-      </main>
-    </div>
+    <Router>
+      <div className="App">
+        <header className="header">
+          <nav>
+            <Link to="/">
+              <span className="tippspiel">Tippspiel</span>
+            </Link>
+            <Link to="/leaderboard">
+              <span>Leaderboard</span>
+            </Link>
+          </nav>
+          {isLoading ? (
+            <span className="loading">loading...</span>
+          ) : isAuthenticated ? (
+            <button onClick={() => logout({ returnTo })}>Log Out</button>
+          ) : (
+            <button onClick={() => loginWithRedirect()}>Log In</button>
+          )}
+        </header>
+        <main>
+          {isAuthenticated ? (
+            <Switch>
+              <Route path="/leaderboard">
+                <Leaderboard></Leaderboard>
+              </Route>
+              <Route path="/">
+                <Schedule></Schedule>
+              </Route>
+            </Switch>
+          ) : (
+            <p>Please log in!</p>
+          )}
+        </main>
+      </div>
+    </Router>
   );
 }
 

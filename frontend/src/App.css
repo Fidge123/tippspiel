@@ -6,17 +6,25 @@
 .header {
   position: fixed;
   pointer-events: auto;
-  color: #fff;
   background-color: #282c34;
   height: 3rem;
   width: 100vw;
   padding: 0 1rem;
   z-index: 9999;
-  font-weight: 600;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+nav span {
+  color: #fff;
+  text-decoration: none;
+  padding-right: 1rem;
+}
+
+.tippspiel {
+  font-weight: 600;
 }
 
 .schedule {
@@ -43,18 +51,4 @@ button {
 * {
   color: #212529;
   box-sizing: border-box;
-}
-
-@media screen and (min-width: 900px) {
-  .lb {
-    position: fixed;
-    top: 6rem;
-    right: 0;
-    min-width: 9.5rem;
-  }
-
-  .schedule {
-    min-width: 39rem;
-    padding-right: 10rem;
-  }
 }

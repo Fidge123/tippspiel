@@ -91,7 +91,19 @@ input[type="number"] {
   transition: transform 0.25s ease;
 }
 
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 28rem) {
+  .game {
+    width: 27rem;
+    display: flex;
+  }
+
+  .home,
+  .away {
+    width: 8.5rem;
+  }
+}
+
+@media screen and (min-width: 45rem) {
   .game {
     width: 39rem;
     display: flex;

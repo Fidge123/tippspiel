@@ -32,7 +32,8 @@ export class ScoreboardController {
               status: event.competitions[0].status.type.name,
               home: {
                 name: home.team.displayName,
-                shortName: home.team.abbreviation,
+                shortName: home.team.shortDisplayName,
+                abbreviation: home.team.abbreviation,
                 record: home.records?.find(r => r.type === 'total')?.summary,
                 logo: home.team.logo,
                 color: home.team.color,
@@ -41,7 +42,8 @@ export class ScoreboardController {
               },
               away: {
                 name: away.team.displayName,
-                shortName: away.team.abbreviation,
+                shortName: away.team.shortDisplayName,
+                abbreviation: away.team.abbreviation,
                 record: away.records?.find(r => r.type === 'total')?.summary,
                 logo: away.team.logo,
                 color: away.team.color,

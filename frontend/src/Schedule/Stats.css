@@ -20,7 +20,7 @@
   width: 4rem;
 }
 
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 45rem) {
   .stat-row * {
     width: 5rem;
   }

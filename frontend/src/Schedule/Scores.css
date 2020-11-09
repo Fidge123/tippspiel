@@ -19,7 +19,7 @@
   margin: auto;
 }
 
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 28rem) {
   .scores {
     display: flex;
     width: 5rem;

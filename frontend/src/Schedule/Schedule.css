@@ -25,7 +25,18 @@
   box-shadow: "none";
 }
 
-@media screen and (min-width: 900px) {
+@media screen and (min-width: 28rem) {
+  .schedule {
+    grid-template-columns: repeat(auto-fill, minmax(27rem, 1fr));
+    grid-gap: 1rem;
+  }
+
+  .bye {
+    max-width: 27rem;
+  }
+}
+
+@media screen and (min-width: 45rem) {
   .schedule {
     grid-template-columns: repeat(auto-fill, minmax(39rem, 1fr));
     grid-gap: 1rem;

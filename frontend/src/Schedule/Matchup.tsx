@@ -13,12 +13,12 @@ function MatchUp({ game }: Props) {
   const [tipp, setTipp] = useTipps(game.id, handleTipp);
   const [timeoutID, setTimeoutID] = useState<any>();
   const [busy, setBusy] = useState(false);
-  const [isCompact, setIsCompact] = useState(window.innerWidth < 900);
+  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     function handleResize() {
-      setIsCompact(window.innerWidth < 900);
+      setInnerWidth(window.innerWidth);
     }
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -71,7 +71,9 @@ function MatchUp({ game }: Props) {
           <img src={game.away.logo} className="logo" alt="logo home team"></img>
         )}
         <span className={tipp.selected === "away" ? "selected" : ""}>
-          {isCompact ? game.away.shortName : game.away.name}
+          {innerWidth > 720 && game.away.name}
+          {innerWidth < 720 && innerWidth > 448 && game.away.shortName}
+          {innerWidth < 448 && game.away.abbreviation}
         </span>
       </button>
       <Scores game={game} selected={tipp.selected}></Scores>
@@ -85,7 +87,9 @@ function MatchUp({ game }: Props) {
           <img src={game.home.logo} className="logo" alt="logo home team"></img>
         )}
         <span className={tipp.selected === "home" ? "selected" : ""}>
-          {isCompact ? game.home.shortName : game.home.name}
+          {innerWidth > 720 && game.home.name}
+          {innerWidth < 720 && innerWidth > 448 && game.home.shortName}
+          {innerWidth < 448 && game.home.abbreviation}
         </span>
       </button>
       <input
@@ -95,11 +99,13 @@ function MatchUp({ game }: Props) {
         disabled={
           !tipp.selected || !isAuthenticated || new Date(game.date) < new Date()
         }
-        value={tipp.points ?? ''}
+        value={tipp.points ?? ""}
         onChange={(ev) =>
           setTipp({
             ...tipp,
-            points: isNaN(parseInt(ev.target.value, 10)) ? undefined : parseInt(ev.target.value, 10),
+            points: isNaN(parseInt(ev.target.value, 10))
+              ? undefined
+              : parseInt(ev.target.value, 10),
           })
         }
       ></input>
@@ -111,7 +117,11 @@ function MatchUp({ game }: Props) {
         <div className={open ? "arrow up" : "arrow down"}></div>
       </div>
       {open && (
-        <Stats game={game} votes={tipp.votes} isCompact={isCompact}></Stats>
+        <Stats
+          game={game}
+          votes={tipp.votes}
+          isCompact={innerWidth < 720}
+        ></Stats>
       )}
     </div>
   );

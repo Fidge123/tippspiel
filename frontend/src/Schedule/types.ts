@@ -22,6 +22,7 @@ export interface Votes {
 export interface Team {
   name: string;
   shortName: string;
+  abbreviation: string;
   record: string;
   color: string;
   color2: string;
