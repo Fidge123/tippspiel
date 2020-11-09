@@ -79,14 +79,14 @@ function Stats({ game, votes, isCompact }: StatProps) {
         <div>
           {votes.away || "0"} {votes.away === 1 ? "Stimme" : "Stimmen"}
         </div>
-        <div>{game.away.record}</div>
+        <div>W-L: {game.away.record}</div>
       </div>
       <div className="scores"></div>
       <div className="home">
         <div>
           {votes.home || "0"} {votes.home === 1 ? "Stimme" : "Stimmen"}
         </div>
-        <div>{game.home.record}</div>
+        <div>W-L: {game.home.record}</div>
       </div>
     </div>
   );

@@ -95,11 +95,11 @@ function MatchUp({ game }: Props) {
         disabled={
           !tipp.selected || !isAuthenticated || new Date(game.date) < new Date()
         }
-        value={tipp.points}
+        value={tipp.points ?? ''}
         onChange={(ev) =>
           setTipp({
             ...tipp,
-            points: parseInt(ev.target.value, 10) || 0,
+            points: isNaN(parseInt(ev.target.value, 10)) ? undefined : parseInt(ev.target.value, 10),
           })
         }
       ></input>
