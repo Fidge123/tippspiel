@@ -5,7 +5,7 @@ import { BASE_URL } from "../api";
 
 function Leaderboard() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
-  const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
+  const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
 
   const getAuthHeader = useCallback(
     async (scope: string): Promise<{ Authorization: string }> => {
@@ -52,7 +52,7 @@ function Leaderboard() {
   );
 }
 
-interface Leaderboard {
+interface ILeaderboard {
   name: string;
   points: number;
 }
