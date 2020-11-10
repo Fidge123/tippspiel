@@ -11,7 +11,7 @@ function App() {
   const returnTo = window.location.href;
 
   return (
-    <Router>
+    <Router basename="/tippspiel">
       <div className="App">
         <header className="header">
           <nav>
