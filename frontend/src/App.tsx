@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
 import Leaderboard from "./Leaderboard/Leaderboard";
@@ -11,7 +11,7 @@ function App() {
   const returnTo = window.location.href;
 
   return (
-    <Router basename="/tippspiel">
+    <Router>
       <div className="App">
         <header className="header">
           <nav>
