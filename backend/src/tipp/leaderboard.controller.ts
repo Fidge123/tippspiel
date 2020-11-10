@@ -36,7 +36,7 @@ export class LeaderboardController {
       result = {
         ...result,
         [game.id]: tipps.reduce((res, t) => {
-          const user = users.find(u => u.email === t.user)?.name || t.user;
+          const user = users.find((u) => u.email === t.user)?.name || t.user;
 
           return {
             ...res,
@@ -62,7 +62,7 @@ export class LeaderboardController {
       const tipps = await this.tippService.findGame(game.id);
       const points = calculatePoints(game, tipps, users);
 
-      points.forEach(c => {
+      points.forEach((c) => {
         lb[c.user] = { ...lb[c.user], [game.id]: c.points };
       });
     }
@@ -71,7 +71,7 @@ export class LeaderboardController {
 }
 
 function getWinner(comp: Competitors[]): 'home' | 'away' | undefined {
-  const winners = comp.filter(team => team.winner);
+  const winners = comp.filter((team) => team.winner);
   if (winners.length === 1) {
     return winners[0].homeAway;
   }
@@ -101,8 +101,8 @@ function calculatePoints(game: Competition, tipps: Tipp[], users: User[]) {
   const correctDiff = Math.abs(score0 - score1);
   const winner = getWinner(game.competitors);
 
-  return tipps.map(t => ({
-    user: users.find(u => u.email === t.user)?.name || t.user,
+  return tipps.map((t) => ({
+    user: users.find((u) => u.email === t.user)?.name || t.user,
     points:
       t.winner === winner ? 1 + calcBonus(correctDiff, winner, t, tipps) : 0,
   }));
