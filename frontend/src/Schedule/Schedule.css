@@ -39,7 +39,7 @@
 
 @media screen and (min-width: 45rem) {
   .schedule {
-    grid-template-columns: repeat(auto-fill, minmax(39rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(45rem, 1fr));
     grid-gap: 1rem;
   }
 
