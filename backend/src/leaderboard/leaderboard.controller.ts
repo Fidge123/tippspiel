@@ -4,11 +4,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from '../permissions.decorator';
 import { PermissionsGuard } from '../permissions.guard';
 
-import { TippService } from './tipp.service';
 import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
 import { UserService } from 'src/user/user.service';
 import { Competition, Competitors } from 'src/scoreboard/scoreboard.type';
-import { Tipp } from './tipp.entity';
+
+import { TippService } from '../tipp/tipp.service';
+import { Tipp } from '../tipp/tipp.entity';
 import { User } from 'src/user/user.entity';
 
 @Controller('leaderboard')

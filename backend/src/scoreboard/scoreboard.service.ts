@@ -24,14 +24,14 @@ export class ScoreboardService {
         (events: NFLEvent[], week) => [
           ...events,
           ...week.response.events.filter(
-            e =>
+            (e) =>
               new Date(e.date) < new Date() &&
               e.status.type.name !== 'STATUS_FINAL',
           ),
         ],
         [],
       )
-      .map(ev => ev.competitions[0]);
+      .map((ev) => ev.competitions[0]);
   }
 
   async findFinished(dates: number): Promise<Competition[]> {
@@ -41,12 +41,12 @@ export class ScoreboardService {
         (events: NFLEvent[], week) => [
           ...events,
           ...week.response.events.filter(
-            e => e.status.type.name === 'STATUS_FINAL',
+            (e) => e.status.type.name === 'STATUS_FINAL',
           ),
         ],
         [],
       )
-      .map(ev => ev.competitions[0]);
+      .map((ev) => ev.competitions[0]);
   }
 
   async findOne(
