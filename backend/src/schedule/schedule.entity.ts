@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Game {
+export class Schedule {
   @PrimaryColumn()
   seasontype: number;
 
@@ -23,20 +23,11 @@ export class Game {
   @PrimaryColumn()
   away: string;
 
+  @Column()
+  date: Date;
+
   // @Column()
-  // date: Date;
-
-  @Column()
-  completed: boolean;
-
-  @Column()
-  scoreHome: number;
-
-  @Column()
-  scoreAway: number;
-
-  @Column()
-  winner: 'home' | 'away';
+  // status: string;
 
   @CreateDateColumn()
   createdAt: Date;
