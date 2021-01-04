@@ -30,10 +30,10 @@ export class TippController {
           },
           selected:
             response[count.game]?.selected ||
-            tipps.find(t => t.game === count.game)?.winner,
+            tipps.find((t) => t.game === count.game)?.winner,
           points:
             response[count.game]?.points ||
-            tipps.find(t => t.game === count.game)?.pointDiff,
+            tipps.find((t) => t.game === count.game)?.pointDiff,
         },
       }),
       {},
