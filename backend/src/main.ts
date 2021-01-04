@@ -2,6 +2,7 @@ import { env } from 'process';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as compression from 'compression';
 import * as helmet from 'helmet';
 
 async function bootstrap() {
@@ -15,6 +16,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.use(helmet());
+  app.use(compression());
   app.enableCors();
 
   await app.listen(env.PORT || 3000);
