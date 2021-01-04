@@ -29,8 +29,8 @@ function Week({ week }: Props) {
     }
   }, [isAuthenticated, user]);
 
-  async function reloadWeek(week: number, seasontype: number) {
-    const param = stringify({ dates: 2020, seasontype, week });
+  async function reloadWeek(week: number, type: number) {
+    const param = stringify({ dates: 2020, type, week });
     await fetch(`${BASE_URL}scoreboard?${param}`, {
       method: "POST",
       headers: {
