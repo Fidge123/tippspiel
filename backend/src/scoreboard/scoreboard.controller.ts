@@ -93,9 +93,9 @@ export class ScoreboardController {
     }
   }
 
-  // @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Post()
-  // @Permissions('write:schedule')
+  @Permissions('write:schedule')
   async load(
     @Query() { season, type, week }: UpdateScoreboard,
   ): Promise<Scoreboard> {
