@@ -8,6 +8,11 @@ function Scores({ game, selected }: Props) {
   const awayScore = parseInt(game.away.score, 10);
   const homeWon = homeScore > awayScore;
   const awayWon = awayScore > homeScore;
+
+  if (game.status === "STATUS_CANCELED") {
+    return <div className="scores">CANCELED</div>;
+  }
+
   return (
     <div className="scores">
       <div>
