@@ -18,6 +18,9 @@ import { UserModule } from './user/user.module';
       url: env.DATABASE_URL,
       entities: [ScoreboardEntity, Tipp, User],
       synchronize: true,
+      extra: {
+        ssl: !env.DATABASE_URL.includes('localhost'),
+      },
     }),
     ScoreboardModule,
     TippModule,

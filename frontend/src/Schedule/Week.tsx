@@ -24,7 +24,9 @@ function Week({ week }: Props) {
   useEffect(() => {
     if (isAuthenticated) {
       setAdmin(
-        user["https://nfl-tippspiel.herokuapp.com/auth/roles"].includes("Admin")
+        user?.["https://nfl-tippspiel.herokuapp.com/auth/roles"].includes(
+          "Admin"
+        )
       );
     }
   }, [isAuthenticated, user]);
