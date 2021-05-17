@@ -22,7 +22,7 @@ function Leaderboard() {
         return;
       }
 
-      const response = await fetch(BASE_URL + "leaderboard/2020", {
+      const response = await fetch(BASE_URL + "leaderboard/2021", {
         headers: await getAuthHeader("read:tipp"),
       });
       const res: LBResponse = await response.json();

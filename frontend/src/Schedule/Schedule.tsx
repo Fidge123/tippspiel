@@ -37,7 +37,7 @@ function Schedule() {
   );
 
   useEffect(() => {
-    fetch(BASE_URL + "scoreboard/2020")
+    fetch(BASE_URL + "scoreboard/2021")
       .then((res) => res.json())
       .then(
         (result) => {
@@ -54,7 +54,7 @@ function Schedule() {
   useEffect(() => {
     (async () => {
       if (!isLoading && isAuthenticated) {
-        const res = await fetch(BASE_URL + "leaderboard/games?season=2020", {
+        const res = await fetch(BASE_URL + "leaderboard/games?season=2021", {
           headers: await getAuthHeader("read:tipp"),
         });
         dispatchStats({ type: "init", payload: await res.json() });

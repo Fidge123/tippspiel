@@ -27,7 +27,7 @@ export class ScoreboardController {
 
   @Get(':season')
   async getAll(@Param('season') season: string): Promise<any[]> {
-    const cacheHit = await this.cacheManager.get(`scoreboard${season}`);
+    const cacheHit = await this.cacheManager.get<any[]>(`scoreboard${season}`);
     if (cacheHit) {
       return cacheHit;
     } else {
@@ -35,11 +35,7 @@ export class ScoreboardController {
       const result = weeks
         .filter(({ dates }) => dates.toString() === season.toString())
         .map(({ seasontype, week, response }) => {
-          const {
-            label,
-            startDate,
-            endDate,
-          } = response.leagues[0].calendar
+          const { label, startDate, endDate } = response.leagues[0].calendar
             .find((c) => c.value === seasontype.toString())
             .entries.find((w) => w.value === week.toString());
           const games = response.events
@@ -100,7 +96,7 @@ export class ScoreboardController {
     @Query() { season, type, week }: UpdateScoreboard,
   ): Promise<Scoreboard> {
     await this.cacheManager.del(`scoreboard${season}`);
-    return this.sbService.update(season || 2020, type || 2, week);
+    return this.sbService.update(season || 2021, type || 2, week);
   }
 }
 
