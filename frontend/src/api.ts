@@ -1,2 +1,3 @@
-export const BASE_URL = "https://nfl-tippspiel.herokuapp.com/";
-// export const BASE_URL = "http://localhost:5000/";
+import { env } from "process";
+
+export const BASE_URL = env.API_URL || "https://nfl-tippspiel.herokuapp.com/";
