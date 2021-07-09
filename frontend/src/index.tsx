@@ -12,7 +12,7 @@ ReactDOM.render(
     cacheLocation="localstorage"
     scope="openid email profile read:tipp write:tipp write:schedule"
     useRefreshTokens
-    redirectUri={window.location.href}
+    redirectUri={window.location.origin + window.location.pathname}
     audience={env.AUTH0_AUDIENCE || "https://nfl-tippspiel.herokuapp.com/auth"}
   >
     <React.StrictMode>
