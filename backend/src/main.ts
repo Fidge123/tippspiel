@@ -19,6 +19,6 @@ async function bootstrap() {
   app.use(compression());
   app.enableCors();
 
-  await app.listen(env.PORT || 3000);
+  await app.listen(env.PORT || 3000, () => process.send('ready'));
 }
 bootstrap();
