@@ -2,7 +2,7 @@ import { stringify } from 'querystring';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { ByeEntity } from './bye.entity';
 import { GameEntity } from './game.entity';
 import { TeamEntity } from './team.entity';
@@ -46,14 +46,14 @@ export class ScheduleService {
     return (await axios.get(url)).data;
   }
 
-  @Cron(CronExpression.EVERY_WEEK)
+  @Cron('0 0 * * TUE')
   async importTeams() {
     for (let id = 1; id <= 34; id++) {
       const t: Team = (await axios.get(`${BASE_URL}teams/${id}`)).data.team;
       console.log(`Creating ${t.displayName}`);
       const team = (await this.teamRepo.findOne(t.uid)) || new TeamEntity();
       team.id = t.uid;
-      team.logo = t.logos[0].href;
+      team.logo = t.logos[0].href.split('/').reverse()[0];
       team.abbreviation = t.abbreviation;
       team.shortName = t.shortDisplayName;
       team.name = t.displayName;
@@ -65,6 +65,11 @@ export class ScheduleService {
   }
 
   async importWeek(key: { year: number; seasontype: number; week: number }) {
+    console.log(
+      `Loading ${key.year} ${
+        key.seasontype === 2 ? 'regular season' : 'postseason'
+      } week ${key.week} ...`,
+    );
     const response = await this.load(key);
     const calendar =
       response.leagues[0].calendar[key.seasontype - 1].entries[key.week - 1];
@@ -109,10 +114,8 @@ export class ScheduleService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_7AM)
   async importSchedule() {
     for (let weekNumber = 1; weekNumber <= regularSeason.weeks; weekNumber++) {
-      console.log(`Creating Regular Season Week ${weekNumber}`);
       this.importWeek({
         year: regularSeason.year,
         seasontype: regularSeason.seasonType,
@@ -120,11 +123,30 @@ export class ScheduleService {
       });
     }
     for (const weekNumber of postSeason.weeks) {
-      console.log(`Creating Post Season Week ${weekNumber}`);
       this.importWeek({
         year: postSeason.year,
         seasontype: postSeason.seasonType,
         week: weekNumber,
+      });
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  async updateGames() {
+    const now = new Date();
+    const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
+
+    console.log('Checking for running games...');
+    const games = await this.gameRepo.find({
+      where: { date: Between(fourHoursAgo, now) },
+    });
+    console.log(`${games.length} games started within the last 4 hours`);
+
+    if (games.length) {
+      return await this.importWeek({
+        year: games[0].week.year,
+        seasontype: games[0].week.seasontype,
+        week: games[0].week.week,
       });
     }
   }
