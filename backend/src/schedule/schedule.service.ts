@@ -66,7 +66,8 @@ export class ScheduleService {
 
   async importWeek(key: { year: number; seasontype: number; week: number }) {
     const response = await this.load(key);
-    const calendar = response.leagues[0].calendar[key.seasontype - 1];
+    const calendar =
+      response.leagues[0].calendar[key.seasontype - 1].entries[key.week - 1];
 
     const week = (await this.weekRepo.findOne(key)) || new WeekEntity();
     week.year = key.year;
