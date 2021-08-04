@@ -35,9 +35,9 @@ export class WeekEntity {
   @OneToMany(() => ByeEntity, (bye) => bye.week)
   byes: ByeEntity[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 }

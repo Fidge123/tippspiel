@@ -6,8 +6,21 @@ import { ScheduleService } from './schedule.service';
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
-  @Get(':season')
-  async getAll(@Param('season') season: string): Promise<any[]> {
-    return; // this.scheduleService.findAll();
+  @Get(':year')
+  async getSchedule(@Param('year') year: string): Promise<any[]> {
+    return await this.scheduleService.getSchedule(parseInt(year, 10));
+  }
+
+  @Get(':year/:seasontype/:week')
+  async getWeek(
+    @Param('year') year: string,
+    @Param('seasontype') seasontype: string,
+    @Param('week') week: string,
+  ): Promise<any[]> {
+    return await this.scheduleService.getWeek(
+      parseInt(year, 10),
+      parseInt(seasontype, 10),
+      parseInt(week, 10),
+    );
   }
 }

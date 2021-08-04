@@ -42,9 +42,9 @@ export class GameEntity {
   // | 'STATUS_FINAL'
   // | 'STATUS_CANCELED';
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 }

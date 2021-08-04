@@ -34,10 +34,60 @@ export class ScheduleService {
     await this.importSchedule();
   }
 
+  async getSchedule(year: number) {
+    return this.weekRepo
+      .createQueryBuilder('week')
+      .leftJoin('week.byes', 'bye')
+      .leftJoinAndSelect('week.games', 'game')
+      .leftJoin('game.homeTeam', 'home')
+      .addSelect(['home.id', 'home.name'])
+      .leftJoin('game.awayTeam', 'away')
+      .addSelect(['away.id', 'away.name'])
+      .leftJoinAndSelect('bye.team', 'team')
+      .addSelect(['team.id', 'team.name'])
+      .where('week.year = :year', { year })
+      .orderBy('week.seasontype', 'ASC')
+      .addOrderBy('week.week', 'ASC')
+      .getMany();
+  }
+
+  async getWeek(year: number, seasontype: number, week: number) {
+    return this.weekRepo
+      .createQueryBuilder('week')
+      .where('week.year = :year', { year })
+      .andWhere('week.seasontype = :seasontype', { seasontype })
+      .andWhere('week.week = :week', { week })
+      .leftJoin('week.byes', 'bye')
+      .leftJoinAndSelect('week.games', 'game')
+      .leftJoin('game.homeTeam', 'home')
+      .addSelect(['home.id', 'home.name'])
+      .leftJoin('game.awayTeam', 'away')
+      .addSelect(['away.id', 'away.name'])
+      .leftJoinAndSelect('bye.team', 'team')
+      .addSelect(['team.id', 'team.name'])
+      .orderBy('week.seasontype', 'ASC')
+      .addOrderBy('week.week', 'ASC')
+      .getMany();
+  }
+
+  async getTeams() {
+    return this.teamRepo.find();
+  }
+
+  async getTeam(id: string) {
+    return this.teamRepo.findOne(id);
+  }
+
   @Cron('0 0 * * TUE')
   async importTeams() {
+    const promises = [];
     for (let id = 1; id <= 34; id++) {
-      const t: Team = (await axios.get(`${BASE_URL}teams/${id}`)).data.team;
+      promises.push(axios.get(`${BASE_URL}teams/${id}`));
+    }
+    const teams: Team[] = (await Promise.all(promises)).map(
+      (team) => team.data.team,
+    );
+    for (const t of teams) {
       console.log(`Creating ${t.displayName}`);
       const team = (await this.teamRepo.findOne(t.uid)) || new TeamEntity();
       team.id = t.uid;
@@ -45,6 +95,8 @@ export class ScheduleService {
       team.abbreviation = t.abbreviation;
       team.shortName = t.shortDisplayName;
       team.name = t.displayName;
+      team.color1 = t.color;
+      team.color2 = t.alternateColor;
       team.wins = findStat(t, 'wins');
       team.losses = findStat(t, 'losses');
       team.ties = findStat(t, 'ties');

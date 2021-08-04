@@ -10,9 +10,9 @@ export class ByeEntity {
   @ManyToOne(() => TeamEntity, (team) => team.byes, { primary: true })
   team: TeamEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 }

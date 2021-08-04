@@ -35,6 +35,12 @@ export class TeamEntity {
   @Column()
   ties: number;
 
+  @Column({ nullable: true })
+  color1: string;
+
+  @Column({ nullable: true })
+  color2: string;
+
   @OneToMany(() => GameEntity, (game) => game.homeTeam)
   homeGames: GameEntity[];
 
@@ -44,9 +50,9 @@ export class TeamEntity {
   @OneToMany(() => ByeEntity, (bye) => bye.team)
   byes: ByeEntity[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 }
