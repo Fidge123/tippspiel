@@ -1,6 +1,6 @@
 import { Entity, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { WeekEntity } from './week.entity';
-import { TeamEntity } from 'src/schedule/team.entity';
+import { TeamEntity } from './team.entity';
 
 @Entity({ name: 'bye' })
 export class ByeEntity {

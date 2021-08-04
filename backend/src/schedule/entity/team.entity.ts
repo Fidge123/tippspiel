@@ -1,5 +1,5 @@
-import { GameEntity } from 'src/schedule/game.entity';
-import { ByeEntity } from 'src/schedule/bye.entity';
+import { GameEntity } from './game.entity';
+import { ByeEntity } from './bye.entity';
 import {
   Entity,
   Column,
@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToOne,
 } from 'typeorm';
 
 @Entity({ name: 'team' })

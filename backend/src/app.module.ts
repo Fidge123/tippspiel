@@ -4,10 +4,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ScoreboardEntity } from './scoreboard/scoreboard.entity';
-import { ByeEntity } from './schedule/bye.entity';
-import { GameEntity } from './schedule/game.entity';
-import { WeekEntity } from './schedule/week.entity';
-import { TeamEntity } from './schedule/team.entity';
+import {
+  ByeEntity,
+  WeekEntity,
+  GameEntity,
+  TeamEntity,
+} from './schedule/entity';
 import { Tipp } from './tipp/tipp.entity';
 import { User } from './user/user.entity';
 import { ScoreboardModule } from './scoreboard/scoreboard.module';
@@ -16,6 +18,17 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { ScheduleModule as SchedulerModule } from '@nestjs/schedule';
+
+const extra = env.DATABASE_URL.includes('localhost')
+  ? { ssl: false }
+  : {
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+          enabled: true,
+        },
+      },
+    };
 
 @Module({
   imports: [
@@ -32,10 +45,7 @@ import { ScheduleModule as SchedulerModule } from '@nestjs/schedule';
         User,
       ],
       synchronize: true,
-      // ssl: !env.DATABASE_URL.includes('localhost'),
-      // extra: {
-      //   ssl: { rejectUnauthorized: false },
-      // },
+      ...extra,
     }),
     SchedulerModule.forRoot(),
     ScoreboardModule,

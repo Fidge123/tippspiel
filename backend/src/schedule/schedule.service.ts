@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Between, Repository } from 'typeorm';
-import { ByeEntity } from './bye.entity';
-import { GameEntity } from './game.entity';
-import { TeamEntity } from './team.entity';
-import { WeekEntity } from './week.entity';
+import { ByeEntity, WeekEntity, GameEntity, TeamEntity } from './entity';
 import axios from 'axios';
 import {
   BASE_URL,
@@ -37,15 +34,6 @@ export class ScheduleService {
     await this.importSchedule();
   }
 
-  private async load({ year, seasontype, week }): Promise<Scoreboard> {
-    const url = `${BASE_URL}scoreboard?${stringify({
-      year,
-      seasontype,
-      week,
-    })}`;
-    return (await axios.get(url)).data;
-  }
-
   @Cron('0 0 * * TUE')
   async importTeams() {
     for (let id = 1; id <= 34; id++) {
@@ -70,7 +58,7 @@ export class ScheduleService {
         key.seasontype === 2 ? 'regular season' : 'postseason'
       } week ${key.week} ...`,
     );
-    const response = await this.load(key);
+    const response = await load(key);
     const calendar =
       response.leagues[0].calendar[key.seasontype - 1].entries[key.week - 1];
 
@@ -150,6 +138,15 @@ export class ScheduleService {
       });
     }
   }
+}
+
+async function load({ year, seasontype, week }): Promise<Scoreboard> {
+  const q = stringify({
+    year,
+    seasontype,
+    week,
+  });
+  return (await axios.get(`${BASE_URL}scoreboard?${q}`)).data;
 }
 
 function findStat(t: any, name: string): number {
