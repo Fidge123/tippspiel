@@ -6,7 +6,7 @@ import { PermissionsGuard } from '../permissions.guard';
 import { CurrentUser, User } from '../user.decorator';
 
 import { TippService } from './tipp.service';
-import { Tipp } from './tipp.entity';
+import { TippEntity } from './tipp.entity';
 import { CreateTippDto } from './tipp.dto';
 
 @Controller('tipp')
@@ -46,7 +46,7 @@ export class TippController {
   async setTipp(
     @Body() createTipp: CreateTippDto,
     @CurrentUser() user: User,
-  ): Promise<Tipp> {
+  ): Promise<TippEntity> {
     return this.tippService.update(createTipp, user.email);
   }
 }

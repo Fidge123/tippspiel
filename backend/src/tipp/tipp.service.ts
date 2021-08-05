@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Tipp } from './tipp.entity';
+import { TippEntity } from './tipp.entity';
 import { CreateTippDto } from './tipp.dto';
 import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
 
 @Injectable()
 export class TippService {
   constructor(
-    @InjectRepository(Tipp)
-    private tRepo: Repository<Tipp>,
+    @InjectRepository(TippEntity)
+    private tRepo: Repository<TippEntity>,
     private readonly sbService: ScoreboardService,
   ) {}
 
-  async findAll(): Promise<Tipp[]> {
+  async findAll(): Promise<TippEntity[]> {
     return this.tRepo.find();
   }
 
-  async findUser(user: string): Promise<Tipp[]> {
+  async findUser(user: string): Promise<TippEntity[]> {
     return this.tRepo.find({ where: { user } });
   }
 
-  async findGame(game: string): Promise<Tipp[]> {
+  async findGame(game: string): Promise<TippEntity[]> {
     return this.tRepo.find({ where: { game } });
   }
 
@@ -33,14 +33,14 @@ export class TippService {
       .getRawMany();
   }
 
-  async findOne(user: string, game: string): Promise<Tipp> {
+  async findOne(user: string, game: string): Promise<TippEntity> {
     return this.tRepo.findOne({ game, user });
   }
 
   async update(
     { game, pointDiff, winner }: CreateTippDto,
     user: string,
-  ): Promise<Tipp> {
+  ): Promise<TippEntity> {
     const c = await this.sbService.competitionById(game);
     if (new Date() < new Date(c.startDate)) {
       const tipp = this.tRepo.create({

@@ -8,8 +8,8 @@ import { TippService } from './tipp.service';
 import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
 import { UserService } from 'src/user/user.service';
 import { Competition, Competitors } from 'src/scoreboard/scoreboard.type';
-import { Tipp } from './tipp.entity';
-import { User } from 'src/user/user.entity';
+import { TippEntity } from './tipp.entity';
+import { UserEntity } from 'src/user/user.entity';
 
 @Controller('leaderboard')
 export class LeaderboardController {
@@ -80,8 +80,8 @@ function getWinner(comp: Competitors[]): 'home' | 'away' | undefined {
 function calcBonus(
   correctDiff: number,
   winner: 'home' | 'away',
-  tipp: Tipp,
-  tipps: Tipp[],
+  tipp: TippEntity,
+  tipps: TippEntity[],
 ) {
   return Math.max(
     tipps.reduce((a, b) => {
@@ -95,7 +95,11 @@ function calcBonus(
   );
 }
 
-function calculatePoints(game: Competition, tipps: Tipp[], users: User[]) {
+function calculatePoints(
+  game: Competition,
+  tipps: TippEntity[],
+  users: UserEntity[],
+) {
   const score0 = parseInt(game.competitors[0].score, 10);
   const score1 = parseInt(game.competitors[1].score, 10);
   const correctDiff = Math.abs(score0 - score1);

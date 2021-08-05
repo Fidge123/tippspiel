@@ -6,8 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
-export class Tipp {
+@Entity('tipp')
+export class TippEntity {
   @PrimaryColumn()
   user: string;
 
