@@ -29,12 +29,12 @@ export class ScheduleService {
     this.init();
   }
 
-  private async init() {
+  private async init(): Promise<void> {
     await this.importTeams();
     await this.importSchedule();
   }
 
-  async getSchedule(year: number) {
+  async getSchedule(year: number): Promise<WeekEntity[]> {
     return this.weekRepo
       .createQueryBuilder('week')
       .leftJoin('week.byes', 'bye')
@@ -51,7 +51,11 @@ export class ScheduleService {
       .getMany();
   }
 
-  async getWeek(year: number, seasontype: number, week: number) {
+  async getWeek(
+    year: number,
+    seasontype: number,
+    week: number,
+  ): Promise<WeekEntity[]> {
     return this.weekRepo
       .createQueryBuilder('week')
       .where('week.year = :year', { year })
@@ -70,16 +74,16 @@ export class ScheduleService {
       .getMany();
   }
 
-  async getTeams() {
+  async getTeams(): Promise<TeamEntity[]> {
     return this.teamRepo.find();
   }
 
-  async getTeam(id: string) {
+  async getTeam(id: string): Promise<TeamEntity> {
     return this.teamRepo.findOne(id);
   }
 
   @Cron('0 0 * * TUE')
-  async importTeams() {
+  async importTeams(): Promise<void> {
     const promises = [];
     for (let id = 1; id <= 34; id++) {
       promises.push(axios.get(`${BASE_URL}teams/${id}`));
@@ -104,7 +108,11 @@ export class ScheduleService {
     }
   }
 
-  async importWeek(key: { year: number; seasontype: number; week: number }) {
+  async importWeek(key: {
+    year: number;
+    seasontype: number;
+    week: number;
+  }): Promise<void> {
     console.log(
       `Loading ${key.year} ${
         key.seasontype === 2 ? 'regular season' : 'postseason'
@@ -154,7 +162,7 @@ export class ScheduleService {
     }
   }
 
-  async importSchedule() {
+  async importSchedule(): Promise<void> {
     for (let weekNumber = 1; weekNumber <= regularSeason.weeks; weekNumber++) {
       this.importWeek({
         year: regularSeason.year,
@@ -172,7 +180,7 @@ export class ScheduleService {
   }
 
   @Cron(CronExpression.EVERY_5_MINUTES)
-  async updateGames() {
+  async updateGames(): Promise<void> {
     const now = new Date();
     const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 

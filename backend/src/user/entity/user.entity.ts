@@ -1,4 +1,11 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { ResetEntity } from './reset.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -16,6 +23,12 @@ export class UserEntity {
 
   @Column()
   name: string;
+
+  @OneToMany(() => ResetEntity, (reset) => reset.user)
+  resetTokens: ResetEntity[];
+
+  @Column({ default: false })
+  verified: boolean;
 
   @CreateDateColumn({ select: false })
   createdAt: Date;

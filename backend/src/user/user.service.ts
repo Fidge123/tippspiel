@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { randomBytes, scrypt as s } from 'crypto';
 import { promisify } from 'util';
-import { UserEntity } from './user.entity';
+import { UserEntity } from './entity/user.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 const scrypt = promisify(s);
 
@@ -48,7 +49,12 @@ export class UserService {
     }
   }
 
-  async resetEmail() {}
+  async sendReset(email: string) {}
+
+  async resetPassword(id: string, password: string) {}
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async cleanUpResetTokens() {}
 
   async deleteUser(id: string) {
     return this.userRepo.delete(id);

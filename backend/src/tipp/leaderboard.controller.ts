@@ -9,7 +9,7 @@ import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
 import { UserService } from 'src/user/user.service';
 import { Competition, Competitors } from 'src/scoreboard/scoreboard.type';
 import { TippEntity } from './tipp.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { UserEntity } from 'src/user/entity';
 
 @Controller('leaderboard')
 export class LeaderboardController {

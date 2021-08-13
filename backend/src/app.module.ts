@@ -11,7 +11,7 @@ import {
   TeamEntity,
 } from './schedule/entity';
 import { TippEntity } from './tipp/tipp.entity';
-import { UserEntity } from './user/user.entity';
+import { UserEntity, ResetEntity } from './user/entity';
 import { ScoreboardModule } from './scoreboard/scoreboard.module';
 import { TippModule } from './tipp/tipp.module';
 import { AuthModule } from './auth/auth.module';
@@ -43,6 +43,7 @@ const extra = env.DATABASE_URL.includes('localhost')
         TeamEntity,
         TippEntity,
         UserEntity,
+        ResetEntity,
       ],
       synchronize: true,
       ...extra,

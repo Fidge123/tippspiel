@@ -1,4 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { WeekEntity } from './entity';
 
 import { ScheduleService } from './schedule.service';
 
@@ -7,7 +8,7 @@ export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Get(':year')
-  async getSchedule(@Param('year') year: string): Promise<any[]> {
+  async getSchedule(@Param('year') year: string): Promise<WeekEntity[]> {
     return await this.scheduleService.getSchedule(parseInt(year, 10));
   }
 
@@ -16,7 +17,7 @@ export class ScheduleController {
     @Param('year') year: string,
     @Param('seasontype') seasontype: string,
     @Param('week') week: string,
-  ): Promise<any[]> {
+  ): Promise<WeekEntity[]> {
     return await this.scheduleService.getWeek(
       parseInt(year, 10),
       parseInt(seasontype, 10),
