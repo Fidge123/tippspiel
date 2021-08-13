@@ -1,10 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, LessThan } from 'typeorm';
 import { randomBytes, scrypt as s } from 'crypto';
 import { promisify } from 'util';
-import { UserEntity } from './entity/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { UserEntity, ResetEntity, VerifyEntity } from './entity';
 
 const scrypt = promisify(s);
 
@@ -13,6 +13,10 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
+    @InjectRepository(VerifyEntity)
+    private verifyRepo: Repository<VerifyEntity>,
+    @InjectRepository(ResetEntity)
+    private resetRepo: Repository<ResetEntity>,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -30,7 +34,11 @@ export class UserService {
     );
   }
 
-  async createUser(email: string, name: string, password: string) {
+  async createUser(
+    email: string,
+    name: string,
+    password: string,
+  ): Promise<void> {
     const salt = randomBytes(128);
 
     try {
@@ -40,7 +48,12 @@ export class UserService {
       user.salt = salt.toString('hex');
       user.password = await hash(password, salt);
 
-      return await this.userRepo.save(user);
+      const token = new VerifyEntity();
+      token.token = randomBytes(128).toString('hex');
+      token.user = user;
+
+      await this.userRepo.save(user);
+      await this.verifyRepo.save(token);
     } catch (error) {
       throw new HttpException(
         'A user with that email already exists!',
@@ -49,19 +62,99 @@ export class UserService {
     }
   }
 
-  async sendReset(email: string) {}
+  async verify(id: number, token: string): Promise<void> {
+    const user = await this.userRepo.findOne(id).catch(() => {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    });
+    const tokenEntity = await this.verifyRepo
+      .findOne({ where: { user, token } })
+      .catch(() => {
+        throw new HttpException('Token not found', HttpStatus.BAD_REQUEST);
+      });
 
-  async resetPassword(id: string, password: string) {}
+    if (tokenEntity) {
+      user.verified = true;
+      await this.userRepo.save(user);
+      await this.verifyRepo.remove(tokenEntity);
+    } else {
+      throw new HttpException('Token not found', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async sendReset(email: string): Promise<void> {
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (user) {
+      const token = new ResetEntity();
+      token.token = randomBytes(128).toString('hex');
+      token.user = user;
+      this.resetRepo.save(token);
+    }
+
+    // sendMail
+  }
+
+  async resetPassword(
+    id: number,
+    password: string,
+    token: string,
+  ): Promise<void> {
+    const user = await this.userRepo.findOne(id).catch(() => {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    });
+    const tokenEntity = await this.resetRepo
+      .findOne({ where: { user, token } })
+      .catch(() => {
+        throw new HttpException('Token not found', HttpStatus.BAD_REQUEST);
+      });
+
+    if (tokenEntity) {
+      const salt = randomBytes(128);
+      user.salt = salt.toString('hex');
+      user.password = await hash(password, salt);
+      await this.userRepo.save(user);
+      await this.resetRepo.remove(tokenEntity);
+    } else {
+      throw new HttpException('Token not found', HttpStatus.BAD_REQUEST);
+    }
+  }
 
   @Cron(CronExpression.EVERY_HOUR)
-  async cleanUpResetTokens() {}
+  async cleanUp(): Promise<void> {
+    const today = new Date();
+    const oneDayInMS = 24 * 60 * 60 * 1000;
 
-  async deleteUser(id: string) {
-    return this.userRepo.delete(id);
+    const resetTokens = await this.resetRepo.find({
+      where: { createdAt: LessThan(new Date(today.getTime() - oneDayInMS)) },
+    });
+
+    const verifyTokens = await this.verifyRepo.find({
+      where: { createdAt: LessThan(new Date(today.getTime() - oneDayInMS)) },
+    });
+
+    const users = await this.userRepo.find({
+      where: {
+        createdAt: LessThan(new Date(today.getTime() - 7 * oneDayInMS)),
+        verified: false,
+      },
+    });
+
+    console.log(
+      `Deleting ${resetTokens.length} reset tokens, ${verifyTokens.length} verify tokens and ${users.length} unverified users!`,
+    );
+
+    await Promise.all([
+      this.resetRepo.remove(resetTokens),
+      this.verifyRepo.remove(verifyTokens),
+      this.userRepo.remove(users),
+    ]);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.userRepo.delete(id);
   }
 }
 
-async function hash(password: string, salt: Buffer) {
+async function hash(password: string, salt: Buffer): Promise<string> {
   const hash: any = await scrypt(password.normalize(), salt, 128);
   return hash.toString('hex');
 }

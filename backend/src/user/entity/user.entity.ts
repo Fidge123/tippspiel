@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ResetEntity } from './reset.entity';
+import { VerifyEntity } from './verify.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -26,6 +27,9 @@ export class UserEntity {
 
   @OneToMany(() => ResetEntity, (reset) => reset.user)
   resetTokens: ResetEntity[];
+
+  @OneToMany(() => VerifyEntity, (verify) => verify.user)
+  verifyTokens: VerifyEntity[];
 
   @Column({ default: false })
   verified: boolean;
