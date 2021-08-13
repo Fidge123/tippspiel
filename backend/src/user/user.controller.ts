@@ -1,5 +1,5 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { UserEntity } from './entity';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 
 import { UserService } from './user.service';
 
@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(ThrottlerGuard)
   @Post('login')
   async login(
     @Body('email') email: string,
@@ -18,6 +19,8 @@ export class UserController {
   @Post('logout')
   async logout() {}
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(3, 60)
   @Post('register')
   async register(
     @Body('email') email: string,
@@ -27,6 +30,7 @@ export class UserController {
     await this.userService.createUser(email, name, password);
   }
 
+  @UseGuards(ThrottlerGuard)
   @Post('verify')
   async verify(
     @Body('id') id: number,
@@ -35,11 +39,14 @@ export class UserController {
     await this.userService.verify(id, token);
   }
 
+  @UseGuards(ThrottlerGuard)
   @Post('request-reset')
   async requestReset(@Body('email') email: string): Promise<void> {
     await this.userService.sendReset(email);
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle(1, 60)
   @Post('reset')
   async reset(
     @Body('id') id: number,
