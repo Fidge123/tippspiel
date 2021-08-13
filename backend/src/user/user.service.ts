@@ -5,6 +5,7 @@ import { randomBytes, scrypt as s } from 'crypto';
 import { promisify } from 'util';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { UserEntity, ResetEntity, VerifyEntity } from './entity';
+import { getTransporter } from '../email';
 
 const scrypt = promisify(s);
 
@@ -52,8 +53,30 @@ export class UserService {
       token.token = randomBytes(128).toString('hex');
       token.user = user;
 
-      await this.userRepo.save(user);
+      const userEntity = await this.userRepo.save(user);
       await this.verifyRepo.save(token);
+      const transporter = await getTransporter();
+      await transporter
+        .sendMail({
+          from: 'tippspiel@6v4.de',
+          to: email,
+          subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
+          text: `
+Hallo ${name},
+
+du hast gerade einen Account auf https://6v4.de/tippspiel erstellt.
+Bitte verifiziere deinen Account indem du auf den unten stehenden Link klickst.
+
+https://6v4.de/tippspiel/#/verify?id=${userEntity.id}&token=${token.token}
+
+Viel Glück für die Tippsaison!
+
+
+
+Wenn du keine weiteren Emails von 6v4.de erhalten möchtest, kontaktiere bitte admin@6v4.de
+`,
+        })
+        .catch((error) => console.error(error));
     } catch (error) {
       throw new HttpException(
         'A user with that email already exists!',
@@ -88,9 +111,29 @@ export class UserService {
       token.token = randomBytes(128).toString('hex');
       token.user = user;
       this.resetRepo.save(token);
-    }
 
-    // sendMail
+      const transporter = await getTransporter();
+      await transporter
+        .sendMail({
+          from: 'tippspiel@6v4.de',
+          to: email,
+          subject: 'Tippspiel Passwort zurücksetzen',
+          text: `
+Hallo ${user.name},
+
+du hast dein Passwort vergessen.
+Erstelle ein neues Passwort indem du den unten stehenden Link öffnest.
+
+https://6v4.de/tippspiel/#/reset?id=${user.id}&token=${token.token}
+
+
+
+
+Wenn du keine weiteren Emails von 6v4.de erhalten möchtest oder du diese Mail nicht angefordert hast, kontaktiere bitte admin@6v4.de
+`,
+        })
+        .catch((error) => console.error(error));
+    }
   }
 
   async resetPassword(
@@ -128,7 +171,9 @@ export class UserService {
     });
 
     const verifyTokens = await this.verifyRepo.find({
-      where: { createdAt: LessThan(new Date(today.getTime() - oneDayInMS)) },
+      where: {
+        createdAt: LessThan(new Date(today.getTime() - 7 * oneDayInMS)),
+      },
     });
 
     const users = await this.userRepo.find({

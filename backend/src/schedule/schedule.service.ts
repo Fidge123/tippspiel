@@ -184,7 +184,6 @@ export class ScheduleService {
     const now = new Date();
     const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 
-    console.log('Checking for running games...');
     const games = await this.gameRepo.find({
       where: { date: Between(fourHoursAgo, now) },
     });
