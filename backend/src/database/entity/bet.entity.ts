@@ -7,6 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { GameEntity } from './game.entity';
+import { LeagueEntity } from './league.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('bet')
@@ -14,11 +15,14 @@ export class BetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ManyToOne(() => GameEntity, (game) => game.bets)
+  game: GameEntity;
+
   @ManyToOne(() => UserEntity, (user) => user.bets)
   user: UserEntity;
 
-  @ManyToOne(() => GameEntity, (game) => game.bets)
-  game: GameEntity;
+  @ManyToOne(() => LeagueEntity, (league) => league)
+  league: LeagueEntity;
 
   @CreateDateColumn()
   createdAt: Date;

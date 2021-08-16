@@ -8,12 +8,13 @@ import { ScoreboardEntity } from './scoreboard/scoreboard.entity';
 import {
   BetEntity,
   ByeEntity,
-  WeekEntity,
   GameEntity,
+  LeagueEntity,
+  ResetEntity,
   TeamEntity,
   UserEntity,
-  ResetEntity,
   VerifyEntity,
+  WeekEntity,
 } from './database/entity';
 import { AuthModule } from './auth/auth.module';
 import { BetModule } from './bet/bet.module';
@@ -40,14 +41,15 @@ const extra = env.DATABASE_URL.includes('localhost')
       url: env.DATABASE_URL,
       entities: [
         ScoreboardEntity,
+        BetEntity,
         ByeEntity,
         GameEntity,
-        WeekEntity,
-        TeamEntity,
-        BetEntity,
-        UserEntity,
+        LeagueEntity,
         ResetEntity,
+        TeamEntity,
+        UserEntity,
         VerifyEntity,
+        WeekEntity,
       ],
       synchronize: true,
       ...extra,

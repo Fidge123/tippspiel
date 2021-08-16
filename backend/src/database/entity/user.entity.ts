@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { BetEntity } from './bet.entity';
+import { LeagueEntity } from './league.entity';
 import { ResetEntity } from './reset.entity';
 import { VerifyEntity } from './verify.entity';
 
@@ -26,6 +28,12 @@ export class UserEntity {
 
   @Column()
   name: string;
+
+  @ManyToMany(() => LeagueEntity, (league) => league.members)
+  memberIn: LeagueEntity[];
+
+  @ManyToMany(() => LeagueEntity, (league) => league.admins)
+  adminIn: LeagueEntity[];
 
   @OneToMany(() => BetEntity, (bet) => bet.user)
   bets: BetEntity[];
