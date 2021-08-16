@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Permissions } from '../permissions.decorator';
@@ -16,28 +16,32 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get()
   @Permissions('read:bet')
-  async getAll(@CurrentUser() user: User): Promise<any> {
-    const tipps = await this.databaseService.findUser(user.email);
-    const counts = await this.databaseService.votesPerGame();
-    return counts.reduce(
-      (response: any, count: any) => ({
-        ...response,
-        [count.game]: {
-          ...response[count.game],
-          votes: {
-            ...response[count.game]?.votes,
-            [count.winner]: parseInt(count.count, 10),
-          },
-          selected:
-            response[count.game]?.selected ||
-            tipps.find((t) => t.game === count.game)?.winner,
-          points:
-            response[count.game]?.points ||
-            tipps.find((t) => t.game === count.game)?.pointDiff,
-        },
-      }),
-      {},
+  async getAll(
+    @Query('season') season: string,
+    user: string = '315cbdfc-195a-4f29-8b9b-d820179109df',
+    // @CurrentUser() user: User
+  ): Promise<any> {
+    const games = await this.databaseService.findBetsByGame(
+      parseInt(season, 10),
     );
+
+    return games
+      .map((game) => ({
+        id: game.id,
+        bets: {
+          home: game.bets.filter((bet) => bet.winner === 'home').length,
+          away: game.bets.filter((bet) => bet.winner === 'away').length,
+        },
+        selected: game.bets.find((bet) => bet.user.id === user).winner,
+        points: game.bets.find((bet) => bet.user.id === user).pointDiff,
+      }))
+      .reduce(
+        (result, game) => ({
+          ...result,
+          [game.id]: game,
+        }),
+        {},
+      );
   }
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
@@ -45,8 +49,9 @@ export class BetController {
   @Permissions('write:bet')
   async setTipp(
     @Body() createTipp: CreateBetDto,
-    @CurrentUser() user: User,
+    user: string = '315cbdfc-195a-4f29-8b9b-d820179109df',
+    // @CurrentUser() user: User,
   ): Promise<BetEntity> {
-    return this.databaseService.update(createTipp, user.email);
+    return this.databaseService.update(createTipp, user);
   }
 }

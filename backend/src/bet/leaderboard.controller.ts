@@ -4,82 +4,69 @@ import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from '../permissions.decorator';
 import { PermissionsGuard } from '../permissions.guard';
 
-import { BetEntity, UserEntity } from '../database/entity';
+import { BetEntity, GameEntity } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
-import { UserDataService } from '../database/user.service';
-import { ScoreboardService } from '../scoreboard/scoreboard.service';
-import { Competition, Competitors } from '../scoreboard/scoreboard.type';
 
 @Controller('leaderboard')
 export class LeaderboardController {
-  constructor(
-    private readonly databaseService: BetDataService,
-    private readonly userService: UserDataService,
-    private readonly sbService: ScoreboardService,
-  ) {}
+  constructor(private readonly databaseService: BetDataService) {}
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get('games')
   @Permissions('read:bet')
   async getTippsForStartedGames(@Query('season') season: string): Promise<any> {
-    const users = await this.userService.findAll();
-    const started = await this.sbService.findStarted(parseInt(season, 10));
-    const finished = await this.sbService.findFinished(parseInt(season, 10));
-    const games = [...started, ...finished];
+    const games = await this.databaseService.findBetsForStartedGames(
+      parseInt(season, 10),
+    );
 
-    let result: any = {};
-
-    for (const game of games) {
-      const tipps = await this.databaseService.findGame(game.id);
-
-      result = {
+    return games.reduce(
+      (result, game) => ({
         ...result,
-        [game.id]: tipps.reduce((res, t) => {
-          const user =
-            users.find((u) => u.email === t.user.email)?.name || t.user.email;
-
-          return {
+        [game.id]: game.bets.reduce(
+          (res, bet) => ({
             ...res,
-            [user]: {
-              winner: t.winner,
-              tipp: t.pointDiff,
+            [bet.user.id]: {
+              name: bet.user.name,
+              winner: bet.winner,
+              tipp: bet.pointDiff,
             },
-          };
-        }, {} as any),
-      };
-    }
-    return result;
+          }),
+          {},
+        ),
+      }),
+      {},
+    );
   }
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get(':season')
   @Permissions('read:bet')
   async getAll(@Param('season') season: string): Promise<any> {
-    const games = await this.sbService.findFinished(parseInt(season, 10));
-    const users = await this.userService.findAll();
-    const lb: any = {};
-    for (const game of games) {
-      const tipps = await this.databaseService.findGame(game.id);
-      const points = calculatePoints(game, tipps, users);
-
-      points.forEach((c) => {
-        lb[c.user] = { ...lb[c.user], [game.id]: c.points };
-      });
-    }
-    return lb;
-  }
-}
-
-function getWinner(comp: Competitors[]): 'home' | 'away' | undefined {
-  const winners = comp.filter((team) => team.winner);
-  if (winners.length === 1) {
-    return winners[0].homeAway;
+    const games = await this.databaseService.findBetsByGame(
+      parseInt(season, 10),
+    );
+    const scores = games.map((game) => calculatePoints(game));
+    const users = await this.databaseService.findBetsByUser(
+      parseInt(season, 10),
+    );
+    return users.reduce(
+      (result, user) => ({
+        ...result,
+        [user.id]: user.bets.reduce((res, bet) => ({
+          ...res,
+          [bet.game.id]: scores
+            .find((score) => score.id === bet.game.id)
+            .bets.find((bet) => bet.user === user.id).points,
+        })),
+      }),
+      {},
+    );
   }
 }
 
 function calcBonus(
   correctDiff: number,
-  winner: 'home' | 'away',
+  winner: 'home' | 'away' | 'none',
   tipp: BetEntity,
   tipps: BetEntity[],
 ) {
@@ -95,19 +82,23 @@ function calcBonus(
   );
 }
 
-function calculatePoints(
-  game: Competition,
-  tipps: BetEntity[],
-  users: UserEntity[],
-) {
-  const score0 = parseInt(game.competitors[0].score, 10);
-  const score1 = parseInt(game.competitors[1].score, 10);
-  const correctDiff = Math.abs(score0 - score1);
-  const winner = getWinner(game.competitors);
+function calculatePoints({
+  homeScore,
+  awayScore,
+  winner,
+  bets,
+  id,
+}: GameEntity) {
+  const correctDiff = Math.abs(homeScore - awayScore);
 
-  return tipps.map((t) => ({
-    user: users.find((u) => u.email === t.user.email)?.name || t.user.email,
-    points:
-      t.winner === winner ? 1 + calcBonus(correctDiff, winner, t, tipps) : 0,
-  }));
+  return {
+    id,
+    bets: bets.map((bet) => ({
+      user: bet.user.id,
+      points:
+        bet.winner === winner
+          ? 1 + calcBonus(correctDiff, winner, bet, bets)
+          : 0,
+    })),
+  };
 }

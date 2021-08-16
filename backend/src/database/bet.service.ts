@@ -20,26 +20,77 @@ export class BetDataService {
   }
 
   async findUser(user: string): Promise<BetEntity[]> {
-    return this.betRepo.find({ where: { user } });
+    return this.betRepo
+      .createQueryBuilder('bets')
+      .leftJoin('bets.user', 'user')
+      .where('user.email = :email', { email: user })
+      .getMany();
   }
 
   async findGame(game: string): Promise<BetEntity[]> {
     return this.betRepo.find({ where: { game } });
   }
 
-  async votesPerGame(): Promise<any> {
-    return this.betRepo
-      .createQueryBuilder('bet')
-      .select('game, winner, COUNT(bet.user)')
-      .groupBy('game, winner')
-      .getRawMany();
+  async findBetsForStartedGames(year: number): Promise<GameEntity[]> {
+    return (
+      this.gameRepo
+        .createQueryBuilder('game')
+        .where('game.date < :now', { now: new Date() })
+        .leftJoin('game.week', 'week')
+        .andWhere('week.year = :year', { year })
+        .leftJoinAndSelect('game.bets', 'bets')
+        // .andWhere('bets.league = :league', { league: '' })
+        .leftJoinAndSelect('bets.user', 'user')
+        .getMany()
+    );
+  }
+
+  async findBetsByGame(year: number): Promise<GameEntity[]> {
+    return (
+      this.gameRepo
+        .createQueryBuilder('game')
+        .where('game.status = :status', { status: 'STATUS_FINAL' })
+        .leftJoin('game.week', 'week')
+        .andWhere('week.year = :year', { year })
+        .leftJoinAndSelect('game.bets', 'bets')
+        // .andWhere('bets.league = :league', { league: '' })
+        .leftJoinAndSelect('bets.user', 'user')
+        .getMany()
+    );
+  }
+
+  async findBetsByUser(year: number): Promise<GameEntity[]> {
+    return (
+      this.gameRepo
+        .createQueryBuilder('user')
+        // .andWhere('user.memberIn = :league', { league: '' })
+        .leftJoinAndSelect('user.bets', 'bets')
+        // .andWhere('bets.league = :league', { league: '' })
+        .leftJoinAndSelect('bets.game', 'game')
+        .where('game.status = :status', { status: 'STATUS_FINAL' })
+        .leftJoin('game.week', 'week')
+        .andWhere('week.year = :year', { year })
+        .getMany()
+    );
+  }
+
+  async votesPerGame(year: number): Promise<GameEntity[]> {
+    return (
+      this.gameRepo
+        .createQueryBuilder('game')
+        .leftJoin('game.week', 'week')
+        .andWhere('week.year = :year', { year })
+        .leftJoinAndSelect('game.bets', 'bets')
+        // .andWhere('bets.league = :league', { league: '' })
+        .getMany()
+    );
   }
 
   async update(
     { gameID, pointDiff, winner }: CreateBetDto,
-    email: string,
+    userId: string,
   ): Promise<BetEntity> {
-    const user = await this.userRepo.findOne({ where: { email } });
+    const user = await this.userRepo.findOne(userId);
     const game = await this.gameRepo.findOne(gameID);
     if (new Date() < new Date(game.date)) {
       const tipp = this.betRepo.create({
