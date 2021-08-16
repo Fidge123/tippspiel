@@ -4,8 +4,10 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
   ManyToOne,
 } from 'typeorm';
+import { BetEntity } from './bet.entity';
 import { TeamEntity } from './team.entity';
 import { WeekEntity } from './week.entity';
 
@@ -25,6 +27,9 @@ export class GameEntity {
 
   @ManyToOne(() => TeamEntity, (team) => team.homeGames)
   homeTeam: TeamEntity;
+
+  @OneToMany(() => BetEntity, (bet) => bet.game)
+  bets: BetEntity[];
 
   @Column()
   awayScore: number;

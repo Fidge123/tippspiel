@@ -1,5 +1,3 @@
-import { GameEntity } from './game.entity';
-import { ByeEntity } from './bye.entity';
 import {
   Entity,
   Column,
@@ -8,6 +6,8 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { GameEntity } from './game.entity';
+import { ByeEntity } from './bye.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity {

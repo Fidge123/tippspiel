@@ -1,23 +1,26 @@
 import { env } from 'process';
 
 import { Module } from '@nestjs/common';
+import { ScheduleModule as SchedulerModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ScoreboardEntity } from './scoreboard/scoreboard.entity';
 import {
+  BetEntity,
   ByeEntity,
   WeekEntity,
   GameEntity,
   TeamEntity,
-} from './schedule/entity';
-import { TippEntity } from './tipp/tipp.entity';
-import { UserEntity, ResetEntity, VerifyEntity } from './user/entity';
-import { ScoreboardModule } from './scoreboard/scoreboard.module';
-import { TippModule } from './tipp/tipp.module';
+  UserEntity,
+  ResetEntity,
+  VerifyEntity,
+} from './database/entity';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { BetModule } from './bet/bet.module';
+import { DatabaseModule } from './database/database.module';
 import { ScheduleModule } from './schedule/schedule.module';
-import { ScheduleModule as SchedulerModule } from '@nestjs/schedule';
+import { ScoreboardModule } from './scoreboard/scoreboard.module';
+import { UserModule } from './user/user.module';
 
 const extra = env.DATABASE_URL.includes('localhost')
   ? { ssl: false }
@@ -41,7 +44,7 @@ const extra = env.DATABASE_URL.includes('localhost')
         GameEntity,
         WeekEntity,
         TeamEntity,
-        TippEntity,
+        BetEntity,
         UserEntity,
         ResetEntity,
         VerifyEntity,
@@ -50,8 +53,9 @@ const extra = env.DATABASE_URL.includes('localhost')
       ...extra,
     }),
     SchedulerModule.forRoot(),
+    DatabaseModule,
     ScoreboardModule,
-    TippModule,
+    BetModule,
     UserModule,
     AuthModule,
     ScheduleModule,

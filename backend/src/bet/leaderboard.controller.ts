@@ -4,24 +4,23 @@ import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from '../permissions.decorator';
 import { PermissionsGuard } from '../permissions.guard';
 
-import { TippService } from './tipp.service';
-import { ScoreboardService } from 'src/scoreboard/scoreboard.service';
-import { UserService } from 'src/user/user.service';
-import { Competition, Competitors } from 'src/scoreboard/scoreboard.type';
-import { TippEntity } from './tipp.entity';
-import { UserEntity } from 'src/user/entity';
+import { BetEntity, UserEntity } from '../database/entity';
+import { BetDataService } from '../database/bet.service';
+import { UserDataService } from '../database/user.service';
+import { ScoreboardService } from '../scoreboard/scoreboard.service';
+import { Competition, Competitors } from '../scoreboard/scoreboard.type';
 
 @Controller('leaderboard')
 export class LeaderboardController {
   constructor(
-    private readonly tippService: TippService,
-    private readonly userService: UserService,
+    private readonly databaseService: BetDataService,
+    private readonly userService: UserDataService,
     private readonly sbService: ScoreboardService,
   ) {}
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get('games')
-  @Permissions('read:tipp')
+  @Permissions('read:bet')
   async getTippsForStartedGames(@Query('season') season: string): Promise<any> {
     const users = await this.userService.findAll();
     const started = await this.sbService.findStarted(parseInt(season, 10));
@@ -31,12 +30,13 @@ export class LeaderboardController {
     let result: any = {};
 
     for (const game of games) {
-      const tipps = await this.tippService.findGame(game.id);
+      const tipps = await this.databaseService.findGame(game.id);
 
       result = {
         ...result,
         [game.id]: tipps.reduce((res, t) => {
-          const user = users.find((u) => u.email === t.user)?.name || t.user;
+          const user =
+            users.find((u) => u.email === t.user.email)?.name || t.user.email;
 
           return {
             ...res,
@@ -53,13 +53,13 @@ export class LeaderboardController {
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get(':season')
-  @Permissions('read:tipp')
+  @Permissions('read:bet')
   async getAll(@Param('season') season: string): Promise<any> {
     const games = await this.sbService.findFinished(parseInt(season, 10));
     const users = await this.userService.findAll();
     const lb: any = {};
     for (const game of games) {
-      const tipps = await this.tippService.findGame(game.id);
+      const tipps = await this.databaseService.findGame(game.id);
       const points = calculatePoints(game, tipps, users);
 
       points.forEach((c) => {
@@ -80,8 +80,8 @@ function getWinner(comp: Competitors[]): 'home' | 'away' | undefined {
 function calcBonus(
   correctDiff: number,
   winner: 'home' | 'away',
-  tipp: TippEntity,
-  tipps: TippEntity[],
+  tipp: BetEntity,
+  tipps: BetEntity[],
 ) {
   return Math.max(
     tipps.reduce((a, b) => {
@@ -97,7 +97,7 @@ function calcBonus(
 
 function calculatePoints(
   game: Competition,
-  tipps: TippEntity[],
+  tipps: BetEntity[],
   users: UserEntity[],
 ) {
   const score0 = parseInt(game.competitors[0].score, 10);
@@ -106,7 +106,7 @@ function calculatePoints(
   const winner = getWinner(game.competitors);
 
   return tipps.map((t) => ({
-    user: users.find((u) => u.email === t.user)?.name || t.user,
+    user: users.find((u) => u.email === t.user.email)?.name || t.user.email,
     points:
       t.winner === winner ? 1 + calcBonus(correctDiff, winner, t, tipps) : 0,
   }));

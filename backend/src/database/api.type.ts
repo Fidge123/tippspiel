@@ -1,17 +1,3 @@
-export const BASE_URL =
-  'https://site.api.espn.com/apis/site/v2/sports/football/nfl/';
-
-export const regularSeason = {
-  year: 2021,
-  seasonType: 2,
-  weeks: 18,
-};
-export const postSeason = {
-  year: 2021,
-  seasonType: 3,
-  weeks: [1, 2, 3, 5],
-};
-
 export class Entries {
   alternateLabel: string;
   detail: string;

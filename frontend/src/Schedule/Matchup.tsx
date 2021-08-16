@@ -36,7 +36,7 @@ function MatchUp({ game }: Props) {
             method: "POST",
             headers: {
               Authorization: `Bearer ${await getAccessTokenSilently({
-                scope: "write:tipp",
+                scope: "write:bet",
               })}`,
               "Content-Type": "application/json",
             },

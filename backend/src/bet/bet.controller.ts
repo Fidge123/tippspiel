@@ -5,20 +5,20 @@ import { Permissions } from '../permissions.decorator';
 import { PermissionsGuard } from '../permissions.guard';
 import { CurrentUser, User } from '../user.decorator';
 
-import { TippService } from './tipp.service';
-import { TippEntity } from './tipp.entity';
-import { CreateTippDto } from './tipp.dto';
+import { BetDataService } from '../database/bet.service';
+import { BetEntity } from '../database/entity';
+import { CreateBetDto } from './bet.dto';
 
-@Controller('tipp')
-export class TippController {
-  constructor(private readonly tippService: TippService) {}
+@Controller('bet')
+export class BetController {
+  constructor(private readonly databaseService: BetDataService) {}
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get()
-  @Permissions('read:tipp')
+  @Permissions('read:bet')
   async getAll(@CurrentUser() user: User): Promise<any> {
-    const tipps = await this.tippService.findUser(user.email);
-    const counts = await this.tippService.votesPerGame();
+    const tipps = await this.databaseService.findUser(user.email);
+    const counts = await this.databaseService.votesPerGame();
     return counts.reduce(
       (response: any, count: any) => ({
         ...response,
@@ -42,11 +42,11 @@ export class TippController {
 
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Post()
-  @Permissions('write:tipp')
+  @Permissions('write:bet')
   async setTipp(
-    @Body() createTipp: CreateTippDto,
+    @Body() createTipp: CreateBetDto,
     @CurrentUser() user: User,
-  ): Promise<TippEntity> {
-    return this.tippService.update(createTipp, user.email);
+  ): Promise<BetEntity> {
+    return this.databaseService.update(createTipp, user.email);
   }
 }

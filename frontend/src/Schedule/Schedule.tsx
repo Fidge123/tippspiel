@@ -55,7 +55,7 @@ function Schedule() {
     (async () => {
       if (!isLoading && isAuthenticated) {
         const res = await fetch(BASE_URL + "leaderboard/games?season=2021", {
-          headers: await getAuthHeader("read:tipp"),
+          headers: await getAuthHeader("read:bet"),
         });
         dispatchStats({ type: "init", payload: await res.json() });
       }
@@ -66,7 +66,7 @@ function Schedule() {
     (async () => {
       if (!isLoading && isAuthenticated) {
         const res = await fetch(BASE_URL + "tipp", {
-          headers: await getAuthHeader("read:tipp"),
+          headers: await getAuthHeader("read:bet"),
         });
         dispatchTipps({ type: "init", payload: await res.json() });
       }

@@ -1,17 +1,19 @@
 import {
   Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { BetEntity } from './bet.entity';
 import { ResetEntity } from './reset.entity';
 import { VerifyEntity } from './verify.entity';
 
 @Entity('user')
 export class UserEntity {
-  @Column({ primary: true, generated: true })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ unique: true })
   email: string;
@@ -24,6 +26,9 @@ export class UserEntity {
 
   @Column()
   name: string;
+
+  @OneToMany(() => BetEntity, (bet) => bet.user)
+  bets: BetEntity[];
 
   @OneToMany(() => ResetEntity, (reset) => reset.user)
   resetTokens: ResetEntity[];

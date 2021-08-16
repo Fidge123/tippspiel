@@ -13,7 +13,7 @@ ReactDOM.render(
       process.env.REACT_APP_AUTH0_CLIENT || "VvT2n6cFCwL1pCTAxWdmZJuVPDwOGl3r"
     }
     cacheLocation="localstorage"
-    scope="openid email profile read:tipp write:tipp write:schedule"
+    scope="openid email profile read:bet write:bet write:schedule"
     useRefreshTokens
     redirectUri={window.location.origin + window.location.pathname}
     audience={

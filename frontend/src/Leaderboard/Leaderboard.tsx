@@ -23,7 +23,7 @@ function Leaderboard() {
       }
 
       const response = await fetch(BASE_URL + "leaderboard/2021", {
-        headers: await getAuthHeader("read:tipp"),
+        headers: await getAuthHeader("read:bet"),
       });
       const res: LBResponse = await response.json();
 

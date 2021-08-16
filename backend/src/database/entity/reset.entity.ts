@@ -1,10 +1,16 @@
-import { Entity, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('reset')
 export class ResetEntity {
-  @Column({ primary: true, generated: true })
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => UserEntity, (user) => user.resetTokens)
   user: UserEntity;
