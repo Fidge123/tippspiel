@@ -1,9 +1,18 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
 import { randomBytes, scrypt as s } from 'crypto';
 import { promisify } from 'util';
+
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Repository, LessThan } from 'typeorm';
+
+import { User } from '../user.decorator';
+
 import { UserEntity, ResetEntity, VerifyEntity } from './entity';
 
 const scrypt = promisify(s);
@@ -23,15 +32,19 @@ export class UserDataService {
     return this.userRepo.find();
   }
 
-  async login(email: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<User> {
     const user = await this.userRepo.findOne({
-      select: ['salt', 'password'],
-      where: { email },
+      select: ['id', 'name', 'email', 'salt', 'password'],
+      where: { email, verified: true },
     });
-    return (
+    if (
       !!user &&
       user.password === (await hash(password, Buffer.from(user.salt, 'hex')))
-    );
+    ) {
+      return { id: user.id, name: user.name, email: user.email };
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 
   async createUser(

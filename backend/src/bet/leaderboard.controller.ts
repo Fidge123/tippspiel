@@ -1,9 +1,6 @@
 import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Permissions } from '../permissions.decorator';
-import { PermissionsGuard } from '../permissions.guard';
-
 import { BetEntity, GameEntity } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
 
@@ -11,9 +8,8 @@ import { BetDataService } from '../database/bet.service';
 export class LeaderboardController {
   constructor(private readonly databaseService: BetDataService) {}
 
-  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('games')
-  @Permissions('read:bet')
   async getTippsForStartedGames(@Query('season') season: string): Promise<any> {
     const games = await this.databaseService.findBetsForStartedGames(
       parseInt(season, 10),
@@ -38,9 +34,8 @@ export class LeaderboardController {
     );
   }
 
-  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get(':season')
-  @Permissions('read:bet')
   async getAll(@Param('season') season: string): Promise<any> {
     const games = await this.databaseService.findBetsByGame(
       parseInt(season, 10),

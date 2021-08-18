@@ -1,21 +1,23 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
+import { AuthGuard } from '@nestjs/passport';
 
 import { getTransporter } from '../email';
 
 import { UserDataService } from '../database/user.service';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly databaseService: UserDataService) {}
+  constructor(
+    private readonly databaseService: UserDataService,
+    private readonly authService: AuthService,
+  ) {}
 
-  @UseGuards(ThrottlerGuard)
+  @UseGuards(AuthGuard('local'), ThrottlerGuard)
   @Post('login')
-  async login(
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ): Promise<boolean> {
-    return this.databaseService.login(email, password);
+  async login(@Request() req: any) {
+    return this.authService.login(req.user);
   }
 
   @Post('logout')
