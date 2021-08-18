@@ -20,9 +20,6 @@ export class UserController {
     return this.authService.login(req.user);
   }
 
-  @Post('logout')
-  async logout() {}
-
   @UseGuards(ThrottlerGuard)
   @Throttle(3, 60)
   @Post('register')

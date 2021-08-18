@@ -1,4 +1,5 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { WeekEntity } from '../database/entity';
 import { ScheduleDataService } from '../database/schedule.service';
 
@@ -6,11 +7,13 @@ import { ScheduleDataService } from '../database/schedule.service';
 export class ScheduleController {
   constructor(private readonly databaseService: ScheduleDataService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':year')
   async getSchedule(@Param('year') year: string): Promise<WeekEntity[]> {
     return await this.databaseService.getSchedule(parseInt(year, 10));
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':year/:seasontype/:week')
   async getWeek(
     @Param('year') year: string,
