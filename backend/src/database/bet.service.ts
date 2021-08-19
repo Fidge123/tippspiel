@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { query } from 'express';
+import { Brackets, Repository } from 'typeorm';
 import { CreateBetDto } from '../bet/bet.dto';
 import { BetEntity, UserEntity, GameEntity } from './entity';
 
@@ -29,6 +30,36 @@ export class BetDataService {
 
   async findGame(game: string): Promise<BetEntity[]> {
     return this.betRepo.find({ where: { game } });
+  }
+
+  async findAllUsers(): Promise<UserEntity[]> {
+    return this.userRepo.find();
+  }
+
+  async findGamesWithoutBets(user: string): Promise<GameEntity[]> {
+    const now = new Date();
+    const soon = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+    const bets = this.betRepo
+      .createQueryBuilder('bet')
+      .select('bet.id')
+      .where('bet.user = :user');
+    return this.gameRepo
+      .createQueryBuilder('game')
+      .leftJoin('game.homeTeam', 'home')
+      .leftJoin('game.awayTeam', 'away')
+      .leftJoin('game.bets', 'bets')
+      .select(['game.date', 'home.name', 'away.name'])
+      .where('game.date >= :now')
+      .andWhere('game.date <= :soon')
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where(`bets.id NOT IN (${bets.getQuery()})`)
+            .orWhere('bets.id IS NULL'),
+        ),
+      )
+      .setParameters({ now, soon, user })
+      .getMany();
   }
 
   async findBetsForStartedGames(year: number): Promise<GameEntity[]> {
@@ -93,13 +124,13 @@ export class BetDataService {
     const user = await this.userRepo.findOne(userId);
     const game = await this.gameRepo.findOne(gameID);
     if (new Date() < new Date(game.date)) {
-      const tipp = this.betRepo.create({
-        user,
-        game,
-        pointDiff,
-        winner,
-      });
-      return this.betRepo.save(tipp);
+      const bet =
+        (await this.betRepo.findOne({ user, game })) || new BetEntity();
+      bet.user = user;
+      bet.game = game;
+      bet.pointDiff = pointDiff;
+      bet.winner = winner;
+      return this.betRepo.save(bet);
     }
   }
 
