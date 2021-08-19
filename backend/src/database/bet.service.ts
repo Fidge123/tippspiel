@@ -38,7 +38,7 @@ export class BetDataService {
 
   async findGamesWithoutBets(user: string): Promise<GameEntity[]> {
     const now = new Date();
-    const soon = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+    const soon = new Date(now.getTime() + 24 * 60 * 60 * 1000);
     const bets = this.betRepo
       .createQueryBuilder('bet')
       .select('bet.id')
