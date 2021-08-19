@@ -20,7 +20,7 @@ export class BetService {
           .sendMail({
             from: 'tippspiel@6v4.de',
             to: user.email,
-            subject: `Du hast ${games.length} Spiele noch nicht getippt.`,
+            subject: `Du hast ${games.length} Spiele noch nicht getippt`,
             text: `
 Hallo ${user.name},
 
