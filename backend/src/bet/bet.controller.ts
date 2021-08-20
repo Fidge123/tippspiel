@@ -17,9 +17,7 @@ export class BetController {
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<any> {
-    const games = await this.databaseService.findBetsByGame(
-      parseInt(season, 10),
-    );
+    const games = await this.databaseService.findBets(parseInt(season, 10));
 
     return games
       .map((game) => ({
@@ -28,8 +26,8 @@ export class BetController {
           home: game.bets.filter((bet) => bet.winner === 'home').length,
           away: game.bets.filter((bet) => bet.winner === 'away').length,
         },
-        selected: game.bets.find((bet) => bet.user.id === user.id).winner,
-        points: game.bets.find((bet) => bet.user.id === user.id).pointDiff,
+        selected: game.bets.find((bet) => bet.user.id === user.id)?.winner,
+        points: game.bets.find((bet) => bet.user.id === user.id)?.pointDiff,
       }))
       .reduce(
         (result, game) => ({
@@ -42,7 +40,7 @@ export class BetController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async setTipp(
+  async setBet(
     @Body() createTipp: CreateBetDto,
     @CurrentUser() user: User,
   ): Promise<BetEntity> {

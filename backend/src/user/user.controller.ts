@@ -26,11 +26,13 @@ export class UserController {
   async register(
     @Body('email') email: string,
     @Body('name') name: string,
+    @Body('consent') consent: boolean,
     @Body('password') password: string,
   ): Promise<void> {
     const [id, token] = await this.databaseService.createUser(
       email,
       name,
+      consent,
       password,
     );
     const transporter = await getTransporter();
@@ -48,10 +50,6 @@ Bitte verifiziere deinen Account indem du auf den unten stehenden Link klickst.
 https://6v4.de/tippspiel/#/verify?id=${id}&token=${token}
 
 Viel Glück für die Tippsaison!
-
-
-
-Wenn du keine weiteren Emails von 6v4.de erhalten möchtest, kontaktiere bitte admin@6v4.de
 `,
       })
       .catch((error) => console.error(error));

@@ -10,7 +10,7 @@ export class LeaderboardController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('games')
-  async getTippsForStartedGames(@Query('season') season: string): Promise<any> {
+  async getBetsForStartedGames(@Query('season') season: string): Promise<any> {
     const games = await this.databaseService.findBetsForStartedGames(
       parseInt(season, 10),
     );

@@ -76,6 +76,19 @@ export class BetDataService {
     );
   }
 
+  async findBets(year: number): Promise<GameEntity[]> {
+    return (
+      this.gameRepo
+        .createQueryBuilder('game')
+        .leftJoin('game.week', 'week')
+        .andWhere('week.year = :year', { year })
+        .leftJoinAndSelect('game.bets', 'bets')
+        // .andWhere('bets.league = :league', { league: '' })
+        .leftJoinAndSelect('bets.user', 'user')
+        .getMany()
+    );
+  }
+
   async findBetsByGame(year: number): Promise<GameEntity[]> {
     return (
       this.gameRepo

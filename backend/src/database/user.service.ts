@@ -50,6 +50,7 @@ export class UserDataService {
   async createUser(
     email: string,
     name: string,
+    consent: boolean,
     password: string,
   ): Promise<[string, string]> {
     const salt = randomBytes(128);
@@ -59,6 +60,8 @@ export class UserDataService {
       user.email = email;
       user.name = name;
       user.salt = salt.toString('hex');
+      user.settings = {};
+      user.consentedAt = consent ? new Date() : null;
       user.password = await hash(password, salt);
 
       const token = new VerifyEntity();

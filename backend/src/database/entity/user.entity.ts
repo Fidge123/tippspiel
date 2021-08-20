@@ -29,6 +29,9 @@ export class UserEntity {
   @Column()
   name: string;
 
+  @Column('jsonb')
+  settings: any;
+
   @ManyToMany(() => LeagueEntity, (league) => league.members)
   memberIn: LeagueEntity[];
 
@@ -46,6 +49,9 @@ export class UserEntity {
 
   @Column({ default: false })
   verified: boolean;
+
+  @Column({ select: false })
+  consentedAt: Date;
 
   @CreateDateColumn({ select: false })
   createdAt: Date;
