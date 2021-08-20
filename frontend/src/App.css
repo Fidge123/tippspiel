@@ -17,10 +17,24 @@
   justify-content: space-between;
 }
 
+nav {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
 nav span {
   color: #fff;
   text-decoration: none;
   padding-right: 1rem;
+}
+
+nav span.light {
+  color: #ddd;
+  text-decoration: none;
+  padding-right: 1rem;
+  font-weight: 200;
 }
 
 .tippspiel {

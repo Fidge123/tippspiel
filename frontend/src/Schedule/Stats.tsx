@@ -1,15 +1,14 @@
-import React from "react";
 import { useStats } from "./reducers/stats.reducer";
 import "./Stats.css";
 import { StatProps } from "./types";
 
-function Stats({ game, votes, isCompact }: StatProps) {
+function Stats({ game, bets, home, away, isCompact }: StatProps) {
   const [stats] = useStats(game.id);
 
   if (new Date(game.date) < new Date() && stats) {
     const finished = game.status === "STATUS_FINAL";
-    const homeScore = parseInt(game.home.score, 10) || 0;
-    const awayScore = parseInt(game.away.score, 10) || 0;
+    const homeScore = game.homeScore;
+    const awayScore = game.awayScore;
     const wonBy = Math.abs(homeScore - awayScore) || 0;
     const homeWon = homeScore > awayScore;
     const awayWon = awayScore > homeScore;
@@ -77,16 +76,26 @@ function Stats({ game, votes, isCompact }: StatProps) {
     <div className="stats">
       <div className="away">
         <div>
-          {votes.away || "0"} {votes.away === 1 ? "Stimme" : "Stimmen"}
+          {bets.away || "0"} {bets.away === 1 ? "Stimme" : "Stimmen"}
         </div>
-        <div>W-L: {game.away.record}</div>
+        {away && (
+          <div>
+            W-L{away.ties > 0 ? "-T" : ""}: {away.wins} - {away.losses}
+            {away.ties > 0 ? " - " + away.ties : ""}
+          </div>
+        )}
       </div>
       <div className="scores"></div>
       <div className="home">
         <div>
-          {votes.home || "0"} {votes.home === 1 ? "Stimme" : "Stimmen"}
+          {bets.home || "0"} {bets.home === 1 ? "Stimme" : "Stimmen"}
         </div>
-        <div>W-L: {game.home.record}</div>
+        {home && (
+          <div>
+            W-L{home.ties > 0 ? "-T" : ""}: {home.wins} - {home.losses}
+            {home.ties > 0 ? " - " + home.ties : ""}
+          </div>
+        )}
       </div>
     </div>
   );

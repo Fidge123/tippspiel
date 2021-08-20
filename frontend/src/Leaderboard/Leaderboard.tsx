@@ -1,29 +1,18 @@
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Leaderboard.css";
-import { useAuth0 } from "@auth0/auth0-react";
 import { BASE_URL } from "../api";
+import { useToken } from "../useToken";
 
 function Leaderboard() {
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const [token] = useToken();
   const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
-
-  const getAuthHeader = useCallback(
-    async (scope: string): Promise<{ Authorization: string }> => {
-      return {
-        Authorization: `Bearer ${await getAccessTokenSilently({ scope })}`,
-      };
-    },
-    [getAccessTokenSilently]
-  );
 
   useEffect(() => {
     (async () => {
-      if (isLoading || !isAuthenticated) {
-        return;
-      }
-
       const response = await fetch(BASE_URL + "leaderboard/2021", {
-        headers: await getAuthHeader("read:bet"),
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const res: LBResponse = await response.json();
 
@@ -43,7 +32,7 @@ function Leaderboard() {
           )
       );
     })();
-  }, [isLoading, isAuthenticated, getAuthHeader]);
+  }, [token]);
 
   return (
     <div className="lb">

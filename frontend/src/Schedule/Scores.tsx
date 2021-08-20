@@ -1,11 +1,10 @@
-import React from "react";
 import "./Scores.css";
 import { Game } from "./types";
 
 function Scores({ game, selected }: Props) {
   const final = game.status === "STATUS_FINAL";
-  const homeScore = parseInt(game.home.score, 10);
-  const awayScore = parseInt(game.away.score, 10);
+  const homeScore = game.homeScore;
+  const awayScore = game.awayScore;
   const homeWon = homeScore > awayScore;
   const awayWon = awayScore > homeScore;
 
@@ -23,7 +22,7 @@ function Scores({ game, selected }: Props) {
               color: awayWon && selected === "away" ? "#1b2" : "#212529",
             }}
           >
-            {game.away.score}
+            {game.awayScore}
           </span>
         )}
       </div>
@@ -38,7 +37,7 @@ function Scores({ game, selected }: Props) {
               color: homeWon && selected === "home" ? "#1b2" : "#212529",
             }}
           >
-            {game.home.score}
+            {game.homeScore}
           </span>
         )}
       </div>

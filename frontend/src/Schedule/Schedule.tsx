@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback, useReducer } from "react";
+import { useEffect, useState, useReducer } from "react";
 import "./Schedule.css";
-import { useAuth0 } from "@auth0/auth0-react";
 
-import { IWeek } from "./types";
+import { IWeek, Team } from "./types";
 import { BASE_URL } from "../api";
 import Week from "./Week";
 import {
@@ -16,62 +15,65 @@ import {
   initialTipps,
   TippDispatch,
   TippValues,
-} from "./reducers/tipps.reducer";
+} from "./reducers/bets.reducer";
+import { useToken } from "../useToken";
 
 function Schedule() {
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const [token] = useToken();
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [tipps, dispatchTipps] = useReducer(tippsReducer, initialTipps);
   const [stats, dispatchStats] = useReducer(statsReducer, initialStats);
   const [weeks, setWeeks] = useState<IWeek[]>([]);
-
-  const getAuthHeader = useCallback(
-    async (scope: string): Promise<{ Authorization: string }> => {
-      return {
-        Authorization: `Bearer ${await getAccessTokenSilently({ scope })}`,
-      };
-    },
-    [getAccessTokenSilently]
-  );
+  const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
-    fetch(BASE_URL + "scoreboard/2021")
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setWeeks(result);
+    Promise.all([
+      fetch(BASE_URL + "schedule/2021", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
+      }).then((res) => res.json()),
+      fetch(BASE_URL + "team", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => res.json()),
+    ]).then(
+      ([weeks, teams]) => {
+        setIsLoaded(true);
+        setWeeks(weeks);
+        setTeams(teams);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error);
+      }
+    );
+  }, [token]);
 
   useEffect(() => {
     (async () => {
-      if (!isLoading && isAuthenticated) {
-        const res = await fetch(BASE_URL + "leaderboard/games?season=2021", {
-          headers: await getAuthHeader("read:bet"),
-        });
-        dispatchStats({ type: "init", payload: await res.json() });
-      }
+      const res = await fetch(BASE_URL + "leaderboard/games?season=2021", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatchStats({ type: "init", payload: await res.json() });
     })();
-  }, [isLoading, isAuthenticated, getAuthHeader]);
+  }, [token]);
 
   useEffect(() => {
     (async () => {
-      if (!isLoading && isAuthenticated) {
-        const res = await fetch(BASE_URL + "tipp", {
-          headers: await getAuthHeader("read:bet"),
-        });
-        dispatchTipps({ type: "init", payload: await res.json() });
-      }
+      const res = await fetch(BASE_URL + "bet?season=2021", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatchTipps({ type: "init", payload: await res.json() });
     })();
-  }, [isLoading, isAuthenticated, getAuthHeader]);
+  }, [token]);
 
   if (isLoaded) {
     if (error) {
@@ -84,7 +86,7 @@ function Schedule() {
             <TippDispatch.Provider value={dispatchTipps}>
               <TippValues.Provider value={tipps}>
                 {weeks.map((week, i) => (
-                  <Week week={week} key={`Week-${i}`}></Week>
+                  <Week week={week} teams={teams} key={`Week-${i}`}></Week>
                 ))}
               </TippValues.Provider>
             </TippDispatch.Provider>

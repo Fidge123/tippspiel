@@ -1,12 +1,12 @@
 import { createContext, useContext } from "react";
-import { Tipps, Tipp, Action, APITipp } from "../types";
+import { Bets, Bet, Action, ApiBet } from "../types";
 
 export const TippDispatch = createContext<any>(null);
 export const TippValues = createContext<any>(null);
 
-export const initialTipps: Tipps = {};
+export const initialTipps: Bets = {};
 
-export function tippsReducer(state: Tipps, action: Action): Tipps {
+export function tippsReducer(state: Bets, action: Action): Bets {
   switch (action.type) {
     case "update":
       return { ...state, [action.payload.gameID]: action.payload.tipp };
@@ -19,16 +19,16 @@ export function tippsReducer(state: Tipps, action: Action): Tipps {
 
 export function useTipps(
   gameID: string,
-  cb: (payload: APITipp) => void
-): [Tipp, (tipp: Tipp) => void] {
+  cb: (payload: ApiBet) => void
+): [Bet, (tipp: Bet) => void] {
   const tipps = useContext(TippValues);
   const dispatch = useContext(TippDispatch);
 
   return [
-    tipps[gameID] || { votes: { home: 0, away: 0 } },
-    (tipp: Tipp) => {
+    tipps[gameID] || { bets: { home: 0, away: 0 } },
+    (tipp: Bet) => {
       cb({
-        game: gameID,
+        gameID,
         winner: tipp.selected,
         pointDiff: tipp.points,
       });

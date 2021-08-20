@@ -1,15 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./Week.css";
-import { stringify } from "querystring";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import MatchUp from "./Matchup";
-import { Game, IWeek } from "./types";
-import { BASE_URL } from "../api";
+import { Game, IWeek, Team } from "./types";
 
-function Week({ week }: Props) {
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
-  const [admin, setAdmin] = useState(false);
+function Week({ week, teams }: Props) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -21,54 +16,28 @@ function Week({ week }: Props) {
     }
   }, [week.endDate, week.startDate]);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      setAdmin(
-        user?.["https://nfl-tippspiel.herokuapp.com/auth/roles"].includes(
-          "Admin"
-        )
-      );
-    }
-  }, [isAuthenticated, user]);
-
-  async function reloadWeek(week: number, type: number) {
-    const param = stringify({ season: 2021, type, week });
-    await fetch(`${BASE_URL}scoreboard?${param}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${await getAccessTokenSilently({
-          scope: "write:schedule",
-        })}`,
-        "Content-Type": "application/json",
-      },
-    });
-    window.location.reload();
-  }
-
   return (
     <article className="week" key={week.label} ref={ref}>
       <div className="weekHeader">
         <span className="label">{week.label}</span>
-        {admin && (
-          <button
-            className="reload"
-            onClick={() => {
-              reloadWeek(week.id, week.seasontype);
-            }}
-          >
-            Reload
-          </button>
-        )}
       </div>
-      {week.teamsOnBye.length > 0 && (
+      {week.teamsOnBye?.length > 0 && (
         <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
       )}
       {splitByDate(week.games).map((time) => (
         <div key={time[0].date}>
           <div className="time">{formatDate(time[0].date)}</div>
-          {time.map((g, idx) => (
-            <MatchUp key={idx} game={g}></MatchUp>
-          ))}
+          {time.map(
+            (g, idx) =>
+              g && (
+                <MatchUp
+                  key={idx}
+                  game={g}
+                  home={teams.find((t) => t.id === g.homeTeam?.id)}
+                  away={teams.find((t) => t.id === g.awayTeam?.id)}
+                ></MatchUp>
+              )
+          )}
         </div>
       ))}
     </article>
@@ -95,6 +64,7 @@ function formatDate(date: string) {
 
 interface Props {
   week: IWeek;
+  teams: Team[];
 }
 
 export default Week;
