@@ -66,7 +66,7 @@ export class ScheduleDataService {
     return this.divisonRepo
       .createQueryBuilder('division')
       .leftJoin('division.teams', 'team')
-      .select(['division.name', 'team.name'])
+      .select(['division.name', 'team.name', 'team.id'])
       .getMany();
   }
 

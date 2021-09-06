@@ -10,6 +10,7 @@ import {
 import { GameEntity } from './game.entity';
 import { ByeEntity } from './bye.entity';
 import { DivisionEntity } from './division.entity';
+import { DivisionBetEntity } from './divisionBet.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity {
@@ -45,6 +46,9 @@ export class TeamEntity {
 
   @ManyToOne(() => DivisionEntity, (division) => division.teams)
   division: DivisionEntity;
+
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.team)
+  divisionBets: DivisionBetEntity[];
 
   @OneToMany(() => GameEntity, (game) => game.homeTeam)
   homeGames: GameEntity[];

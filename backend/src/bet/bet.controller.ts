@@ -4,8 +4,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, User } from '../user.decorator';
 
 import { BetDataService } from '../database/bet.service';
-import { BetEntity } from '../database/entity';
+import { BetEntity, DivisionBetEntity } from '../database/entity';
 import { CreateBetDto } from './bet.dto';
+import { CreateDivisionBetDto } from './division.dto';
 
 @Controller('bet')
 export class BetController {
@@ -45,5 +46,20 @@ export class BetController {
     @CurrentUser() user: User,
   ): Promise<BetEntity> {
     return this.databaseService.update(createTipp, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('division')
+  async getDivisionBets(@CurrentUser() user: User): Promise<any> {
+    return await this.databaseService.findDivisionBets(user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('division')
+  async setDivisionBet(
+    @Body() createTipp: CreateDivisionBetDto,
+    @CurrentUser() user: User,
+  ): Promise<DivisionBetEntity> {
+    return this.databaseService.setDivisionBet(createTipp, user.id);
   }
 }

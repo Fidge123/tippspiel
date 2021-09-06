@@ -1,19 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { query } from 'express';
+import { CreateDivisionBetDto } from 'src/bet/division.dto';
 import { Brackets, Repository } from 'typeorm';
+
 import { CreateBetDto } from '../bet/bet.dto';
-import { BetEntity, UserEntity, GameEntity } from './entity';
+
+import {
+  BetEntity,
+  DivisionEntity,
+  DivisionBetEntity,
+  GameEntity,
+  TeamEntity,
+  UserEntity,
+} from './entity';
 
 @Injectable()
 export class BetDataService {
   constructor(
     @InjectRepository(BetEntity)
     private betRepo: Repository<BetEntity>,
-    @InjectRepository(UserEntity)
-    private userRepo: Repository<UserEntity>,
+    @InjectRepository(DivisionEntity)
+    private divisionRepo: Repository<DivisionEntity>,
+    @InjectRepository(DivisionBetEntity)
+    private divBetRepo: Repository<DivisionBetEntity>,
     @InjectRepository(GameEntity)
     private gameRepo: Repository<GameEntity>,
+    @InjectRepository(TeamEntity)
+    private teamRepo: Repository<TeamEntity>,
+    @InjectRepository(UserEntity)
+    private userRepo: Repository<UserEntity>,
   ) {}
 
   async findAll(): Promise<BetEntity[]> {
@@ -131,6 +146,35 @@ export class BetDataService {
         // .andWhere('bets.league = :league', { league: '' })
         .getMany()
     );
+  }
+
+  async findDivisionBets(user: string): Promise<DivisionBetEntity[]> {
+    return this.divBetRepo.find({ where: { user } });
+  }
+
+  async setDivisionBet(
+    { division, winner }: CreateDivisionBetDto,
+    userId: string,
+  ): Promise<DivisionBetEntity> {
+    const [user, div, team] = await Promise.all([
+      this.userRepo.findOne(userId),
+      this.divisionRepo.findOne(division),
+      this.teamRepo.findOne(winner),
+    ]);
+
+    const firstGame = (
+      await this.gameRepo.find({ order: { date: 'ASC' }, take: 1 })
+    )[0];
+
+    if (new Date() < firstGame.date && user) {
+      const divBet =
+        (await this.divBetRepo.findOne({ division: div, user })) ||
+        new DivisionBetEntity();
+      divBet.user = user;
+      divBet.team = team;
+      divBet.division = div;
+      return this.divBetRepo.save(divBet);
+    }
   }
 
   async update(

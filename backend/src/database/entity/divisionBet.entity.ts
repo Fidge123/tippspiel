@@ -6,17 +6,21 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { GameEntity } from './game.entity';
+import { TeamEntity } from './team.entity';
 import { LeagueEntity } from './league.entity';
 import { UserEntity } from './user.entity';
+import { DivisionEntity } from '.';
 
-@Entity('bet')
-export class BetEntity {
+@Entity('divisionBet')
+export class DivisionBetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => GameEntity, (game) => game.bets)
-  game: GameEntity;
+  @ManyToOne(() => DivisionEntity, (division) => division.bets)
+  division: DivisionEntity;
+
+  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  team: TeamEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.bets)
   user: UserEntity;
@@ -24,15 +28,9 @@ export class BetEntity {
   @ManyToOne(() => LeagueEntity, (league) => league.bets)
   league: LeagueEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
-
-  @Column()
-  winner: string;
-
-  @Column()
-  pointDiff: number;
 }
