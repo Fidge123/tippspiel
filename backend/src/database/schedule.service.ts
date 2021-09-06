@@ -34,6 +34,7 @@ export class ScheduleDataService {
       .where('week.year = :year', { year })
       .orderBy('week.seasontype', 'ASC')
       .addOrderBy('week.week', 'ASC')
+      .addOrderBy('game.date', 'ASC')
       .getMany();
   }
 
@@ -57,6 +58,7 @@ export class ScheduleDataService {
       .addSelect(['team.id', 'team.name'])
       .orderBy('week.seasontype', 'ASC')
       .addOrderBy('week.week', 'ASC')
+      .addOrderBy('game.date', 'ASC')
       .getMany();
   }
 

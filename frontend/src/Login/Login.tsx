@@ -35,7 +35,7 @@ export default function Login({ setToken }: LoginProperties) {
             setPassword("");
             setError(error.message);
           }
-        } catch (err) {
+        } catch (err: any) {
           setError(err);
         }
       }

@@ -41,7 +41,7 @@ function Verify() {
             const error = await res.json();
             setError(error.message);
           }
-        } catch (err) {
+        } catch (err: any) {
           setError(err);
         }
       } else {
