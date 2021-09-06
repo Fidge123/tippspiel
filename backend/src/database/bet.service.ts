@@ -38,7 +38,9 @@ export class BetDataService {
 
   async findGamesWithoutBets(user: string): Promise<GameEntity[]> {
     const now = new Date();
-    const soon = new Date(now.getTime() + 30 * 60 * 60 * 1000);
+    const thirtyHours = 30 * 60 * 60 * 1000;
+    const soon = new Date(now.getTime() + thirtyHours);
+    const status = 'STATUS_SCHEDULED';
     const bets = this.betRepo
       .createQueryBuilder('bet')
       .select('bet.id')
@@ -49,7 +51,8 @@ export class BetDataService {
       .leftJoin('game.awayTeam', 'away')
       .leftJoin('game.bets', 'bets')
       .select(['game.date', 'home.name', 'away.name'])
-      .where('game.date >= :now')
+      .where('game.date > :now')
+      .andWhere('game.status = :status')
       .andWhere('game.date <= :soon')
       .andWhere(
         new Brackets((qb) =>
@@ -58,7 +61,7 @@ export class BetDataService {
             .orWhere('bets.id IS NULL'),
         ),
       )
-      .setParameters({ now, soon, user })
+      .setParameters({ now, soon, status, user })
       .getMany();
   }
 
