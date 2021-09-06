@@ -26,7 +26,9 @@ export class UserDataService {
     private verifyRepo: Repository<VerifyEntity>,
     @InjectRepository(ResetEntity)
     private resetRepo: Repository<ResetEntity>,
-  ) {}
+  ) {
+    this.cleanUp();
+  }
 
   async findAll(): Promise<UserEntity[]> {
     return this.userRepo.find();
@@ -149,6 +151,13 @@ export class UserDataService {
     });
 
     const users = await this.userRepo.find({
+      join: {
+        alias: 'user',
+        leftJoin: {
+          reset: 'user.resetTokens',
+          verify: 'user.verifyTokens',
+        },
+      },
       where: {
         createdAt: LessThan(new Date(today.getTime() - 7 * oneDayInMS)),
         verified: false,
@@ -159,11 +168,15 @@ export class UserDataService {
       `Deleting ${resetTokens.length} reset tokens, ${verifyTokens.length} verify tokens and ${users.length} unverified users!`,
     );
 
-    await Promise.all([
-      this.resetRepo.remove(resetTokens),
-      this.verifyRepo.remove(verifyTokens),
-      this.userRepo.remove(users),
-    ]);
+    if (resetTokens.length) {
+      await this.resetRepo.remove(resetTokens);
+    }
+    if (verifyTokens.length) {
+      await this.verifyRepo.remove(verifyTokens);
+    }
+    if (users.length) {
+      await this.userRepo.remove(users);
+    }
   }
 
   async deleteUser(id: string): Promise<void> {

@@ -26,22 +26,36 @@ export class ScheduleService {
   }
 
   private async init(): Promise<void> {
-    // await this.importTeams();
+    // await this.importMasterData();
     // await this.importSchedule();
   }
 
   @Cron('0 0 * * TUE')
-  async importTeams(): Promise<void> {
-    const promises = [];
-    for (let id = 1; id <= 34; id++) {
-      promises.push(axios.get(`${BASE_URL}teams/${id}`));
+  async importMasterData(): Promise<void> {
+    const response = (await axios.get(`${BASE_URL}groups`)).data;
+    for (const conf of response.groups) {
+      console.log(`--- Loading ${conf.abbreviation} divisions ---`);
+      await Promise.all(
+        conf.children.map((division: any) =>
+          this.importTeamsOfDivision(division),
+        ),
+      );
     }
-    const teams: Team[] = (await Promise.all(promises)).map(
-      (team) => team.data.team,
+  }
+
+  async importTeamsOfDivision(division: any): Promise<void> {
+    const divEntity = await this.databaseService.createOrUpdateDivision({
+      name: division.name,
+    });
+    const teamResponses = await Promise.all(
+      division.teams.map((team: Team) =>
+        axios.get(`${BASE_URL}teams/${team.id}`),
+      ),
     );
+    const teams = teamResponses.map((team: any) => team.data.team);
     for (const t of teams) {
       console.log(`Creating ${t.displayName}`);
-      await this.databaseService.createOrUpdateTeam(t);
+      await this.databaseService.createOrUpdateTeam(t, divEntity);
     }
   }
 

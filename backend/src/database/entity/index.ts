@@ -1,5 +1,6 @@
 export * from './bet.entity';
 export * from './bye.entity';
+export * from './division.entity';
 export * from './game.entity';
 export * from './league.entity';
 export * from './reset.entity';

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { ByeEntity, WeekEntity, GameEntity, TeamEntity } from './entity';
 import { Competitors, NFLEvent, Team } from './api.type';
+import { DivisionEntity } from './entity/division.entity';
 
 @Injectable()
 export class ScheduleDataService {
@@ -11,6 +12,8 @@ export class ScheduleDataService {
     private gameRepo: Repository<GameEntity>,
     @InjectRepository(ByeEntity)
     private byeRepo: Repository<ByeEntity>,
+    @InjectRepository(DivisionEntity)
+    private divisonRepo: Repository<DivisionEntity>,
     @InjectRepository(TeamEntity)
     private teamRepo: Repository<TeamEntity>,
     @InjectRepository(WeekEntity)
@@ -57,6 +60,14 @@ export class ScheduleDataService {
       .getMany();
   }
 
+  async getDivisions(): Promise<DivisionEntity[]> {
+    return this.divisonRepo
+      .createQueryBuilder('division')
+      .leftJoin('division.teams', 'team')
+      .select(['division.name', 'team.name'])
+      .getMany();
+  }
+
   async getTeams(): Promise<TeamEntity[]> {
     return this.teamRepo.find();
   }
@@ -65,18 +76,29 @@ export class ScheduleDataService {
     return this.teamRepo.findOne(id);
   }
 
-  async createOrUpdateTeam(team: Team): Promise<TeamEntity> {
+  async createOrUpdateDivision(div: any): Promise<DivisionEntity> {
+    const division =
+      (await this.divisonRepo.findOne(div.name)) || new DivisionEntity();
+    division.name = div.name;
+    return this.divisonRepo.save(division);
+  }
+
+  async createOrUpdateTeam(
+    team: Team,
+    division: DivisionEntity,
+  ): Promise<TeamEntity> {
     const t = (await this.teamRepo.findOne(team.uid)) || new TeamEntity();
     t.id = team.uid;
     t.logo = team.logos[0].href.split('/').reverse()[0];
     t.abbreviation = team.abbreviation;
     t.shortName = team.shortDisplayName;
     t.name = team.displayName;
+    t.division = division;
+    t.wins = findStat(team, 'wins'); // TODO?
+    t.losses = findStat(team, 'losses'); // TODO?
+    t.ties = findStat(team, 'ties'); // TODO?
     t.color1 = team.color;
     t.color2 = team.alternateColor;
-    t.wins = findStat(team, 'wins');
-    t.losses = findStat(team, 'losses');
-    t.ties = findStat(team, 'ties');
     return this.teamRepo.save(t);
   }
 

@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   BetEntity,
   ByeEntity,
+  DivisionEntity,
   GameEntity,
   LeagueEntity,
   ResetEntity,
@@ -40,6 +41,7 @@ const extra = env.DATABASE_URL.includes('localhost')
       entities: [
         BetEntity,
         ByeEntity,
+        DivisionEntity,
         GameEntity,
         LeagueEntity,
         ResetEntity,

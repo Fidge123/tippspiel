@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   BetEntity,
   ByeEntity,
+  DivisionEntity,
   GameEntity,
   LeagueEntity,
   ResetEntity,
@@ -20,6 +21,7 @@ import { UserDataService } from './user.service';
     TypeOrmModule.forFeature([
       BetEntity,
       ByeEntity,
+      DivisionEntity,
       GameEntity,
       LeagueEntity,
       ResetEntity,

@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { GameEntity } from './game.entity';
 import { ByeEntity } from './bye.entity';
+import { DivisionEntity } from './division.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity {
@@ -40,6 +42,9 @@ export class TeamEntity {
 
   @Column({ nullable: true })
   color2: string;
+
+  @ManyToOne(() => DivisionEntity, (division) => division.teams)
+  division: DivisionEntity;
 
   @OneToMany(() => GameEntity, (game) => game.homeTeam)
   homeGames: GameEntity[];

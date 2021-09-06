@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinTable,
 } from 'typeorm';
 import { GameEntity } from './game.entity';
 import { LeagueEntity } from './league.entity';
@@ -21,7 +22,7 @@ export class BetEntity {
   @ManyToOne(() => UserEntity, (user) => user.bets)
   user: UserEntity;
 
-  @ManyToOne(() => LeagueEntity, (league) => league)
+  @ManyToOne(() => LeagueEntity, (league) => league.bets)
   league: LeagueEntity;
 
   @CreateDateColumn()
