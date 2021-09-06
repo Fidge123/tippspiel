@@ -39,6 +39,14 @@ export class UserController {
     await transporter
       .sendMail({
         from: 'tippspiel@6v4.de',
+        to: process.env.EMAIL,
+        subject: 'Neuer Nutzer registriert',
+        text: `Ein neuer Nutzer hat sich registriert.`,
+      })
+      .catch((error) => console.error(error));
+    await transporter
+      .sendMail({
+        from: 'tippspiel@6v4.de',
         to: email,
         subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
         text: `
@@ -61,6 +69,15 @@ Viel Glück für die Tippsaison!
     @Body('id') id: number,
     @Body('token') token: string,
   ): Promise<void> {
+    const transporter = await getTransporter();
+    await transporter
+      .sendMail({
+        from: 'tippspiel@6v4.de',
+        to: process.env.EMAIL,
+        subject: 'Nutzer verifiziert',
+        text: `Ein Nutzer hat sich verifiziert.`,
+      })
+      .catch((error) => console.error(error));
     await this.databaseService.verify(id, token);
   }
 
@@ -71,6 +88,14 @@ Viel Glück für die Tippsaison!
     if (reset) {
       const { user, token } = reset;
       const transporter = await getTransporter();
+      await transporter
+        .sendMail({
+          from: 'tippspiel@6v4.de',
+          to: process.env.EMAIL,
+          subject: 'Passwort Reset angefragt',
+          text: `Ein Passwort Reset wurde angefragt.`,
+        })
+        .catch((error) => console.error(error));
       await transporter
         .sendMail({
           from: 'tippspiel@6v4.de',
