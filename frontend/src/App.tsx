@@ -45,12 +45,12 @@ function App() {
                   <span className="tippspiel">Tabelle</span>
                 </Link>
               )}
-              <Link to="/impressum">
+              {/* <Link to="/impressum">
                 <span className="light">Impressum</span>
               </Link>
               <Link to="/terms">
                 <span className="light">Nutzungsbedingungen</span>
-              </Link>
+              </Link> */}
             </div>
             <div className="right">
               {token ? (

@@ -7,7 +7,8 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [consent, setConsent] = useState(false);
+  // const [consent, setConsent] = useState(false);
+  const [consent] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [credentials, setCredentials] = useState<any>();
@@ -42,7 +43,7 @@ function Register() {
             setCredentials(undefined);
             setError(error.message);
           }
-        } catch (err) {
+        } catch (err: any) {
           setError(err);
         }
       }
@@ -89,7 +90,7 @@ function Register() {
             aria-required="true"
           />
         </div>
-        <div>
+        {/* <div>
           <label id="usage-label">
             <a
               href={
@@ -112,7 +113,7 @@ function Register() {
             />
             <label id="">Ja, ich stimme zu!</label>
           </span>
-        </div>
+        </div> */}
         <div>
           <button disabled={credentials} type="submit">
             Registrieren

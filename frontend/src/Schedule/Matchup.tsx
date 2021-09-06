@@ -67,7 +67,7 @@ function MatchUp({ game, home, away }: Props) {
       >
         {away?.logo && (
           <img
-            src={"/logos/" + away.logo}
+            src={process.env.REACT_APP_IMG_URL + away.logo}
             className="logo"
             alt="logo away team"
             onError={(event: any) => (event.target.style.display = "none")}
@@ -88,7 +88,7 @@ function MatchUp({ game, home, away }: Props) {
       >
         {home?.logo && (
           <img
-            src={"/logos/" + home.logo}
+            src={process.env.REACT_APP_IMG_URL + home.logo}
             className="logo"
             alt="logo home team"
             onError={(event: any) => (event.target.style.display = "none")}
