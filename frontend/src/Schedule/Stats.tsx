@@ -80,8 +80,8 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
         </div>
         {away && (
           <div>
-            W-L{away.ties > 0 ? "-T" : ""}: {away.wins} - {away.losses}
-            {away.ties > 0 ? " - " + away.ties : ""}
+            W-L{away.ties > 0 ? "-T" : ""}: {away.wins}-{away.losses}
+            {away.ties > 0 ? "-" + away.ties : ""}
           </div>
         )}
       </div>
@@ -92,8 +92,8 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
         </div>
         {home && (
           <div>
-            W-L{home.ties > 0 ? "-T" : ""}: {home.wins} - {home.losses}
-            {home.ties > 0 ? " - " + home.ties : ""}
+            W-L{home.ties > 0 ? "-T" : ""}: {home.wins}-{home.losses}
+            {home.ties > 0 ? "-" + home.ties : ""}
           </div>
         )}
       </div>

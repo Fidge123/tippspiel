@@ -65,8 +65,7 @@ export class ScheduleDataService {
   async getDivisions(): Promise<DivisionEntity[]> {
     return this.divisonRepo
       .createQueryBuilder('division')
-      .leftJoin('division.teams', 'team')
-      .select(['division.name', 'team.name', 'team.id'])
+      .leftJoinAndSelect('division.teams', 'team')
       .getMany();
   }
 

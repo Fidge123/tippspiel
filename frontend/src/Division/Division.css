@@ -1,0 +1,38 @@
+.division {
+  display: flex;
+  flex-direction: column;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.divisionParent {
+  margin: 0.5rem;
+}
+
+.divisionButton {
+  padding: 6px 0.5rem;
+  margin: 0 0 0.5rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  outline: none;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  height: 2.5rem;
+  font-weight: 600;
+}
+
+.logo {
+  height: 1.5rem;
+  width: 1.5rem;
+  float: left;
+}
+
+.selected {
+  color: #fafafa;
+}
+
+button.home:disabled,
+button.away:disabled {
+  opacity: 0.5;
+}

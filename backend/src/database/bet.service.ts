@@ -149,30 +149,42 @@ export class BetDataService {
   }
 
   async findDivisionBets(user: string): Promise<DivisionBetEntity[]> {
-    return this.divBetRepo.find({ where: { user } });
+    return this.divBetRepo.find({
+      where: { user },
+      join: {
+        alias: 'bet',
+        leftJoinAndSelect: { team: 'bet.team', division: 'bet.division' },
+      },
+    });
   }
 
   async setDivisionBet(
-    { division, winner }: CreateDivisionBetDto,
+    { division: div, team: t }: CreateDivisionBetDto,
     userId: string,
   ): Promise<DivisionBetEntity> {
-    const [user, div, team] = await Promise.all([
-      this.userRepo.findOne(userId),
-      this.divisionRepo.findOne(division),
-      this.teamRepo.findOne(winner),
+    console.log(div, t, userId);
+
+    const [user, division, team] = await Promise.all([
+      this.userRepo.findOneOrFail(userId),
+      this.divisionRepo.findOneOrFail({ where: { name: div } }),
+      this.teamRepo.findOneOrFail(t),
     ]);
 
-    const firstGame = (
-      await this.gameRepo.find({ order: { date: 'ASC' }, take: 1 })
-    )[0];
+    console.log('Create Tipp', user.name, division.name, team.name);
+
+    const firstGame = await this.gameRepo.findOneOrFail({
+      order: { date: 'ASC' },
+    });
+
+    console.log(firstGame.date);
 
     if (new Date() < firstGame.date && user) {
       const divBet =
-        (await this.divBetRepo.findOne({ division: div, user })) ||
+        (await this.divBetRepo.findOne({ division, user })) ||
         new DivisionBetEntity();
       divBet.user = user;
       divBet.team = team;
-      divBet.division = div;
+      divBet.division = division;
       return this.divBetRepo.save(divBet);
     }
   }

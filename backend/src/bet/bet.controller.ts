@@ -51,7 +51,10 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Get('division')
   async getDivisionBets(@CurrentUser() user: User): Promise<any> {
-    return await this.databaseService.findDivisionBets(user.id);
+    return (await this.databaseService.findDivisionBets(user.id)).reduce(
+      (result, bet) => ({ ...result, [bet.division.name]: bet.team.id }),
+      {},
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))

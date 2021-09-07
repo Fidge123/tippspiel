@@ -15,6 +15,7 @@ import Register from "./Register/Register";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Verify from "./Verify/Verify";
 import Impressum from "./Impressum/Impressum";
+import Division from "./Division/Division";
 import { useToken } from "./useToken";
 
 function App() {
@@ -43,6 +44,11 @@ function App() {
               {token && (
                 <Link to="/leaderboard">
                   <span className="tippspiel">Tabelle</span>
+                </Link>
+              )}
+              {token && (
+                <Link to="/division">
+                  <span className="tippspiel">Divisions</span>
                 </Link>
               )}
               {/* <Link to="/impressum">
@@ -87,6 +93,13 @@ function App() {
             </Route>
             <Route path="/terms">
               <TermsAndConditions></TermsAndConditions>
+            </Route>
+            <Route path="/division">
+              {token ? (
+                <Division></Division>
+              ) : (
+                <Redirect to="/login"></Redirect>
+              )}
             </Route>
             <Route path="/leaderboard">
               {token ? (

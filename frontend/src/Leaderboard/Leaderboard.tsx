@@ -76,28 +76,25 @@ function Leaderboard() {
         folgenden Regeln bei der Punkteverteilung:
       </p>
       <ul>
-        <li>Ein Tipp auf das richtige Team gibt 1 Punkt</li>
+        <li>Ein Tipp auf den Sieger eines Spiels gibt 2 Punkte</li>
         <li>
-          Der Tipp mit dem geringsten Abstand zum tatsächlichen Ergebnis bekommt
-          3 Extrapunkte, der nächstbeste Tipp 2 Extrapunkte, usw.
+          Ein Tipp mit +- 0 / 3 / 6 Punkte Abstand zur korrekten
+          Ergebnisdifferenz bekommt 3 / 2 / 1 Extrapunkte (nicht kumuluativ)
+        </li>
+        <li>Ein Tipp auf den Sieger der Division gibt 5 Punkte</li>
+        <li>
+          Der Tipp auf den Superbowltipp gibt 10 Punkte (zusätzlich zum
+          eigentlich Match)
         </li>
         <li>
-          Bei Tipps mit gleichem Abstand erhalten beide Tipps die vollen
-          Extrapunkte und die Anzahl der Extrapunkte für den nächstbesten Tipp
-          verringert sich um die Anzahl der Tipps mit gleichem Abstand
-        </li>
-      </ul>
-      <p>Bei einem Gleichstand der Punkte werden folgende Aspekte gewertet:</p>
-      <ul>
-        <li>Höhere Anzahl korrekter Tipps</li>
-        <li>
-          Niedriger Abstand zu den tatsächlichen Spielergebnissen bei korrekten
-          Tipps
+          Jeder Spieler kann wöchentlich ein Spiel auswählen was doppelte Punkte
+          bringt
         </li>
       </ul>
       <p>
-        Falls danach kein klarer Sieger bestimmt ist, teilen sich die Spieler
-        den Platz.
+        Spiele müssen vor der offiziellen Startzeit getippt werden. Sieger der
+        Divisions und des Superbowls müssen vor dem ersten Sonntagsspiel der
+        Saison getippt werden.
       </p>
     </div>
   );
