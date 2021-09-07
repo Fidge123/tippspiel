@@ -1,11 +1,20 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { DatabaseModule } from '../database/database.module';
+import { AuthModule } from '../auth/auth.module';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { UserController } from './user.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    AuthModule,
+    DatabaseModule,
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
+  ],
+  controllers: [UserController],
   providers: [UserService],
-  exports: [UserService],
 })
 export class UserModule {}

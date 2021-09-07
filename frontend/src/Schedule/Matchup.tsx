@@ -1,14 +1,14 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BASE_URL } from "../api";
+import { useToken } from "../useToken";
 import "./Matchup.css";
-import { useTipps } from "./reducers/tipps.reducer";
+import { useTipps } from "./reducers/bets.reducer";
 import Scores from "./Scores";
 import Stats from "./Stats";
-import { Team, Game, APITipp } from "./types";
+import { Team, Game, ApiBet } from "./types";
 
-function MatchUp({ game }: Props) {
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
+  const [token] = useToken();
 
   const [tipp, setTipp] = useTipps(game.id, handleTipp);
   const [timeoutID, setTimeoutID] = useState<any>();
@@ -24,7 +24,7 @@ function MatchUp({ game }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  async function handleTipp(payload: APITipp) {
+  async function handleTipp(payload: ApiBet) {
     if (timeoutID) {
       clearTimeout(timeoutID);
     }
@@ -32,12 +32,10 @@ function MatchUp({ game }: Props) {
     setTimeoutID(
       setTimeout(async () => {
         if (payload.pointDiff && payload.winner) {
-          await fetch(`${BASE_URL}tipp`, {
+          await fetch(`${BASE_URL}bet`, {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${await getAccessTokenSilently({
-                scope: "write:tipp",
-              })}`,
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
@@ -49,56 +47,69 @@ function MatchUp({ game }: Props) {
   }
 
   function select(homeAway: "home" | "away") {
-    const v = { ...tipp.votes };
+    const v = { ...tipp.bets };
     if (tipp.selected && tipp.selected !== homeAway) {
       v[tipp.selected] = (v[tipp.selected] || 0) - 1;
     }
     if (tipp.selected !== homeAway) {
       v[homeAway] = (v[homeAway] || 0) + 1;
     }
-    setTipp({ ...tipp, votes: v, selected: homeAway });
+    setTipp({ ...tipp, bets: v, selected: homeAway });
   }
 
   return (
     <div className="game">
       <button
         className="away"
-        disabled={new Date(game.date) < new Date() || !isAuthenticated}
-        style={styleByTeam(game.away, tipp.selected === "away")}
+        disabled={new Date(game.date) < new Date()}
+        style={styleByTeam(away, tipp.selected === "away")}
         onClick={() => select("away")}
       >
-        {game.away.logo && (
-          <img src={game.away.logo} className="logo" alt="logo home team"></img>
+        {away?.logo && (
+          <img
+            src={process.env.REACT_APP_IMG_URL + away.logo}
+            className="logo"
+            alt="logo away team"
+            onError={(event: any) => (event.target.style.display = "none")}
+          ></img>
         )}
         <span className={tipp.selected === "away" ? "selected" : ""}>
-          {innerWidth > 720 && game.away.name}
-          {innerWidth < 720 && innerWidth > 448 && game.away.shortName}
-          {innerWidth < 448 && game.away.abbreviation}
+          {innerWidth > 720 && game.awayTeam?.name}
+          {innerWidth < 720 && innerWidth > 448 && away?.shortName}
+          {innerWidth < 448 && away?.abbreviation}
         </span>
       </button>
-      <Scores game={game} selected={tipp.selected}></Scores>
+      <Scores
+        game={game}
+        selected={tipp.selected}
+        doubler={doubler}
+        setDoubler={setDoubler}
+      ></Scores>
       <button
         className="home"
-        disabled={new Date(game.date) < new Date() || !isAuthenticated}
-        style={styleByTeam(game.home, tipp.selected === "home")}
+        disabled={new Date(game.date) < new Date()}
+        style={styleByTeam(home, tipp.selected === "home")}
         onClick={() => select("home")}
       >
-        {game.home.logo && (
-          <img src={game.home.logo} className="logo" alt="logo home team"></img>
+        {home?.logo && (
+          <img
+            src={process.env.REACT_APP_IMG_URL + home.logo}
+            className="logo"
+            alt="logo home team"
+            onError={(event: any) => (event.target.style.display = "none")}
+          ></img>
         )}
         <span className={tipp.selected === "home" ? "selected" : ""}>
-          {innerWidth > 720 && game.home.name}
-          {innerWidth < 720 && innerWidth > 448 && game.home.shortName}
-          {innerWidth < 448 && game.home.abbreviation}
+          {innerWidth > 720 && game.homeTeam?.name}
+          {innerWidth < 720 && innerWidth > 448 && home?.shortName}
+          {innerWidth < 448 && home?.abbreviation}
         </span>
       </button>
       <input
         className="input"
         style={{ color: busy ? "#d73" : "#000" }}
         type="number"
-        disabled={
-          !tipp.selected || !isAuthenticated || new Date(game.date) < new Date()
-        }
+        disabled={!tipp.selected || new Date(game.date) < new Date()}
         value={tipp.points ?? ""}
         onChange={(ev) =>
           setTipp({
@@ -119,7 +130,9 @@ function MatchUp({ game }: Props) {
       {open && (
         <Stats
           game={game}
-          votes={tipp.votes}
+          home={home}
+          away={away}
+          bets={tipp.bets}
           isCompact={innerWidth < 720}
         ></Stats>
       )}
@@ -127,18 +140,22 @@ function MatchUp({ game }: Props) {
   );
 }
 
-function styleByTeam(team: Team, selected: boolean) {
+function styleByTeam(team: Team | undefined, selected: boolean) {
   return {
-    border: `2px solid #${selected ? team.color2 : team.color || "000000"}${
+    border: `2px solid #${selected ? team?.color2 : team?.color1 || "000000"}${
       selected ? "ff" : "55"
     }`,
-    backgroundColor: selected ? `#${team.color}aa` : "#fff",
+    backgroundColor: selected ? `#${team?.color1}aa` : "#fff",
     boxShadow: "none",
   };
 }
 
 interface Props {
   game: Game;
+  home?: Team;
+  away?: Team;
+  doubler: boolean;
+  setDoubler: Function;
 }
 
 export default MatchUp;

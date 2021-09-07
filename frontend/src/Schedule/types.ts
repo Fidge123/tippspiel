@@ -1,50 +1,55 @@
-export interface Tipps {
-  [gameId: string]: Tipp;
+export interface Bets {
+  [gameId: string]: Bet;
 }
 
-export interface Tipp {
-  votes: Votes;
+export interface Bet {
+  bets: Votes;
   selected?: "home" | "away";
   points?: number;
 }
 
-export interface APITipp {
-  game: string;
+export interface ApiBet {
+  gameID: string;
   winner?: "home" | "away";
   pointDiff?: number;
 }
 
 export interface Votes {
-  home?: number;
-  away?: number;
+  home: number;
+  away: number;
 }
 
 export interface Team {
+  id: string;
   name: string;
   shortName: string;
   abbreviation: string;
-  record: string;
-  color: string;
+  color1: string;
   color2: string;
   logo: string;
-  score: string;
+  wins: number;
+  losses: number;
+  ties: number;
 }
 
 export interface Game {
   id: string;
   date: string;
   status: string;
-  home: Team;
-  away: Team;
+  homeTeam: { id: string; name: string };
+  homeScore: number;
+  awayTeam: { id: string; name: string };
+  awayScore: number;
 }
 
 export interface IWeek {
-  id: number;
   seasontype: number;
+  week: number;
+  year: number;
   label: string;
-  teamsOnBye: string[];
-  startDate: string;
-  endDate: string;
+  teamsOnBye: { id: string; name: string; shortName: string }[];
+  start: string;
+  end: string;
   games: Game[];
 }
 
@@ -61,7 +66,9 @@ export interface IStats {
 
 export interface StatProps {
   game: Game;
-  votes: Votes;
+  home?: Team;
+  away?: Team;
+  bets: Votes;
   isCompact: boolean;
 }
 

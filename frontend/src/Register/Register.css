@@ -1,0 +1,17 @@
+.register,
+.register form,
+.register form div {
+  display: flex;
+  width: 250px;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.register form div * {
+  margin: 0.5rem;
+}
+
+.register button {
+  margin: 1rem;
+}

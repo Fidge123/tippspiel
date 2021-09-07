@@ -1,0 +1,48 @@
+.divisionParent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 24rem);
+  grid-gap: 0.5rem;
+  margin: 0.5rem;
+}
+
+.division,
+.divBet,
+.sbBet {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.divBet,
+.sbBet {
+  width: 22.5rem;
+}
+
+.sbButton,
+.divisionButton {
+  padding: 6px 0.5rem;
+  margin: 0 0 0.5rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  outline: none;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  height: 2.5rem;
+  font-weight: 600;
+}
+
+.logo {
+  height: 1.5rem;
+  width: 1.5rem;
+  float: left;
+}
+
+.selected {
+  color: #fafafa;
+}
+
+button.home:disabled,
+button.away:disabled {
+  opacity: 0.5;
+}

@@ -1,11 +1,10 @@
-import React from "react";
 import "./Scores.css";
 import { Game } from "./types";
 
-function Scores({ game, selected }: Props) {
+function Scores({ game, selected, doubler, setDoubler }: Props) {
   const final = game.status === "STATUS_FINAL";
-  const homeScore = parseInt(game.home.score, 10);
-  const awayScore = parseInt(game.away.score, 10);
+  const homeScore = game.homeScore;
+  const awayScore = game.awayScore;
   const homeWon = homeScore > awayScore;
   const awayWon = awayScore > homeScore;
 
@@ -23,12 +22,17 @@ function Scores({ game, selected }: Props) {
               color: awayWon && selected === "away" ? "#1b2" : "#212529",
             }}
           >
-            {game.away.score}
+            {game.awayScore}
           </span>
         )}
       </div>
       <div>
-        <span>@</span>
+        <button
+          disabled={new Date(game.date) < new Date()}
+          onClick={() => setDoubler(game.id)}
+        >
+          {doubler ? "🌟" : "@"}
+        </button>
       </div>
       <div>
         {final && (
@@ -38,7 +42,7 @@ function Scores({ game, selected }: Props) {
               color: homeWon && selected === "home" ? "#1b2" : "#212529",
             }}
           >
-            {game.home.score}
+            {game.homeScore}
           </span>
         )}
       </div>
@@ -49,6 +53,8 @@ function Scores({ game, selected }: Props) {
 interface Props {
   game: Game;
   selected?: "home" | "away";
+  doubler: boolean;
+  setDoubler: Function;
 }
 
 export default Scores;

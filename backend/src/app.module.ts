@@ -1,32 +1,70 @@
 import { env } from 'process';
 
 import { Module } from '@nestjs/common';
+import { ScheduleModule as SchedulerModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ScoreboardEntity } from './scoreboard/scoreboard.entity';
-import { Tipp } from './tipp/tipp.entity';
-import { User } from './user/user.entity';
-import { ScoreboardModule } from './scoreboard/scoreboard.module';
-import { TippModule } from './tipp/tipp.module';
+import {
+  BetEntity,
+  BetDoublerEntity,
+  ByeEntity,
+  DivisionEntity,
+  DivisionBetEntity,
+  GameEntity,
+  LeagueEntity,
+  ResetEntity,
+  SuperbowlBetEntity,
+  TeamEntity,
+  UserEntity,
+  VerifyEntity,
+  WeekEntity,
+} from './database/entity';
 import { AuthModule } from './auth/auth.module';
+import { BetModule } from './bet/bet.module';
+import { DatabaseModule } from './database/database.module';
+import { ScheduleModule } from './schedule/schedule.module';
 import { UserModule } from './user/user.module';
+
+const extra = env.DATABASE_URL.includes('localhost')
+  ? { ssl: false }
+  : {
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+          enabled: true,
+        },
+      },
+    };
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: env.DATABASE_URL,
-      entities: [ScoreboardEntity, Tipp, User],
+      entities: [
+        BetEntity,
+        BetDoublerEntity,
+        ByeEntity,
+        DivisionEntity,
+        DivisionBetEntity,
+        GameEntity,
+        LeagueEntity,
+        ResetEntity,
+        SuperbowlBetEntity,
+        TeamEntity,
+        UserEntity,
+        VerifyEntity,
+        WeekEntity,
+      ],
       synchronize: true,
-      ssl: !env.DATABASE_URL.includes('localhost'),
-      extra: {
-        ssl: { rejectUnauthorized: false },
-      },
+      ...extra,
     }),
-    ScoreboardModule,
-    TippModule,
+    SchedulerModule.forRoot(),
+    DatabaseModule,
+    BetModule,
     UserModule,
     AuthModule,
+    ScheduleModule,
   ],
   controllers: [],
   providers: [],
