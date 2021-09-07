@@ -26,8 +26,8 @@ export class ScheduleService {
   }
 
   private async init(): Promise<void> {
-    // await this.importMasterData();
-    // await this.importSchedule();
+    await this.importMasterData();
+    await this.importSchedule();
   }
 
   @Cron('0 0 * * TUE')
