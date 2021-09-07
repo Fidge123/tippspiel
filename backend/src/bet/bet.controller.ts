@@ -13,6 +13,7 @@ import {
 import { CreateBetDto } from './bet.dto';
 import { CreateDivisionBetDto } from './division.dto';
 import { CreateDoublerDto } from './doubler.dto';
+import { CreateSBBetDto } from './superbowl.dto';
 
 @Controller('bet')
 export class BetController {
@@ -56,8 +57,13 @@ export class BetController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('division')
-  async getDivisionBets(@CurrentUser() user: User): Promise<any> {
-    return (await this.databaseService.findDivisionBets(user.id)).reduce(
+  async getDivisionBets(
+    @Query('season') season: string,
+    @CurrentUser() user: User,
+  ): Promise<any> {
+    return (
+      await this.databaseService.findDivisionBets(parseInt(season, 10), user.id)
+    ).reduce(
       (result, bet) => ({ ...result, [bet.division.name]: bet.team.id }),
       {},
     );
@@ -74,23 +80,36 @@ export class BetController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('superbowl')
-  async getSbBets(@CurrentUser() user: User): Promise<any> {
-    return await this.databaseService.findSbBets(user.id);
+  async getSbBets(
+    @Query('season') season: string,
+    @CurrentUser() user: User,
+  ): Promise<any> {
+    return await this.databaseService.findSbBets(parseInt(season, 10), user.id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('superbowl')
   async setSbBet(
-    @Body() createBet: any,
+    @Body() createBet: CreateSBBetDto,
     @CurrentUser() user: User,
   ): Promise<SuperbowlBetEntity> {
-    return this.databaseService.setSbBet(createBet.teamId, user.id);
+    return this.databaseService.setSbBet(
+      createBet.teamId,
+      createBet.year,
+      user.id,
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('doubler')
-  async getBetDoublers(@CurrentUser() user: User): Promise<any> {
-    return await this.databaseService.findBetDoublers(user.id);
+  async getBetDoublers(
+    @Query('season') season: string,
+    @CurrentUser() user: User,
+  ): Promise<any> {
+    return await this.databaseService.findBetDoublers(
+      parseInt(season, 10),
+      user.id,
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -101,7 +120,7 @@ export class BetController {
   ): Promise<BetDoublerEntity> {
     return this.databaseService.setBetDoubler(
       createBet.gameID,
-      createBet.weekID,
+      createBet.week,
       user.id,
     );
   }

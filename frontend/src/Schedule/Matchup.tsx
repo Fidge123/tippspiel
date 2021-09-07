@@ -7,7 +7,7 @@ import Scores from "./Scores";
 import Stats from "./Stats";
 import { Team, Game, ApiBet } from "./types";
 
-function MatchUp({ game, home, away }: Props) {
+function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
   const [token] = useToken();
 
   const [tipp, setTipp] = useTipps(game.id, handleTipp);
@@ -79,7 +79,12 @@ function MatchUp({ game, home, away }: Props) {
           {innerWidth < 448 && away?.abbreviation}
         </span>
       </button>
-      <Scores game={game} selected={tipp.selected}></Scores>
+      <Scores
+        game={game}
+        selected={tipp.selected}
+        doubler={doubler}
+        setDoubler={setDoubler}
+      ></Scores>
       <button
         className="home"
         disabled={new Date(game.date) < new Date()}
@@ -149,6 +154,8 @@ interface Props {
   game: Game;
   home?: Team;
   away?: Team;
+  doubler: boolean;
+  setDoubler: Function;
 }
 
 export default MatchUp;

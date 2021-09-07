@@ -1,7 +1,7 @@
 import "./Scores.css";
 import { Game } from "./types";
 
-function Scores({ game, selected }: Props) {
+function Scores({ game, selected, doubler, setDoubler }: Props) {
   const final = game.status === "STATUS_FINAL";
   const homeScore = game.homeScore;
   const awayScore = game.awayScore;
@@ -27,7 +27,12 @@ function Scores({ game, selected }: Props) {
         )}
       </div>
       <div>
-        <span>@</span>
+        <button
+          disabled={new Date(game.date) < new Date()}
+          onClick={() => setDoubler(game.id)}
+        >
+          {doubler ? "🌟" : "@"}
+        </button>
       </div>
       <div>
         {final && (
@@ -48,6 +53,8 @@ function Scores({ game, selected }: Props) {
 interface Props {
   game: Game;
   selected?: "home" | "away";
+  doubler: boolean;
+  setDoubler: Function;
 }
 
 export default Scores;

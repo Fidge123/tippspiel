@@ -43,12 +43,13 @@ export interface Game {
 }
 
 export interface IWeek {
-  id: number;
   seasontype: number;
+  week: number;
+  year: number;
   label: string;
-  teamsOnBye: string[];
-  startDate: string;
-  endDate: string;
+  teamsOnBye: { id: string; name: string; shortName: string }[];
+  start: string;
+  end: string;
   games: Game[];
 }
 

@@ -29,7 +29,7 @@ function Division() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "bet/division", {
+      const response = await fetch(BASE_URL + "bet/division?season=2021", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -42,7 +42,7 @@ function Division() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "bet/superbowl", {
+      const response = await fetch(BASE_URL + "bet/superbowl?season=2021", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,7 +60,7 @@ function Division() {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ division, team }),
+      body: JSON.stringify({ division, team, year: 2021 }),
     });
   }
 
@@ -72,7 +72,7 @@ function Division() {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ teamId }),
+      body: JSON.stringify({ teamId, year: 2021 }),
     });
   }
 

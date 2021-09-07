@@ -20,17 +20,44 @@ export class ScheduleDataService {
     private weekRepo: Repository<WeekEntity>,
   ) {}
 
+  async getByes(year: number): Promise<WeekEntity[]> {
+    return this.weekRepo
+      .createQueryBuilder('week')
+      .leftJoinAndSelect('week.byes', 'bye')
+      .leftJoin('bye.team', 'team')
+      .addSelect(['team.id', 'team.name', 'team.shortName'])
+      .where('week.year = :year', { year })
+      .orderBy('week.seasontype', 'ASC')
+      .addOrderBy('week.week', 'ASC')
+      .getMany();
+  }
+
+  async getByesForWeek(
+    year: number,
+    seasontype: number,
+    week: number,
+  ): Promise<WeekEntity> {
+    return this.weekRepo
+      .createQueryBuilder('week')
+      .leftJoinAndSelect('week.byes', 'bye')
+      .leftJoin('bye.team', 'team')
+      .addSelect(['team.id', 'team.name', 'team.shortName'])
+      .where('week.year = :year', { year })
+      .andWhere('week.seasontype = :seasontype', { seasontype })
+      .andWhere('week.week = :week', { week })
+      .orderBy('week.seasontype', 'ASC')
+      .addOrderBy('week.week', 'ASC')
+      .getOne();
+  }
+
   async getSchedule(year: number): Promise<WeekEntity[]> {
     return this.weekRepo
       .createQueryBuilder('week')
-      .leftJoin('week.byes', 'bye')
       .leftJoinAndSelect('week.games', 'game')
       .leftJoin('game.homeTeam', 'home')
       .addSelect(['home.id', 'home.name'])
       .leftJoin('game.awayTeam', 'away')
       .addSelect(['away.id', 'away.name'])
-      .leftJoinAndSelect('bye.team', 'team')
-      .addSelect(['team.id', 'team.name'])
       .where('week.year = :year', { year })
       .orderBy('week.seasontype', 'ASC')
       .addOrderBy('week.week', 'ASC')
@@ -42,13 +69,12 @@ export class ScheduleDataService {
     year: number,
     seasontype: number,
     week: number,
-  ): Promise<WeekEntity[]> {
+  ): Promise<WeekEntity> {
     return this.weekRepo
       .createQueryBuilder('week')
       .where('week.year = :year', { year })
       .andWhere('week.seasontype = :seasontype', { seasontype })
       .andWhere('week.week = :week', { week })
-      .leftJoin('week.byes', 'bye')
       .leftJoinAndSelect('week.games', 'game')
       .leftJoin('game.homeTeam', 'home')
       .addSelect(['home.id', 'home.name'])
@@ -59,7 +85,7 @@ export class ScheduleDataService {
       .orderBy('week.seasontype', 'ASC')
       .addOrderBy('week.week', 'ASC')
       .addOrderBy('game.date', 'ASC')
-      .getMany();
+      .getOne();
   }
 
   async getDivisions(): Promise<DivisionEntity[]> {

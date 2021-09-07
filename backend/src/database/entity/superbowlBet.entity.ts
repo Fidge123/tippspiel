@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Column,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { LeagueEntity } from './league.entity';
@@ -19,6 +20,9 @@ export class SuperbowlBetEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.superbowlBets)
   user: UserEntity;
+
+  @Column()
+  year: number;
 
   @ManyToOne(() => LeagueEntity, (league) => league.superbowlBets)
   league: LeagueEntity;

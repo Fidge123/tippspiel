@@ -1,20 +1,62 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Week.css";
+import { BASE_URL } from "../api";
+import { useToken } from "../useToken";
 
 import MatchUp from "./Matchup";
 import { Game, IWeek, Team } from "./types";
 
 function Week({ week, teams }: Props) {
+  const [token] = useToken();
   const ref = useRef<HTMLElement>(null);
+  const [doubler, setDoubler] = useState<string>();
+  const loaded = useRef(false);
 
   useEffect(() => {
-    if (
-      new Date(week.startDate) < new Date() &&
-      new Date() < new Date(week.endDate)
-    ) {
+    (async () => {
+      const response = await fetch(BASE_URL + "bet/doubler?season=2021", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const res: any = await response.json();
+      setDoubler(
+        res.find(
+          ({ week: w }: any) =>
+            w.week === week.week &&
+            w.seasontype === week.seasontype &&
+            w.year === week.year
+        )?.game.id
+      );
+      setTimeout(() => (loaded.current = true));
+    })();
+  }, [token, week]);
+
+  useEffect(() => {
+    if (token && doubler && week && loaded.current) {
+      fetch(BASE_URL + "bet/doubler", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameID: doubler,
+          week: {
+            week: week.week,
+            year: week.year,
+            seasontype: week.seasontype,
+          },
+        }),
+      });
+    }
+  }, [token, doubler, week]);
+
+  useEffect(() => {
+    if (new Date(week.start) < new Date() && new Date() < new Date(week.end)) {
       ref.current?.scrollIntoView();
     }
-  }, [week.endDate, week.startDate]);
+  }, [week.end, week.start]);
 
   return (
     <article className="week" key={week.label} ref={ref}>
@@ -22,7 +64,9 @@ function Week({ week, teams }: Props) {
         <span className="label">{week.label}</span>
       </div>
       {week.teamsOnBye?.length > 0 && (
-        <div className="bye">Bye: {week.teamsOnBye.join(", ")}</div>
+        <div className="bye">
+          Bye: {week.teamsOnBye.map((t) => t.shortName).join(", ")}
+        </div>
       )}
       {splitByDate(week.games).map((time) => (
         <div key={time[0].date}>
@@ -33,6 +77,8 @@ function Week({ week, teams }: Props) {
                 <MatchUp
                   key={idx}
                   game={g}
+                  doubler={doubler === g.id}
+                  setDoubler={setDoubler}
                   home={teams.find((t) => t.id === g.homeTeam?.id)}
                   away={teams.find((t) => t.id === g.awayTeam?.id)}
                 ></MatchUp>

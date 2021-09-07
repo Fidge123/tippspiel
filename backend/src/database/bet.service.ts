@@ -157,9 +157,12 @@ export class BetDataService {
     );
   }
 
-  async findDivisionBets(user: string): Promise<DivisionBetEntity[]> {
+  async findDivisionBets(
+    year: number,
+    user: string,
+  ): Promise<DivisionBetEntity[]> {
     return this.divBetRepo.find({
-      where: { user },
+      where: { user, year },
       join: {
         alias: 'bet',
         leftJoinAndSelect: { team: 'bet.team', division: 'bet.division' },
@@ -167,9 +170,9 @@ export class BetDataService {
     });
   }
 
-  async findSbBets(user: string): Promise<SuperbowlBetEntity> {
+  async findSbBets(year: number, user: string): Promise<SuperbowlBetEntity> {
     return this.sbBetRepo.findOne({
-      where: { user },
+      where: { user, year },
       join: {
         alias: 'bet',
         leftJoinAndSelect: { team: 'bet.team' },
@@ -177,7 +180,10 @@ export class BetDataService {
     });
   }
 
-  async findBetDoublers(user: string): Promise<BetDoublerEntity[]> {
+  async findBetDoublers(
+    year: number,
+    user: string,
+  ): Promise<BetDoublerEntity[]> {
     return this.doublerRepo.find({
       where: { user },
       join: {
@@ -188,7 +194,7 @@ export class BetDataService {
   }
 
   async setDivisionBet(
-    { division: div, team: t }: CreateDivisionBetDto,
+    { division: div, team: t, year }: CreateDivisionBetDto,
     userId: string,
   ): Promise<DivisionBetEntity> {
     const [user, division, team] = await Promise.all([
@@ -203,12 +209,17 @@ export class BetDataService {
         new DivisionBetEntity();
       bet.user = user;
       bet.team = team;
+      bet.year = year;
       bet.division = division;
       return this.divBetRepo.save(bet);
     }
   }
 
-  async setSbBet(teamId: string, userId: string): Promise<SuperbowlBetEntity> {
+  async setSbBet(
+    teamId: string,
+    year: number,
+    userId: string,
+  ): Promise<SuperbowlBetEntity> {
     const [user, team] = await Promise.all([
       this.userRepo.findOneOrFail(userId),
       this.teamRepo.findOneOrFail(teamId),
@@ -218,6 +229,7 @@ export class BetDataService {
       const bet =
         (await this.sbBetRepo.findOne({ user })) || new SuperbowlBetEntity();
       bet.user = user;
+      bet.year = year;
       bet.team = team;
       return this.sbBetRepo.save(bet);
     }
@@ -225,7 +237,7 @@ export class BetDataService {
 
   async setBetDoubler(
     gameId: string,
-    weekId: string,
+    weekId: { week: number; seasontype: number; year: number },
     userId: string,
   ): Promise<BetDoublerEntity> {
     const [user, game, week] = await Promise.all([
