@@ -8,7 +8,7 @@ export async function getTransporter() {
 
 async function createTransport() {
   try {
-    nodemailer.createTransport({
+    return nodemailer.createTransport({
       host: 'localhost',
       port: 25,
       tls: { servername: '6v4.de' },
