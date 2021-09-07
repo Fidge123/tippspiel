@@ -12,6 +12,9 @@ import {
   GameEntity,
   TeamEntity,
   UserEntity,
+  SuperbowlBetEntity,
+  BetDoublerEntity,
+  WeekEntity,
 } from './entity';
 
 @Injectable()
@@ -19,16 +22,22 @@ export class BetDataService {
   constructor(
     @InjectRepository(BetEntity)
     private betRepo: Repository<BetEntity>,
+    @InjectRepository(BetDoublerEntity)
+    private doublerRepo: Repository<BetDoublerEntity>,
     @InjectRepository(DivisionEntity)
     private divisionRepo: Repository<DivisionEntity>,
     @InjectRepository(DivisionBetEntity)
     private divBetRepo: Repository<DivisionBetEntity>,
+    @InjectRepository(SuperbowlBetEntity)
+    private sbBetRepo: Repository<SuperbowlBetEntity>,
     @InjectRepository(GameEntity)
     private gameRepo: Repository<GameEntity>,
     @InjectRepository(TeamEntity)
     private teamRepo: Repository<TeamEntity>,
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
+    @InjectRepository(WeekEntity)
+    private weekRepo: Repository<WeekEntity>,
   ) {}
 
   async findAll(): Promise<BetEntity[]> {
@@ -158,34 +167,81 @@ export class BetDataService {
     });
   }
 
+  async findSbBets(user: string): Promise<SuperbowlBetEntity> {
+    return this.sbBetRepo.findOne({
+      where: { user },
+      join: {
+        alias: 'bet',
+        leftJoinAndSelect: { team: 'bet.team' },
+      },
+    });
+  }
+
+  async findBetDoublers(user: string): Promise<BetDoublerEntity[]> {
+    return this.doublerRepo.find({
+      where: { user },
+      join: {
+        alias: 'bet',
+        leftJoinAndSelect: { game: 'bet.game', week: 'bet.week' },
+      },
+    });
+  }
+
   async setDivisionBet(
     { division: div, team: t }: CreateDivisionBetDto,
     userId: string,
   ): Promise<DivisionBetEntity> {
-    console.log(div, t, userId);
-
     const [user, division, team] = await Promise.all([
       this.userRepo.findOneOrFail(userId),
       this.divisionRepo.findOneOrFail({ where: { name: div } }),
       this.teamRepo.findOneOrFail(t),
     ]);
 
-    console.log('Create Tipp', user.name, division.name, team.name);
-
-    const firstGame = await this.gameRepo.findOneOrFail({
-      order: { date: 'ASC' },
-    });
-
-    console.log(firstGame.date);
-
-    if (new Date() < firstGame.date && user) {
-      const divBet =
+    if (new Date() < new Date(2021, 8, 19, 19) && user) {
+      const bet =
         (await this.divBetRepo.findOne({ division, user })) ||
         new DivisionBetEntity();
-      divBet.user = user;
-      divBet.team = team;
-      divBet.division = division;
-      return this.divBetRepo.save(divBet);
+      bet.user = user;
+      bet.team = team;
+      bet.division = division;
+      return this.divBetRepo.save(bet);
+    }
+  }
+
+  async setSbBet(teamId: string, userId: string): Promise<SuperbowlBetEntity> {
+    const [user, team] = await Promise.all([
+      this.userRepo.findOneOrFail(userId),
+      this.teamRepo.findOneOrFail(teamId),
+    ]);
+
+    if (new Date() < new Date(2021, 8, 19, 19) && user) {
+      const bet =
+        (await this.sbBetRepo.findOne({ user })) || new SuperbowlBetEntity();
+      bet.user = user;
+      bet.team = team;
+      return this.sbBetRepo.save(bet);
+    }
+  }
+
+  async setBetDoubler(
+    gameId: string,
+    weekId: string,
+    userId: string,
+  ): Promise<BetDoublerEntity> {
+    const [user, game, week] = await Promise.all([
+      this.userRepo.findOneOrFail(userId),
+      this.gameRepo.findOneOrFail(gameId),
+      this.weekRepo.findOneOrFail(weekId),
+    ]);
+
+    if (new Date() < game.date && user) {
+      const bet =
+        (await this.doublerRepo.findOne({ user, week })) ||
+        new BetDoublerEntity();
+      bet.user = user;
+      bet.game = game;
+      bet.week = week;
+      return this.doublerRepo.save(bet);
     }
   }
 

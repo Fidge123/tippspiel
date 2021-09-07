@@ -1,14 +1,24 @@
-.division {
-  display: flex;
-  flex-direction: column;
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .divisionParent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 24rem);
+  grid-gap: 0.5rem;
   margin: 0.5rem;
 }
 
+.division,
+.divBet,
+.sbBet {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.divBet,
+.sbBet {
+  width: 22.5rem;
+}
+
+.sbButton,
 .divisionButton {
   padding: 6px 0.5rem;
   margin: 0 0 0.5rem 0;

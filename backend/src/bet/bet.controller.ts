@@ -4,9 +4,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, User } from '../user.decorator';
 
 import { BetDataService } from '../database/bet.service';
-import { BetEntity, DivisionBetEntity } from '../database/entity';
+import {
+  BetDoublerEntity,
+  BetEntity,
+  DivisionBetEntity,
+  SuperbowlBetEntity,
+} from '../database/entity';
 import { CreateBetDto } from './bet.dto';
 import { CreateDivisionBetDto } from './division.dto';
+import { CreateDoublerDto } from './doubler.dto';
 
 @Controller('bet')
 export class BetController {
@@ -42,10 +48,10 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async setBet(
-    @Body() createTipp: CreateBetDto,
+    @Body() createBet: CreateBetDto,
     @CurrentUser() user: User,
   ): Promise<BetEntity> {
-    return this.databaseService.update(createTipp, user.id);
+    return this.databaseService.update(createBet, user.id);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -60,9 +66,43 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Post('division')
   async setDivisionBet(
-    @Body() createTipp: CreateDivisionBetDto,
+    @Body() createBet: CreateDivisionBetDto,
     @CurrentUser() user: User,
   ): Promise<DivisionBetEntity> {
-    return this.databaseService.setDivisionBet(createTipp, user.id);
+    return this.databaseService.setDivisionBet(createBet, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('superbowl')
+  async getSbBets(@CurrentUser() user: User): Promise<any> {
+    return await this.databaseService.findSbBets(user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('superbowl')
+  async setSbBet(
+    @Body() createBet: any,
+    @CurrentUser() user: User,
+  ): Promise<SuperbowlBetEntity> {
+    return this.databaseService.setSbBet(createBet.teamId, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('doubler')
+  async getBetDoublers(@CurrentUser() user: User): Promise<any> {
+    return await this.databaseService.findBetDoublers(user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('doubler')
+  async setBetDoublers(
+    @Body() createBet: CreateDoublerDto,
+    @CurrentUser() user: User,
+  ): Promise<BetDoublerEntity> {
+    return this.databaseService.setBetDoubler(
+      createBet.gameID,
+      createBet.weekID,
+      user.id,
+    );
   }
 }
