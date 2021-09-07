@@ -57,13 +57,20 @@ export class UserDataService {
   ): Promise<[string, string]> {
     const salt = randomBytes(128);
 
+    if (!consent) {
+      throw new HttpException(
+        'User needs to consent to terms and conditions',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     try {
       const user = new UserEntity();
       user.email = email;
       user.name = name;
       user.salt = salt.toString('hex');
       user.settings = {};
-      user.consentedAt = consent ? new Date() : null;
+      user.consentedAt = new Date();
       user.password = await hash(password, salt);
 
       const token = new VerifyEntity();

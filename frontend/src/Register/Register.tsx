@@ -8,7 +8,7 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [consent, setConsent] = useState(false);
-  const [consent] = useState(false);
+  const [consent] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [credentials, setCredentials] = useState<any>();
