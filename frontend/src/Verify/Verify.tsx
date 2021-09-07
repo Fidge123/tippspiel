@@ -17,10 +17,8 @@ function Verify() {
     (async () => {
       const id = query.get("id");
       const token = query.get("token");
-      setError("");
-      setSuccess("");
 
-      if (id && token) {
+      if (id && token && !error && !success) {
         try {
           const res = await fetch(BASE_URL + "user/verify", {
             method: "POST",

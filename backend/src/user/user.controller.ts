@@ -70,6 +70,7 @@ Viel Glück für die Tippsaison!
     @Body('token') token: string,
   ): Promise<void> {
     const transporter = await getTransporter();
+    await this.databaseService.verify(id, token);
     await transporter
       .sendMail({
         from: 'tippspiel@6v4.de',
@@ -78,7 +79,6 @@ Viel Glück für die Tippsaison!
         text: `Ein Nutzer hat sich verifiziert.`,
       })
       .catch((error) => console.error(error));
-    await this.databaseService.verify(id, token);
   }
 
   @UseGuards(ThrottlerGuard)
