@@ -11,6 +11,7 @@ import { GameEntity } from './game.entity';
 import { ByeEntity } from './bye.entity';
 import { DivisionEntity } from './division.entity';
 import { DivisionBetEntity } from './divisionBet.entity';
+import { SuperbowlBetEntity } from './superbowlBet.entity';
 
 @Entity({ name: 'team' })
 export class TeamEntity {
@@ -49,6 +50,9 @@ export class TeamEntity {
 
   @OneToMany(() => DivisionBetEntity, (bet) => bet.team)
   divisionBets: DivisionBetEntity[];
+
+  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.team)
+  superbowlBets: SuperbowlBetEntity[];
 
   @OneToMany(() => GameEntity, (game) => game.homeTeam)
   homeGames: GameEntity[];

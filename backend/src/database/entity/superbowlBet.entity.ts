@@ -8,23 +8,19 @@ import {
 import { TeamEntity } from './team.entity';
 import { LeagueEntity } from './league.entity';
 import { UserEntity } from './user.entity';
-import { DivisionEntity } from './division.entity';
 
-@Entity('divisionBet')
-export class DivisionBetEntity {
+@Entity('superbowlBet')
+export class SuperbowlBetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => DivisionEntity, (division) => division.bets)
-  division: DivisionEntity;
-
-  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  @ManyToOne(() => TeamEntity, (team) => team.superbowlBets)
   team: TeamEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.divisionBets)
+  @ManyToOne(() => UserEntity, (user) => user.superbowlBets)
   user: UserEntity;
 
-  @ManyToOne(() => LeagueEntity, (league) => league.divisionBets)
+  @ManyToOne(() => LeagueEntity, (league) => league.superbowlBets)
   league: LeagueEntity;
 
   @CreateDateColumn({ select: false })

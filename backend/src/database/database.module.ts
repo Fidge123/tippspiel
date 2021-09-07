@@ -2,12 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   BetEntity,
+  BetDoublerEntity,
   ByeEntity,
   DivisionEntity,
   DivisionBetEntity,
   GameEntity,
   LeagueEntity,
   ResetEntity,
+  SuperbowlBetEntity,
   TeamEntity,
   UserEntity,
   VerifyEntity,
@@ -21,12 +23,14 @@ import { UserDataService } from './user.service';
   imports: [
     TypeOrmModule.forFeature([
       BetEntity,
+      BetDoublerEntity,
       ByeEntity,
       DivisionEntity,
       DivisionBetEntity,
       GameEntity,
       LeagueEntity,
       ResetEntity,
+      SuperbowlBetEntity,
       TeamEntity,
       UserEntity,
       VerifyEntity,

@@ -19,9 +19,9 @@ export class DivisionEntity {
   @OneToMany(() => DivisionBetEntity, (bet) => bet.division)
   bets: DivisionBetEntity[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ select: false })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   updatedAt: Date;
 }

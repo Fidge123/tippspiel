@@ -8,8 +8,11 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { BetEntity } from './bet.entity';
+import { BetDoublerEntity } from './betDoubler.entity';
+import { DivisionBetEntity } from './divisionBet.entity';
 import { LeagueEntity } from './league.entity';
 import { ResetEntity } from './reset.entity';
+import { SuperbowlBetEntity } from './superbowlBet.entity';
 import { VerifyEntity } from './verify.entity';
 
 @Entity('user')
@@ -40,6 +43,15 @@ export class UserEntity {
 
   @OneToMany(() => BetEntity, (bet) => bet.user)
   bets: BetEntity[];
+
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.user)
+  divisionBets: DivisionBetEntity[];
+
+  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.user)
+  superbowlBets: SuperbowlBetEntity[];
+
+  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.user)
+  doubler: BetDoublerEntity[];
 
   @OneToMany(() => ResetEntity, (reset) => reset.user)
   resetTokens: ResetEntity[];

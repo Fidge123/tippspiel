@@ -8,6 +8,9 @@ import {
   JoinTable,
 } from 'typeorm';
 import { BetEntity } from './bet.entity';
+import { BetDoublerEntity } from './betDoubler.entity';
+import { DivisionBetEntity } from './divisionBet.entity';
+import { SuperbowlBetEntity } from './superbowlBet.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('league')
@@ -25,6 +28,15 @@ export class LeagueEntity {
 
   @OneToMany(() => BetEntity, (bet) => bet.league)
   bets: BetEntity[];
+
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.league)
+  divisionBets: DivisionBetEntity[];
+
+  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.league)
+  superbowlBets: SuperbowlBetEntity[];
+
+  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.league)
+  doubler: BetDoublerEntity[];
 
   @CreateDateColumn({ select: false })
   createdAt: Date;

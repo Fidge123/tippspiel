@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { BetDoublerEntity } from './betDoubler.entity';
 import { ByeEntity } from './bye.entity';
 import { GameEntity } from './game.entity';
 
@@ -34,6 +35,9 @@ export class WeekEntity {
 
   @OneToMany(() => ByeEntity, (bye) => bye.week)
   byes: ByeEntity[];
+
+  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.week)
+  doubler: BetDoublerEntity[];
 
   @CreateDateColumn({ select: false })
   createdAt: Date;
