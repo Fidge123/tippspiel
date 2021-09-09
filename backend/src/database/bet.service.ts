@@ -65,28 +65,26 @@ export class BetDataService {
     const thirtyHours = 30 * 60 * 60 * 1000;
     const soon = new Date(now.getTime() + thirtyHours);
     const status = 'STATUS_SCHEDULED';
-    const bets = this.betRepo
-      .createQueryBuilder('bet')
-      .select('bet.id')
-      .where('bet.user = :user');
-    return this.gameRepo
+    const bets = await this.betRepo
+      .createQueryBuilder('bets')
+      .leftJoin('bets.game', 'game')
+      .select(['bets.id', 'game.id'])
+      .where('bets.user = :user')
+      .andWhere('game.date > :now')
+      .andWhere('game.date <= :soon')
+      .setParameters({ now, soon, status, user })
+      .getMany();
+    const games = await this.gameRepo
       .createQueryBuilder('game')
       .leftJoin('game.homeTeam', 'home')
       .leftJoin('game.awayTeam', 'away')
-      .leftJoin('game.bets', 'bets')
-      .select(['game.date', 'home.name', 'away.name'])
+      .select(['game.id', 'game.date', 'home.name', 'away.name'])
       .where('game.date > :now')
       .andWhere('game.status = :status')
       .andWhere('game.date <= :soon')
-      .andWhere(
-        new Brackets((qb) =>
-          qb
-            .where(`bets.id NOT IN (${bets.getQuery()})`)
-            .orWhere('bets.id IS NULL'),
-        ),
-      )
-      .setParameters({ now, soon, status, user })
+      .setParameters({ now, soon, status })
       .getMany();
+    return games.filter((game) => !bets.some((bet) => bet.game.id === game.id));
   }
 
   async findBetsForStartedGames(year: number): Promise<GameEntity[]> {

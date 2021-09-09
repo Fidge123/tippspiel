@@ -9,7 +9,7 @@ export class BetService {
   constructor(private readonly databaseService: BetDataService) {}
 
   @Cron('0 9,19 * * *')
-  async importTeams(): Promise<void> {
+  async betReminder(): Promise<void> {
     const users = await this.databaseService.findAllUsers();
     for (const user of users) {
       const games = await this.databaseService.findGamesWithoutBets(user.id);
