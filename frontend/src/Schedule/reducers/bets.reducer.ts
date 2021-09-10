@@ -4,12 +4,12 @@ import { Bets, Bet, Action, ApiBet } from "../types";
 export const TippDispatch = createContext<any>(null);
 export const TippValues = createContext<any>(null);
 
-export const initialTipps: Bets = {};
+export const initialBets: Bets = {};
 
-export function tippsReducer(state: Bets, action: Action): Bets {
+export function betsReducer(state: Bets, action: Action): Bets {
   switch (action.type) {
     case "update":
-      return { ...state, [action.payload.gameID]: action.payload.tipp };
+      return { ...state, [action.payload.gameID]: action.payload.bet };
     case "init":
       return { ...action.payload };
     default:
@@ -17,22 +17,22 @@ export function tippsReducer(state: Bets, action: Action): Bets {
   }
 }
 
-export function useTipps(
+export function useBets(
   gameID: string,
   cb: (payload: ApiBet) => void
-): [Bet, (tipp: Bet) => void] {
-  const tipps = useContext(TippValues);
+): [Bet, (bet: Bet) => void] {
+  const bets = useContext(TippValues);
   const dispatch = useContext(TippDispatch);
 
   return [
-    tipps[gameID] || { bets: { home: 0, away: 0 } },
-    (tipp: Bet) => {
+    bets[gameID] || { bets: { home: 0, away: 0 } },
+    (bet: Bet) => {
       cb({
         gameID,
-        winner: tipp.selected,
-        pointDiff: tipp.points,
+        winner: bet.selected,
+        pointDiff: bet.points,
       });
-      dispatch({ type: "update", payload: { gameID, tipp } });
+      dispatch({ type: "update", payload: { gameID, bet: bet } });
     },
   ];
 }

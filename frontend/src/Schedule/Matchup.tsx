@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
 import "./Matchup.css";
-import { useTipps } from "./reducers/bets.reducer";
+import { useBets } from "./reducers/bets.reducer";
 import Scores from "./Scores";
 import Stats from "./Stats";
 import { Team, Game, ApiBet } from "./types";
@@ -10,7 +10,7 @@ import { Team, Game, ApiBet } from "./types";
 function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
   const [token] = useToken();
 
-  const [tipp, setTipp] = useTipps(game.id, handleTipp);
+  const [bet, setBet] = useBets(game.id, handleTipp);
   const [timeoutID, setTimeoutID] = useState<any>();
   const [busy, setBusy] = useState(false);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
@@ -47,14 +47,14 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
   }
 
   function select(homeAway: "home" | "away") {
-    const v = { ...tipp.bets };
-    if (tipp.selected && tipp.selected !== homeAway) {
-      v[tipp.selected] = (v[tipp.selected] || 0) - 1;
+    const v = { ...bet.bets };
+    if (bet.selected && bet.selected !== homeAway) {
+      v[bet.selected] = (v[bet.selected] || 0) - 1;
     }
-    if (tipp.selected !== homeAway) {
+    if (bet.selected !== homeAway) {
       v[homeAway] = (v[homeAway] || 0) + 1;
     }
-    setTipp({ ...tipp, bets: v, selected: homeAway });
+    setBet({ ...bet, bets: v, selected: homeAway });
   }
 
   return (
@@ -62,7 +62,7 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
       <button
         className="away"
         disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(away, tipp.selected === "away")}
+        style={styleByTeam(away, bet.selected === "away")}
         onClick={() => select("away")}
       >
         {away?.logo && (
@@ -73,7 +73,7 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
             onError={(event: any) => (event.target.style.display = "none")}
           ></img>
         )}
-        <span className={tipp.selected === "away" ? "selected" : ""}>
+        <span className={bet.selected === "away" ? "selected" : ""}>
           {innerWidth > 720 && game.awayTeam?.name}
           {innerWidth < 720 && innerWidth > 448 && away?.shortName}
           {innerWidth < 448 && away?.abbreviation}
@@ -81,14 +81,14 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
       </button>
       <Scores
         game={game}
-        selected={tipp.selected}
+        selected={bet.selected}
         doubler={doubler}
         setDoubler={setDoubler}
       ></Scores>
       <button
         className="home"
         disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(home, tipp.selected === "home")}
+        style={styleByTeam(home, bet.selected === "home")}
         onClick={() => select("home")}
       >
         {home?.logo && (
@@ -99,7 +99,7 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
             onError={(event: any) => (event.target.style.display = "none")}
           ></img>
         )}
-        <span className={tipp.selected === "home" ? "selected" : ""}>
+        <span className={bet.selected === "home" ? "selected" : ""}>
           {innerWidth > 720 && game.homeTeam?.name}
           {innerWidth < 720 && innerWidth > 448 && home?.shortName}
           {innerWidth < 448 && home?.abbreviation}
@@ -109,11 +109,11 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
         className="input"
         style={{ color: busy ? "#d73" : "#000" }}
         type="number"
-        disabled={!tipp.selected || new Date(game.date) < new Date()}
-        value={tipp.points ?? ""}
+        disabled={!bet.selected || new Date(game.date) < new Date()}
+        value={bet.points ?? ""}
         onChange={(ev) =>
-          setTipp({
-            ...tipp,
+          setBet({
+            ...bet,
             points: isNaN(parseInt(ev.target.value, 10))
               ? undefined
               : parseInt(ev.target.value, 10),
@@ -132,7 +132,7 @@ function MatchUp({ game, home, away, doubler, setDoubler }: Props) {
           game={game}
           home={home}
           away={away}
-          bets={tipp.bets}
+          bets={bet.bets}
           isCompact={innerWidth < 720}
         ></Stats>
       )}

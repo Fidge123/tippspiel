@@ -13,35 +13,35 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
     const homeWon = homeScore > awayScore;
     const awayWon = awayScore > homeScore;
 
-    const awayVotes = Object.entries(stats)
-      .filter(([key, value]) => value.winner === "away")
-      .sort(([ak, av], [bk, bv]) =>
+    const awayVotes = stats
+      .filter((value) => value.winner === "away")
+      .sort((a, b) =>
         finished
-          ? Math.abs(av.tipp - wonBy) - Math.abs(bv.tipp - wonBy)
-          : bv.tipp - av.tipp
+          ? Math.abs(a.bet - wonBy) - Math.abs(b.bet - wonBy)
+          : b.bet - a.bet
       );
-    const homeVotes = Object.entries(stats)
-      .filter(([key, value]) => value.winner === "home")
-      .sort(([ak, av], [bk, bv]) =>
+    const homeVotes = stats
+      .filter((value) => value.winner === "home")
+      .sort((a, b) =>
         finished
-          ? Math.abs(av.tipp - wonBy) - Math.abs(bv.tipp - wonBy)
-          : bv.tipp - av.tipp
+          ? Math.abs(a.bet - wonBy) - Math.abs(b.bet - wonBy)
+          : b.bet - a.bet
       );
 
     return (
       <div className="stats">
         <div className="away">
-          {awayVotes.map(([key, value], i) => (
+          {awayVotes.map((value, i) => (
             <div key={`away-${i}`} className="stat-row">
               <span>{value.name}</span>
               <span>
                 {isCompact ? "T" : "Tipp: "}
-                {value.tipp}
+                {value.bet}
               </span>
               {awayWon && finished && (
                 <span>
-                  {isCompact ? "D" : "Distanz: "}
-                  {Math.abs(value.tipp - wonBy)}
+                  {isCompact ? "P" : "Punkte: "}
+                  {value.points}
                 </span>
               )}
             </div>
@@ -53,17 +53,17 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
           {finished && homeWon && " >"}
         </div>
         <div className="home">
-          {homeVotes.map(([key, value], i) => (
+          {homeVotes.map((value, i) => (
             <div key={`home-${i}`} className="stat-row">
               <span>{value.name}</span>
               <span>
                 {isCompact ? "T" : "Tipp: "}
-                {value.tipp}
+                {value.bet}
               </span>
               {homeWon && finished && (
                 <span>
-                  {isCompact ? "D" : "Distanz: "}
-                  {Math.abs(value.tipp - wonBy)}
+                  {isCompact ? "P" : "Punkte: "}
+                  {value.points}
                 </span>
               )}
             </div>

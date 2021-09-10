@@ -19,13 +19,13 @@ export function statsReducer(state: AllStats, action: Action): AllStats {
 
 export function useStats(
   gameID: string
-): [IStats | undefined, (stats: IStats) => void] {
+): [IStats[] | undefined, (stats: IStats[]) => void] {
   const stats = useContext(StatValues);
   const dispatch = useContext(StatDispatch);
 
   return [
     stats[gameID],
-    (stats: IStats) => {
+    (stats: IStats[]) => {
       dispatch({ type: "update", payload: { gameID, stats } });
     },
   ];

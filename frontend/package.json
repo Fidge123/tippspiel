@@ -18,7 +18,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "homepage": "https://fidge123.github.io/tippspiel/",
+  "homepage": "https://6v4.de/tippspiel/",
   "browserslist": {
     "production": [
       ">0.2%",

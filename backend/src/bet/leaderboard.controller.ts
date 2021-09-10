@@ -18,17 +18,12 @@ export class LeaderboardController {
     return games.reduce(
       (result, game) => ({
         ...result,
-        [game.id]: game.bets.reduce(
-          (res, bet) => ({
-            ...res,
-            [bet.user.id]: {
-              name: bet.user.name,
-              winner: bet.winner,
-              tipp: bet.pointDiff,
-            },
-          }),
-          {},
-        ),
+        [game.id]: game.bets.map((bet) => ({
+          name: bet.user.name,
+          winner: bet.winner,
+          bet: bet.pointDiff,
+          points: calculatePoints(game, bet).points.reduce((a, b) => a + b, 0),
+        })),
       }),
       {},
     );

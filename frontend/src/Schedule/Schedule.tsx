@@ -11,8 +11,8 @@ import {
   StatValues,
 } from "./reducers/stats.reducer";
 import {
-  tippsReducer,
-  initialTipps,
+  betsReducer,
+  initialBets,
   TippDispatch,
   TippValues,
 } from "./reducers/bets.reducer";
@@ -23,7 +23,7 @@ function Schedule() {
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [tipps, dispatchTipps] = useReducer(tippsReducer, initialTipps);
+  const [bets, dispatchBets] = useReducer(betsReducer, initialBets);
   const [stats, dispatchStats] = useReducer(statsReducer, initialStats);
   const [weeks, setWeeks] = useState<IWeek[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -71,7 +71,7 @@ function Schedule() {
           Authorization: `Bearer ${token}`,
         },
       });
-      dispatchTipps({ type: "init", payload: await res.json() });
+      dispatchBets({ type: "init", payload: await res.json() });
     })();
   }, [token]);
 
@@ -83,8 +83,8 @@ function Schedule() {
       <section className="schedule">
         <StatDispatch.Provider value={dispatchStats}>
           <StatValues.Provider value={stats}>
-            <TippDispatch.Provider value={dispatchTipps}>
-              <TippValues.Provider value={tipps}>
+            <TippDispatch.Provider value={dispatchBets}>
+              <TippValues.Provider value={bets}>
                 {weeks.map((week, i) => (
                   <Week week={week} teams={teams} key={`Week-${i}`}></Week>
                 ))}

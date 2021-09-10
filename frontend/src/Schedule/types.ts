@@ -3,6 +3,7 @@ export interface Bets {
 }
 
 export interface Bet {
+  id: string;
   bets: Votes;
   selected?: "home" | "away";
   points?: number;
@@ -58,11 +59,10 @@ export interface AllStats {
 }
 
 export interface IStats {
-  [player: string]: {
-    name: string;
-    winner: "home" | "away";
-    tipp: number;
-  };
+  name: string;
+  winner: "home" | "away";
+  bet: number;
+  points: number;
 }
 
 export interface StatProps {
