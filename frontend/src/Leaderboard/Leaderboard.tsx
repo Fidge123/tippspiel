@@ -3,6 +3,10 @@ import "./Leaderboard.css";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
 
+function sum(list: number[]) {
+  return list.reduce((a, b) => a + b, 0);
+}
+
 function Leaderboard() {
   const [token] = useToken();
   const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
@@ -14,18 +18,30 @@ function Leaderboard() {
           Authorization: `Bearer ${token}`,
         },
       });
-      const res: LBResponse = await response.json();
+      const res: LBResponse[] = await response.json();
 
       setLeaderboard(
-        Object.entries(res)
-          .map(([key, value]) => ({
-            name: key,
-            points: Object.values(value).reduce((a, b) => a + b),
-            correct: Object.values(value).reduce(
-              (a, b) => (b > 0 ? a + 1 : a),
+        res
+          .map((user) => ({
+            name: user.user,
+            points: user.bets.reduce(
+              (prev, { points }) => prev + sum(points),
               0
             ),
-            total: Object.values(value).length,
+            correct: user.bets.reduce(
+              (a, b) => (b.points[0] > 0 ? a + 1 : a),
+              0
+            ),
+            exact: user.bets.reduce((a, b) => (b.points[1] > 0 ? a + 1 : a), 0),
+            offThree: user.bets.reduce(
+              (a, b) => (b.points[2] > 0 ? a + 1 : a),
+              0
+            ),
+            offSix: user.bets.reduce(
+              (a, b) => (b.points[3] > 0 ? a + 1 : a),
+              0
+            ),
+            total: user.bets.length,
           }))
           .sort((a, b) =>
             a.points === b.points ? b.total - a.total : b.points - a.points
@@ -41,31 +57,39 @@ function Leaderboard() {
       <table>
         <thead className="lb-header">
           <tr>
-            <th className="left">Platz</th>
+            <th className="left"></th>
             <th className="left">Name</th>
             <th className="center">Punkte</th>
-            {/* <th>Aktuelle Woche</th> */}
-            <th className="center">Tipps</th>
-            <th className="center">Genauigkeit</th>
-            {/* <th>Gesamtabstand</th> */}
-            {/* <th>Abstand pro richtiger Tipp</th> */}
+            <th className="center">Sieger</th>
+            <th className="center">+-0</th>
+            <th className="center">+-3</th>
+            <th className="center">+-6</th>
           </tr>
         </thead>
         <tbody className="lb-body">
           {leaderboard.map((l, i) => (
             <tr key={`LB-${l.name}`}>
-              <td>{i + 1}</td>
+              <td>{i + 1}.</td>
               <td>{l.name}</td>
               <td className="center">{l.points}</td>
-              {/* <td>AW</td> */}
               <td className="center">
                 {l.correct}/{l.total}
+                <br />
+                {((l.correct / l.total) * 100).toFixed(0)}%
               </td>
               <td className="center">
-                {((l.correct / l.total) * 100).toFixed(2)} %
+                {l.exact}/{l.total}
+                <br /> {((l.exact / l.total) * 100).toFixed(0)}%
               </td>
-              {/* <td>GA</td> */}
-              {/* <td>AprT</td> */}
+              <td className="center">
+                {l.offThree}/{l.total}
+                <br />
+                {((l.offThree / l.total) * 100).toFixed(0)}%
+              </td>
+              <td className="center">
+                {l.offSix}/{l.total}
+                <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
+              </td>
             </tr>
           ))}
         </tbody>
@@ -104,13 +128,18 @@ interface ILeaderboard {
   name: string;
   points: number;
   correct: number;
+  exact: number;
+  offThree: number;
+  offSix: number;
   total: number;
 }
 
 interface LBResponse {
-  [name: string]: {
-    [gameId: string]: number;
-  };
+  user: string;
+  bets: {
+    id: string;
+    points: number[];
+  }[];
 }
 
 export default Leaderboard;

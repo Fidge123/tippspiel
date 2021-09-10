@@ -128,9 +128,9 @@ export class BetDataService {
     );
   }
 
-  async findBetsByUser(year: number): Promise<GameEntity[]> {
+  async findBetsByUser(year: number): Promise<UserEntity[]> {
     return (
-      this.gameRepo
+      this.userRepo
         .createQueryBuilder('user')
         // .andWhere('user.memberIn = :league', { league: '' })
         .leftJoinAndSelect('user.bets', 'bets')
