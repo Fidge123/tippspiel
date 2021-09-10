@@ -18,7 +18,7 @@ function Verify() {
       const id = query.get("id");
       const token = query.get("token");
 
-      if (id && token && !error && !success) {
+      if (id && token) {
         try {
           const res = await fetch(BASE_URL + "user/verify", {
             method: "POST",
@@ -36,8 +36,8 @@ function Verify() {
             );
             setTimeout(() => history.push("/login"), 5000);
           } else {
-            const error = await res.json();
-            setError(error.message);
+            const e = await res.json();
+            setError(e.message);
           }
         } catch (err: any) {
           setError(err);

@@ -176,6 +176,7 @@ export class ScheduleDataService {
 
     return this.gameRepo.find({
       where: { date: Between(fourHoursAgo, now) },
+      relations: ['week'],
     });
   }
 }

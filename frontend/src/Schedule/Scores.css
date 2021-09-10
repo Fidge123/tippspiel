@@ -19,6 +19,10 @@
   margin: auto;
 }
 
+.doubler:disabled {
+  border: none;
+}
+
 @media screen and (min-width: 28rem) {
   .scores {
     display: flex;

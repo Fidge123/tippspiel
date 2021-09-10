@@ -59,6 +59,7 @@ export interface AllStats {
 
 export interface IStats {
   [player: string]: {
+    name: string;
     winner: "home" | "away";
     tipp: number;
   };

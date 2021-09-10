@@ -113,11 +113,15 @@ export class ScheduleService {
     console.log(`${games.length} games started within the last 4 hours`);
 
     if (games.length) {
-      return await this.importWeek({
-        year: games[0].week.year,
-        seasontype: games[0].week.seasontype,
-        week: games[0].week.week,
-      });
+      await Promise.all(
+        games.map((game) =>
+          this.importWeek({
+            year: game.week.year,
+            seasontype: game.week.seasontype,
+            week: game.week.week,
+          }),
+        ),
+      );
     }
   }
 }
