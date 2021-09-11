@@ -33,7 +33,10 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
         <div className="away">
           {awayVotes.map((value, i) => (
             <div key={`away-${i}`} className="stat-row">
-              <span>{value.name}</span>
+              <span>
+                {value.name}
+                {value.doubler ? "🌟" : ""}
+              </span>
               <span>
                 {isCompact ? "T" : "Tipp: "}
                 {value.bet}
@@ -55,7 +58,10 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
         <div className="home">
           {homeVotes.map((value, i) => (
             <div key={`home-${i}`} className="stat-row">
-              <span>{value.name}</span>
+              <span>
+                {value.name}
+                {value.doubler ? "🌟" : ""}
+              </span>
               <span>
                 {isCompact ? "T" : "Tipp: "}
                 {value.bet}

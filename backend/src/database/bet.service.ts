@@ -178,6 +178,22 @@ export class BetDataService {
     });
   }
 
+  async findBetDoublersForStratedGames(
+    year: number,
+  ): Promise<BetDoublerEntity[]> {
+    return (
+      this.doublerRepo
+        .createQueryBuilder('doubler')
+        .leftJoinAndSelect('doubler.game', 'game')
+        .where('game.date < :now', { now: new Date() })
+        .leftJoin('doubler.week', 'week')
+        .andWhere('week.year = :year', { year })
+        // .andWhere('bets.league = :league', { league: '' })
+        .leftJoinAndSelect('doubler.user', 'user')
+        .getMany()
+    );
+  }
+
   async findBetDoublers(
     year: number,
     user: string,

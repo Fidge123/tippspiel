@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { BetEntity, GameEntity } from '../database/entity';
+import { BetDoublerEntity, BetEntity, GameEntity } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
 
 @Controller('leaderboard')
@@ -14,6 +14,9 @@ export class LeaderboardController {
     const games = await this.databaseService.findBetsForStartedGames(
       parseInt(season, 10),
     );
+    const doublers = await this.databaseService.findBetDoublersForStratedGames(
+      parseInt(season, 10),
+    );
 
     return games.reduce(
       (result, game) => ({
@@ -22,7 +25,14 @@ export class LeaderboardController {
           name: bet.user.name,
           winner: bet.winner,
           bet: bet.pointDiff,
-          points: calculatePoints(game, bet).points.reduce((a, b) => a + b, 0),
+          doubler: doublers.some(
+            (d) => d.user.id === bet.user.id && d.game.id === game.id,
+          ),
+          points: calculatePoints(
+            game,
+            bet,
+            doublers.filter((d) => d.user.id === bet.user.id),
+          ).points.reduce((a, b) => a + b, 0),
         })),
       }),
       {},
@@ -35,9 +45,20 @@ export class LeaderboardController {
     const users = await this.databaseService.findBetsByUser(
       parseInt(season, 10),
     );
+
+    const doublers = await this.databaseService.findBetDoublersForStratedGames(
+      parseInt(season, 10),
+    );
+
     return users.map((user) => ({
       user: user.name,
-      bets: user.bets.map((bet) => calculatePoints(bet.game, bet)),
+      bets: user.bets.map((bet) =>
+        calculatePoints(
+          bet.game,
+          bet,
+          doublers.filter((d) => d.user.id === user.id),
+        ),
+      ),
     }));
   }
 }
@@ -59,16 +80,18 @@ function withinPoints(
 function calculatePoints(
   { homeScore, awayScore, winner: actualWinner, id }: GameEntity,
   { pointDiff, winner: predictedWinnner }: BetEntity,
+  doublers: BetDoublerEntity[],
 ) {
   const correctDiff = homeScore - awayScore;
+  const multi = doublers.some((d) => d.game.id === id) ? 2 : 1;
 
   return {
     id,
     points: [
-      correctTeam(predictedWinnner, actualWinner) * 2,
-      withinPoints(pointDiff, predictedWinnner, correctDiff, 0) * 1,
-      withinPoints(pointDiff, predictedWinnner, correctDiff, 3) * 1,
-      withinPoints(pointDiff, predictedWinnner, correctDiff, 6) * 1,
+      correctTeam(predictedWinnner, actualWinner) * 2 * multi,
+      withinPoints(pointDiff, predictedWinnner, correctDiff, 0) * 1 * multi,
+      withinPoints(pointDiff, predictedWinnner, correctDiff, 3) * 1 * multi,
+      withinPoints(pointDiff, predictedWinnner, correctDiff, 6) * 1 * multi,
     ],
   };
 }

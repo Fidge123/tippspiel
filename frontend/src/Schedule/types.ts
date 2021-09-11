@@ -61,6 +61,7 @@ export interface AllStats {
 export interface IStats {
   name: string;
   winner: "home" | "away";
+  doubler: boolean;
   bet: number;
   points: number;
 }
