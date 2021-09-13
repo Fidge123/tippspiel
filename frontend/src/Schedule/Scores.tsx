@@ -27,13 +27,13 @@ function Scores({ game, selected, doubler, setDoubler }: Props) {
         )}
       </div>
       <div>
-        <button
-          className="doubler"
-          disabled={new Date(game.date) < new Date()}
-          onClick={() => setDoubler(game.id)}
-        >
-          {doubler ? "🌟" : "@"}
-        </button>
+        {new Date(game.date) < new Date() ? (
+          "@"
+        ) : (
+          <button className="doubler" onClick={() => setDoubler(game.id)}>
+            {doubler ? "🌟" : "@"}
+          </button>
+        )}
       </div>
       <div>
         {final && (
