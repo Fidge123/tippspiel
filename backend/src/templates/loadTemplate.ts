@@ -12,7 +12,7 @@ export async function loadHTML(
   name: availableTemplates,
   param: Record<string, string> = {},
 ) {
-  const template = await readFile(`src/templates/${name}.html`, 'utf8');
+  const template = await readFile(`${__dirname}/${name}.html`, 'utf8');
 
   return Object.entries(param).reduce(
     (html, [key, value]) => html.replace(new RegExp(`{{${key}}}`, 'g'), value),
@@ -24,7 +24,7 @@ export async function loadTXT(
   name: availableTemplates,
   param: Record<string, string> = {},
 ) {
-  const template = await readFile(`src/templates/${name}.txt`, 'utf8');
+  const template = await readFile(`${__dirname}/${name}.txt`, 'utf8');
 
   return Object.entries(param).reduce(
     (html, [key, value]) => html.replace(new RegExp(`{{${key}}}`, 'g'), value),
