@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+  <title>Du hast {{count}} Spiele noch nicht getippt</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 600px;
+      margin: auto;
+      padding: 25px 50px;
+    }
+
+    h2 {
+      width: 100%;
+    }
+
+    p {
+      width: 100%;
+      line-height: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Du hast {{count}} Spiele noch nicht getippt</h2>
+  <p>Hallo {{name}},</p>
+  <p>du hast folgende Spiele noch nicht getippt:</p>
+  <ul>
+    {{list}}
+  </ul>
+  <p>Tippe die Spiele hier: <a href="https://6v4.de/tippspiel">https://6v4.de/tippspiel</a></p>
+</body>
+
+</html>

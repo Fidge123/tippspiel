@@ -1,0 +1,9 @@
+Hallo {{ name }},
+
+du hast folgende Spiele noch nicht getippt:
+{{ list }}
+
+Tippe die Spiele hier: https://6v4.de/tippspiel
+
+
+Wenn du keine weiteren Emails von 6v4.de erhalten möchtest, kontaktiere bitte admin@6v4.de

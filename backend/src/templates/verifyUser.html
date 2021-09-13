@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+  <title>Bitte verifiziere deinen neuen Tippspiel-Account</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 600px;
+      margin: auto;
+      padding: 25px 50px;
+    }
+
+    h2 {
+      width: 100%;
+    }
+
+    p {
+      width: 100%;
+      line-height: 1.5rem;
+    }
+
+    a {
+      line-break: anywhere;
+    }
+
+    .small {
+      font-size: .75rem;
+      color: #999;
+    }
+
+    button {
+      color: #fff;
+      background-color: #39e;
+      border: none;
+      border-radius: .5rem;
+      padding: .75rem 3rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Bitte verifiziere deinen neuen Tippspiel-Account</h2>
+  <p>Hallo {{name}},</p>
+  <p>du hast gerade einen Account auf <a href="https://6v4.de/tippspiel">https://6v4.de/tippspiel</a> erstellt.
+    Bitte verifiziere deinen Account, indem du auf den unten stehenden Link klickst.</p>
+  <a href="{{link}}"><button>Account verifizieren</button></a>
+  <p class="small">Falls der Knopf nicht funktioniert, klicke oder kopiere diesen Link: <a href="{{link}}">{{link}}</a>
+  </p>
+  <p>Viel Glück für die Tippsaison!</p>
+</body>
+
+</html>

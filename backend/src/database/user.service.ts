@@ -88,12 +88,12 @@ export class UserDataService {
     }
   }
 
-  async verify(id: number, token: string): Promise<void> {
+  async verify(id: string, token: string): Promise<void> {
     const user = await this.userRepo.findOne(id).catch(() => {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     });
     const tokenEntity = await this.verifyRepo
-      .findOne({ where: { user, token } })
+      .findOne({ where: { token, user } })
       .catch(() => {
         throw new HttpException('Token not found', HttpStatus.BAD_REQUEST);
       });

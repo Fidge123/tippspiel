@@ -2,6 +2,7 @@ import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
 
+import { loadHTML, loadTXT } from '../templates/loadTemplate';
 import { getTransporter } from '../email';
 
 import { UserDataService } from '../database/user.service';
@@ -35,30 +36,34 @@ export class UserController {
       consent,
       password,
     );
+    const now = new Date();
+    const link = `https://6v4.de/tippspiel/#/verify?id=${id}&token=${token}`;
     const transporter = await getTransporter();
     await transporter
       .sendMail({
-        from: 'tippspiel@6v4.de',
+        from: {
+          name: 'Tippspiel',
+          address: 'tippspiel@6v4.de',
+        },
         to: process.env.EMAIL,
         subject: 'Neuer Nutzer registriert',
-        text: `Ein neuer Nutzer hat sich registriert.`,
+        text: await loadTXT('newUserAlert'),
+        html: await loadHTML('newUserAlert', {
+          id,
+          time: now.toLocaleString(),
+        }),
       })
       .catch((error) => console.error(error));
     await transporter
       .sendMail({
-        from: 'tippspiel@6v4.de',
+        from: {
+          name: 'Tippspiel',
+          address: 'tippspiel@6v4.de',
+        },
         to: email,
         subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
-        text: `
-Hallo ${name},
-
-du hast gerade einen Account auf https://6v4.de/tippspiel erstellt.
-Bitte verifiziere deinen Account indem du auf den unten stehenden Link klickst.
-
-https://6v4.de/tippspiel/#/verify?id=${id}&token=${token}
-
-Viel Glück für die Tippsaison!
-`,
+        text: await loadTXT('verifyUser', { name, link }),
+        html: await loadHTML('verifyUser', { name, link }),
       })
       .catch((error) => console.error(error));
   }
@@ -66,17 +71,26 @@ Viel Glück für die Tippsaison!
   @UseGuards(ThrottlerGuard)
   @Post('verify')
   async verify(
-    @Body('id') id: number,
+    @Body('id') id: string,
     @Body('token') token: string,
   ): Promise<void> {
+    const now = new Date();
+
     const transporter = await getTransporter();
     await this.databaseService.verify(id, token);
     await transporter
       .sendMail({
-        from: 'tippspiel@6v4.de',
+        from: {
+          name: 'Tippspiel',
+          address: 'tippspiel@6v4.de',
+        },
         to: process.env.EMAIL,
         subject: 'Nutzer verifiziert',
-        text: `Ein Nutzer hat sich verifiziert.`,
+        text: await loadTXT('userVerifiedAlert'),
+        html: await loadHTML('userVerifiedAlert', {
+          id,
+          time: now.toLocaleString(),
+        }),
       })
       .catch((error) => console.error(error));
   }
@@ -84,36 +98,38 @@ Viel Glück für die Tippsaison!
   @UseGuards(ThrottlerGuard)
   @Post('request-reset')
   async requestReset(@Body('email') email: string): Promise<void> {
+    const now = new Date();
+
     const reset = await this.databaseService.sendReset(email);
     if (reset) {
       const { user, token } = reset;
+      const link = `https://6v4.de/tippspiel/#/reset?id=${user.id}&token=${token}`;
       const transporter = await getTransporter();
       await transporter
         .sendMail({
-          from: 'tippspiel@6v4.de',
+          from: {
+            name: 'Tippspiel',
+            address: 'tippspiel@6v4.de',
+          },
           to: process.env.EMAIL,
           subject: 'Passwort Reset angefragt',
-          text: `Ein Passwort Reset wurde angefragt.`,
+          text: await loadTXT('passwordResetAlert'),
+          html: await loadHTML('passwordResetAlert', {
+            id: user.id,
+            time: now.toLocaleString(),
+          }),
         })
         .catch((error) => console.error(error));
       await transporter
         .sendMail({
-          from: 'tippspiel@6v4.de',
+          from: {
+            name: 'Tippspiel',
+            address: 'tippspiel@6v4.de',
+          },
           to: email,
           subject: 'Tippspiel Passwort zurücksetzen',
-          text: `
-Hallo ${user.name},
-
-du hast dein Passwort vergessen.
-Erstelle ein neues Passwort indem du den unten stehenden Link öffnest.
-
-https://6v4.de/tippspiel/#/reset?id=${user.id}&token=${token}
-
-
-
-
-Wenn du keine weiteren Emails von 6v4.de erhalten möchtest oder du diese Mail nicht angefordert hast, kontaktiere bitte admin@6v4.de
-`,
+          text: await loadTXT('passwordReset', { name: user.name, link }),
+          html: await loadHTML('passwordReset', { name: user.name, link }),
         })
         .catch((error) => console.error(error));
     }

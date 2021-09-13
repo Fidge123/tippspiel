@@ -12,13 +12,14 @@ function Verify() {
   const history = useHistory();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     (async () => {
       const id = query.get("id");
       const token = query.get("token");
 
-      if (id && token) {
+      if (id && token && !done) {
         try {
           const res = await fetch(BASE_URL + "user/verify", {
             method: "POST",
@@ -30,6 +31,9 @@ function Verify() {
               token,
             }),
           });
+
+          setDone(true);
+
           if (res.ok) {
             setSuccess(
               "Account erfolgreich bestätigt! Du wirst in 5 Sekunden zum einloggen weitergeleitet."
@@ -47,7 +51,7 @@ function Verify() {
         setError("Link invalid!");
       }
     })();
-  }, [query, history]);
+  }, [query, history, done]);
 
   return (
     <div className="verify">

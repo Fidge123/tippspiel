@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { loadHTML, loadTXT } from 'src/templates/loadTemplate';
 
 import { BetDataService } from '../database/bet.service';
 import { getTransporter } from '../email';
@@ -18,27 +19,44 @@ export class BetService {
         const transporter = await getTransporter();
         await transporter
           .sendMail({
-            from: 'tippspiel@6v4.de',
+            from: {
+              name: 'Tippspiel',
+              address: 'tippspiel@6v4.de',
+            },
             to: user.email,
             subject: `Du hast ${games.length} Spiele noch nicht getippt`,
-            text: `
-Hallo ${user.name},
-
-du hast folgende Spiele noch nicht getippt:
-${games
-  .map(
-    (game) =>
-      `  - ${game.awayTeam.name} @ ${
-        game.homeTeam.name
-      } (${game.date.toLocaleString()})`,
-  )
-  .join('\n')}
-
-Tippe die Spiele hier: https://6v4.de/tippspiel
-
-
-Wenn du keine weiteren Emails von 6v4.de erhalten möchtest, kontaktiere bitte admin@6v4.de
-`,
+            text: await loadTXT('betReminder', {
+              name: user.name,
+              list: games
+                .map(
+                  (game) =>
+                    `  - ${game.awayTeam.name} @ ${
+                      game.homeTeam.name
+                    } (${game.date.toLocaleString('de', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })})`,
+                )
+                .join('\n'),
+              html: await loadHTML('betReminder', {
+                name: user.name,
+                list: games
+                  .map(
+                    (game) =>
+                      `    <li>${game.awayTeam.name} @ ${
+                        game.homeTeam.name
+                      } (${game.date.toLocaleString('de', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })})</li>`,
+                  )
+                  .join('\n'),
+              }),
+            }),
           })
           .catch((error) => console.error(error));
       }
