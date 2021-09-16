@@ -15,7 +15,8 @@ export async function loadHTML(
   const template = await readFile(`${__dirname}/${name}.html`, 'utf8');
 
   return Object.entries(param).reduce(
-    (html, [key, value]) => html.replace(new RegExp(`{{${key}}}`, 'g'), value),
+    (html, [key, value]) =>
+      html.replace(new RegExp(`{{ *${key} *}}`, 'g'), value),
     template,
   );
 }
@@ -27,7 +28,8 @@ export async function loadTXT(
   const template = await readFile(`${__dirname}/${name}.txt`, 'utf8');
 
   return Object.entries(param).reduce(
-    (html, [key, value]) => html.replace(new RegExp(`{{${key}}}`, 'g'), value),
+    (html, [key, value]) =>
+      html.replace(new RegExp(`{{ *${key} *}}`, 'g'), value),
     template,
   );
 }

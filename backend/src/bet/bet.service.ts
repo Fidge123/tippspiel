@@ -17,6 +17,8 @@ export class BetService {
       if (games.length) {
         console.log('Found', games.length, 'games without bets for', user.name);
         const transporter = await getTransporter();
+        const countString =
+          games.length > 1 ? `${games.length} Spiele` : `ein Spiel`;
         await transporter
           .sendMail({
             from: {
@@ -24,7 +26,7 @@ export class BetService {
               address: 'tippspiel@6v4.de',
             },
             to: user.email,
-            subject: `Du hast ${games.length} Spiele noch nicht getippt`,
+            subject: `Du hast ${countString} noch nicht getippt`,
             text: await loadTXT('betReminder', {
               name: user.name,
               list: games
@@ -40,22 +42,23 @@ export class BetService {
                     })})`,
                 )
                 .join('\n'),
-              html: await loadHTML('betReminder', {
-                name: user.name,
-                list: games
-                  .map(
-                    (game) =>
-                      `    <li>${game.awayTeam.name} @ ${
-                        game.homeTeam.name
-                      } (${game.date.toLocaleString('de', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })})</li>`,
-                  )
-                  .join('\n'),
-              }),
+            }),
+            html: await loadHTML('betReminder', {
+              name: user.name,
+              count: countString,
+              list: games
+                .map(
+                  (game) =>
+                    `    <li>${game.awayTeam.name} @ ${
+                      game.homeTeam.name
+                    } (${game.date.toLocaleString('de', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })})</li>`,
+                )
+                .join('\n'),
             }),
           })
           .catch((error) => console.error(error));
