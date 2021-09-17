@@ -2,6 +2,11 @@
   display: flex;
 }
 
+.stats .away,
+.stats .home {
+  padding: 6px 2px;
+}
+
 .stats .scores {
   justify-content: center;
 }
@@ -17,7 +22,8 @@
 }
 
 .stat-row *:first-child {
-  width: 4rem;
+  width: 5rem;
+  line-height: 1rem;
 }
 
 @media screen and (min-width: 45rem) {
