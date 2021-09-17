@@ -41,7 +41,7 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
                 {isCompact ? "T" : "Tipp: "}
                 {value.bet}
               </span>
-              {awayWon && finished && (
+              {finished && (
                 <span>
                   {isCompact ? "P" : "Punkte: "}
                   {value.points}
@@ -66,7 +66,7 @@ function Stats({ game, bets, home, away, isCompact }: StatProps) {
                 {isCompact ? "T" : "Tipp: "}
                 {value.bet}
               </span>
-              {homeWon && finished && (
+              {finished && (
                 <span>
                   {isCompact ? "P" : "Punkte: "}
                   {value.points}

@@ -2,6 +2,7 @@ import "./Scores.css";
 import { Game } from "./types";
 
 function Scores({ game, selected, doubler, setDoubler }: Props) {
+  const inProgress = game.status === "STATUS_IN_PROGRESS";
   const final = game.status === "STATUS_FINAL";
   const homeScore = game.homeScore;
   const awayScore = game.awayScore;
@@ -25,6 +26,7 @@ function Scores({ game, selected, doubler, setDoubler }: Props) {
             {game.awayScore}
           </span>
         )}
+        {inProgress && <i style={{ color: "#696969" }}>{game.awayScore}</i>}
       </div>
       <div>
         {new Date(game.date) < new Date() ? (
@@ -46,6 +48,7 @@ function Scores({ game, selected, doubler, setDoubler }: Props) {
             {game.homeScore}
           </span>
         )}
+        {inProgress && <i style={{ color: "#696969" }}>{game.homeScore}</i>}
       </div>
     </div>
   );
