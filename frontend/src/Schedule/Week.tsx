@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./Week.css";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
@@ -11,27 +11,9 @@ function Week({ week, teams }: Props) {
   const ref = useRef<HTMLElement>(null);
   const [doubler, setDoubler] = useState<string>();
   const loaded = useRef(false);
-
-  async function loadDoubler() {
-    const response = await fetch(BASE_URL + "bet/doubler?season=2021", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const res: any = await response.json();
-    setDoubler(
-      res.find(
-        ({ week: w }: any) =>
-          w.week === week.week &&
-          w.seasontype === week.seasontype &&
-          w.year === week.year
-      )?.game.id
-    );
-    setTimeout(() => (loaded.current = true));
-  }
-
-  useEffect(() => {
+  const loadDoubler = useCallback(() => {
     (async () => {
+      loaded.current = false;
       const response = await fetch(BASE_URL + "bet/doubler?season=2021", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,6 +31,10 @@ function Week({ week, teams }: Props) {
       setTimeout(() => (loaded.current = true));
     })();
   }, [token, week]);
+
+  useEffect(() => {
+    loadDoubler();
+  }, [loadDoubler]);
 
   useEffect(() => {
     (async () => {
@@ -69,7 +55,7 @@ function Week({ week, teams }: Props) {
           }),
         });
         if (!res.ok) {
-          await loadDoubler();
+          loadDoubler();
         }
       }
     })();
