@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDivisionBetDto } from 'src/bet/division.dto';
 import { Brackets, Repository } from 'typeorm';
@@ -259,15 +259,27 @@ export class BetDataService {
       this.gameRepo.findOneOrFail(gameId),
       this.weekRepo.findOneOrFail(weekId),
     ]);
+    const betDoubler = await this.doublerRepo
+      .createQueryBuilder('doubler')
+      .where('doubler.user = :user', { user: user.id })
+      .andWhere('doubler.weekYear = :year', { year: week.year })
+      .andWhere('doubler.weekSeasontype = :st', { st: week.seasontype })
+      .andWhere('doubler.weekWeek = :week', { week: week.week })
+      .leftJoinAndSelect('doubler.game', 'game')
+      .getOne();
 
-    if (new Date() < game.date && user) {
-      const bet =
-        (await this.doublerRepo.findOne({ user, week })) ||
-        new BetDoublerEntity();
+    if (
+      new Date() < game.date &&
+      user &&
+      (new Date() < betDoubler.game.date || !betDoubler)
+    ) {
+      const bet = betDoubler || new BetDoublerEntity();
       bet.user = user;
       bet.game = game;
       bet.week = week;
       return this.doublerRepo.save(bet);
+    } else {
+      throw new BadRequestException();
     }
   }
 

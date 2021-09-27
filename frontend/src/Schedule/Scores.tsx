@@ -2,7 +2,11 @@ import "./Scores.css";
 import { Game } from "./types";
 
 function Scores({ game, selected, doubler, setDoubler }: Props) {
-  const inProgress = game.status === "STATUS_IN_PROGRESS";
+  const inProgress = [
+    "STATUS_IN_PROGRESS",
+    "STATUS_HALFTIME",
+    "STATUS_END_PERIOD",
+  ].includes(game.status);
   const final = game.status === "STATUS_FINAL";
   const homeScore = game.homeScore;
   const awayScore = game.awayScore;
@@ -30,7 +34,11 @@ function Scores({ game, selected, doubler, setDoubler }: Props) {
       </div>
       <div>
         {new Date(game.date) < new Date() ? (
-          "@"
+          doubler ? (
+            "🌟"
+          ) : (
+            "@"
+          )
         ) : (
           <button className="doubler" onClick={() => setDoubler(game.id)}>
             {doubler ? "🌟" : "@"}

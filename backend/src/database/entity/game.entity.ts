@@ -56,6 +56,8 @@ export class GameEntity {
   status: string;
   // | 'STATUS_SCHEDULED'
   // | 'STATUS_IN_PROGRESS'
+  // | 'STATUS_HALFTIME'
+  // | 'STATUS_END_PERIOD'
   // | 'STATUS_FINAL'
   // | 'STATUS_CANCELED';
 

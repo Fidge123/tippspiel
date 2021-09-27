@@ -12,6 +12,24 @@ function Week({ week, teams }: Props) {
   const [doubler, setDoubler] = useState<string>();
   const loaded = useRef(false);
 
+  async function loadDoubler() {
+    const response = await fetch(BASE_URL + "bet/doubler?season=2021", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const res: any = await response.json();
+    setDoubler(
+      res.find(
+        ({ week: w }: any) =>
+          w.week === week.week &&
+          w.seasontype === week.seasontype &&
+          w.year === week.year
+      )?.game.id
+    );
+    setTimeout(() => (loaded.current = true));
+  }
+
   useEffect(() => {
     (async () => {
       const response = await fetch(BASE_URL + "bet/doubler?season=2021", {
@@ -33,24 +51,29 @@ function Week({ week, teams }: Props) {
   }, [token, week]);
 
   useEffect(() => {
-    if (token && doubler && week && loaded.current) {
-      fetch(BASE_URL + "bet/doubler", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          gameID: doubler,
-          week: {
-            week: week.week,
-            year: week.year,
-            seasontype: week.seasontype,
+    (async () => {
+      if (token && doubler && week && loaded.current) {
+        const res = await fetch(BASE_URL + "bet/doubler", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-        }),
-      });
-    }
-  }, [token, doubler, week]);
+          body: JSON.stringify({
+            gameID: doubler,
+            week: {
+              week: week.week,
+              year: week.year,
+              seasontype: week.seasontype,
+            },
+          }),
+        });
+        if (!res.ok) {
+          await loadDoubler();
+        }
+      }
+    })();
+  }, [token, doubler, week, loadDoubler]);
 
   useEffect(() => {
     if (new Date(week.start) < new Date() && new Date() < new Date(week.end)) {
