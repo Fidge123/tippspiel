@@ -171,9 +171,9 @@ export class UserDataService {
       },
     });
 
-    console.log(
-      `Deleting ${resetTokens.length} reset tokens, ${verifyTokens.length} verify tokens and ${users.length} unverified users!`,
-    );
+    // console.log(
+    //   `Deleting ${resetTokens.length} reset tokens, ${verifyTokens.length} verify tokens and ${users.length} unverified users!`,
+    // );
 
     if (resetTokens.length) {
       await this.resetRepo.remove(resetTokens);

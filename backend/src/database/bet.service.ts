@@ -271,7 +271,7 @@ export class BetDataService {
     if (
       new Date() < game.date &&
       user &&
-      (new Date() < betDoubler.game.date || !betDoubler)
+      (!betDoubler || new Date() < betDoubler?.game?.date)
     ) {
       const bet = betDoubler || new BetDoublerEntity();
       bet.user = user;

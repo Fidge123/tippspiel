@@ -110,7 +110,7 @@ export class ScheduleService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async updateGames(): Promise<void> {
     const games = await this.databaseService.findRecentlyStartedGames();
-    console.log(`${games.length} games started within the last 4 hours`);
+    // console.log(`${games.length} games started within the last 4 hours`);
 
     if (games.length) {
       await Promise.all(
