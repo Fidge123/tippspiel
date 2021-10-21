@@ -107,12 +107,12 @@ function Leaderboard() {
         </li>
         <li>Ein Tipp auf den Sieger der Division gibt 5 Punkte</li>
         <li>
-          Der Tipp auf den Superbowltipp gibt 10 Punkte (zusätzlich zum
+          Der Tipp auf den Superbowlsieger gibt 10 Punkte (zusätzlich zum
           eigentlich Match)
         </li>
         <li>
-          Jeder Spieler kann wöchentlich ein Spiel auswählen was doppelte Punkte
-          bringt
+          Jeder Spieler kann wöchentlich ein Spiel auswählen, welches doppelte
+          Punkte bringt
         </li>
       </ul>
       <p>

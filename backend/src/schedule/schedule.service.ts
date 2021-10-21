@@ -30,7 +30,7 @@ export class ScheduleService {
     await this.importSchedule();
   }
 
-  @Cron('0 0 * * TUE')
+  @Cron('0 7 * * 1,2')
   async importMasterData(): Promise<void> {
     const response = (await axios.get(`${BASE_URL}groups`)).data;
     for (const conf of response.groups) {
