@@ -175,7 +175,10 @@ export class ScheduleDataService {
     const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 
     return this.gameRepo.find({
-      where: { date: Between(fourHoursAgo, now) },
+      where: [
+        { date: Between(fourHoursAgo, now) },
+        { status: 'STATUS_IN_PROGRESS' },
+      ],
       relations: ['week'],
     });
   }

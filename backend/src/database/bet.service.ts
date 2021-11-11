@@ -290,6 +290,8 @@ export class BetDataService {
     const user = await this.userRepo.findOne(userId);
     const game = await this.gameRepo.findOne(gameID);
 
+    console.log(`User ${user.name} posted bet for ${game.id}`);
+
     if (new Date() < new Date(game.date) && user && game.id === gameID) {
       const bet =
         (await this.betRepo.findOne({ user, game })) || new BetEntity();
