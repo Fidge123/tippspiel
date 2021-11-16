@@ -13,3 +13,8 @@
 .login button {
   margin: 1rem;
 }
+
+.forgot {
+  border: none;
+  font-style: italic;
+}

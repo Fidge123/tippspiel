@@ -15,6 +15,30 @@ export default function Login({ setToken }: LoginProperties) {
     setCredentials({ email, password });
   };
 
+  async function forgot() {
+    try {
+      if (!email) {
+        setError("Need to set email");
+        return;
+      }
+      const res = await fetch(BASE_URL + "user/request-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        history.push("/");
+      } else {
+        const error = await res.json();
+        setError(error.message);
+      }
+    } catch (err: any) {
+      setError(err);
+    }
+  }
+
   useEffect(() => {
     (async () => {
       if (credentials) {
@@ -70,6 +94,12 @@ export default function Login({ setToken }: LoginProperties) {
           />
         </div>
         <button type="submit">Submit</button>
+
+        <div>
+          <button className="forgot" onClick={() => forgot()}>
+            Forgot Password?
+          </button>
+        </div>
         {error && <p>An error occured: {error}</p>}
       </form>
     </div>

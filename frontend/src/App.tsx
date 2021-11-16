@@ -12,6 +12,7 @@ import Leaderboard from "./Leaderboard/Leaderboard";
 import Schedule from "./Schedule/Schedule";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
+import Reset from "./Reset/Reset";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Verify from "./Verify/Verify";
 import Impressum from "./Impressum/Impressum";
@@ -84,6 +85,9 @@ function App() {
             </Route>
             <Route path="/register">
               {token ? <Redirect to="/"></Redirect> : <Register></Register>}
+            </Route>
+            <Route path="/reset">
+              <Reset></Reset>
             </Route>
             <Route path="/verify">
               <Verify></Verify>

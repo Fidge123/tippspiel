@@ -1,4 +1,11 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  BadRequestException,
+} from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -30,6 +37,11 @@ export class UserController {
     @Body('consent') consent: boolean,
     @Body('password') password: string,
   ): Promise<void> {
+    if (password.length < 8) {
+      throw new BadRequestException(
+        'Password needs to be longer than 8 characters',
+      );
+    }
     const [id, token] = await this.databaseService.createUser(
       email,
       name,
@@ -143,6 +155,11 @@ export class UserController {
     @Body('token') token: string,
     @Body('password') password: string,
   ): Promise<void> {
+    if (password.length < 8) {
+      throw new BadRequestException(
+        'Password needs to be longer than 8 characters',
+      );
+    }
     return this.databaseService.resetPassword(id, password, token);
   }
 
