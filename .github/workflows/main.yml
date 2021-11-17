@@ -2,24 +2,27 @@ name: Build frontend
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   workflow_dispatch:
 
 jobs:
   frontend:
+    defaults:
+      run:
+        working-directory: frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
       - name: Install dependencies
         run: yarn install
       - name: Build frontend
-        run: yarn build
+        run: yarn run build
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
