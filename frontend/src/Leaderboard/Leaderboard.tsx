@@ -41,6 +41,13 @@ function Leaderboard() {
               (a, b) => (b.points[3] > 0 ? a + 1 : a),
               0
             ),
+            doubler: user.bets.reduce(
+              (a, b) =>
+                b.points[0] === 4
+                  ? a + b.points.reduce((a, b) => a + b) / 2
+                  : a,
+              0
+            ),
             total: user.bets.length,
           }))
           .sort((a, b) =>
@@ -64,6 +71,7 @@ function Leaderboard() {
             <th className="center">+-0</th>
             <th className="center">+-3</th>
             <th className="center">+-6</th>
+            <th className="center">🌟</th>
           </tr>
         </thead>
         <tbody className="lb-body">
@@ -90,6 +98,7 @@ function Leaderboard() {
                 {l.offSix}/{l.total}
                 <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
               </td>
+              <td className="center">{l.doubler}</td>
             </tr>
           ))}
         </tbody>
@@ -131,6 +140,7 @@ interface ILeaderboard {
   exact: number;
   offThree: number;
   offSix: number;
+  doubler: number;
   total: number;
 }
 
