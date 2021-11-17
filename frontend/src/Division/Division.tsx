@@ -84,36 +84,44 @@ function Division() {
           <div key={division.name}>
             <h3>{division.name}</h3>
             <div className="division">
-              {division.teams.map((team) => (
-                <button
-                  key={"Div" + team.id}
-                  disabled={new Date(2021, 8, 12, 19) < new Date()}
-                  className="divisionButton"
-                  style={styleByTeam(
-                    team,
-                    divisionBets[division.name] === team.id
-                  )}
-                  onClick={() => selectDivisionWinner(division.name, team.id)}
-                >
-                  {team.logo && (
-                    <img
-                      src={process.env.REACT_APP_IMG_URL + team.logo}
-                      className="logo"
-                      alt="logo home team"
-                      onError={(event: any) =>
-                        (event.target.style.display = "none")
-                      }
-                    ></img>
-                  )}
-                  <span
-                    className={
-                      divisionBets[division.name] === team.id ? "selected" : ""
-                    }
+              {division.teams
+                .sort(
+                  (a, b) =>
+                    b.wins - a.wins || b.ties - a.ties || a.losses - b.losses
+                )
+                .map((team) => (
+                  <button
+                    key={"Div" + team.id}
+                    disabled={new Date(2021, 8, 12, 19) < new Date()}
+                    className="divisionButton"
+                    style={styleByTeam(
+                      team,
+                      divisionBets[division.name] === team.id
+                    )}
+                    onClick={() => selectDivisionWinner(division.name, team.id)}
                   >
-                    {team.name}
-                  </span>
-                </button>
-              ))}
+                    {team.logo && (
+                      <img
+                        src={process.env.REACT_APP_IMG_URL + team.logo}
+                        className="logo"
+                        alt="logo home team"
+                        onError={(event: any) =>
+                          (event.target.style.display = "none")
+                        }
+                      ></img>
+                    )}
+                    <span
+                      className={
+                        divisionBets[division.name] === team.id
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      {`${team.name} ${team.wins}-${team.losses}`}
+                      {team.ties > 0 ? "-" + team.ties : ""}
+                    </span>
+                  </button>
+                ))}
             </div>
           </div>
         ))}
