@@ -107,6 +107,29 @@ export class UserDataService {
     }
   }
 
+  async getSettings(id: string): Promise<any> {
+    return this.userRepo.findOne(id, { select: ['settings'] }).catch(() => {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    });
+  }
+
+  async setHidden(
+    userId: string,
+    weekId: string,
+    hidden: boolean,
+  ): Promise<void> {
+    const user = await this.userRepo.findOne(userId).catch(() => {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    });
+
+    user.settings = {
+      ...user.settings,
+      hidden: { ...user.settings.hidden, [weekId]: hidden },
+    };
+
+    await this.userRepo.save(user);
+  }
+
   async sendReset(email: string): Promise<ResetEntity> {
     const user = await this.userRepo.findOne({ where: { email } });
     if (user) {

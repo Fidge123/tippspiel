@@ -71,6 +71,7 @@ export interface StatProps {
   home?: Team;
   away?: Team;
   bets: Votes;
+  hidden: boolean;
   isCompact: boolean;
 }
 

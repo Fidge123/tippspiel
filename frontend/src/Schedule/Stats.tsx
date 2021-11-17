@@ -2,11 +2,11 @@ import { useStats } from "./reducers/stats.reducer";
 import "./Stats.css";
 import { StatProps } from "./types";
 
-function Stats({ game, bets, home, away, isCompact }: StatProps) {
+function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
   const [stats] = useStats(game.id);
 
   if (new Date(game.date) < new Date() && stats) {
-    const finished = game.status === "STATUS_FINAL";
+    const finished = !hidden && game.status === "STATUS_FINAL";
     const homeScore = game.homeScore;
     const awayScore = game.awayScore;
     const wonBy = Math.abs(homeScore - awayScore) || 0;

@@ -5,6 +5,7 @@ import {
   UseGuards,
   Request,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,6 +15,8 @@ import { getTransporter } from '../email';
 
 import { UserDataService } from '../database/user.service';
 import { AuthService } from '../auth/auth.service';
+import { HiddenDto } from './hidden.dto';
+import { CurrentUser, User } from 'src/user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -163,6 +166,23 @@ export class UserController {
     return this.databaseService.resetPassword(id, password, token);
   }
 
-  @Post('edit')
-  async editUser(): Promise<void> {}
+  @UseGuards(AuthGuard('jwt'))
+  @Get('settings')
+  async getSettings(@CurrentUser() user: User): Promise<void> {
+    const u = await this.databaseService.getSettings(user.id);
+    return u.settings;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('hidden')
+  async setHidden(
+    @Body() hidden: HiddenDto,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.databaseService.setHidden(
+      user.id,
+      hidden.weekId,
+      hidden.hidden,
+    );
+  }
 }

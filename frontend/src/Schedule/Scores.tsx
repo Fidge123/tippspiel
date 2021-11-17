@@ -1,13 +1,13 @@
 import "./Scores.css";
 import { Game } from "./types";
 
-function Scores({ game, selected, doubler, setDoubler }: Props) {
+function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
   const inProgress = [
     "STATUS_IN_PROGRESS",
     "STATUS_HALFTIME",
     "STATUS_END_PERIOD",
   ].includes(game.status);
-  const final = game.status === "STATUS_FINAL";
+  const final = !hidden && game.status === "STATUS_FINAL";
   const homeScore = game.homeScore;
   const awayScore = game.awayScore;
   const homeWon = homeScore > awayScore;
@@ -66,6 +66,7 @@ interface Props {
   game: Game;
   selected?: "home" | "away";
   doubler: boolean;
+  hidden: boolean;
   setDoubler: Function;
 }
 
