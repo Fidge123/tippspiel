@@ -122,7 +122,7 @@ function Week({ week, teams }: Props) {
             onClick={() => setHidden(!hidden)}
             style={spoilerStyle(hidden)}
           >
-            Spoilermodus {hidden ? "an" : "aus"}
+            Spoilerschutz {hidden ? "an" : "aus"}
           </button>
         )}
       </div>
