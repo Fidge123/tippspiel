@@ -1,6 +1,5 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useHistory } from "react-router-dom";
-import "./Register.css";
 import { BASE_URL } from "../api";
 
 function Register() {
@@ -51,13 +50,14 @@ function Register() {
   }, [credentials, history]);
 
   return (
-    <div className="register">
+    <div className="flex flex-col items-center">
       <h2>Register</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="flex flex-col items-center">
+        <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="name-label">Name</label>
           <input
+            className="text-black px-2"
             disabled={credentials}
             type="text"
             onChange={(e) => setName(e.target.value)}
@@ -66,9 +66,10 @@ function Register() {
             aria-required="true"
           />
         </div>
-        <div>
+        <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="email-label">E-Mail</label>
           <input
+            className="text-black px-2"
             disabled={credentials}
             type="email"
             onChange={(e) => setEmail(e.target.value)}
@@ -77,9 +78,10 @@ function Register() {
             aria-required="true"
           />
         </div>
-        <div>
+        <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="pw-label">Password</label>
           <input
+            className="text-black px-2"
             disabled={credentials}
             type="password"
             onChange={(e) => setPassword(e.target.value)}
@@ -104,6 +106,7 @@ function Register() {
           </label>
           <span>
             <input
+              className="text-black px-2"
               disabled={credentials}
               type="checkbox"
               onChange={(e) => setConsent(e.target.checked)}
@@ -114,8 +117,8 @@ function Register() {
             <label id="">Ja, ich stimme zu!</label>
           </span>
         </div> */}
-        <div>
-          <button disabled={credentials} type="submit">
+        <div className="flex flex-col items-center">
+          <button className="m-4" disabled={credentials} type="submit">
             Registrieren
           </button>
         </div>

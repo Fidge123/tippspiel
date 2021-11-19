@@ -1,5 +1,4 @@
 import { useEffect, useState, useReducer } from "react";
-import "./Schedule.css";
 
 import { IWeek, Team } from "./types";
 import { BASE_URL } from "../api";
@@ -80,7 +79,7 @@ function Schedule() {
       return <div>Error occured... please reload!</div>;
     }
     return (
-      <section className="schedule">
+      <section className="grid gap-x-2 sm:gap-x-4 grid-cols-23 sm:grid-cols-27 md:grid-cols-45 gap-y-12 justify-items-center px-1 pb-8 min-w-min">
         <StatDispatch.Provider value={dispatchStats}>
           <StatValues.Provider value={stats}>
             <TippDispatch.Provider value={dispatchBets}>

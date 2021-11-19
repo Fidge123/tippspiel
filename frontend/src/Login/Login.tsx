@@ -1,5 +1,4 @@
 import { useState, useEffect, FormEvent } from "react";
-import "./Login.css";
 import { BASE_URL } from "../api";
 import { useHistory } from "react-router-dom";
 
@@ -67,13 +66,14 @@ export default function Login({ setToken }: LoginProperties) {
   }, [credentials, setToken, history]);
 
   return (
-    <div className="login">
+    <div className="flex flex-col items-center">
       <h2>Login</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="flex flex-col items-center">
+        <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="email-label">E-Mail</label>
           <input
+            className="text-black px-2"
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -81,9 +81,10 @@ export default function Login({ setToken }: LoginProperties) {
             aria-required="true"
           />
         </div>
-        <div>
+        <div className="flex flex-col items-center space-y-4">
           <label id="pw-label">Password</label>
           <input
+            className="text-black px-2"
             type="password"
             minLength={8}
             maxLength={100}
@@ -93,10 +94,15 @@ export default function Login({ setToken }: LoginProperties) {
             aria-required="true"
           />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" className="m-4">
+          Submit
+        </button>
 
-        <div>
-          <button className="forgot" onClick={() => forgot()}>
+        <div className="flex flex-col items-center">
+          <button
+            className="m-4 italic border-0 bg-transparent"
+            onClick={() => forgot()}
+          >
             Forgot Password?
           </button>
         </div>

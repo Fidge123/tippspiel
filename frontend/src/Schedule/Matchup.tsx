@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
-import "./Matchup.css";
 import { useBets } from "./reducers/bets.reducer";
 import Scores from "./Scores";
 import Stats from "./Stats";
@@ -58,9 +57,9 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
   }
 
   return (
-    <div className="game">
+    <div className="w-23r sm:w-27r md:w-39r flex flex-wrap py-1">
       <button
-        className="away"
+        className="team"
         disabled={new Date(game.date) < new Date()}
         style={styleByTeam(away, bet.selected === "away")}
         onClick={() => select("away")}
@@ -68,12 +67,16 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         {away?.logo && (
           <img
             src={process.env.REACT_APP_IMG_URL + away.logo}
-            className="logo"
+            className="h-6 w-6 float-left"
             alt="logo away team"
             onError={(event: any) => (event.target.style.display = "none")}
           ></img>
         )}
-        <span className={bet.selected === "away" ? "selected" : ""}>
+        <span
+          className={
+            bet.selected === "away" ? "font-semibold text-gray-50" : ""
+          }
+        >
           {innerWidth > 720 && game.awayTeam?.name}
           {innerWidth < 720 && innerWidth > 448 && away?.shortName}
           {innerWidth < 448 && away?.abbreviation}
@@ -87,7 +90,7 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         hidden={hidden}
       ></Scores>
       <button
-        className="home"
+        className="team"
         disabled={new Date(game.date) < new Date()}
         style={styleByTeam(home, bet.selected === "home")}
         onClick={() => select("home")}
@@ -95,20 +98,25 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         {home?.logo && (
           <img
             src={process.env.REACT_APP_IMG_URL + home.logo}
-            className="logo"
+            className="h-6 w-6 float-left"
             alt="logo home team"
             onError={(event: any) => (event.target.style.display = "none")}
           ></img>
         )}
-        <span className={bet.selected === "home" ? "selected" : ""}>
+        <span
+          className={
+            bet.selected === "home" ? "font-semibold text-gray-50" : ""
+          }
+        >
           {innerWidth > 720 && game.homeTeam?.name}
           {innerWidth < 720 && innerWidth > 448 && home?.shortName}
           {innerWidth < 448 && home?.abbreviation}
         </span>
       </button>
       <input
-        className="input"
-        style={{ color: busy ? "#d73" : "#000" }}
+        className={`h-10 w-11 ml-1 p-px text-center border bg-gray-300 disabled:bg-gray-600 border-gray-700 rounded disabled:text-gray-100 ${
+          busy ? "text-yellow-600" : "text-black"
+        }`}
         type="number"
         disabled={!bet.selected || new Date(game.date) < new Date()}
         value={bet.points ?? ""}
@@ -123,10 +131,16 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
       ></input>
       <div
         role="button"
-        className="panel-indicator"
+        className="flex justify-end items-center p-1 w-6 h-10"
         onClick={() => setOpen(!open)}
       >
-        <div className={open ? "arrow up" : "arrow down"}></div>
+        <div
+          className={`inline-block h-2 w-2 p-0.5 border-r-2 border-b-2 border-black dark:border-gray-200 ${
+            open
+              ? "transform duration-200 -rotate-135"
+              : "transform duration-200 rotate-45"
+          }`}
+        ></div>
       </div>
       {open && (
         <Stats
@@ -143,13 +157,14 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
 }
 
 function styleByTeam(team: Team | undefined, selected: boolean) {
-  return {
-    border: `2px solid #${selected ? team?.color2 : team?.color1 || "000000"}${
-      selected ? "ff" : "55"
-    }`,
-    backgroundColor: selected ? `#${team?.color1}aa` : "#fff",
-    boxShadow: "none",
-  };
+  return selected
+    ? {
+        borderColor: `#${team?.color2}ff`,
+        backgroundColor: `#${team?.color1}aa`,
+      }
+    : {
+        borderColor: `#${team?.color1 || "000000"}ff`,
+      };
 }
 
 interface Props {

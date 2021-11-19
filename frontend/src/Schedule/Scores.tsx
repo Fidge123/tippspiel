@@ -1,4 +1,3 @@
-import "./Scores.css";
 import { Game } from "./types";
 
 function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
@@ -14,25 +13,28 @@ function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
   const awayWon = awayScore > homeScore;
 
   if (game.status === "STATUS_CANCELED") {
-    return <div className="scores">CANCELED</div>;
+    return <div className="flex w-16 items-center mx-1">CANCELED</div>;
   }
 
   return (
-    <div className="scores">
-      <div>
+    <div className="flex w-16 sm:w-20 items-center mx-1">
+      <div className="flex flex-1 justify-center">
         {final && (
           <span
-            style={{
-              fontWeight: awayWon ? 800 : 400,
-              color: awayWon && selected === "away" ? "#1b2" : "#212529",
-            }}
+            className={`m-auto ${awayWon ? "font-extrabold" : "font-normal"} ${
+              selected === "away" && awayWon
+                ? "text-green-500"
+                : "text-gray-700 dark:text-gray-200"
+            }`}
           >
             {game.awayScore}
           </span>
         )}
-        {inProgress && <i style={{ color: "#696969" }}>{game.awayScore}</i>}
+        {inProgress && (
+          <i className={"text-gray-700 dark:text-gray-200"}>{game.awayScore}</i>
+        )}
       </div>
-      <div>
+      <div className="flex flex-1 justify-center text-gray-700 dark:text-gray-200">
         {new Date(game.date) < new Date() ? (
           doubler ? (
             "🌟"
@@ -40,23 +42,26 @@ function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
             "@"
           )
         ) : (
-          <button className="doubler" onClick={() => setDoubler(game.id)}>
+          <button onClick={() => setDoubler(game.id)}>
             {doubler ? "🌟" : "@"}
           </button>
         )}
       </div>
-      <div>
+      <div className="flex flex-1 justify-center">
         {final && (
           <span
-            style={{
-              fontWeight: homeWon ? 800 : 400,
-              color: homeWon && selected === "home" ? "#1b2" : "#212529",
-            }}
+            className={`m-auto ${homeWon ? "font-extrabold" : "font-normal"} ${
+              selected === "home" && homeWon
+                ? "text-green-500"
+                : "text-gray-700 dark:text-gray-200"
+            }`}
           >
             {game.homeScore}
           </span>
         )}
-        {inProgress && <i style={{ color: "#696969" }}>{game.homeScore}</i>}
+        {inProgress && (
+          <i className={"text-gray-700 dark:text-gray-200"}>{game.homeScore}</i>
+        )}
       </div>
     </div>
   );

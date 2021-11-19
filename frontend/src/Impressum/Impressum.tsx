@@ -1,5 +1,3 @@
-import "./Impressum.css";
-
 function Impressum() {
   return (
     <div className="impressum">

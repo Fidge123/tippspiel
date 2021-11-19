@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import {
   HashRouter as Router,
   Switch,
@@ -33,33 +32,37 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <header className="header">
-          <nav>
-            <div className="left">
+      <div className="w-screen h-screen">
+        <header className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex">
+          <nav className="flex w-full items-center justify-between">
+            <div>
               {token && (
                 <Link to="/">
-                  <span className="tippspiel">Tippspiel</span>
+                  <span className="text-white font-semibold pr-4">
+                    Tippspiel
+                  </span>
                 </Link>
               )}
               {token && (
                 <Link to="/leaderboard">
-                  <span className="tippspiel">Tabelle</span>
+                  <span className="text-white font-semibold pr-4">Tabelle</span>
                 </Link>
               )}
               {token && (
                 <Link to="/division">
-                  <span className="tippspiel">Divisions</span>
+                  <span className="text-white font-semibold pr-4">
+                    Divisions
+                  </span>
                 </Link>
               )}
               {/* <Link to="/impressum">
-                <span className="light">Impressum</span>
+                <span className="text-gray-200 font-light pr-4">Impressum</span>
               </Link>
               <Link to="/terms">
-                <span className="light">Nutzungsbedingungen</span>
+                <span className="text-gray-200 font-light pr-4">Nutzungsbedingungen</span>
               </Link> */}
             </div>
-            <div className="right">
+            <div>
               {token ? (
                 <button onClick={() => setToken("")}>Ausloggen</button>
               ) : showRegister ? (
@@ -74,7 +77,7 @@ function App() {
             </div>
           </nav>
         </header>
-        <main>
+        <main className="pt-12 dark:bg-gray-800 dark:text-gray-100 min-h-full">
           <Switch>
             <Route path="/login">
               {token ? (

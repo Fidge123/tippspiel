@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import "./Reset.css";
 import { BASE_URL } from "../api";
 
 function useQuery() {
@@ -54,10 +53,10 @@ function Reset() {
   }
 
   return (
-    <div className="reset">
+    <div className="flex flex-col items-center">
       <h2>Password Reset</h2>
-      <form onSubmit={reset}>
-        <div>
+      <form onSubmit={reset} className="flex flex-col items-center m-4">
+        <div className="space-y-4 space-x-2">
           <label id="pw-label">Neues Password</label>
           <input
             type="password"
@@ -69,7 +68,9 @@ function Reset() {
             aria-required="true"
           />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" className="m-4">
+          Submit
+        </button>
         {error && <p>An error occured: {error}</p>}
         {success && <p>{success}</p>}
       </form>

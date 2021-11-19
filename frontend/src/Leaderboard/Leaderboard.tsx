@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "./Leaderboard.css";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
 
@@ -58,47 +57,47 @@ function Leaderboard() {
   }, [token]);
 
   return (
-    <div className="lb">
-      <h2>Leaderboard</h2>
+    <div className="p-4 pt-0">
+      <h2 className="text-xl">Leaderboard</h2>
 
-      <table>
-        <thead className="lb-header">
+      <table className="mt-4 mb-12">
+        <thead>
           <tr>
-            <th className="left"></th>
-            <th className="left">Name</th>
-            <th className="center">Punkte</th>
-            <th className="center">Sieger</th>
-            <th className="center">+-0</th>
-            <th className="center">+-3</th>
-            <th className="center">+-6</th>
-            <th className="center">🌟</th>
+            <th className="pr-2 pt-2 text-left"></th>
+            <th className="pr-2 pt-2 text-left">Name</th>
+            <th className="pr-2 pt-2 text-center">Punkte</th>
+            <th className="pr-2 pt-2 text-center">Sieger</th>
+            <th className="pr-2 pt-2 text-center">+-0</th>
+            <th className="pr-2 pt-2 text-center">+-3</th>
+            <th className="pr-2 pt-2 text-center">+-6</th>
+            <th className="pr-2 pt-2 text-center">🌟</th>
           </tr>
         </thead>
         <tbody className="lb-body">
           {leaderboard.map((l, i) => (
             <tr key={`LB-${l.name}`}>
-              <td>{i + 1}.</td>
-              <td>{l.name}</td>
-              <td className="center">{l.points}</td>
-              <td className="center">
+              <td className="pr-2 pt-2">{i + 1}.</td>
+              <td className="pr-2 pt-2">{l.name}</td>
+              <td className="pr-2 pt-2 text-center">{l.points}</td>
+              <td className="pr-2 pt-2 text-center">
                 {l.correct}/{l.total}
                 <br />
                 {((l.correct / l.total) * 100).toFixed(0)}%
               </td>
-              <td className="center">
+              <td className="pr-2 pt-2 text-center">
                 {l.exact}/{l.total}
                 <br /> {((l.exact / l.total) * 100).toFixed(0)}%
               </td>
-              <td className="center">
+              <td className="pr-2 pt-2 text-center">
                 {l.offThree}/{l.total}
                 <br />
                 {((l.offThree / l.total) * 100).toFixed(0)}%
               </td>
-              <td className="center">
+              <td className="pr-2 pt-2 text-center">
                 {l.offSix}/{l.total}
                 <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
               </td>
-              <td className="center">{l.doubler}</td>
+              <td className="pr-2 pt-2 text-center">{l.doubler}</td>
             </tr>
           ))}
         </tbody>
@@ -108,7 +107,7 @@ function Leaderboard() {
         Die Platzierung wird bestimmt durch die erzielten Punkte. Es gelten die
         folgenden Regeln bei der Punkteverteilung:
       </p>
-      <ul>
+      <ul className="list-disc list-outside pl-12 py-4">
         <li>Ein Tipp auf den Sieger eines Spiels gibt 2 Punkte</li>
         <li>
           Ein Tipp mit +- 0 / 3 / 6 Punkte Abstand zur korrekten

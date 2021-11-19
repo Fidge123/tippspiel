@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import "./Week.css";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
 
@@ -114,26 +113,32 @@ function Week({ week, teams }: Props) {
   }, [hidden, token, weekId, loadHidden]);
 
   return (
-    <article className="week" key={week.label} ref={ref}>
-      <div className="weekHeader">
-        <span className="label">{week.label}</span>
+    <article className="pt-4" key={week.label} ref={ref}>
+      <div className="flex justify-between pr-6">
+        <span className="text-2xl dark:text-gray-100">{week.label}</span>
         {new Date(week.start) < new Date() && (
           <button
             onClick={() => setHidden(!hidden)}
-            style={spoilerStyle(hidden)}
+            className={`border border-gray-800 dark:border-black rounded ${
+              hidden
+                ? "text-white dark:text-white bg-gray-600 dark:bg-gray-900"
+                : "text-gray-800 dark:text-gray-900 bg-gray-100 dark:bg-gray-400"
+            }`}
           >
             Spoilerschutz {hidden ? "an" : "aus"}
           </button>
         )}
       </div>
       {week.teamsOnBye?.length > 0 && (
-        <div className="bye">
+        <div className="pb-1.5 max-w-sm sm:max-w-md dark:text-gray-300">
           Bye: {week.teamsOnBye.map((t) => t.shortName).join(", ")}
         </div>
       )}
       {splitByDate(week.games).map((time) => (
         <div key={time[0].date}>
-          <div className="time">{formatDate(time[0].date)}</div>
+          <div className="text-gray-400 py-0.5 leading-none">
+            {formatDate(time[0].date)}
+          </div>
           {time
             .sort((a, b) => a.id.localeCompare(b.id))
             .map(
@@ -178,15 +183,6 @@ function formatDate(date: string) {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function spoilerStyle(hidden: boolean) {
-  return {
-    border: "1px solid #999",
-    borderRadius: ".5rem",
-    color: hidden ? "#ccc" : "#999",
-    backgroundColor: hidden ? "#222" : "#fff",
-  };
 }
 
 interface Props {
