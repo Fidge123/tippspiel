@@ -119,6 +119,10 @@ function Division() {
                     >
                       {`${team.name} ${team.wins}-${team.losses}`}
                       {team.ties > 0 ? "-" + team.ties : ""}
+                      {` (${
+                        division.bets.filter((bet) => bet.team.id === team.id)
+                          .length
+                      })`}
                     </span>
                   </button>
                 ))}
@@ -166,6 +170,11 @@ function styleByTeam(team: Team | undefined, selected: boolean) {
 
 interface DivisionRes {
   name: string;
+  bets: {
+    id: string;
+    team: Team;
+    year: number;
+  }[];
   teams: Team[];
 }
 
