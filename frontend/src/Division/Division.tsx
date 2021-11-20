@@ -109,7 +109,13 @@ function Division() {
                         }
                       ></img>
                     )}
-                    <span>
+                    <span
+                      className={
+                        divisionBets[division.name] === team.id
+                          ? "font-semibold text-gray-50"
+                          : ""
+                      }
+                    >
                       {`${team.name} ${team.wins}-${team.losses}`}
                       {team.ties > 0 ? "-" + team.ties : ""}
                       {` (${
@@ -141,7 +147,11 @@ function Division() {
                 onError={(event: any) => (event.target.style.display = "none")}
               ></img>
             )}
-            <span>{team.name}</span>
+            <span
+              className={sbBet === team.id ? "font-semibold text-gray-50" : ""}
+            >
+              {team.name}
+            </span>
           </button>
         ))}
       </div>
