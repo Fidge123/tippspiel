@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply dark:bg-gray-800;
+  }
+
   button {
     @apply rounded border border-black;
     @apply h-8 bg-white dark:bg-gray-600 dark:text-gray-100;
@@ -12,6 +16,10 @@
 
   h2 {
     @apply text-2xl my-4;
+  }
+
+  h3 {
+    @apply text-xl my-4;
   }
 }
 
@@ -24,7 +32,7 @@
 }
 
 .team-l {
-  @apply py-1.5 px-2 h-10 w-23r;
+  @apply py-1.5 px-2 h-10 w-21r;
   @apply truncate text-base outline-none;
   @apply disabled:opacity-70 dark:disabled:opacity-80 shadow-none;
   @apply border-2 dark:bg-gray-500;

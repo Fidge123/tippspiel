@@ -14,6 +14,7 @@ module.exports = {
         3: "3px",
       },
       width: {
+        "21r": "21rem",
         "23r": "23rem",
         "27r": "27rem",
         "39r": "39rem",

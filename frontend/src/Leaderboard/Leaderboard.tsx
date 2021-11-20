@@ -60,49 +60,50 @@ function Leaderboard() {
     <div className="p-4 pt-0">
       <h2 className="text-xl">Leaderboard</h2>
 
-      <table className="mt-4 mb-12">
-        <thead>
-          <tr>
-            <th className="pr-2 pt-2 text-left"></th>
-            <th className="pr-2 pt-2 text-left">Name</th>
-            <th className="pr-2 pt-2 text-center">Punkte</th>
-            <th className="pr-2 pt-2 text-center">Sieger</th>
-            <th className="pr-2 pt-2 text-center">+-0</th>
-            <th className="pr-2 pt-2 text-center">+-3</th>
-            <th className="pr-2 pt-2 text-center">+-6</th>
-            <th className="pr-2 pt-2 text-center">🌟</th>
-          </tr>
-        </thead>
-        <tbody className="lb-body">
-          {leaderboard.map((l, i) => (
-            <tr key={`LB-${l.name}`}>
-              <td className="pr-2 pt-2">{i + 1}.</td>
-              <td className="pr-2 pt-2">{l.name}</td>
-              <td className="pr-2 pt-2 text-center">{l.points}</td>
-              <td className="pr-2 pt-2 text-center">
-                {l.correct}/{l.total}
-                <br />
-                {((l.correct / l.total) * 100).toFixed(0)}%
-              </td>
-              <td className="pr-2 pt-2 text-center">
-                {l.exact}/{l.total}
-                <br /> {((l.exact / l.total) * 100).toFixed(0)}%
-              </td>
-              <td className="pr-2 pt-2 text-center">
-                {l.offThree}/{l.total}
-                <br />
-                {((l.offThree / l.total) * 100).toFixed(0)}%
-              </td>
-              <td className="pr-2 pt-2 text-center">
-                {l.offSix}/{l.total}
-                <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
-              </td>
-              <td className="pr-2 pt-2 text-center">{l.doubler}</td>
+      <div className="mt-4 mb-12 w-full overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th className="pr-2 pt-2 text-left"></th>
+              <th className="pr-2 pt-2 text-left">Name</th>
+              <th className="pr-2 pt-2 text-center">Punkte</th>
+              <th className="pr-2 pt-2 text-center">Sieger</th>
+              <th className="pr-2 pt-2 text-center">+-0</th>
+              <th className="pr-2 pt-2 text-center">+-3</th>
+              <th className="pr-2 pt-2 text-center">+-6</th>
+              <th className="pr-2 pt-2 text-center">🌟</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
+          </thead>
+          <tbody className="lb-body">
+            {leaderboard.map((l, i) => (
+              <tr key={`LB-${l.name}`}>
+                <td className="pr-2 pt-2">{i + 1}.</td>
+                <td className="pr-2 pt-2">{l.name}</td>
+                <td className="pr-2 pt-2 text-center">{l.points}</td>
+                <td className="pr-2 pt-2 text-center">
+                  {l.correct}/{l.total}
+                  <br />
+                  {((l.correct / l.total) * 100).toFixed(0)}%
+                </td>
+                <td className="pr-2 pt-2 text-center">
+                  {l.exact}/{l.total}
+                  <br /> {((l.exact / l.total) * 100).toFixed(0)}%
+                </td>
+                <td className="pr-2 pt-2 text-center">
+                  {l.offThree}/{l.total}
+                  <br />
+                  {((l.offThree / l.total) * 100).toFixed(0)}%
+                </td>
+                <td className="pr-2 pt-2 text-center">
+                  {l.offSix}/{l.total}
+                  <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
+                </td>
+                <td className="pr-2 pt-2 text-center">{l.doubler}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <p>
         Die Platzierung wird bestimmt durch die erzielten Punkte. Es gelten die
         folgenden Regeln bei der Punkteverteilung:

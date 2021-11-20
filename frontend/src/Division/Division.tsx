@@ -76,8 +76,8 @@ function Division() {
   }
 
   return (
-    <div className="grid grid-cols-23 mx-8 gap-2 pb-8">
-      <div className="flex flex-col flex-wrap w-23r">
+    <div className="grid grid-cols-23 mx-4 sm:mx-8 gap-2 pb-8">
+      <div className="flex flex-col flex-wrap w-21r">
         <h2>Wähle den Sieger je Division:</h2>
         {divisions.map((division) => (
           <div key={division.name}>
@@ -129,7 +129,7 @@ function Division() {
           </div>
         ))}
       </div>
-      <div className="flex flex-col flex-wrap w-23r space-y-2">
+      <div className="flex flex-col flex-wrap w-21r space-y-2">
         <h2>Wähle den Sieger des Superbowls:</h2>
         {teams.map((team) => (
           <button

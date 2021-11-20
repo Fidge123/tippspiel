@@ -77,7 +77,7 @@ function App() {
             </div>
           </nav>
         </header>
-        <main className="pt-12 dark:bg-gray-800 dark:text-gray-100 min-h-full">
+        <main className="pt-12 dark:text-gray-100 min-h-full">
           <Switch>
             <Route path="/login">
               {token ? (
