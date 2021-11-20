@@ -79,55 +79,59 @@ function Division() {
     <div className="grid grid-cols-23 mx-4 sm:mx-8 gap-2 pb-8">
       <div className="flex flex-col flex-wrap w-21r">
         <h2>Wähle den Sieger je Division:</h2>
-        {divisions.map((division) => (
-          <div key={division.name}>
-            <h3>{division.name}</h3>
-            <div className="flex flex-col flex-wrap space-y-2">
-              {division.teams
-                .sort(
-                  (a, b) =>
-                    b.wins - a.wins || b.ties - a.ties || a.losses - b.losses
-                )
-                .map((team) => (
-                  <button
-                    key={"Div" + team.id}
-                    disabled={new Date(2021, 8, 12, 19) < new Date()}
-                    className="team-l"
-                    style={styleByTeam(
-                      team,
-                      divisionBets[division.name] === team.id
-                    )}
-                    onClick={() => selectDivisionWinner(division.name, team.id)}
-                  >
-                    {team.logo && (
-                      <img
-                        src={process.env.REACT_APP_IMG_URL + team.logo}
-                        className="h-6 w-6 float-left"
-                        alt="logo home team"
-                        onError={(event: any) =>
-                          (event.target.style.display = "none")
-                        }
-                      ></img>
-                    )}
-                    <span
-                      className={
+        {divisions
+          .sort((divA, divB) => divA.name.localeCompare(divB.name))
+          .map((division) => (
+            <div key={division.name}>
+              <h3>{division.name}</h3>
+              <div className="flex flex-col flex-wrap space-y-2">
+                {division.teams
+                  .sort(
+                    (a, b) =>
+                      b.wins - a.wins || b.ties - a.ties || a.losses - b.losses
+                  )
+                  .map((team) => (
+                    <button
+                      key={"Div" + team.id}
+                      disabled={new Date(2021, 8, 12, 19) < new Date()}
+                      className="team-l"
+                      style={styleByTeam(
+                        team,
                         divisionBets[division.name] === team.id
-                          ? "font-semibold text-gray-50"
-                          : ""
+                      )}
+                      onClick={() =>
+                        selectDivisionWinner(division.name, team.id)
                       }
                     >
-                      {`${team.name} ${team.wins}-${team.losses}`}
-                      {team.ties > 0 ? "-" + team.ties : ""}
-                      {` (${
-                        division.bets.filter((bet) => bet.team.id === team.id)
-                          .length
-                      })`}
-                    </span>
-                  </button>
-                ))}
+                      {team.logo && (
+                        <img
+                          src={process.env.REACT_APP_IMG_URL + team.logo}
+                          className="h-6 w-6 float-left"
+                          alt="logo home team"
+                          onError={(event: any) =>
+                            (event.target.style.display = "none")
+                          }
+                        ></img>
+                      )}
+                      <span
+                        className={
+                          divisionBets[division.name] === team.id
+                            ? "font-semibold text-gray-50"
+                            : ""
+                        }
+                      >
+                        {`${team.name} ${team.wins}-${team.losses}`}
+                        {team.ties > 0 ? "-" + team.ties : ""}
+                        {` (${
+                          division.bets.filter((bet) => bet.team.id === team.id)
+                            .length
+                        })`}
+                      </span>
+                    </button>
+                  ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className="flex flex-col flex-wrap w-21r space-y-2">
         <h2>Wähle den Sieger des Superbowls:</h2>
