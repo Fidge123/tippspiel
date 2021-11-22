@@ -20,14 +20,11 @@ export class BetService {
         const countString =
           games.length > 1 ? `${games.length} Spiele` : `ein Spiel`;
         await transporter
-          .sendMail({
-            from: {
-              name: 'Tippspiel',
-              address: 'tippspiel@6v4.de',
-            },
-            to: user.email,
-            subject: `Du hast ${countString} noch nicht getippt`,
-            text: await loadTXT('betReminder', {
+          .sendEmail({
+            From: 'Tippspiel <tippspiel@6v4.de>',
+            To: user.email,
+            Subject: `Du hast ${countString} noch nicht getippt`,
+            TextBody: await loadTXT('betReminder', {
               name: user.name,
               list: games
                 .map(
@@ -43,7 +40,7 @@ export class BetService {
                 )
                 .join('\n'),
             }),
-            html: await loadHTML('betReminder', {
+            HtmlBody: await loadHTML('betReminder', {
               name: user.name,
               count: countString,
               list: games

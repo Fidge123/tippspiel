@@ -55,30 +55,24 @@ export class UserController {
     const link = `https://6v4.de/tippspiel/#/verify?id=${id}&token=${token}`;
     const transporter = await getTransporter();
     await transporter
-      .sendMail({
-        from: {
-          name: 'Tippspiel',
-          address: 'tippspiel@6v4.de',
-        },
-        to: process.env.EMAIL,
-        subject: 'Neuer Nutzer registriert',
-        text: await loadTXT('newUserAlert'),
-        html: await loadHTML('newUserAlert', {
+      .sendEmail({
+        From: 'Tippspiel <tippspiel@6v4.de>',
+        To: process.env.EMAIL,
+        Subject: 'Neuer Nutzer registriert',
+        TextBody: await loadTXT('newUserAlert'),
+        HtmlBody: await loadHTML('newUserAlert', {
           id,
           time: now.toLocaleString(),
         }),
       })
       .catch((error) => console.error(error));
     await transporter
-      .sendMail({
-        from: {
-          name: 'Tippspiel',
-          address: 'tippspiel@6v4.de',
-        },
-        to: email,
-        subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
-        text: await loadTXT('verifyUser', { name, link }),
-        html: await loadHTML('verifyUser', { name, link }),
+      .sendEmail({
+        From: 'Tippspiel <tippspiel@6v4.de>',
+        To: email,
+        Subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
+        TextBody: await loadTXT('verifyUser', { name, link }),
+        HtmlBody: await loadHTML('verifyUser', { name, link }),
       })
       .catch((error) => console.error(error));
   }
@@ -94,15 +88,12 @@ export class UserController {
     const transporter = await getTransporter();
     await this.databaseService.verify(id, token);
     await transporter
-      .sendMail({
-        from: {
-          name: 'Tippspiel',
-          address: 'tippspiel@6v4.de',
-        },
-        to: process.env.EMAIL,
-        subject: 'Nutzer verifiziert',
-        text: await loadTXT('userVerifiedAlert'),
-        html: await loadHTML('userVerifiedAlert', {
+      .sendEmail({
+        From: 'Tippspiel <tippspiel@6v4.de>',
+        To: process.env.EMAIL,
+        Subject: 'Nutzer verifiziert',
+        TextBody: await loadTXT('userVerifiedAlert'),
+        HtmlBody: await loadHTML('userVerifiedAlert', {
           id,
           time: now.toLocaleString(),
         }),
@@ -121,30 +112,24 @@ export class UserController {
       const link = `https://6v4.de/tippspiel/#/reset?id=${user.id}&token=${token}`;
       const transporter = await getTransporter();
       await transporter
-        .sendMail({
-          from: {
-            name: 'Tippspiel',
-            address: 'tippspiel@6v4.de',
-          },
-          to: process.env.EMAIL,
-          subject: 'Passwort Reset angefragt',
-          text: await loadTXT('passwordResetAlert'),
-          html: await loadHTML('passwordResetAlert', {
+        .sendEmail({
+          From: 'Tippspiel <tippspiel@6v4.de>',
+          To: process.env.EMAIL,
+          Subject: 'Passwort Reset angefragt',
+          TextBody: await loadTXT('passwordResetAlert'),
+          HtmlBody: await loadHTML('passwordResetAlert', {
             id: user.id,
             time: now.toLocaleString(),
           }),
         })
         .catch((error) => console.error(error));
       await transporter
-        .sendMail({
-          from: {
-            name: 'Tippspiel',
-            address: 'tippspiel@6v4.de',
-          },
-          to: email,
-          subject: 'Tippspiel Passwort zurücksetzen',
-          text: await loadTXT('passwordReset', { name: user.name, link }),
-          html: await loadHTML('passwordReset', { name: user.name, link }),
+        .sendEmail({
+          From: 'Tippspiel <tippspiel@6v4.de>',
+          To: email,
+          Subject: 'Tippspiel Passwort zurücksetzen',
+          TextBody: await loadTXT('passwordReset', { name: user.name, link }),
+          HtmlBody: await loadHTML('passwordReset', { name: user.name, link }),
         })
         .catch((error) => console.error(error));
     }
