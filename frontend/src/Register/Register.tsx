@@ -57,7 +57,7 @@ function Register() {
         <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="name-label">Name</label>
           <input
-            className="text-black px-2"
+            className="text-black px-2 border"
             disabled={credentials}
             type="text"
             onChange={(e) => setName(e.target.value)}
@@ -69,7 +69,7 @@ function Register() {
         <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="email-label">E-Mail</label>
           <input
-            className="text-black px-2"
+            className="text-black px-2 border"
             disabled={credentials}
             type="email"
             onChange={(e) => setEmail(e.target.value)}
@@ -81,7 +81,7 @@ function Register() {
         <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="pw-label">Password</label>
           <input
-            className="text-black px-2"
+            className="text-black px-2 border"
             disabled={credentials}
             type="password"
             onChange={(e) => setPassword(e.target.value)}
@@ -106,7 +106,7 @@ function Register() {
           </label>
           <span>
             <input
-              className="text-black px-2"
+              className="text-black px-2 border"
               disabled={credentials}
               type="checkbox"
               onChange={(e) => setConsent(e.target.checked)}

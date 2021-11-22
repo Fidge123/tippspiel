@@ -73,7 +73,7 @@ export default function Login({ setToken }: LoginProperties) {
         <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="email-label">E-Mail</label>
           <input
-            className="text-black px-2"
+            className="text-black px-2 border"
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -84,7 +84,7 @@ export default function Login({ setToken }: LoginProperties) {
         <div className="flex flex-col items-center space-y-4">
           <label id="pw-label">Password</label>
           <input
-            className="text-black px-2"
+            className="text-black px-2 border"
             type="password"
             minLength={8}
             maxLength={100}

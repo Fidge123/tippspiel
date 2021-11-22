@@ -59,6 +59,7 @@ function Reset() {
         <div className="space-y-4 space-x-2">
           <label id="pw-label">Neues Password</label>
           <input
+            className="text-black px-2 border"
             type="password"
             minLength={8}
             maxLength={100}

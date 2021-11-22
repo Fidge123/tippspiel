@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useStats } from "./reducers/stats.reducer";
 import { StatProps } from "./types";
 
@@ -28,25 +29,27 @@ function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
       );
 
     return (
-      <div className="flex flex-row dark:text-gray-300">
-        <div className="w-7r sm:w-8.5r md:w-14.5r py-1.5 px-0.5">
+      <div className="flex flex-row text-gray-800 dark:text-gray-300 font-xs leading-tight">
+        <div
+          className={`w-7r sm:w-8.5r md:w-14.5r font-xs truncate grid auto-rows-min gap-x-0.5 ${
+            finished ? "stat-grid-4" : "stat-grid-3"
+          } `}
+        >
+          {awayVotes.length > 0 && (
+            <span className="col-start-3 text-center">
+              {isCompact ? "T" : "Tipp"}
+            </span>
+          )}
+          {awayVotes.length > 0 && finished && (
+            <span className="text-center">{isCompact ? "P" : "Punkte"}</span>
+          )}
           {awayVotes.map((value, i) => (
-            <div key={`away-${i}`} className="flex justify-between">
-              <span className="w-20 truncate font-xs">
-                {value.name}
-                {value.doubler ? "🌟" : ""}
-              </span>
-              <span className="w-8 md:w-20 font-xs">
-                {isCompact ? "T" : "Tipp: "}
-                {value.bet}
-              </span>
-              {finished && (
-                <span className="w-8 md:w-20 font-xs">
-                  {isCompact ? "P" : "Punkte: "}
-                  {value.points}
-                </span>
-              )}
-            </div>
+            <Fragment key={`away${i}`}>
+              <span>{value.name}</span>
+              <span>{value.doubler ? "🌟" : ""}</span>
+              <span className="text-center">{value.bet}</span>
+              {finished && <span className="text-center">{value.points}</span>}
+            </Fragment>
           ))}
         </div>
         <div className="flex w-16 sm:w-20 mx-1 items-center justify-center">
@@ -54,24 +57,26 @@ function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
           {finished && wonBy}
           {finished && homeWon && " >"}
         </div>
-        <div className="w-7r sm:w-8.5r md:w-14.5r py-1.5 px-0.5">
+        <div
+          className={`w-7r sm:w-8.5r md:w-14.5r font-xs truncate grid auto-rows-min gap-x-0.5 ${
+            finished ? "stat-grid-4" : "stat-grid-3"
+          }`}
+        >
+          {homeVotes.length > 0 && (
+            <span className="col-start-3 text-center">
+              {isCompact ? "T" : "Tipp"}
+            </span>
+          )}
+          {homeVotes.length > 0 && finished && (
+            <span className="text-center">{isCompact ? "P" : "Punkte"}</span>
+          )}
           {homeVotes.map((value, i) => (
-            <div key={`home-${i}`} className="flex justify-between">
-              <span className="w-20 truncate font-xs">
-                {value.doubler ? "🌟" : ""}
-                {value.name}
-              </span>
-              <span className="w-8 md:w-20 font-xs">
-                {isCompact ? "T" : "Tipp: "}
-                {value.bet}
-              </span>
-              {finished && (
-                <span className="w-8 md:w-20 font-xs">
-                  {isCompact ? "P" : "Punkte: "}
-                  {value.points}
-                </span>
-              )}
-            </div>
+            <Fragment key={`home${i}`}>
+              <span>{value.name}</span>
+              <span>{value.doubler ? "🌟" : ""}</span>
+              <span className="text-center">{value.bet}</span>
+              {finished && <span className="text-center">{value.points}</span>}
+            </Fragment>
           ))}
         </div>
       </div>
@@ -79,7 +84,7 @@ function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
   }
   return (
     <div className="flex flex-row dark:text-gray-300">
-      <div className="w-7r sm:w-8.5r md:w-14.5r py-1.5 px-0.5">
+      <div className="w-7r sm:w-8.5r md:w-14.5r px-0.5">
         <div>
           {bets.away || "0"} {bets.away === 1 ? "Stimme" : "Stimmen"}
         </div>
@@ -91,7 +96,7 @@ function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
         )}
       </div>
       <div className="flex w-16 sm:w-20 mx-1 items-center justify-center"></div>
-      <div className="w-7r sm:w-8.5r md:w-14.5r py-1.5 px-0.5">
+      <div className="w-7r sm:w-8.5r md:w-14.5r px-0.5">
         <div>
           {bets.home || "0"} {bets.home === 1 ? "Stimme" : "Stimmen"}
         </div>
