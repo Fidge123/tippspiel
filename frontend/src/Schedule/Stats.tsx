@@ -58,8 +58,8 @@ function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
           {homeVotes.map((value, i) => (
             <div key={`home-${i}`} className="flex justify-between">
               <span className="w-20 truncate font-xs">
-                {value.name}
                 {value.doubler ? "🌟" : ""}
+                {value.name}
               </span>
               <span className="w-8 md:w-20 font-xs">
                 {isCompact ? "T" : "Tipp: "}
