@@ -90,6 +90,7 @@ export class ScheduleService {
     }
   }
 
+  @Cron('0 11 * * *')
   async importSchedule(): Promise<void> {
     for (let weekNumber = 1; weekNumber <= regularSeason.weeks; weekNumber++) {
       this.importWeek({
