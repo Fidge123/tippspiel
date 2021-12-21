@@ -75,9 +75,9 @@ function Leaderboard() {
             </tr>
           </thead>
           <tbody className="lb-body">
-            {leaderboard.map((l, i) => (
+            {leaderboard.map((l, i, lb) => (
               <tr key={`LB-${l.name}`}>
-                <td className="pr-2 pt-2">{i + 1}.</td>
+                <td className="pr-2 pt-2">{i && lb[i-1].points === lb[i].points ? "" : `${i + 1}.`}</td>
                 <td className="pr-2 pt-2">{l.name}</td>
                 <td className="pr-2 pt-2 text-center">{l.points}</td>
                 <td className="pr-2 pt-2 text-center">
