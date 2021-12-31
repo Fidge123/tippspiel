@@ -30,7 +30,7 @@ export class ScheduleService {
     await this.importSchedule();
   }
 
-  @Cron('0 7 * * 1,2')
+  @Cron('3 7 * 1-2,9-12 *')
   async importMasterData(): Promise<void> {
     const response = (await axios.get(`${BASE_URL}groups`)).data;
     for (const conf of response.groups) {
@@ -90,7 +90,7 @@ export class ScheduleService {
     }
   }
 
-  @Cron('0 11 * * *')
+  @Cron('48 7 * 1-2,9-12 *')
   async importSchedule(): Promise<void> {
     for (let weekNumber = 1; weekNumber <= regularSeason.weeks; weekNumber++) {
       this.importWeek({

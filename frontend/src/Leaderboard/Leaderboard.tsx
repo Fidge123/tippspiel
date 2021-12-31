@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
 
@@ -9,6 +10,13 @@ function sum(list: number[]) {
 function Leaderboard() {
   const [token] = useToken();
   const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
+
+  function formatBet(bet: any) {
+    return {
+      logo: process.env.REACT_APP_IMG_URL + bet?.team?.logo,
+      points: bet?.points || 0,
+    };
+  }
 
   useEffect(() => {
     (async () => {
@@ -48,6 +56,17 @@ function Leaderboard() {
               0
             ),
             total: user.bets.length,
+            divBets: [
+              formatBet(user.divBets.find((bet) => bet.name === "AFC North")),
+              formatBet(user.divBets.find((bet) => bet.name === "AFC South")),
+              formatBet(user.divBets.find((bet) => bet.name === "AFC West")),
+              formatBet(user.divBets.find((bet) => bet.name === "AFC East")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC North")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC South")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC West")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC East")),
+            ],
+            sbBet: formatBet(user.sbBet),
           }))
           .sort((a, b) =>
             a.points === b.points ? b.total - a.total : b.points - a.points
@@ -77,7 +96,9 @@ function Leaderboard() {
           <tbody className="lb-body">
             {leaderboard.map((l, i, lb) => (
               <tr key={`LB-${l.name}`}>
-                <td className="pr-2 pt-2">{i && lb[i-1].points === lb[i].points ? "" : `${i + 1}.`}</td>
+                <td className="pr-2 pt-2">
+                  {i && lb[i - 1].points === lb[i].points ? "" : `${i + 1}.`}
+                </td>
                 <td className="pr-2 pt-2">{l.name}</td>
                 <td className="pr-2 pt-2 text-center">{l.points}</td>
                 <td className="pr-2 pt-2 text-center">
@@ -99,6 +120,57 @@ function Leaderboard() {
                   <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
                 </td>
                 <td className="pr-2 pt-2 text-center">{l.doubler}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-4 mb-12 w-full overflow-x-auto">
+        <table>
+          <thead className="lb-header">
+            <tr>
+              <th className="left">Name</th>
+              <th className="center px-2">AFC North</th>
+              <th className="center px-2">AFC South</th>
+              <th className="center px-2">AFC West</th>
+              <th className="center px-2">AFC East</th>
+              <th className="center px-2">NFC North</th>
+              <th className="center px-2">NFC South</th>
+              <th className="center px-2">NFC West</th>
+              <th className="center px-2">NFC East</th>
+              <th className="center px-2">SB</th>
+              <th className="center px-2">Points</th>
+            </tr>
+          </thead>
+          <tbody className="lb-body">
+            {leaderboard.map((l) => (
+              <tr key={`LB-${l.name}`}>
+                <td className="pr-2 pt-2">{l.name}</td>
+                {l.divBets.map((bet, i) => (
+                  <td key={"divbet" + i} className="pr-2 pt-2 text-center">
+                    <img
+                      src={bet?.logo}
+                      className="h-6 w-6 inline-block"
+                      alt="logo home team"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
+                      }
+                    ></img>
+                  </td>
+                ))}
+                <td className="pr-2 pt-2 text-center">
+                  <img
+                    src={l.sbBet?.logo}
+                    className="h-6 w-6 inline-block"
+                    alt="logo home team"
+                    onError={(event: any) =>
+                      (event.target.style.display = "none")
+                    }
+                  ></img>
+                </td>
+                <td className="cpr-2 pt-2 text-center">
+                  {l.divBets.reduce((p, c) => p + c.points, 0) + l.sbBet.points}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -142,6 +214,14 @@ interface ILeaderboard {
   offSix: number;
   doubler: number;
   total: number;
+  divBets: {
+    logo: string;
+    points: number;
+  }[];
+  sbBet: {
+    logo: string;
+    points: number;
+  };
 }
 
 interface LBResponse {
@@ -150,6 +230,24 @@ interface LBResponse {
     id: string;
     points: number[];
   }[];
+  divBets: {
+    id: string;
+    name: string;
+    team: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+  }[];
+  sbBet: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    logo: string;
+    playoffSeed: number;
+  };
 }
 
 export default Leaderboard;

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDivisionBetDto } from 'src/bet/division.dto';
-import { Brackets, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThan, Repository } from 'typeorm';
 
 import { CreateBetDto } from '../bet/bet.dto';
 
@@ -134,13 +134,44 @@ export class BetDataService {
         .createQueryBuilder('user')
         // .andWhere('user.memberIn = :league', { league: '' })
         .leftJoinAndSelect('user.bets', 'bets')
+        .leftJoinAndSelect('user.divisionBets', 'divisionBets')
+        .leftJoinAndSelect('divisionBets.team', 'divTeam')
+        .leftJoinAndSelect('divisionBets.division', 'division')
+        .leftJoinAndSelect('user.superbowlBets', 'superbowlBets')
+        .leftJoinAndSelect('superbowlBets.team', 'sbTeam')
         // .andWhere('bets.league = :league', { league: '' })
         .leftJoinAndSelect('bets.game', 'game')
         .where('game.status = :status', { status: 'STATUS_FINAL' })
         .leftJoin('game.week', 'week')
         .andWhere('week.year = :year', { year })
+        .andWhere('divisionBets.year = :year', { year })
+        .andWhere('superbowlBets.year = :year', { year })
         .getMany()
     );
+  }
+
+  async findCurrentSeasonType(): Promise<number> {
+    const week = await this.weekRepo.findOne({
+      where: [
+        { start: MoreThan(new Date()) },
+        { end: LessThanOrEqual(new Date()) },
+      ],
+    });
+    return week.seasontype;
+  }
+
+  async findSbWinner(year: number): Promise<TeamEntity> {
+    const game = await this.gameRepo
+      .createQueryBuilder('game')
+      .leftJoinAndSelect('game.week', 'week')
+      .leftJoinAndSelect('game.homeTeam', 'home')
+      .leftJoinAndSelect('game.awayTeam', 'away')
+      .where('week.seasonType = :st', { st: 3 })
+      .andWhere('week.week = :w', { w: 5 })
+      .andWhere('week.year = :year', { year })
+      .getOne();
+
+    return game.winner === 'home' ? game.homeTeam : game.awayTeam;
   }
 
   async votesPerGame(year: number): Promise<GameEntity[]> {
@@ -178,7 +209,7 @@ export class BetDataService {
     });
   }
 
-  async findBetDoublersForStratedGames(
+  async findBetDoublersForStartedGames(
     year: number,
   ): Promise<BetDoublerEntity[]> {
     return (

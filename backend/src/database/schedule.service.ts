@@ -123,9 +123,13 @@ export class ScheduleDataService {
     t.shortName = team.shortDisplayName;
     t.name = team.displayName;
     t.division = division;
-    t.wins = findStat(team, 'wins'); // TODO?
-    t.losses = findStat(team, 'losses'); // TODO?
-    t.ties = findStat(team, 'ties'); // TODO?
+    t.playoffSeed = findStat(team, 'playoffSeed');
+    t.wins = findStat(team, 'wins');
+    t.losses = findStat(team, 'losses');
+    t.ties = findStat(team, 'ties');
+    t.pointsFor = findStat(team, 'pointsFor');
+    t.pointsAgainst = findStat(team, 'pointsAgainst');
+    t.streak = findStat(team, 'streak');
     t.color1 = team.color;
     t.color2 = team.alternateColor;
     return this.teamRepo.save(t);

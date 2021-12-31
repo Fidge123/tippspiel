@@ -1,6 +1,7 @@
 import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import { CurrentUser, User } from '../user.decorator';
 import { BetDoublerEntity, BetEntity, GameEntity } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
 
@@ -14,7 +15,7 @@ export class LeaderboardController {
     const games = await this.databaseService.findBetsForStartedGames(
       parseInt(season, 10),
     );
-    const doublers = await this.databaseService.findBetDoublersForStratedGames(
+    const doublers = await this.databaseService.findBetDoublersForStartedGames(
       parseInt(season, 10),
     );
 
@@ -41,12 +42,20 @@ export class LeaderboardController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':season')
-  async getAll(@Param('season') season: string): Promise<any> {
+  async getAll(
+    @Param('season') season: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<any> {
     const users = await this.databaseService.findBetsByUser(
       parseInt(season, 10),
     );
 
-    const doublers = await this.databaseService.findBetDoublersForStratedGames(
+    const st = await this.databaseService.findCurrentSeasonType();
+    const sbWinner = await this.databaseService.findSbWinner(
+      parseInt(season, 10),
+    );
+
+    const doublers = await this.databaseService.findBetDoublersForStartedGames(
       parseInt(season, 10),
     );
 
@@ -59,6 +68,21 @@ export class LeaderboardController {
           doublers.filter((d) => d.user.id === user.id),
         ),
       ),
+      divBets: user.divisionBets.map((bet) => ({
+        name: bet.division.name,
+        team: st === 3 || user.id === currentUser.id ? bet.team : {},
+        points:
+          st === 3 && bet.team.playoffSeed > 0 && bet.team.playoffSeed <= 4
+            ? 5
+            : 0,
+      })),
+      sbBet: {
+        team:
+          st === 3 || user.id === currentUser.id
+            ? user.superbowlBets[0]?.team
+            : {},
+        points: sbWinner ? user.superbowlBets[0]?.team.id === sbWinner.id : 0,
+      },
     }));
   }
 }
