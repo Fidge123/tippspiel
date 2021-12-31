@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { BASE_URL } from "../api";
 import { useToken } from "../useToken";
 
