@@ -12,7 +12,9 @@ function Leaderboard() {
 
   function formatBet(bet: any) {
     return {
-      logo: process.env.REACT_APP_IMG_URL + bet?.team?.logo,
+      logo: bet?.team?.logo
+        ? process.env.REACT_APP_IMG_URL + bet?.team?.logo
+        : null,
       points: bet?.points || 0,
     };
   }
@@ -146,26 +148,36 @@ function Leaderboard() {
               <tr key={`LB-${l.name}`}>
                 <td className="pr-2 pt-2">{l.name}</td>
                 {l.divBets.map((bet, i) => (
-                  <td key={"divbet" + i} className="pr-2 pt-2 text-center">
+                  <td key={"divbet" + i} className="p-1 pt-2 text-center">
+                    {bet?.logo && (
+                      <img
+                        src={bet?.logo}
+                        className={`h-8 w-8 p-1 inline-block border rounded ${
+                          bet.points ? "border-green-500" : "border-red-500"
+                        }`}
+                        alt="team logo for division bet"
+                        onError={(event: any) =>
+                          (event.target.style.display = "none")
+                        }
+                      ></img>
+                    )}
+                    {bet?.logo === null && "?"}
+                  </td>
+                ))}
+                <td className="p-1 pt-2 text-center">
+                  {l.sbBet?.logo && (
                     <img
-                      src={bet?.logo}
-                      className="h-6 w-6 inline-block"
-                      alt="logo home team"
+                      src={l.sbBet?.logo}
+                      className={`h-8 w-8 p-1 inline-block border rounded ${
+                        l.sbBet.points ? "border-green-500" : "border-red-500"
+                      }`}
+                      alt="team logo for superbowl bet"
                       onError={(event: any) =>
                         (event.target.style.display = "none")
                       }
                     ></img>
-                  </td>
-                ))}
-                <td className="pr-2 pt-2 text-center">
-                  <img
-                    src={l.sbBet?.logo}
-                    className="h-6 w-6 inline-block"
-                    alt="logo home team"
-                    onError={(event: any) =>
-                      (event.target.style.display = "none")
-                    }
-                  ></img>
+                  )}
+                  {l.sbBet?.logo === null && "?"}
                 </td>
                 <td className="cpr-2 pt-2 text-center">
                   {l.divBets.reduce((p, c) => p + c.points, 0) + l.sbBet.points}
