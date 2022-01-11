@@ -50,9 +50,7 @@ export class LeaderboardController {
       parseInt(season, 10),
     );
 
-    const st = await this.databaseService.findCurrentSeasonType();
-    const now = new Date();
-    console.log(`ST: ${st}, now ${now.toISOString()}`);
+    const st = await this.databaseService.findCurrentWeek();
     const sbWinner = await this.databaseService.findSbWinner(
       parseInt(season, 10),
     );
@@ -72,15 +70,17 @@ export class LeaderboardController {
       ),
       divBets: user.divisionBets.map((bet) => ({
         name: bet.division.name,
-        team: st === 3 || user.id === currentUser.id ? bet.team : {},
+        team: st.seasontype === 3 || user.id === currentUser.id ? bet.team : {},
         points:
-          st === 3 && bet.team.playoffSeed > 0 && bet.team.playoffSeed <= 4
+          st.seasontype === 3 &&
+          bet.team.playoffSeed > 0 &&
+          bet.team.playoffSeed <= 4
             ? 5
             : 0,
       })),
       sbBet: {
         team:
-          st === 3 || user.id === currentUser.id
+          (st.seasontype === 3 && st.week === 5) || user.id === currentUser.id
             ? user.superbowlBets[0]?.team
             : {},
         points: sbWinner ? user.superbowlBets[0]?.team.id === sbWinner.id : 0,

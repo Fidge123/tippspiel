@@ -150,12 +150,11 @@ export class BetDataService {
     );
   }
 
-  async findCurrentSeasonType(): Promise<number> {
-    const week = await this.weekRepo.findOne({
-      where: { end: MoreThan(new Date()), start: LessThanOrEqual(new Date()) },
+  async findCurrentWeek(): Promise<WeekEntity> {
+    return await this.weekRepo.findOne({
+      where: { end: MoreThan(new Date()) },
+      order: { end: 'ASC' },
     });
-    console.log(week.start, week.end);
-    return week.seasontype;
   }
 
   async findSbWinner(year: number): Promise<TeamEntity> {
