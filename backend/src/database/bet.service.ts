@@ -157,6 +157,7 @@ export class BetDataService {
         { start: LessThanOrEqual(new Date()) },
       ],
     });
+    console.log(week.start, week.end);
     return week.seasontype;
   }
 

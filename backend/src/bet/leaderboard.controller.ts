@@ -51,7 +51,8 @@ export class LeaderboardController {
     );
 
     const st = await this.databaseService.findCurrentSeasonType();
-    console.log(st);
+    const now = new Date();
+    console.log(`ST: ${st}, now ${now.toISOString()}`);
     const sbWinner = await this.databaseService.findSbWinner(
       parseInt(season, 10),
     );
