@@ -153,8 +153,8 @@ export class BetDataService {
   async findCurrentSeasonType(): Promise<number> {
     const week = await this.weekRepo.findOne({
       where: [
-        { start: MoreThan(new Date()) },
-        { end: LessThanOrEqual(new Date()) },
+        { end: MoreThan(new Date()) },
+        { start: LessThanOrEqual(new Date()) },
       ],
     });
     return week.seasontype;
