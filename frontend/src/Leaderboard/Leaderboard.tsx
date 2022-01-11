@@ -32,10 +32,10 @@ function Leaderboard() {
         res
           .map((user) => ({
             name: user.user,
-            points: user.bets.reduce(
-              (prev, { points }) => prev + sum(points),
-              0
-            ),
+            points:
+              user.bets.reduce((prev, { points }) => prev + sum(points), 0) +
+              user.divBets.reduce((p, c) => p + c.points, 0) +
+              user.sbBet.points,
             correct: user.bets.reduce(
               (a, b) => (b.points[0] > 0 ? a + 1 : a),
               0
@@ -242,8 +242,8 @@ interface LBResponse {
     points: number[];
   }[];
   divBets: {
-    id: string;
     name: string;
+    points: number;
     team: {
       id: string;
       name: string;
@@ -253,11 +253,14 @@ interface LBResponse {
     };
   }[];
   sbBet: {
-    id: string;
-    name: string;
-    abbreviation: string;
-    logo: string;
-    playoffSeed: number;
+    points: number;
+    team: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
   };
 }
 
