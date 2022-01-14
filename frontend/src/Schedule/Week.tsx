@@ -78,7 +78,6 @@ function Week({ week, teams }: Props) {
         },
       });
       const res: any = await response.json();
-      console.log(res);
       if (res.hidden && typeof res.hidden[weekId] !== "undefined") {
         setHidden(res.hidden[weekId]);
       }

@@ -9,7 +9,7 @@ import { getTransporter } from '../email';
 export class BetService {
   constructor(private readonly databaseService: BetDataService) {}
 
-  @Cron('0 18 * * *')
+  @Cron('0 18 * Sep-Dec,Jan,Feb *')
   async betReminder(): Promise<void> {
     const users = await this.databaseService.findAllUsers();
     for (const user of users) {

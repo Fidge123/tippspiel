@@ -10,6 +10,15 @@ function Leaderboard() {
   const [token] = useToken();
   const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
 
+  function formatBet(bet: any) {
+    return {
+      logo: bet?.team?.logo
+        ? process.env.REACT_APP_IMG_URL + bet?.team?.logo
+        : null,
+      points: bet?.points || 0,
+    };
+  }
+
   useEffect(() => {
     (async () => {
       const response = await fetch(BASE_URL + "leaderboard/2021", {
@@ -23,10 +32,10 @@ function Leaderboard() {
         res
           .map((user) => ({
             name: user.user,
-            points: user.bets.reduce(
-              (prev, { points }) => prev + sum(points),
-              0
-            ),
+            points:
+              user.bets.reduce((prev, { points }) => prev + sum(points), 0) +
+              user.divBets.reduce((p, c) => p + c.points, 0) +
+              user.sbBet.points,
             correct: user.bets.reduce(
               (a, b) => (b.points[0] > 0 ? a + 1 : a),
               0
@@ -48,6 +57,17 @@ function Leaderboard() {
               0
             ),
             total: user.bets.length,
+            divBets: [
+              formatBet(user.divBets.find((bet) => bet.name === "AFC North")),
+              formatBet(user.divBets.find((bet) => bet.name === "AFC South")),
+              formatBet(user.divBets.find((bet) => bet.name === "AFC West")),
+              formatBet(user.divBets.find((bet) => bet.name === "AFC East")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC North")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC South")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC West")),
+              formatBet(user.divBets.find((bet) => bet.name === "NFC East")),
+            ],
+            sbBet: formatBet(user.sbBet),
           }))
           .sort((a, b) =>
             a.points === b.points ? b.total - a.total : b.points - a.points
@@ -77,7 +97,9 @@ function Leaderboard() {
           <tbody className="lb-body">
             {leaderboard.map((l, i, lb) => (
               <tr key={`LB-${l.name}`}>
-                <td className="pr-2 pt-2">{i && lb[i-1].points === lb[i].points ? "" : `${i + 1}.`}</td>
+                <td className="pr-2 pt-2">
+                  {i && lb[i - 1].points === lb[i].points ? "" : `${i + 1}.`}
+                </td>
                 <td className="pr-2 pt-2">{l.name}</td>
                 <td className="pr-2 pt-2 text-center">{l.points}</td>
                 <td className="pr-2 pt-2 text-center">
@@ -99,6 +121,67 @@ function Leaderboard() {
                   <br /> {((l.offSix / l.total) * 100).toFixed(0)}%
                 </td>
                 <td className="pr-2 pt-2 text-center">{l.doubler}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-4 mb-12 w-full overflow-x-auto">
+        <table>
+          <thead className="lb-header">
+            <tr>
+              <th className="left">Name</th>
+              <th className="center px-2">AFC North</th>
+              <th className="center px-2">AFC South</th>
+              <th className="center px-2">AFC West</th>
+              <th className="center px-2">AFC East</th>
+              <th className="center px-2">NFC North</th>
+              <th className="center px-2">NFC South</th>
+              <th className="center px-2">NFC West</th>
+              <th className="center px-2">NFC East</th>
+              <th className="center px-2">SB</th>
+              <th className="center px-2">Points</th>
+            </tr>
+          </thead>
+          <tbody className="lb-body">
+            {leaderboard.map((l) => (
+              <tr key={`LB-${l.name}`}>
+                <td className="pr-2 pt-2">{l.name}</td>
+                {l.divBets.map((bet, i) => (
+                  <td key={"divbet" + i} className="p-1 pt-2 text-center">
+                    {bet?.logo && (
+                      <img
+                        src={bet?.logo}
+                        className={`h-8 w-8 p-1 inline-block border rounded ${
+                          bet.points ? "border-green-500" : "border-red-500"
+                        }`}
+                        alt="team logo for division bet"
+                        onError={(event: any) =>
+                          (event.target.style.display = "none")
+                        }
+                      ></img>
+                    )}
+                    {bet?.logo === null && "?"}
+                  </td>
+                ))}
+                <td className="p-1 pt-2 text-center">
+                  {l.sbBet?.logo && (
+                    <img
+                      src={l.sbBet?.logo}
+                      className={`h-8 w-8 p-1 inline-block border rounded ${
+                        l.sbBet.points ? "border-green-500" : "border-red-500"
+                      }`}
+                      alt="team logo for superbowl bet"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
+                      }
+                    ></img>
+                  )}
+                  {l.sbBet?.logo === null && "?"}
+                </td>
+                <td className="cpr-2 pt-2 text-center">
+                  {l.divBets.reduce((p, c) => p + c.points, 0) + l.sbBet.points}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -142,6 +225,14 @@ interface ILeaderboard {
   offSix: number;
   doubler: number;
   total: number;
+  divBets: {
+    logo: string;
+    points: number;
+  }[];
+  sbBet: {
+    logo: string;
+    points: number;
+  };
 }
 
 interface LBResponse {
@@ -150,6 +241,27 @@ interface LBResponse {
     id: string;
     points: number[];
   }[];
+  divBets: {
+    name: string;
+    points: number;
+    team: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+  }[];
+  sbBet: {
+    points: number;
+    team: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+  };
 }
 
 export default Leaderboard;

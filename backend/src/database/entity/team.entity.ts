@@ -30,20 +30,32 @@ export class TeamEntity {
   @Column()
   name: string;
 
-  @Column()
-  wins: number;
-
-  @Column()
-  losses: number;
-
-  @Column()
-  ties: number;
+  @Column({ nullable: true })
+  playoffSeed?: number;
 
   @Column({ nullable: true })
-  color1: string;
+  wins?: number;
 
   @Column({ nullable: true })
-  color2: string;
+  losses?: number;
+
+  @Column({ nullable: true })
+  ties?: number;
+
+  @Column({ nullable: true })
+  pointsFor?: number;
+
+  @Column({ nullable: true })
+  pointsAgainst?: number;
+
+  @Column({ nullable: true })
+  streak?: number;
+
+  @Column({ nullable: true })
+  color1?: string;
+
+  @Column({ nullable: true })
+  color2?: string;
 
   @ManyToOne(() => DivisionEntity, (division) => division.teams)
   division: DivisionEntity;
