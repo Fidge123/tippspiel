@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+
+import { tokenState } from "../State/states";
 import { BASE_URL } from "../api";
-import { useToken } from "../useToken";
 import { Team } from "../Schedule/types";
 
 function Division() {
-  const [token] = useToken();
+  const [token] = useRecoilState(tokenState);
   const [divisions, setDivisions] = useState<DivisionRes[]>([]);
   const [divisionBets, setDivisionBets] = useState<any>({});
   const [teams, setTeams] = useState<Team[]>([]);

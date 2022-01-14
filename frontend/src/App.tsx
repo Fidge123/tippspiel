@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import {
   HashRouter as Router,
   Switch,
@@ -16,14 +17,18 @@ import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Verify from "./Verify/Verify";
 import Impressum from "./Impressum/Impressum";
 import Division from "./Division/Division";
-import { useToken } from "./useToken";
+import { tokenState } from "./State/states";
 
 function App() {
-  const [token, setToken] = useToken();
   const [showRegister, setShowRegister] = useState(true);
+  const [token, setToken] = useRecoilState(tokenState);
 
   const onHashChange = () =>
     setShowRegister(window.location.hash === "#/login");
+
+  useEffect(() => {
+    window.localStorage.setItem("access_token", token);
+  }, [token]);
 
   useEffect(() => {
     window.addEventListener("hashchange", onHashChange);
@@ -80,11 +85,7 @@ function App() {
         <main className="pt-12 dark:text-gray-100 min-h-full">
           <Switch>
             <Route path="/login">
-              {token ? (
-                <Redirect to="/"></Redirect>
-              ) : (
-                <Login setToken={setToken}></Login>
-              )}
+              {token ? <Redirect to="/"></Redirect> : <Login></Login>}
             </Route>
             <Route path="/register">
               {token ? <Redirect to="/"></Redirect> : <Register></Register>}

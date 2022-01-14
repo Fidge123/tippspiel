@@ -1,5 +1,7 @@
 import { useEffect, useState, useReducer } from "react";
+import { useRecoilState } from "recoil";
 
+import { tokenState } from "../State/states";
 import { IWeek, Team } from "./types";
 import { BASE_URL } from "../api";
 import Week from "./Week";
@@ -15,10 +17,9 @@ import {
   TippDispatch,
   TippValues,
 } from "./reducers/bets.reducer";
-import { useToken } from "../useToken";
 
 function Schedule() {
-  const [token] = useToken();
+  const [token] = useRecoilState(tokenState);
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);

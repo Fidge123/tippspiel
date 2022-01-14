@@ -1,12 +1,16 @@
 import { useState, useEffect, FormEvent } from "react";
-import { BASE_URL } from "../api";
 import { useHistory } from "react-router-dom";
+import { useRecoilState } from "recoil";
 
-export default function Login({ setToken }: LoginProperties) {
+import { BASE_URL } from "../api";
+import { tokenState } from "../State/states";
+
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [credentials, setCredentials] = useState<any>();
+  const [, setToken] = useRecoilState(tokenState);
   const history = useHistory();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -110,8 +114,4 @@ export default function Login({ setToken }: LoginProperties) {
       </form>
     </div>
   );
-}
-
-export interface LoginProperties {
-  setToken: Function;
 }

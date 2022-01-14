@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+
+import { tokenState } from "../State/states";
 import { BASE_URL } from "../api";
-import { useToken } from "../useToken";
 import { useBets } from "./reducers/bets.reducer";
 import Scores from "./Scores";
 import Stats from "./Stats";
 import { Team, Game, ApiBet } from "./types";
 
 function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
-  const [token] = useToken();
+  const [token] = useRecoilState(tokenState);
 
   const [bet, setBet] = useBets(game.id, handleTipp);
   const [timeoutID, setTimeoutID] = useState<any>();
