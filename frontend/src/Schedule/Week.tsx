@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import { tokenState } from "../State/states";
 import { BASE_URL } from "../api";
@@ -9,7 +9,7 @@ import { Game, IWeek, Team } from "./types";
 
 function Week({ week, teams }: Props) {
   const weekId = `${week.year}-${week.seasontype}-${week.week}`;
-  const [token] = useRecoilState(tokenState);
+  const token = useRecoilValue(tokenState);
   const ref = useRef<HTMLElement>(null);
   const [doubler, setDoubler] = useState<string>();
   const [hidden, setHidden] = useState(true);

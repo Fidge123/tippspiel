@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import { tokenState } from "../State/states";
 import { BASE_URL } from "../api";
@@ -9,7 +9,7 @@ function sum(list: number[]) {
 }
 
 function Leaderboard() {
-  const [token] = useRecoilState(tokenState);
+  const token = useRecoilValue(tokenState);
   const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
 
   function formatBet(bet: any) {
