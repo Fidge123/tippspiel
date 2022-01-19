@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useHistory } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import { BASE_URL } from "../api";
 import { tokenState } from "../State/states";
@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [credentials, setCredentials] = useState<any>();
-  const [, setToken] = useRecoilState(tokenState);
+  const setToken = useSetRecoilState(tokenState);
   const history = useHistory();
 
   const handleSubmit = async (e: FormEvent) => {

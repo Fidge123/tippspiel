@@ -27,10 +27,6 @@ function App() {
     setShowRegister(window.location.hash === "#/login");
 
   useEffect(() => {
-    window.localStorage.setItem("access_token", token);
-  }, [token]);
-
-  useEffect(() => {
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);

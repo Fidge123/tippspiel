@@ -8,26 +8,25 @@ import {
   Week,
 } from "./response-types";
 
-function getToken() {
-  try {
-    const item = window.localStorage.getItem("access_token");
-    if (item) {
-      const payload = JSON.parse(window.atob(item.split(".")[1]));
-      if (new Date(payload.exp * 1000) <= new Date()) {
-        window.localStorage.setItem("access_token", "");
-        return "";
-      }
-    }
-    return item ? item : "";
-  } catch (error) {
-    console.log(error);
-    return "";
-  }
-}
-
 export const tokenState = atom<string>({
   key: "accessToken",
-  default: getToken(),
+  default: "",
+  effects_UNSTABLE: [
+    ({ setSelf, resetSelf, onSet }) => {
+      const item = window.localStorage.getItem("access_token");
+      if (item) {
+        const payload = JSON.parse(window.atob(item.split(".")[1]));
+        if (new Date(payload.exp * 1000) <= new Date()) {
+          resetSelf();
+        }
+        setSelf(item);
+      }
+
+      onSet((newValue, _, isReset) =>
+        window.localStorage.setItem("access_token", isReset ? "" : newValue)
+      );
+    },
+  ],
 });
 
 export const divisionsState = atom<Division[]>({
