@@ -55,7 +55,7 @@ export interface IWeek {
 }
 
 export interface AllStats {
-  [game: string]: IStats;
+  [game: string]: IStats[];
 }
 
 export interface IStats {

@@ -1,14 +1,7 @@
 import { atom, atomFamily, DefaultValue } from "recoil";
 import { fetchFromAPI } from "../api";
 import { ApiBet } from "../Schedule/types";
-import {
-  Division,
-  Team,
-  Leaderboard,
-  Bet,
-  Stats,
-  Week,
-} from "./response-types";
+import { Division, Team, Leaderboard, Bet, Stat, Week } from "./response-types";
 
 export const tokenState = atom<string>({
   key: "accessToken",
@@ -51,9 +44,9 @@ export const weeksState = atom<Week[]>({
   default: [],
 });
 
-export const statsState = atom<Stats>({
+export const statsState = atomFamily<Stat[], string>({
   key: "stats",
-  default: {},
+  default: [],
 });
 
 export const gameBetsState = atomFamily<Bet, string>({

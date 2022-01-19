@@ -1,7 +1,7 @@
-import { Team as T, Bet as B, AllStats as A, IWeek } from "../Schedule/types";
+import { Team as T, Bet as B, IStats as A, IWeek } from "../Schedule/types";
 
 export type Week = IWeek;
-export type Stats = A;
+export type Stat = A;
 export type Bet = B;
 export type Team = T;
 
