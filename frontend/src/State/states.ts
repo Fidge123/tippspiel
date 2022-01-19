@@ -1,9 +1,11 @@
-import { atom } from "recoil";
+import { atom, atomFamily, DefaultValue } from "recoil";
+import { fetchFromAPI } from "../api";
+import { ApiBet } from "../Schedule/types";
 import {
   Division,
   Team,
   Leaderboard,
-  Bets,
+  Bet,
   Stats,
   Week,
 } from "./response-types";
@@ -54,9 +56,29 @@ export const statsState = atom<Stats>({
   default: {},
 });
 
-export const gameBetsState = atom<Bets>({
+export const gameBetsState = atomFamily<Bet, string>({
   key: "gameBets",
-  default: {},
+  default: { id: "", bets: { home: 0, away: 0 } },
+  effects_UNSTABLE: (gameID) => [
+    ({ onSet, getPromise }) => {
+      onSet((bet, old) => {
+        if (
+          !(old instanceof DefaultValue) &&
+          old.id !== "" &&
+          JSON.stringify(bet) !== JSON.stringify(old) &&
+          bet.points &&
+          bet.selected
+        ) {
+          const body: ApiBet = {
+            gameID,
+            winner: bet.selected,
+            pointDiff: bet.points,
+          };
+          fetchFromAPI("bet", getPromise(tokenState), "POST", body, true);
+        }
+      });
+    },
+  ],
 });
 
 export const doublerState = atom<any>({

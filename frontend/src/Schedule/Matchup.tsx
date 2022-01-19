@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { tokenState } from "../State/states";
-import { BASE_URL } from "../api";
-import { useBets } from "./reducers/bets.reducer";
+import { gameBetsState } from "../State/states";
 import Scores from "./Scores";
 import Stats from "./Stats";
-import { Team, Game, ApiBet } from "./types";
+import { Team, Game } from "./types";
 
 function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
-  const [token] = useRecoilState(tokenState);
-
-  const [bet, setBet] = useBets(game.id, handleTipp);
-  const [timeoutID, setTimeoutID] = useState<any>();
-  const [busy, setBusy] = useState(false);
+  const [bet, setBet] = useRecoilState(gameBetsState(game.id));
+  const [points, setPoints] = useState(bet.points);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
+  const [timeoutID, setTimeoutID] = useState<NodeJS.Timeout>();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -25,27 +21,7 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  async function handleTipp(payload: ApiBet) {
-    if (timeoutID) {
-      clearTimeout(timeoutID);
-    }
-    setBusy(true);
-    setTimeoutID(
-      setTimeout(async () => {
-        if (payload.pointDiff && payload.winner) {
-          await fetch(`${BASE_URL}bet`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-          setBusy(false);
-        }
-      }, 1500)
-    );
-  }
+  useEffect(() => setPoints(bet.points), [bet]);
 
   function select(homeAway: "home" | "away") {
     const v = { ...bet.bets };
@@ -117,19 +93,29 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
       </button>
       <input
         className={`h-10 w-11 ml-1 p-px text-center border dark:bg-gray-300 dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
-          busy ? "text-yellow-600" : "text-black"
+          points !== bet.points ? "text-yellow-600" : "text-black"
         }`}
         type="number"
         disabled={!bet.selected || new Date(game.date) < new Date()}
-        value={bet.points ?? ""}
-        onChange={(ev) =>
-          setBet({
-            ...bet,
-            points: isNaN(parseInt(ev.target.value, 10))
-              ? undefined
-              : parseInt(ev.target.value, 10),
-          })
-        }
+        value={points ?? ""}
+        onChange={(ev) => {
+          const points = isNaN(parseInt(ev.target.value, 10))
+            ? undefined
+            : parseInt(ev.target.value, 10);
+          setPoints(points);
+
+          if (timeoutID) {
+            clearTimeout(timeoutID);
+          }
+          setTimeoutID(
+            setTimeout(() => {
+              if (bet.points !== points) {
+                setBet({ ...bet, points });
+              }
+            }, 1500)
+          );
+        }}
+        onBlur={() => setBet({ ...bet, points })}
       ></input>
       <div
         role="button"
