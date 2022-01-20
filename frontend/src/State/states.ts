@@ -111,6 +111,8 @@ export const gameBetsState = selectorFamily<Bet, string>({
     ({ set, get }, newValue) => {
       if (
         !(newValue instanceof DefaultValue) &&
+        JSON.stringify(get(gameBetsState(gameID))) !==
+          JSON.stringify(newValue) &&
         newValue.points &&
         newValue.selected
       ) {
@@ -166,7 +168,10 @@ export const doublerState = selectorFamily<
   set:
     ([week, st, year]) =>
     ({ set, get }, newValue) => {
-      if (!(newValue instanceof DefaultValue)) {
+      if (
+        !(newValue instanceof DefaultValue) &&
+        get(doublerState([week, st, year])) !== newValue
+      ) {
         set(
           doublersState,
           setDoubler(get(doublersState), week, st, year, newValue)
