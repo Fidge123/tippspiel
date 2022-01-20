@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
 import { tokenState } from "../State/states";
-import { BASE_URL } from "../api";
+import { BASE_URL, fetchFromAPI } from "../api";
 
 function sum(list: number[]) {
   return list.reduce((a, b) => a + b, 0);
@@ -23,12 +23,7 @@ function Leaderboard() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "leaderboard/2021", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: LBResponse[] = await response.json();
+      const res: LBResponse[] = await fetchFromAPI("leaderboard/2021", token); //TODO
 
       setLeaderboard(
         res

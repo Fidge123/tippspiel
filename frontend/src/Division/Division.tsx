@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
 import { tokenState } from "../State/states";
-import { BASE_URL } from "../api";
+import { fetchFromAPI } from "../api";
 import { Team } from "../Schedule/types";
 
 function Division() {
@@ -14,12 +14,7 @@ function Division() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "division", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: DivisionRes[] = await response.json();
+      const res: DivisionRes[] = await fetchFromAPI("division", token); //TODO
 
       setDivisions(res);
       setTeams(
@@ -30,50 +25,32 @@ function Division() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "bet/division?season=2021", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: any = await response.json();
-
-      setDivisionBets(res);
+      setDivisionBets(await fetchFromAPI("bet/division?season=2021", token)); //TODO
     })();
   }, [token]);
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "bet/superbowl?season=2021", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: any = await response.json();
-      setSBBet(res?.team?.id);
+      setSBBet(
+        (await fetchFromAPI("bet/superbowl?season=2021", token))?.team?.id
+      ); //TODO
     })();
   }, [token]);
 
   async function selectDivisionWinner(division: string, team: string) {
     setDivisionBets({ ...divisionBets, [division]: team });
-    return await fetch(BASE_URL + "bet/division", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ division, team, year: 2021 }),
+    return await fetchFromAPI("bet/division", token, "POST", {
+      division,
+      team,
+      year: 2021,
     });
   }
 
   async function selectSBWinner(teamId: string) {
     setSBBet(teamId);
-    return await fetch(BASE_URL + "bet/superbowl", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ teamId, year: 2021 }),
+    return await fetchFromAPI("bet/superbowl", token, "POST", {
+      teamId,
+      year: 2021,
     });
   }
 
