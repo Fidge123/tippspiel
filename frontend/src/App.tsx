@@ -1,6 +1,13 @@
-import { useEffect, useState, Suspense, lazy } from "react";
+import { Suspense, lazy } from "react";
 import { useRecoilState } from "recoil";
-import { Route, Link, Routes, Navigate, useNavigate } from "react-router-dom";
+import {
+  Route,
+  Link,
+  Routes,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 import { tokenState } from "./State/states";
 import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
@@ -18,17 +25,9 @@ const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Division = lazy(() => import("./Division/Division"));
 
 function App() {
-  const [showRegister, setShowRegister] = useState(true);
   const [token, setToken] = useRecoilState(tokenState);
   const navigate = useNavigate();
-
-  const onHashChange = () =>
-    setShowRegister(window.location.hash === "#/login");
-
-  useEffect(() => {
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
+  const location = useLocation();
 
   return (
     <div className="w-screen h-screen">
@@ -50,12 +49,6 @@ function App() {
                 <span className="text-white font-semibold pr-4">Divisions</span>
               </Link>
             )}
-            {/* <Link to="/impressum">
-                <span className="text-gray-200 font-light pr-4">Impressum</span>
-              </Link>
-              <Link to="/terms">
-                <span className="text-gray-200 font-light pr-4">Nutzungsbedingungen</span>
-              </Link> */}
           </div>
           <div>
             {token ? (
@@ -67,7 +60,7 @@ function App() {
               >
                 Ausloggen
               </button>
-            ) : showRegister ? (
+            ) : location.pathname === "/login" ? (
               <Link to="/register">
                 <button>Registrieren</button>
               </Link>
