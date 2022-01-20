@@ -1,10 +1,10 @@
 import { Fragment } from "react";
 import { useRecoilValue } from "recoil";
-import { statsState } from "../State/states";
+import { statState } from "../State/states";
 import { StatProps } from "./types";
 
 function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
-  const stats = useRecoilValue(statsState(game.id));
+  const stats = useRecoilValue(statState(game.id));
 
   if (new Date(game.date) < new Date() && stats) {
     const finished = !hidden && game.status === "STATUS_FINAL";

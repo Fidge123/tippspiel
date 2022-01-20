@@ -1,5 +1,5 @@
 import { useState, useEffect, FormEvent } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 
 import { BASE_URL } from "../api";
@@ -10,8 +10,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [credentials, setCredentials] = useState<any>();
+  const navigate = useNavigate();
   const setToken = useSetRecoilState(tokenState);
-  const history = useHistory();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export default function Login() {
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
-        history.push("/");
+        navigate("/");
       } else {
         const error = await res.json();
         setError(error.message);
@@ -56,7 +56,6 @@ export default function Login() {
           if (res.ok) {
             const token = await res.json();
             setToken(token.access_token);
-            history.push("/");
           } else {
             const error = await res.json();
             setPassword("");
@@ -67,7 +66,7 @@ export default function Login() {
         }
       }
     })();
-  }, [credentials, setToken, history]);
+  }, [credentials, setToken]);
 
   return (
     <div className="flex flex-col items-center">

@@ -1,6 +1,7 @@
 import {
   Team as T,
   Bet as B,
+  AllStats as C,
   IStats as A,
   IWeek,
   Game,
@@ -8,6 +9,7 @@ import {
 
 export type Week = IWeek;
 export type Stat = A;
+export type Stats = C;
 export type Bet = B;
 export type Team = T;
 

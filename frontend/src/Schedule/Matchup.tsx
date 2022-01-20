@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState, lazy } from "react";
 import { useRecoilState } from "recoil";
 
 import { gameBetsState } from "../State/states";
-import Scores from "./Scores";
-import Stats from "./Stats";
 import { Team, Game } from "./types";
+
+const Scores = lazy(() => import("./Scores"));
+const Stats = lazy(() => import("./Stats"));
 
 function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
   const [bet, setBet] = useRecoilState(gameBetsState(game.id));
@@ -131,14 +132,16 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         ></div>
       </div>
       {open && (
-        <Stats
-          game={game}
-          home={home}
-          away={away}
-          bets={bet.bets}
-          isCompact={innerWidth < 720}
-          hidden={hidden}
-        ></Stats>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Stats
+            game={game}
+            home={home}
+            away={away}
+            bets={bet.bets}
+            isCompact={innerWidth < 720}
+            hidden={hidden}
+          ></Stats>
+        </Suspense>
       )}
     </div>
   );

@@ -1,10 +1,4 @@
-import {
-  atom,
-  atomFamily,
-  DefaultValue,
-  selector,
-  selectorFamily,
-} from "recoil";
+import { atom, DefaultValue, selector, selectorFamily } from "recoil";
 import { fetchFromAPI } from "../api";
 import { ApiBet } from "../Schedule/types";
 import {
@@ -13,8 +7,10 @@ import {
   Leaderboard,
   Bet,
   Stat,
+  Stats,
   Week,
   UserSettings,
+  Doubler,
 } from "./response-types";
 
 export const tokenState = atom<string>({
@@ -72,68 +68,125 @@ export const weeksState = atom<Week[]>({
   }),
 });
 
-export const statsState = atomFamily<Stat[], string>({
+export const statsState = atom<Stats>({
   key: "stats",
-  default: [],
+  default: selector({
+    key: "stats/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<Stats>(
+        "leaderboard/games?season=2021",
+        get(tokenState)
+      ),
+  }),
 });
 
-export const gameBetsState = atomFamily<Bet, string>({
+export const statState = selectorFamily<Stat[], string>({
+  key: "stat",
+  get:
+    (gameId) =>
+    ({ get }) =>
+      get(statsState)[gameId],
+});
+
+export const allGameBetsState = atom<Record<string, Bet>>({
+  key: "allGameBets",
+  default: selector({
+    key: "allGameBets/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<Record<string, Bet>>(
+        "bet?season=2021",
+        get(tokenState)
+      ),
+  }),
+});
+
+export const gameBetsState = selectorFamily<Bet, string>({
   key: "gameBets",
-  default: { id: "", bets: { home: 0, away: 0 } },
-  effects_UNSTABLE: (gameID) => [
-    ({ onSet, getPromise }) => {
-      onSet((bet, old) => {
-        if (
-          !(old instanceof DefaultValue) &&
-          old.id !== "" &&
-          JSON.stringify(bet) !== JSON.stringify(old) &&
-          bet.points &&
-          bet.selected
-        ) {
-          const body: ApiBet = {
-            gameID,
-            winner: bet.selected,
-            pointDiff: bet.points,
-          };
-          fetchFromAPI("bet", getPromise(tokenState), "POST", body, true);
-        }
-      });
+  get:
+    (gameId) =>
+    ({ get }) =>
+      get(allGameBetsState)[gameId] || { id: "", bets: { home: 0, away: 0 } },
+  set:
+    (gameID) =>
+    ({ set, get }, newValue) => {
+      if (
+        !(newValue instanceof DefaultValue) &&
+        newValue.points &&
+        newValue.selected
+      ) {
+        const body: ApiBet = {
+          gameID,
+          winner: newValue.selected,
+          pointDiff: newValue.points,
+        };
+        set(allGameBetsState, { ...get(allGameBetsState), [gameID]: newValue });
+        fetchFromAPI("bet", get(tokenState), "POST", body, true);
+      }
     },
-  ],
 });
 
-export const doublerState = atomFamily<
+export const doublersState = atom<Doubler[]>({
+  key: "doublers",
+  default: selector({
+    key: "doublers/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<Doubler[]>("bet/doubler?season=2021", get(tokenState)),
+  }),
+});
+
+function setDoubler(
+  doublers: Doubler[],
+  week: number,
+  st: number,
+  year: number,
+  gameID?: string
+) {
+  const filterFn = ({ week: dw }: Doubler) =>
+    dw.week === week && dw.seasontype === st && dw.year === year;
+  let element = { ...doublers.find(filterFn) } as Doubler;
+  if (element && element.game) {
+    element.game = { ...element.game, id: gameID || "" };
+    return [...doublers.filter((d) => !filterFn(d)), element];
+  }
+  return doublers;
+}
+
+export const doublerState = selectorFamily<
   string | undefined,
   [number, number, number]
 >({
   key: "doubler",
-  default: undefined,
-  effects_UNSTABLE: ([week, seasontype, year]) => [
-    ({ onSet, getPromise }) => {
-      onSet((doubler, old) => {
-        if (
-          !(old instanceof DefaultValue) &&
-          old !== undefined &&
-          JSON.stringify(doubler) !== JSON.stringify(old)
-        ) {
-          fetchFromAPI(
-            "bet/doubler",
-            getPromise(tokenState),
-            "POST",
-            {
-              gameID: doubler,
-              week: {
-                week,
-                year,
-                seasontype,
-              },
+  get:
+    ([week, st, year]) =>
+    ({ get }) =>
+      get(doublersState).find(
+        ({ week: dw }) =>
+          dw.week === week && dw.seasontype === st && dw.year === year
+      )?.game.id,
+  set:
+    ([week, st, year]) =>
+    ({ set, get }, newValue) => {
+      if (!(newValue instanceof DefaultValue)) {
+        set(
+          doublersState,
+          setDoubler(get(doublersState), week, st, year, newValue)
+        );
+        fetchFromAPI(
+          "bet/doubler",
+          get(tokenState),
+          "POST",
+          {
+            gameID: newValue,
+            week: {
+              week,
+              year,
+              seasontype: st,
             },
-            true
-          );
-        }
-      });
+          },
+          true
+        );
+      }
     },
-  ],
 });
 
 export const divisionBetsState = atom<Record<string, string>>({
@@ -200,9 +253,4 @@ export const userState = atom<UserSettings>({
     get: async ({ get }) =>
       await fetchFromAPI<UserSettings>("user/settings", get(tokenState)),
   }),
-});
-
-export const innerWidth = atom<number>({
-  key: "innerWidth",
-  default: window.innerWidth,
 });

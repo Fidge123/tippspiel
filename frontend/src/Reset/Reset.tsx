@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BASE_URL } from "../api";
 
 function useQuery() {
@@ -8,7 +8,7 @@ function useQuery() {
 
 function Reset() {
   const query = useQuery();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -38,7 +38,7 @@ function Reset() {
           setSuccess(
             "Passwort erfolgreich zurückgesetzt! Du wirst in 5 Sekunden zum einloggen weitergeleitet."
           );
-          setTimeout(() => history.push("/login"), 5000);
+          setTimeout(() => navigate("/login"), 5000);
         } else {
           const e = await res.json();
           setError(e.message);
