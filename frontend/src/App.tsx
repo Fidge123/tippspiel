@@ -17,9 +17,7 @@ const Schedule = lazy(() => import("./Schedule/Schedule"));
 const Login = lazy(() => import("./Login/Login"));
 const Register = lazy(() => import("./Register/Register"));
 const Reset = lazy(() => import("./Reset/Reset"));
-const TermsAndConditions = lazy(
-  () => import("./TermsAndConditions/TermsAndConditions")
-);
+const TermsAndConditions = lazy(() => import("./T&C/TermsAndConditions"));
 const Verify = lazy(() => import("./Verify/Verify"));
 const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Division = lazy(() => import("./Division/Division"));
@@ -35,19 +33,21 @@ function App() {
         <nav className="flex w-full items-center justify-between">
           <div>
             {token && (
-              <Link to="/">
-                <span className="text-white font-semibold pr-4">Tippspiel</span>
-              </Link>
-            )}
-            {token && (
-              <Link to="/leaderboard">
-                <span className="text-white font-semibold pr-4">Tabelle</span>
-              </Link>
-            )}
-            {token && (
-              <Link to="/division">
-                <span className="text-white font-semibold pr-4">Divisions</span>
-              </Link>
+              <>
+                <Link to="/">
+                  <span className="text-white font-semibold pr-4">
+                    Tippspiel
+                  </span>
+                </Link>
+                <Link to="/leaderboard">
+                  <span className="text-white font-semibold pr-4">Tabelle</span>
+                </Link>
+                <Link to="/division">
+                  <span className="text-white font-semibold pr-4">
+                    Divisions
+                  </span>
+                </Link>
+              </>
             )}
           </div>
           <div>
