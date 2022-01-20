@@ -61,13 +61,15 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
           {innerWidth < 448 && away?.abbreviation}
         </span>
       </button>
-      <Scores
-        game={game}
-        selected={bet.selected}
-        doubler={doubler}
-        setDoubler={setDoubler}
-        hidden={hidden}
-      ></Scores>
+      <Suspense fallback={<div className="w-16 sm:w-20">...</div>}>
+        <Scores
+          game={game}
+          selected={bet.selected}
+          doubler={doubler}
+          setDoubler={setDoubler}
+          hidden={hidden}
+        ></Scores>
+      </Suspense>
       <button
         className="team"
         disabled={new Date(game.date) < new Date()}
