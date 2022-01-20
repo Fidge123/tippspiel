@@ -1,4 +1,10 @@
-import { Team as T, Bet as B, IStats as A, IWeek } from "../Schedule/types";
+import {
+  Team as T,
+  Bet as B,
+  IStats as A,
+  IWeek,
+  Game,
+} from "../Schedule/types";
 
 export type Week = IWeek;
 export type Stat = A;
@@ -24,4 +30,14 @@ export interface Leaderboard {
   offSix: number;
   doubler: number;
   total: number;
+}
+
+export interface Doubler {
+  game: Game;
+  id: string;
+  week: IWeek;
+}
+
+export interface UserSettings {
+  hidden?: Record<string, boolean>;
 }

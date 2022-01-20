@@ -1,7 +1,15 @@
-import { atom, atomFamily, DefaultValue } from "recoil";
+import { atom, atomFamily, DefaultValue, selectorFamily } from "recoil";
 import { fetchFromAPI } from "../api";
 import { ApiBet } from "../Schedule/types";
-import { Division, Team, Leaderboard, Bet, Stat, Week } from "./response-types";
+import {
+  Division,
+  Team,
+  Leaderboard,
+  Bet,
+  Stat,
+  Week,
+  UserSettings,
+} from "./response-types";
 
 export const tokenState = atom<string>({
   key: "accessToken",
@@ -74,9 +82,38 @@ export const gameBetsState = atomFamily<Bet, string>({
   ],
 });
 
-export const doublerState = atom<any>({
+export const doublerState = atomFamily<
+  string | undefined,
+  [number, number, number]
+>({
   key: "doubler",
-  default: {},
+  default: undefined,
+  effects_UNSTABLE: ([week, seasontype, year]) => [
+    ({ onSet, getPromise }) => {
+      onSet((doubler, old) => {
+        if (
+          !(old instanceof DefaultValue) &&
+          old !== undefined &&
+          JSON.stringify(doubler) !== JSON.stringify(old)
+        ) {
+          fetchFromAPI(
+            "bet/doubler",
+            getPromise(tokenState),
+            "POST",
+            {
+              gameID: doubler,
+              week: {
+                week,
+                year,
+                seasontype,
+              },
+            },
+            true
+          );
+        }
+      });
+    },
+  ],
 });
 
 export const divisionBetsState = atom<Record<string, string>>({
@@ -89,7 +126,42 @@ export const sbBetState = atom<string>({
   default: "",
 });
 
-export const userState = atom<any>({
+export const hiddenState = selectorFamily<boolean, string>({
+  key: "hidden",
+  get:
+    (weekId) =>
+    ({ get }) => {
+      const { hidden } = get(userState);
+      return hidden && typeof hidden[weekId] !== "undefined"
+        ? hidden[weekId]
+        : true;
+    },
+
+  set:
+    (weekId) =>
+    ({ get, set }, newValue) => {
+      fetchFromAPI(
+        "user/hidden",
+        get(tokenState),
+        "POST",
+        {
+          hidden: newValue,
+          weekId,
+        },
+        true
+      );
+
+      set(userState, {
+        ...get(userState),
+        hidden: {
+          ...get(userState).hidden,
+          [weekId]: !!newValue, // FIXME
+        },
+      });
+    },
+});
+
+export const userState = atom<UserSettings>({
   key: "user",
   default: {},
 });

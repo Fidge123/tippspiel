@@ -1,117 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect, useRef } from "react";
+import { useRecoilState } from "recoil";
 
-import { tokenState } from "../State/states";
-import { BASE_URL } from "../api";
+import { doublerState, hiddenState } from "../State/states";
 
 import MatchUp from "./Matchup";
 import { Game, IWeek, Team } from "./types";
 
 function Week({ week, teams }: Props) {
   const weekId = `${week.year}-${week.seasontype}-${week.week}`;
-  const token = useRecoilValue(tokenState);
   const ref = useRef<HTMLElement>(null);
-  const [doubler, setDoubler] = useState<string>();
-  const [hidden, setHidden] = useState(true);
-  const hiddenLoaded = useRef(false);
-  const doublerLoaded = useRef(false);
-  const loadDoubler = useCallback(() => {
-    (async () => {
-      doublerLoaded.current = false;
-      const response = await fetch(BASE_URL + "bet/doubler?season=2021", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: any = await response.json();
-      setDoubler(
-        res.find(
-          ({ week: w }: any) =>
-            w.week === week.week &&
-            w.seasontype === week.seasontype &&
-            w.year === week.year
-        )?.game.id
-      );
-      setTimeout(() => (doublerLoaded.current = true));
-    })();
-  }, [token, week]);
-
-  useEffect(() => {
-    loadDoubler();
-  }, [loadDoubler]);
-
-  useEffect(() => {
-    (async () => {
-      if (token && doubler && week && doublerLoaded.current) {
-        const res = await fetch(BASE_URL + "bet/doubler", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            gameID: doubler,
-            week: {
-              week: week.week,
-              year: week.year,
-              seasontype: week.seasontype,
-            },
-          }),
-        });
-        if (!res.ok) {
-          loadDoubler();
-        }
-      }
-    })();
-  }, [token, doubler, week, loadDoubler]);
+  const [doubler, setDoubler] = useRecoilState(
+    doublerState([week.week, week.seasontype, week.year])
+  );
+  const [hidden, setHidden] = useRecoilState(hiddenState(weekId));
 
   useEffect(() => {
     if (new Date(week.start) < new Date() && new Date() < new Date(week.end)) {
       ref.current?.scrollIntoView();
     }
   }, [week.end, week.start]);
-
-  const loadHidden = useCallback(() => {
-    (async () => {
-      hiddenLoaded.current = false;
-      const response = await fetch(BASE_URL + "user/settings", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: any = await response.json();
-      if (res.hidden && typeof res.hidden[weekId] !== "undefined") {
-        setHidden(res.hidden[weekId]);
-      }
-
-      setTimeout(() => (hiddenLoaded.current = true));
-    })();
-  }, [token, weekId]);
-
-  useEffect(() => {
-    loadHidden();
-  }, [loadHidden]);
-
-  useEffect(() => {
-    (async () => {
-      if (token && weekId && hiddenLoaded.current) {
-        const res = await fetch(BASE_URL + "user/hidden", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            hidden,
-            weekId,
-          }),
-        });
-        if (!res.ok) {
-          loadHidden();
-        }
-      }
-    })();
-  }, [hidden, token, weekId, loadHidden]);
 
   return (
     <article className="pt-4" key={week.label} ref={ref}>
@@ -130,12 +37,12 @@ function Week({ week, teams }: Props) {
           </button>
         )}
       </div>
-      {week.teamsOnBye?.length > 0 && (
+      {week.teamsOnBye && week.teamsOnBye.length > 0 && (
         <div className="pb-1.5 max-w-sm sm:max-w-md dark:text-gray-300">
-          Bye: {week.teamsOnBye.map((t) => t.shortName).join(", ")}
+          Bye: {week.teamsOnBye?.map((t) => t.shortName).join(", ")}
         </div>
       )}
-      {splitByDate(week.games).map((time) => (
+      {splitByDate(week.games!).map((time) => (
         <div key={time[0].date}>
           <div className="text-gray-400 py-0.5 leading-none">
             {formatDate(time[0].date)}

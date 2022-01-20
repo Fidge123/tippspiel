@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import { useRecoilValue, useRecoilCallback } from "recoil";
+import { useRecoilValue, useRecoilCallback, useSetRecoilState } from "recoil";
 
-import { tokenState, gameBetsState, statsState } from "../State/states";
-import { Bet, Stat } from "../State/response-types";
+import {
+  tokenState,
+  gameBetsState,
+  statsState,
+  doublerState,
+  userState,
+} from "../State/states";
+import { Bet, Stat, Doubler } from "../State/response-types";
 import { IWeek, Team } from "./types";
-import { BASE_URL, fetchFromAPI } from "../api";
+import { fetchFromAPI } from "../api";
 import Week from "./Week";
 
 function Schedule() {
   const token = useRecoilValue(tokenState);
+  const setUserState = useSetRecoilState(userState);
   const setBet = useRecoilCallback(({ set }) => (gameId: string, bet: Bet) => {
     set(gameBetsState(gameId), bet);
   });
@@ -18,60 +25,48 @@ function Schedule() {
         set(statsState(gameId), stat);
       }
   );
+  const setDoubler = useRecoilCallback(
+    ({ set }) =>
+      ({ week, seasontype, year }: IWeek, doubler: string) => {
+        set(doublerState([week, seasontype, year]), doubler);
+      }
+  );
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isLoadedBets, setIsLoadedBets] = useState(false);
-  const [isLoadedStats, setIsLoadedStats] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const [weeks, setWeeks] = useState<IWeek[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
-    Promise.all([
-      fetch(BASE_URL + "schedule/2021", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    if (!initialized) {
+      Promise.all([
+        fetchFromAPI("schedule/2021", token),
+        fetchFromAPI("team", token),
+        fetchFromAPI("leaderboard/games?season=2021", token),
+        fetchFromAPI("bet?season=2021", token),
+        fetchFromAPI<Doubler[]>("bet/doubler?season=2021", token),
+        fetchFromAPI("user/settings", token),
+      ]).then(
+        ([weeks, teams, stats, bets, doubler, settings]) => {
+          setIsLoaded(true);
+          setWeeks(weeks);
+          setTeams(teams);
+          Object.entries<Stat[]>(stats).forEach(([id, stat]) =>
+            setStat(id, stat)
+          );
+          Object.entries<Bet>(bets).forEach(([id, bet]) => setBet(id, bet));
+          doubler.forEach((d) => setDoubler(d.week, d.game.id));
+          setUserState(settings);
         },
-      }).then((res) => res.json()),
-      fetch(BASE_URL + "team", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((res) => res.json()),
-    ]).then(
-      ([weeks, teams]) => {
-        setIsLoaded(true);
-        setWeeks(weeks);
-        setTeams(teams);
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
-    );
-  }, [token]);
-
-  useEffect(() => {
-    if (!isLoadedStats) {
-      (async () => {
-        Object.entries<Stat[]>(
-          await fetchFromAPI("leaderboard/games?season=2021", token)
-        ).forEach(([id, stat]) => setStat(id, stat));
-      })();
-      setIsLoadedStats(true);
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
     }
-  }, [token, setStat, isLoadedStats]);
-
-  useEffect(() => {
-    if (!isLoadedBets) {
-      (async () => {
-        Object.entries<Bet>(
-          await fetchFromAPI("bet?season=2021", token)
-        ).forEach(([id, bet]) => setBet(id, bet));
-      })();
-      setIsLoadedBets(true);
-    }
-  }, [token, setBet, isLoadedBets]);
+    setInitialized(true);
+  }, [token, setStat, setBet, setDoubler, setUserState, initialized]);
 
   if (isLoaded) {
     if (error) {
