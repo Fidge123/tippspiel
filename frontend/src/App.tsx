@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { useRecoilState } from "recoil";
 import {
   HashRouter as Router,
@@ -16,8 +16,9 @@ import Reset from "./Reset/Reset";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import Verify from "./Verify/Verify";
 import Impressum from "./Impressum/Impressum";
-import Division from "./Division/Division";
 import { tokenState } from "./State/states";
+
+const Division = lazy(() => import("./Division/Division"));
 
 function App() {
   const [showRegister, setShowRegister] = useState(true);
@@ -100,7 +101,9 @@ function App() {
             </Route>
             <Route path="/division">
               {token ? (
-                <Division></Division>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Division></Division>
+                </Suspense>
               ) : (
                 <Redirect to="/login"></Redirect>
               )}

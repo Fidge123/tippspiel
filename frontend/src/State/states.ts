@@ -1,4 +1,10 @@
-import { atom, atomFamily, DefaultValue, selectorFamily } from "recoil";
+import {
+  atom,
+  atomFamily,
+  DefaultValue,
+  selector,
+  selectorFamily,
+} from "recoil";
 import { fetchFromAPI } from "../api";
 import { ApiBet } from "../Schedule/types";
 import {
@@ -34,12 +40,22 @@ export const tokenState = atom<string>({
 
 export const divisionsState = atom<Division[]>({
   key: "divisions",
-  default: [],
+  default: selector({
+    key: "divisions/Default",
+    get: async ({ get }) =>
+      (await fetchFromAPI<Division[]>("division", get(tokenState))).sort(
+        (divA, divB) => divA.name.localeCompare(divB.name)
+      ),
+  }),
 });
 
-export const teamsState = atom<Team[]>({
+export const teamsState = selector<Team[]>({
   key: "teams",
-  default: [],
+  get: ({ get }) =>
+    get(divisionsState).reduce(
+      (result, curr) => [...result, ...curr.teams],
+      [] as Team[]
+    ),
 });
 
 export const leaderboardState = atom<Leaderboard[]>({
@@ -118,12 +134,24 @@ export const doublerState = atomFamily<
 
 export const divisionBetsState = atom<Record<string, string>>({
   key: "divisionBets",
-  default: {},
+  default: selector({
+    key: "divisionBets/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<Record<string, string>>(
+        "bet/division?season=2021",
+        get(tokenState)
+      ),
+  }),
 });
 
 export const sbBetState = atom<string>({
   key: "sbBet",
-  default: "",
+  default: selector({
+    key: "sbBet/Default",
+    get: async ({ get }) =>
+      (await fetchFromAPI("bet/superbowl?season=2021", get(tokenState)))?.team
+        ?.id,
+  }),
 });
 
 export const hiddenState = selectorFamily<boolean, string>({

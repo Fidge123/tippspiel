@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
 import { tokenState } from "../State/states";
-import { BASE_URL, fetchFromAPI } from "../api";
+import { fetchFromAPI } from "../api";
 
 function sum(list: number[]) {
   return list.reduce((a, b) => a + b, 0);
