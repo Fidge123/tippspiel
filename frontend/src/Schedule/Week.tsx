@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-import { doublerState, hiddenState } from "../State/states";
+import { doublerState, teamsState, hiddenState } from "../State/states";
 
 import MatchUp from "./Matchup";
-import { Game, IWeek, Team } from "./types";
+import { Game, IWeek } from "./types";
 
-function Week({ week, teams }: Props) {
+function Week({ week }: Props) {
   const weekId = `${week.year}-${week.seasontype}-${week.week}`;
   const ref = useRef<HTMLElement>(null);
   const [doubler, setDoubler] = useRecoilState(
     doublerState([week.week, week.seasontype, week.year])
   );
+  const teams = useRecoilValue(teamsState);
   const [hidden, setHidden] = useRecoilState(hiddenState(weekId));
 
   useEffect(() => {
@@ -95,7 +96,6 @@ function formatDate(date: string) {
 
 interface Props {
   week: IWeek;
-  teams: Team[];
 }
 
 export default Week;

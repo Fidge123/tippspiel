@@ -8,16 +8,18 @@ import {
   Redirect,
 } from "react-router-dom";
 
-import Leaderboard from "./Leaderboard/Leaderboard";
-import Schedule from "./Schedule/Schedule";
-import Login from "./Login/Login";
-import Register from "./Register/Register";
-import Reset from "./Reset/Reset";
-import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
-import Verify from "./Verify/Verify";
-import Impressum from "./Impressum/Impressum";
 import { tokenState } from "./State/states";
 
+const Leaderboard = lazy(() => import("./Leaderboard/Leaderboard"));
+const Schedule = lazy(() => import("./Schedule/Schedule"));
+const Login = lazy(() => import("./Login/Login"));
+const Register = lazy(() => import("./Register/Register"));
+const Reset = lazy(() => import("./Reset/Reset"));
+const TermsAndConditions = lazy(
+  () => import("./TermsAndConditions/TermsAndConditions")
+);
+const Verify = lazy(() => import("./Verify/Verify"));
+const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Division = lazy(() => import("./Division/Division"));
 
 function App() {
@@ -80,52 +82,52 @@ function App() {
           </nav>
         </header>
         <main className="pt-12 dark:text-gray-100 min-h-full">
-          <Switch>
-            <Route path="/login">
-              {token ? <Redirect to="/"></Redirect> : <Login></Login>}
-            </Route>
-            <Route path="/register">
-              {token ? <Redirect to="/"></Redirect> : <Register></Register>}
-            </Route>
-            <Route path="/reset">
-              <Reset></Reset>
-            </Route>
-            <Route path="/verify">
-              <Verify></Verify>
-            </Route>
-            <Route path="/impressum">
-              <Impressum></Impressum>
-            </Route>
-            <Route path="/terms">
-              <TermsAndConditions></TermsAndConditions>
-            </Route>
-            <Route path="/division">
-              {token ? (
-                <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Switch>
+              <Route path="/login">
+                {token ? <Redirect to="/"></Redirect> : <Login></Login>}
+              </Route>
+              <Route path="/register">
+                {token ? <Redirect to="/"></Redirect> : <Register></Register>}
+              </Route>
+              <Route path="/reset">
+                <Reset></Reset>
+              </Route>
+              <Route path="/verify">
+                <Verify></Verify>
+              </Route>
+              <Route path="/impressum">
+                <Impressum></Impressum>
+              </Route>
+              <Route path="/terms">
+                <TermsAndConditions></TermsAndConditions>
+              </Route>
+              <Route path="/division">
+                {token ? (
                   <Division></Division>
-                </Suspense>
-              ) : (
-                <Redirect to="/login"></Redirect>
-              )}
-            </Route>
-            <Route path="/leaderboard">
-              {token ? (
-                <Leaderboard></Leaderboard>
-              ) : (
-                <Redirect to="/login"></Redirect>
-              )}
-            </Route>
-            <Route path="/">
-              {token ? (
-                <Schedule></Schedule>
-              ) : (
-                <Redirect to="/login"></Redirect>
-              )}
-            </Route>
-            <Route path="*">
-              <Redirect to="/"></Redirect>
-            </Route>
-          </Switch>
+                ) : (
+                  <Redirect to="/login"></Redirect>
+                )}
+              </Route>
+              <Route path="/leaderboard">
+                {token ? (
+                  <Leaderboard></Leaderboard>
+                ) : (
+                  <Redirect to="/login"></Redirect>
+                )}
+              </Route>
+              <Route path="/">
+                {token ? (
+                  <Schedule></Schedule>
+                ) : (
+                  <Redirect to="/login"></Redirect>
+                )}
+              </Route>
+              <Route path="*">
+                <Redirect to="/"></Redirect>
+              </Route>
+            </Switch>
+          </Suspense>
         </main>
       </div>
     </Router>

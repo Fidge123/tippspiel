@@ -65,7 +65,11 @@ export const leaderboardState = atom<Leaderboard[]>({
 
 export const weeksState = atom<Week[]>({
   key: "weeks",
-  default: [],
+  default: selector({
+    key: "weeks/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<Week[]>("schedule/2021", get(tokenState)),
+  }),
 });
 
 export const statsState = atomFamily<Stat[], string>({
@@ -191,7 +195,11 @@ export const hiddenState = selectorFamily<boolean, string>({
 
 export const userState = atom<UserSettings>({
   key: "user",
-  default: {},
+  default: selector({
+    key: "user/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<UserSettings>("user/settings", get(tokenState)),
+  }),
 });
 
 export const innerWidth = atom<number>({

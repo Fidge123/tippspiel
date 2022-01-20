@@ -127,17 +127,17 @@ function Leaderboard() {
         <table>
           <thead className="lb-header">
             <tr>
-              <th className="left">Name</th>
-              <th className="center px-2">AFC North</th>
-              <th className="center px-2">AFC South</th>
-              <th className="center px-2">AFC West</th>
-              <th className="center px-2">AFC East</th>
-              <th className="center px-2">NFC North</th>
-              <th className="center px-2">NFC South</th>
-              <th className="center px-2">NFC West</th>
-              <th className="center px-2">NFC East</th>
-              <th className="center px-2">SB</th>
-              <th className="center px-2">Points</th>
+              <th className="text-left">Name</th>
+              <th className="text-center px-2">AFC North</th>
+              <th className="text-center px-2">AFC South</th>
+              <th className="text-center px-2">AFC West</th>
+              <th className="text-center px-2">AFC East</th>
+              <th className="text-center px-2">NFC North</th>
+              <th className="text-center px-2">NFC South</th>
+              <th className="text-center px-2">NFC West</th>
+              <th className="text-center px-2">NFC East</th>
+              <th className="text-center px-2">SB</th>
+              <th className="text-center px-2">Points</th>
             </tr>
           </thead>
           <tbody className="lb-body">
