@@ -55,7 +55,7 @@ function App() {
               <button
                 onClick={() => {
                   setToken("");
-                  navigate("/login");
+                  navigate("/login", { replace: true });
                 }}
               >
                 Ausloggen

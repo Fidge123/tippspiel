@@ -32,7 +32,7 @@ export default function Login() {
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
-        navigate("/");
+        navigate("/", { replace: true });
       } else {
         const error = await res.json();
         setError(error.message);

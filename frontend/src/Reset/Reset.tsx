@@ -38,7 +38,7 @@ function Reset() {
           setSuccess(
             "Passwort erfolgreich zurückgesetzt! Du wirst in 5 Sekunden zum einloggen weitergeleitet."
           );
-          setTimeout(() => navigate("/login"), 5000);
+          setTimeout(() => navigate("/login", { replace: true }), 5000);
         } else {
           const e = await res.json();
           setError(e.message);
