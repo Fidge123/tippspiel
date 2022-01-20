@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
-import { BASE_URL } from "../api";
-import { useToken } from "../useToken";
-import { useBets } from "./reducers/bets.reducer";
-import Scores from "./Scores";
-import Stats from "./Stats";
-import { Team, Game, ApiBet } from "./types";
+import { Suspense, useEffect, useState, lazy } from "react";
+import { useRecoilState } from "recoil";
+
+import { gameBetsState } from "../State/states";
+import { Team, Game } from "./types";
+
+const Scores = lazy(() => import("./Scores"));
+const Stats = lazy(() => import("./Stats"));
 
 function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
-  const [token] = useToken();
-
-  const [bet, setBet] = useBets(game.id, handleTipp);
-  const [timeoutID, setTimeoutID] = useState<any>();
-  const [busy, setBusy] = useState(false);
+  const [bet, setBet] = useRecoilState(gameBetsState(game.id));
+  const [points, setPoints] = useState(bet.points);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
+  const [timeoutID, setTimeoutID] = useState<NodeJS.Timeout>();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -23,27 +22,7 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  async function handleTipp(payload: ApiBet) {
-    if (timeoutID) {
-      clearTimeout(timeoutID);
-    }
-    setBusy(true);
-    setTimeoutID(
-      setTimeout(async () => {
-        if (payload.pointDiff && payload.winner) {
-          await fetch(`${BASE_URL}bet`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-          setBusy(false);
-        }
-      }, 1500)
-    );
-  }
+  useEffect(() => setPoints(bet.points), [bet]);
 
   function select(homeAway: "home" | "away") {
     const v = { ...bet.bets };
@@ -82,13 +61,15 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
           {innerWidth < 448 && away?.abbreviation}
         </span>
       </button>
-      <Scores
-        game={game}
-        selected={bet.selected}
-        doubler={doubler}
-        setDoubler={setDoubler}
-        hidden={hidden}
-      ></Scores>
+      <Suspense fallback={<div className="w-16 sm:w-20">...</div>}>
+        <Scores
+          game={game}
+          selected={bet.selected}
+          doubler={doubler}
+          setDoubler={setDoubler}
+          hidden={hidden}
+        ></Scores>
+      </Suspense>
       <button
         className="team"
         disabled={new Date(game.date) < new Date()}
@@ -115,19 +96,29 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
       </button>
       <input
         className={`h-10 w-11 ml-1 p-px text-center border dark:bg-gray-300 dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
-          busy ? "text-yellow-600" : "text-black"
+          points !== bet.points ? "text-yellow-600" : "text-black"
         }`}
         type="number"
         disabled={!bet.selected || new Date(game.date) < new Date()}
-        value={bet.points ?? ""}
-        onChange={(ev) =>
-          setBet({
-            ...bet,
-            points: isNaN(parseInt(ev.target.value, 10))
-              ? undefined
-              : parseInt(ev.target.value, 10),
-          })
-        }
+        value={points ?? ""}
+        onChange={(ev) => {
+          const points = isNaN(parseInt(ev.target.value, 10))
+            ? undefined
+            : parseInt(ev.target.value, 10);
+          setPoints(points);
+
+          if (timeoutID) {
+            clearTimeout(timeoutID);
+          }
+          setTimeoutID(
+            setTimeout(() => {
+              if (bet.points !== points) {
+                setBet({ ...bet, points });
+              }
+            }, 1500)
+          );
+        }}
+        onBlur={() => setBet({ ...bet, points })}
       ></input>
       <div
         role="button"
@@ -143,14 +134,16 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         ></div>
       </div>
       {open && (
-        <Stats
-          game={game}
-          home={home}
-          away={away}
-          bets={bet.bets}
-          isCompact={innerWidth < 720}
-          hidden={hidden}
-        ></Stats>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Stats
+            game={game}
+            home={home}
+            away={away}
+            bets={bet.bets}
+            isCompact={innerWidth < 720}
+            hidden={hidden}
+          ></Stats>
+        </Suspense>
       )}
     </div>
   );

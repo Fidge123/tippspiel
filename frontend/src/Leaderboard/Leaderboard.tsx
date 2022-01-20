@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { BASE_URL } from "../api";
-import { useToken } from "../useToken";
+import { useRecoilValue } from "recoil";
+
+import { tokenState } from "../State/states";
+import { fetchFromAPI } from "../api";
 
 function sum(list: number[]) {
   return list.reduce((a, b) => a + b, 0);
 }
 
 function Leaderboard() {
-  const [token] = useToken();
+  const token = useRecoilValue(tokenState);
   const [leaderboard, setLeaderboard] = useState<ILeaderboard[]>([]);
 
   function formatBet(bet: any) {
@@ -21,12 +23,7 @@ function Leaderboard() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(BASE_URL + "leaderboard/2021", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res: LBResponse[] = await response.json();
+      const res: LBResponse[] = await fetchFromAPI("leaderboard/2021", token); //TODO
 
       setLeaderboard(
         res
@@ -130,17 +127,17 @@ function Leaderboard() {
         <table>
           <thead className="lb-header">
             <tr>
-              <th className="left">Name</th>
-              <th className="center px-2">AFC North</th>
-              <th className="center px-2">AFC South</th>
-              <th className="center px-2">AFC West</th>
-              <th className="center px-2">AFC East</th>
-              <th className="center px-2">NFC North</th>
-              <th className="center px-2">NFC South</th>
-              <th className="center px-2">NFC West</th>
-              <th className="center px-2">NFC East</th>
-              <th className="center px-2">SB</th>
-              <th className="center px-2">Points</th>
+              <th className="text-left">Name</th>
+              <th className="text-center px-2">AFC North</th>
+              <th className="text-center px-2">AFC South</th>
+              <th className="text-center px-2">AFC West</th>
+              <th className="text-center px-2">AFC East</th>
+              <th className="text-center px-2">NFC North</th>
+              <th className="text-center px-2">NFC South</th>
+              <th className="text-center px-2">NFC West</th>
+              <th className="text-center px-2">NFC East</th>
+              <th className="text-center px-2">SB</th>
+              <th className="text-center px-2">Points</th>
             </tr>
           </thead>
           <tbody className="lb-body">

@@ -1,13 +1,17 @@
 import { useState, useEffect, FormEvent } from "react";
-import { BASE_URL } from "../api";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 
-export default function Login({ setToken }: LoginProperties) {
+import { BASE_URL } from "../api";
+import { tokenState } from "../State/states";
+
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [credentials, setCredentials] = useState<any>();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const setToken = useSetRecoilState(tokenState);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -28,7 +32,7 @@ export default function Login({ setToken }: LoginProperties) {
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
-        history.push("/");
+        navigate("/", { replace: true });
       } else {
         const error = await res.json();
         setError(error.message);
@@ -52,7 +56,6 @@ export default function Login({ setToken }: LoginProperties) {
           if (res.ok) {
             const token = await res.json();
             setToken(token.access_token);
-            history.push("/");
           } else {
             const error = await res.json();
             setPassword("");
@@ -63,7 +66,7 @@ export default function Login({ setToken }: LoginProperties) {
         }
       }
     })();
-  }, [credentials, setToken, history]);
+  }, [credentials, setToken]);
 
   return (
     <div className="flex flex-col items-center">
@@ -110,8 +113,4 @@ export default function Login({ setToken }: LoginProperties) {
       </form>
     </div>
   );
-}
-
-export interface LoginProperties {
-  setToken: Function;
 }

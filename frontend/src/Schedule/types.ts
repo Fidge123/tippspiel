@@ -37,9 +37,9 @@ export interface Game {
   id: string;
   date: string;
   status: string;
-  homeTeam: { id: string; name: string };
+  homeTeam?: { id: string; name: string };
   homeScore: number;
-  awayTeam: { id: string; name: string };
+  awayTeam?: { id: string; name: string };
   awayScore: number;
 }
 
@@ -48,14 +48,14 @@ export interface IWeek {
   week: number;
   year: number;
   label: string;
-  teamsOnBye: { id: string; name: string; shortName: string }[];
+  teamsOnBye?: { id: string; name: string; shortName: string }[];
   start: string;
   end: string;
-  games: Game[];
+  games?: Game[];
 }
 
 export interface AllStats {
-  [game: string]: IStats;
+  [game: string]: IStats[];
 }
 
 export interface IStats {

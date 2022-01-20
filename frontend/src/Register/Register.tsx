@@ -1,5 +1,6 @@
 import { useState, useEffect, FormEvent } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 import { BASE_URL } from "../api";
 
 function Register() {
@@ -11,7 +12,7 @@ function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [credentials, setCredentials] = useState<any>();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ function Register() {
             setSuccess(
               "Erfolgreich registriert! Du solltest gleich eine E-Mail mit einem Bestätigungslink erhalten. Nach der Bestätigung kannst du dich einloggen."
             );
-            setTimeout(() => history.push("/login"), 30000);
+            setTimeout(() => navigate("/login", { replace: true }), 30000);
           } else {
             const error = await res.json();
             setPassword("");
@@ -47,7 +48,7 @@ function Register() {
         }
       }
     })();
-  }, [credentials, history]);
+  }, [credentials, navigate]);
 
   return (
     <div className="flex flex-col items-center">
