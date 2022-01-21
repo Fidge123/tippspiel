@@ -12,7 +12,7 @@ import {
 } from '../database/entity';
 import { CreateBetDto } from './bet.dto';
 import { CreateDivisionBetDto } from './division.dto';
-import { CreateDoublerDto } from './doubler.dto';
+import { CreateDoublerDto, GetDoublerDto } from './doubler.dto';
 import { CreateSBBetDto } from './superbowl.dto';
 
 @Controller('bet')
@@ -97,11 +97,15 @@ export class BetController {
   async getBetDoublers(
     @Query('season') season: string,
     @CurrentUser() user: User,
-  ): Promise<any> {
-    return await this.databaseService.findBetDoublers(
+  ): Promise<GetDoublerDto[]> {
+    const doublers = await this.databaseService.findBetDoublers(
       parseInt(season, 10),
       user.id,
     );
+    return doublers.map((d) => ({
+      game: d.game.id,
+      week: `${d.week.year}-${d.week.seasontype}-${d.week.week}`,
+    }));
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -110,9 +114,12 @@ export class BetController {
     @Body() createBet: CreateDoublerDto,
     @CurrentUser() user: User,
   ): Promise<BetDoublerEntity> {
+    const [year, seasontype, week] = createBet.week
+      .split('-')
+      .map((n) => parseInt(n, 10));
     return this.databaseService.setBetDoubler(
-      createBet.gameId,
-      createBet.week,
+      createBet.game,
+      { year, seasontype, week },
       user.id,
     );
   }

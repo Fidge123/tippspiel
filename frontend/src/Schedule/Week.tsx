@@ -4,14 +4,12 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { doublerState, teamsState, hiddenState } from "../State/states";
 
 import MatchUp from "./Matchup";
-import { Game, IWeek } from "./types";
+import { IWeek } from "./types";
 
 function Week({ week }: Props) {
   const weekId = `${week.year}-${week.seasontype}-${week.week}`;
   const ref = useRef<HTMLElement>(null);
-  const [doubler, setDoubler] = useRecoilState(
-    doublerState([week.week, week.seasontype, week.year])
-  );
+  const [doubler, setDoubler] = useRecoilState(doublerState(weekId));
   const teams = useRecoilValue(teamsState);
   const [hidden, setHidden] = useRecoilState(hiddenState(weekId));
 
@@ -43,12 +41,13 @@ function Week({ week }: Props) {
           Bye: {week.teamsOnBye?.map((t) => t.shortName).join(", ")}
         </div>
       )}
-      {splitByDate(week.games!).map((time) => (
-        <div key={time[0].date}>
+      {[...new Set(week.games!.map((g) => g.date))].map((time) => (
+        <div key={time}>
           <div className="text-gray-400 py-0.5 leading-none">
-            {formatDate(time[0].date)}
+            {formatDate(time)}
           </div>
-          {time
+          {week
+            .games!.filter((game) => game.date === time)
             .sort((a, b) => a.id.localeCompare(b.id))
             .map(
               (g, idx) =>
@@ -68,19 +67,6 @@ function Week({ week }: Props) {
       ))}
     </article>
   );
-}
-
-function splitByDate(games: Game[]) {
-  const result: Game[][] = [];
-  return games.reduce((res, game) => {
-    const idx = res.findIndex((sub) => sub[0].date === game.date);
-    if (idx === -1) {
-      res.push([game]);
-    } else {
-      res[idx].push(game);
-    }
-    return res;
-  }, result);
 }
 
 function formatDate(date: string) {

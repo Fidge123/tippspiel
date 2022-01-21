@@ -1,7 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Week } from 'src/database/api.type';
-import { WeekEntity } from '../database/entity';
 import { ScheduleDataService } from '../database/schedule.service';
 
 @Controller('schedule')

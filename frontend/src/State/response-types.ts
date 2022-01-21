@@ -4,7 +4,6 @@ import {
   AllStats as C,
   IStats as A,
   IWeek,
-  Game,
 } from "../Schedule/types";
 
 export type Week = IWeek;
@@ -35,9 +34,8 @@ export interface Leaderboard {
 }
 
 export interface Doubler {
-  game: Game;
-  id: string;
-  week: IWeek;
+  game: string;
+  week: string;
 }
 
 export interface UserSettings {

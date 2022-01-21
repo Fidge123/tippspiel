@@ -139,46 +139,33 @@ export const doublersState = atom<Doubler[]>({
   }),
 });
 
-export const doublerState = selectorFamily<
-  string | undefined,
-  [number, number, number]
->({
+export const doublerState = selectorFamily<string, string>({
   key: "doubler",
   get:
-    ([week, st, year]) =>
+    (weekId) =>
     ({ get }) =>
-      get(doublersState).find(
-        ({ week: dw }) =>
-          dw.week === week && dw.seasontype === st && dw.year === year
-      )?.game.id,
+      get(doublersState).find(({ week }) => week === weekId)?.game || "",
   set:
-    ([week, st, year]) =>
+    (weekId) =>
     ({ set, get }, newValue) => {
       if (
         !(newValue instanceof DefaultValue) &&
-        get(doublerState([week, st, year])) !== newValue
+        get(doublerState(weekId)) !== newValue
       ) {
         set(doublersState, [
-          ...get(doublersState).filter(
-            ({ week: dw }) =>
-              !(dw.week === week && dw.seasontype === st && dw.year === year)
-          ),
+          ...get(doublersState).filter(({ week }) => week !== weekId),
           {
-            game: { id: newValue },
-            week: { week, seasontype: st, year },
-          } as Doubler,
+            game: newValue,
+            week: weekId,
+          },
         ]);
         fetchFromAPI(
           "bet/doubler",
           get(tokenState),
           "POST",
           {
-            gameId: newValue,
-            week: {
-              week,
-              year,
-              seasontype: st,
-            },
+            game: newValue,
+            week: weekId,
           },
           true
         );
