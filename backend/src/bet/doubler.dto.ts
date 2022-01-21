@@ -1,5 +1,5 @@
 export class CreateDoublerDto {
-  gameID: string;
+  gameId: string;
   week: {
     week: number;
     seasontype: number;

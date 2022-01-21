@@ -11,7 +11,7 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
   const [bet, setBet] = useRecoilState(gameBetsState(game.id));
   const [points, setPoints] = useState(bet.points);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-  const [timeoutID, setTimeoutID] = useState<NodeJS.Timeout>();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -107,10 +107,10 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
             : parseInt(ev.target.value, 10);
           setPoints(points);
 
-          if (timeoutID) {
-            clearTimeout(timeoutID);
+          if (timeoutId) {
+            clearTimeout(timeoutId);
           }
-          setTimeoutID(
+          setTimeoutId(
             setTimeout(() => {
               if (bet.points !== points) {
                 setBet({ ...bet, points });

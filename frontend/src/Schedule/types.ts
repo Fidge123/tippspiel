@@ -10,7 +10,7 @@ export interface Bet {
 }
 
 export interface ApiBet {
-  gameID: string;
+  gameId: string;
   winner?: "home" | "away";
   pointDiff?: number;
 }

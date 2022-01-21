@@ -88,15 +88,12 @@ export const statState = selectorFamily<Stat[], string>({
       get(statsState)[gameId],
 });
 
-export const allGameBetsState = atom<Record<string, Bet>>({
+export const allGameBetsState = atom<Bet[]>({
   key: "allGameBets",
   default: selector({
     key: "allGameBets/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Record<string, Bet>>(
-        "bet?season=2021",
-        get(tokenState)
-      ),
+      await fetchFromAPI<Bet[]>("bet?season=2021", get(tokenState)),
   }),
 });
 
@@ -105,19 +102,25 @@ export const gameBetsState = selectorFamily<Bet, string>({
   get:
     (gameId) =>
     ({ get }) =>
-      get(allGameBetsState)[gameId] || { id: "", bets: { home: 0, away: 0 } },
+      get(allGameBetsState).find((bet) => bet.id === gameId) || {
+        id: "",
+        bets: { home: 0, away: 0 },
+      },
   set:
-    (gameID) =>
+    (gameId) =>
     ({ set, get }, newValue) => {
       if (
         !(newValue instanceof DefaultValue) &&
-        JSON.stringify(get(gameBetsState(gameID))) !== JSON.stringify(newValue)
+        JSON.stringify(get(gameBetsState(gameId))) !== JSON.stringify(newValue)
       ) {
-        set(allGameBetsState, { ...get(allGameBetsState), [gameID]: newValue });
+        set(allGameBetsState, [
+          ...get(allGameBetsState).filter((bet: Bet) => bet.id !== gameId),
+          newValue,
+        ]);
 
         if (newValue.points && newValue.selected) {
           const body: ApiBet = {
-            gameID,
+            gameId: gameId,
             winner: newValue.selected,
             pointDiff: newValue.points,
           };
@@ -135,23 +138,6 @@ export const doublersState = atom<Doubler[]>({
       await fetchFromAPI<Doubler[]>("bet/doubler?season=2021", get(tokenState)),
   }),
 });
-
-function setDoubler(
-  doublers: Doubler[],
-  week: number,
-  st: number,
-  year: number,
-  gameID?: string
-) {
-  const filterFn = ({ week: dw }: Doubler) =>
-    dw.week === week && dw.seasontype === st && dw.year === year;
-  let element = { ...doublers.find(filterFn) } as Doubler;
-  if (element && element.game) {
-    element.game = { ...element.game, id: gameID || "" };
-    return [...doublers.filter((d) => !filterFn(d)), element];
-  }
-  return doublers;
-}
 
 export const doublerState = selectorFamily<
   string | undefined,
@@ -172,16 +158,22 @@ export const doublerState = selectorFamily<
         !(newValue instanceof DefaultValue) &&
         get(doublerState([week, st, year])) !== newValue
       ) {
-        set(
-          doublersState,
-          setDoubler(get(doublersState), week, st, year, newValue)
-        );
+        set(doublersState, [
+          ...get(doublersState).filter(
+            ({ week: dw }) =>
+              !(dw.week === week && dw.seasontype === st && dw.year === year)
+          ),
+          {
+            game: { id: newValue },
+            week: { week, seasontype: st, year },
+          } as Doubler,
+        ]);
         fetchFromAPI(
           "bet/doubler",
           get(tokenState),
           "POST",
           {
-            gameID: newValue,
+            gameId: newValue,
             week: {
               week,
               year,

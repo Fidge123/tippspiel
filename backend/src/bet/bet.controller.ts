@@ -27,23 +27,15 @@ export class BetController {
   ): Promise<any> {
     const games = await this.databaseService.findBets(parseInt(season, 10));
 
-    return games
-      .map((game) => ({
-        id: game.id,
-        bets: {
-          home: game.bets.filter((bet) => bet.winner === 'home').length,
-          away: game.bets.filter((bet) => bet.winner === 'away').length,
-        },
-        selected: game.bets.find((bet) => bet.user.id === user.id)?.winner,
-        points: game.bets.find((bet) => bet.user.id === user.id)?.pointDiff,
-      }))
-      .reduce(
-        (result, game) => ({
-          ...result,
-          [game.id]: game,
-        }),
-        {},
-      );
+    return games.map((game) => ({
+      id: game.id,
+      bets: {
+        home: game.bets.filter((bet) => bet.winner === 'home').length,
+        away: game.bets.filter((bet) => bet.winner === 'away').length,
+      },
+      selected: game.bets.find((bet) => bet.user.id === user.id)?.winner,
+      points: game.bets.find((bet) => bet.user.id === user.id)?.pointDiff,
+    }));
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -119,7 +111,7 @@ export class BetController {
     @CurrentUser() user: User,
   ): Promise<BetDoublerEntity> {
     return this.databaseService.setBetDoubler(
-      createBet.gameID,
+      createBet.gameId,
       createBet.week,
       user.id,
     );

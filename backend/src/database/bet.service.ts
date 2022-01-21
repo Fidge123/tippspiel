@@ -312,15 +312,15 @@ export class BetDataService {
   }
 
   async update(
-    { gameID, pointDiff, winner }: CreateBetDto,
+    { gameId, pointDiff, winner }: CreateBetDto,
     userId: string,
   ): Promise<BetEntity> {
     const user = await this.userRepo.findOne(userId);
-    const game = await this.gameRepo.findOne(gameID);
+    const game = await this.gameRepo.findOne(gameId);
 
     console.log(`User ${user.name} posted bet for ${game.id}`);
 
-    if (new Date() < new Date(game.date) && user && game.id === gameID) {
+    if (new Date() < new Date(game.date) && user && game.id === gameId) {
       const bet =
         (await this.betRepo.findOne({ user, game })) || new BetEntity();
       bet.user = user;
