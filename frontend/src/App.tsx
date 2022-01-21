@@ -11,6 +11,7 @@ import {
 
 import { tokenState } from "./State/states";
 import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
+import { ErrorBoundary } from "react-error-boundary";
 
 const Leaderboard = lazy(() => import("./Leaderboard/Leaderboard"));
 const Schedule = lazy(() => import("./Schedule/Schedule"));
@@ -32,7 +33,7 @@ function App() {
       <header className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex">
         <nav className="flex w-full items-center justify-between">
           <div>
-            {token && (
+            {token ? (
               <>
                 <Link to="/">
                   <span className="text-white font-semibold pr-4">
@@ -48,6 +49,8 @@ function App() {
                   </span>
                 </Link>
               </>
+            ) : (
+              ""
             )}
           </div>
           <div>
@@ -73,75 +76,82 @@ function App() {
         </nav>
       </header>
       <main className="pt-12 dark:text-gray-100 min-h-full">
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <LoggedOutRoute>
-                  <Login></Login>
-                </LoggedOutRoute>
-              }
-            ></Route>
-            <Route
-              path="/register"
-              element={
-                <LoggedOutRoute>
-                  <Register></Register>
-                </LoggedOutRoute>
-              }
-            ></Route>
-            <Route
-              path="/reset"
-              element={
-                <LoggedOutRoute>
-                  <Reset></Reset>
-                </LoggedOutRoute>
-              }
-            ></Route>
-            <Route
-              path="/verify"
-              element={
-                <LoggedOutRoute>
-                  <Verify></Verify>
-                </LoggedOutRoute>
-              }
-            ></Route>
-            <Route path="/impressum" element={<Impressum></Impressum>}></Route>
-            <Route
-              path="/terms"
-              element={<TermsAndConditions></TermsAndConditions>}
-            ></Route>
-            <Route
-              path="/division"
-              element={
-                <LoggedInRoute>
-                  <Division></Division>
-                </LoggedInRoute>
-              }
-            ></Route>
-            <Route
-              path="/leaderboard"
-              element={
-                <LoggedInRoute>
-                  <Leaderboard></Leaderboard>
-                </LoggedInRoute>
-              }
-            ></Route>
-            <Route
-              path="/"
-              element={
-                <LoggedInRoute>
-                  <Schedule></Schedule>
-                </LoggedInRoute>
-              }
-            ></Route>
-            <Route
-              path="*"
-              element={<Navigate to="/" replace></Navigate>}
-            ></Route>
-          </Routes>
-        </Suspense>
+        <ErrorBoundary
+          fallbackRender={() => <div>Error! Please reload...</div>}
+        >
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  <LoggedOutRoute>
+                    <Login></Login>
+                  </LoggedOutRoute>
+                }
+              ></Route>
+              <Route
+                path="/register"
+                element={
+                  <LoggedOutRoute>
+                    <Register></Register>
+                  </LoggedOutRoute>
+                }
+              ></Route>
+              <Route
+                path="/reset"
+                element={
+                  <LoggedOutRoute>
+                    <Reset></Reset>
+                  </LoggedOutRoute>
+                }
+              ></Route>
+              <Route
+                path="/verify"
+                element={
+                  <LoggedOutRoute>
+                    <Verify></Verify>
+                  </LoggedOutRoute>
+                }
+              ></Route>
+              <Route
+                path="/impressum"
+                element={<Impressum></Impressum>}
+              ></Route>
+              <Route
+                path="/terms"
+                element={<TermsAndConditions></TermsAndConditions>}
+              ></Route>
+              <Route
+                path="/division"
+                element={
+                  <LoggedInRoute>
+                    <Division></Division>
+                  </LoggedInRoute>
+                }
+              ></Route>
+              <Route
+                path="/leaderboard"
+                element={
+                  <LoggedInRoute>
+                    <Leaderboard></Leaderboard>
+                  </LoggedInRoute>
+                }
+              ></Route>
+              <Route
+                path="/"
+                element={
+                  <LoggedInRoute>
+                    <Schedule></Schedule>
+                  </LoggedInRoute>
+                }
+              ></Route>
+              <Route
+                path="*"
+                element={<Navigate to="/" replace></Navigate>}
+              ></Route>
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );
