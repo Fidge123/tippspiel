@@ -111,18 +111,18 @@ export const gameBetsState = selectorFamily<Bet, string>({
     ({ set, get }, newValue) => {
       if (
         !(newValue instanceof DefaultValue) &&
-        JSON.stringify(get(gameBetsState(gameID))) !==
-          JSON.stringify(newValue) &&
-        newValue.points &&
-        newValue.selected
+        JSON.stringify(get(gameBetsState(gameID))) !== JSON.stringify(newValue)
       ) {
-        const body: ApiBet = {
-          gameID,
-          winner: newValue.selected,
-          pointDiff: newValue.points,
-        };
         set(allGameBetsState, { ...get(allGameBetsState), [gameID]: newValue });
-        fetchFromAPI("bet", get(tokenState), "POST", body, true);
+
+        if (newValue.points && newValue.selected) {
+          const body: ApiBet = {
+            gameID,
+            winner: newValue.selected,
+            pointDiff: newValue.points,
+          };
+          fetchFromAPI("bet", get(tokenState), "POST", body, true);
+        }
       }
     },
 });
