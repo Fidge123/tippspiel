@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { RecoilRoot } from "recoil";
 import { BrowserRouter } from "react-router-dom";
@@ -8,9 +9,11 @@ import App from "./App";
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
-  <RecoilRoot>
-    <BrowserRouter basename="tippspiel">
-      <App />
-    </BrowserRouter>
-  </RecoilRoot>
+  <StrictMode>
+    <RecoilRoot>
+      <BrowserRouter basename="tippspiel">
+        <App />
+      </BrowserRouter>
+    </RecoilRoot>
+  </StrictMode>
 );

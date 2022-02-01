@@ -16,7 +16,7 @@ import {
 export const tokenState = atom<string>({
   key: "accessToken",
   default: "",
-  effects_UNSTABLE: [
+  effects: [
     ({ setSelf, resetSelf, onSet }) => {
       const item = window.localStorage.getItem("access_token");
       if (item) {
