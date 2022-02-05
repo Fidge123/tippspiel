@@ -31,6 +31,14 @@ export interface Leaderboard {
   offSix: number;
   doubler: number;
   total: number;
+  divBets: {
+    logo: string;
+    points: number;
+  }[];
+  sbBet: {
+    logo: string;
+    points: number;
+  };
 }
 
 export interface Doubler {
@@ -40,4 +48,33 @@ export interface Doubler {
 
 export interface UserSettings {
   hidden?: Record<string, boolean>;
+}
+
+export interface LBResponse {
+  user: string;
+  bets: {
+    id: string;
+    points: number[];
+  }[];
+  divBets: {
+    name: string;
+    points: number;
+    team: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+  }[];
+  sbBet: {
+    points: number;
+    team: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+  };
 }

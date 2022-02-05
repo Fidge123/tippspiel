@@ -1,6 +1,7 @@
 import { env } from 'process';
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Request } from 'express';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
@@ -8,12 +9,14 @@ import { UserDataService } from '../database/user.service';
 import { User } from '../user.decorator';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   constructor(private userDataService: UserDataService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: Request) => req?.cookies?.refreshToken,
+      ]),
       ignoreExpiration: false,
-      secretOrKey: env.JWT_SECRET,
+      secretOrKey: env.REFRESH_SECRET,
     });
   }
 
@@ -24,6 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException();
     }
 
-    return payload;
+    return user;
   }
 }

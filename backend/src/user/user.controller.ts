@@ -3,12 +3,14 @@ import {
   Post,
   Body,
   UseGuards,
-  Request,
+  Req,
+  Res,
   BadRequestException,
   Get,
 } from '@nestjs/common';
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
+import { Request, Response } from 'express';
 
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
 import { getTransporter } from '../email';
@@ -17,6 +19,10 @@ import { UserDataService } from '../database/user.service';
 import { AuthService } from '../auth/auth.service';
 import { HiddenDto } from './hidden.dto';
 import { CurrentUser, User } from 'src/user.decorator';
+
+interface RequestWithUser extends Request {
+  user: User;
+}
 
 @Controller('user')
 export class UserController {
@@ -27,8 +33,32 @@ export class UserController {
 
   @UseGuards(AuthGuard('local'), ThrottlerGuard)
   @Post('login')
-  async login(@Request() req: any) {
-    return this.authService.login(req.user);
+  async login(@Req() req: RequestWithUser, @Res() res: Response) {
+    const { access_token, refresh_token } = await this.authService.login(
+      req.user,
+    );
+    res.cookie('refreshToken', refresh_token, {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 29 * 24 * 60 * 60 * 10000, // 29 days
+    });
+    return res.json(access_token);
+  }
+
+  @UseGuards(AuthGuard('refresh'), ThrottlerGuard)
+  @Post('refresh')
+  async refresh(@Req() req: RequestWithUser, @Res() res: Response) {
+    const { access_token, refresh_token } = await this.authService.login(
+      req.user,
+    );
+    res.cookie('refreshToken', refresh_token, {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 29 * 24 * 60 * 60 * 10000, // 29 days
+    });
+    return res.json(access_token);
   }
 
   @UseGuards(ThrottlerGuard)

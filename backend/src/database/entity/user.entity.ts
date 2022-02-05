@@ -65,6 +65,9 @@ export class UserEntity {
   @Column({ select: false })
   consentedAt: Date;
 
+  // @Column({ default: null, select: false })
+  // invalidatedAt: Date | null;
+
   @CreateDateColumn({ select: false })
   createdAt: Date;
 

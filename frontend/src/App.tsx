@@ -1,5 +1,5 @@
-import { Suspense, lazy } from "react";
-import { useRecoilState } from "recoil";
+import { Suspense, lazy, useEffect } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   Route,
   Link,
@@ -11,7 +11,8 @@ import {
 
 import { tokenState } from "./State/states";
 import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
+import { refresh } from "./api";
 
 const Leaderboard = lazy(() => import("./Leaderboard/Leaderboard"));
 const Schedule = lazy(() => import("./Schedule/Schedule"));
@@ -22,6 +23,17 @@ const TermsAndConditions = lazy(() => import("./T&C/TermsAndConditions"));
 const Verify = lazy(() => import("./Verify/Verify"));
 const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Division = lazy(() => import("./Division/Division"));
+
+function Placeholder({ resetErrorBoundary }: FallbackProps) {
+  const setToken = useSetRecoilState(tokenState);
+  useEffect(() => {
+    (async () => {
+      setToken(await refresh());
+      resetErrorBoundary();
+    })();
+  }, [setToken, resetErrorBoundary]);
+  return <div>Error!</div>;
+}
 
 function App() {
   const [token, setToken] = useRecoilState(tokenState);
@@ -76,9 +88,7 @@ function App() {
         </nav>
       </header>
       <main className="pt-12 dark:text-gray-100 min-h-full">
-        <ErrorBoundary
-          fallbackRender={() => <div>Error! Please reload...</div>}
-        >
+        <ErrorBoundary FallbackComponent={Placeholder}>
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route

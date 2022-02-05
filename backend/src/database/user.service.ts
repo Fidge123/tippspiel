@@ -34,6 +34,10 @@ export class UserDataService {
     return this.userRepo.find();
   }
 
+  async findOne(id: string): Promise<UserEntity> {
+    return this.userRepo.findOne(id);
+  }
+
   async login(email: string, password: string): Promise<User> {
     const user = await this.userRepo.findOne({
       select: ['id', 'name', 'email', 'salt', 'password'],

@@ -9,7 +9,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [credentials, setCredentials] = useState<any>();
+  const [credentials, setCredentials] =
+    useState<{ email: string; password: string }>();
   const navigate = useNavigate();
   const setToken = useSetRecoilState(tokenState);
 
@@ -48,6 +49,7 @@ export default function Login() {
         try {
           const res = await fetch(BASE_URL + "user/login", {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
             },
@@ -55,7 +57,7 @@ export default function Login() {
           });
           if (res.ok) {
             const token = await res.json();
-            setToken(token.access_token);
+            setToken(token);
           } else {
             const error = await res.json();
             setPassword("");

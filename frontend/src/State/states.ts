@@ -1,5 +1,5 @@
 import { atom, DefaultValue, selector, selectorFamily } from "recoil";
-import { fetchFromAPI } from "../api";
+import { refresh, fetchFromAPI } from "../api";
 import { ApiBet } from "../Schedule/types";
 import {
   Division,
@@ -12,19 +12,29 @@ import {
   UserSettings,
   Doubler,
 } from "./response-types";
+import { formatLb } from "./util";
 
 export const tokenState = atom<string>({
   key: "accessToken",
-  default: "",
+  default: window.localStorage.getItem("access_token") || "",
   effects: [
-    ({ setSelf, resetSelf, onSet }) => {
+    ({ setSelf, onSet }) => {
       const item = window.localStorage.getItem("access_token");
+      const refreshSelf = async () => {
+        const token = await refresh();
+        if (token) {
+          setSelf(token);
+          window.localStorage.setItem("access_token", token);
+        }
+      };
+
       if (item) {
         const payload = JSON.parse(window.atob(item.split(".")[1]));
         if (new Date(payload.exp * 1000) <= new Date()) {
-          resetSelf();
+          refreshSelf();
+        } else {
+          setSelf(item);
         }
-        setSelf(item);
       }
 
       onSet((newValue, _, isReset) =>
@@ -56,7 +66,11 @@ export const teamsState = selector<Team[]>({
 
 export const leaderboardState = atom<Leaderboard[]>({
   key: "leaderboard",
-  default: [],
+  default: selector({
+    key: "leaderboard/Default",
+    get: async ({ get }) =>
+      formatLb(await fetchFromAPI("leaderboard/2021", get(tokenState))),
+  }),
 });
 
 export const weeksState = atom<Week[]>({
