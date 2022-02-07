@@ -25,9 +25,11 @@ function DivisionTable({ leaderboard }: Props) {
                 {bet?.logo && (
                   <img
                     src={bet?.logo}
-                    className={`h-8 w-8 p-1 inline-block border rounded ${
+                    className={`p-1 inline-block border rounded ${
                       bet.points ? "border-green-500" : "border-red-500"
                     }`}
+                    width="32"
+                    height="32"
                     alt="team logo for division bet"
                     onError={(event: any) =>
                       (event.target.style.display = "none")
@@ -41,9 +43,11 @@ function DivisionTable({ leaderboard }: Props) {
               {l.sbBet?.logo && (
                 <img
                   src={l.sbBet?.logo}
-                  className={`h-8 w-8 p-1 inline-block border rounded ${
+                  className={`p-1 inline-block border rounded ${
                     l.sbBet.points ? "border-green-500" : "border-red-500"
                   }`}
+                  width="32"
+                  height="32"
                   alt="team logo for superbowl bet"
                   onError={(event: any) =>
                     (event.target.style.display = "none")

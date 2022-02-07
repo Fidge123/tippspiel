@@ -46,8 +46,11 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         {away?.logo && (
           <img
             src={process.env.REACT_APP_IMG_URL + away.logo}
-            className="h-6 w-6 float-left"
+            className="float-left"
             alt="logo away team"
+            width="24"
+            height="24"
+            loading="lazy"
             onError={(event: any) => (event.target.style.display = "none")}
           ></img>
         )}
@@ -79,7 +82,10 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
         {home?.logo && (
           <img
             src={process.env.REACT_APP_IMG_URL + home.logo}
-            className="h-6 w-6 float-left"
+            className="float-left"
+            width="24"
+            height="24"
+            loading="lazy"
             alt="logo home team"
             onError={(event: any) => (event.target.style.display = "none")}
           ></img>

@@ -61,7 +61,9 @@ function Division() {
                     {team.logo && (
                       <img
                         src={process.env.REACT_APP_IMG_URL + team.logo}
-                        className="h-6 w-6 float-left"
+                        className="float-left"
+                        width="24"
+                        height="24"
                         alt="logo home team"
                         onError={(event: any) =>
                           (event.target.style.display = "none")
@@ -101,7 +103,9 @@ function Division() {
             {team.logo && (
               <img
                 src={process.env.REACT_APP_IMG_URL + team.logo}
-                className="h-6 w-6 float-left"
+                className="float-left"
+                width="24"
+                height="24"
                 alt="logo home team"
                 onError={(event: any) => (event.target.style.display = "none")}
               ></img>
