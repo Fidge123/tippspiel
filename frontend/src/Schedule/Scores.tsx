@@ -1,6 +1,11 @@
+import { useRecoilState, useRecoilValue } from "recoil";
+import { doublerState, hiddenState } from "../State/states";
 import { Game } from "./types";
 
-function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
+function Scores({ game, selected, weekId }: Props) {
+  const [doubler, setDoubler] = useRecoilState(doublerState(weekId));
+  const hidden = useRecoilValue(hiddenState(weekId));
+
   const inProgress = [
     "STATUS_IN_PROGRESS",
     "STATUS_HALFTIME",
@@ -31,19 +36,21 @@ function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
           </span>
         )}
         {inProgress && (
-          <i className={"text-gray-700 dark:text-gray-200"}>{game.awayScore}</i>
+          <span className={"text-gray-700 dark:text-gray-200 italic"}>
+            {game.awayScore}
+          </span>
         )}
       </div>
       <div className="flex flex-1 justify-center text-gray-700 dark:text-gray-200">
         {new Date(game.date) < new Date() ? (
-          doubler ? (
+          doubler === game.id ? (
             "🌟"
           ) : (
             "@"
           )
         ) : (
           <button onClick={() => setDoubler(game.id)}>
-            {doubler ? "🌟" : "@"}
+            {doubler === game.id ? "🌟" : "@"}
           </button>
         )}
       </div>
@@ -60,7 +67,9 @@ function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
           </span>
         )}
         {inProgress && (
-          <i className={"text-gray-700 dark:text-gray-200"}>{game.homeScore}</i>
+          <span className={"text-gray-700 dark:text-gray-200 italic"}>
+            {game.homeScore}
+          </span>
         )}
       </div>
     </div>
@@ -70,9 +79,7 @@ function Scores({ game, selected, doubler, setDoubler, hidden }: Props) {
 interface Props {
   game: Game;
   selected?: "home" | "away";
-  doubler: boolean;
-  hidden: boolean;
-  setDoubler: Function;
+  weekId: string;
 }
 
 export default Scores;

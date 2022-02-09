@@ -1,10 +1,17 @@
 import { Fragment } from "react";
-import { useRecoilValue } from "recoil";
-import { statState } from "../State/states";
+import { useRecoilValue, selector } from "recoil";
+import { statState, widthState, hiddenState } from "../State/states";
 import { StatProps } from "./types";
 
-function Stats({ game, bets, home, away, isCompact, hidden }: StatProps) {
+const isCompactState = selector<boolean>({
+  key: "isCompact",
+  get: ({ get }) => get(widthState) < 720,
+});
+
+function Stats({ game, bets, home, away, weekId }: StatProps) {
   const stats = useRecoilValue(statState(game.id));
+  const hidden = useRecoilValue(hiddenState(weekId));
+  const isCompact = useRecoilValue(isCompactState);
 
   if (new Date(game.date) < new Date() && stats) {
     const finished = !hidden && game.status === "STATUS_FINAL";

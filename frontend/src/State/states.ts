@@ -64,6 +64,14 @@ export const teamsState = selector<Team[]>({
     ),
 });
 
+export const teamState = selectorFamily<Team | undefined, string | undefined>({
+  key: "team",
+  get:
+    (id) =>
+    ({ get }) =>
+      get(teamsState).find((t) => t.id === id),
+});
+
 export const leaderboardState = atom<Leaderboard[]>({
   key: "leaderboard",
   default: selector({
@@ -80,6 +88,35 @@ export const weeksState = atom<Week[]>({
     get: async ({ get }) =>
       await fetchFromAPI<Week[]>("schedule/2021", get(tokenState)),
   }),
+});
+
+export const currentWeekState = selectorFamily<boolean, string>({
+  key: "weeks/current",
+  get:
+    (weekId) =>
+    ({ get }) => {
+      const now = new Date();
+      const week = get(weeksState).reduce((prev, curr) => {
+        const startA = new Date(curr.start);
+        const endA = new Date(curr.end);
+        const startB = new Date(curr.start);
+        const endB = new Date(curr.end);
+        if (now <= endA && now >= startA) {
+          return prev; // if in period A, return prev
+        }
+        if (now <= endB && now >= startB) {
+          return curr; // if in period B, return curr
+        }
+        if (endA <= now && endB <= now) {
+          return endA > endB ? prev : curr; // if both before, return later period
+        }
+        if (endA >= now && endB >= now) {
+          return endA < endB ? prev : curr; // if both after, return earlier period
+        }
+        return endA < now ? prev : curr; // if between periods, return later period
+      });
+      return `${week.year}-${week.seasontype}-${week.week}` === weekId;
+    },
 });
 
 export const statsState = atom<Stats>({
@@ -251,4 +288,9 @@ export const userState = atom<UserSettings>({
     get: async ({ get }) =>
       await fetchFromAPI<UserSettings>("user/settings", get(tokenState)),
   }),
+});
+
+export const widthState = atom<number>({
+  key: "innerWidth",
+  default: window.innerWidth,
 });

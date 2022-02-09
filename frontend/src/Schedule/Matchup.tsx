@@ -1,28 +1,20 @@
-import { Suspense, useEffect, useState, lazy } from "react";
-import { useRecoilState } from "recoil";
+import { Suspense, useState, lazy } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-import { gameBetsState } from "../State/states";
-import { Team, Game } from "./types";
+import { gameBetsState, teamState } from "../State/states";
+import { Game } from "./types";
 
 const Scores = lazy(() => import("./Scores"));
 const Stats = lazy(() => import("./Stats"));
+const MatchupInput = lazy(() => import("./MatchupInput"));
+const TeamButton = lazy(() => import("./TeamButton"));
 
-function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
+function MatchUp({ game, weekId }: Props) {
   const [bet, setBet] = useRecoilState(gameBetsState(game.id));
-  const [points, setPoints] = useState(bet.points);
-  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    function handleResize() {
-      setInnerWidth(window.innerWidth);
-    }
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => setPoints(bet.points), [bet]);
+  const home = useRecoilValue(teamState(game.homeTeam?.id));
+  const away = useRecoilValue(teamState(game.awayTeam?.id));
 
   function select(homeAway: "home" | "away") {
     const v = { ...bet.bets };
@@ -37,95 +29,22 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
 
   return (
     <div className="w-23r sm:w-27r md:w-39r flex flex-wrap py-1">
-      <button
-        className="team"
+      <TeamButton
+        team={away}
+        selected={bet.selected === "away"}
+        setSelected={() => select("away")}
         disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(away, bet.selected === "away")}
-        onClick={() => select("away")}
-      >
-        {away?.logo && (
-          <img
-            src={process.env.REACT_APP_IMG_URL + away.logo}
-            className="float-left"
-            alt="logo away team"
-            width="24"
-            height="24"
-            loading="lazy"
-            onError={(event: any) => (event.target.style.display = "none")}
-          ></img>
-        )}
-        <span
-          className={
-            bet.selected === "away" ? "font-semibold text-gray-50" : ""
-          }
-        >
-          {innerWidth > 720 && game.awayTeam?.name}
-          {innerWidth < 720 && innerWidth > 448 && away?.shortName}
-          {innerWidth < 448 && away?.abbreviation}
-        </span>
-      </button>
+      ></TeamButton>
       <Suspense fallback={<div className="w-16 sm:w-20">...</div>}>
-        <Scores
-          game={game}
-          selected={bet.selected}
-          doubler={doubler}
-          setDoubler={setDoubler}
-          hidden={hidden}
-        ></Scores>
+        <Scores game={game} selected={bet.selected} weekId={weekId}></Scores>
       </Suspense>
-      <button
-        className="team"
+      <TeamButton
+        team={home}
+        selected={bet.selected === "home"}
+        setSelected={() => select("home")}
         disabled={new Date(game.date) < new Date()}
-        style={styleByTeam(home, bet.selected === "home")}
-        onClick={() => select("home")}
-      >
-        {home?.logo && (
-          <img
-            src={process.env.REACT_APP_IMG_URL + home.logo}
-            className="float-left"
-            width="24"
-            height="24"
-            loading="lazy"
-            alt="logo home team"
-            onError={(event: any) => (event.target.style.display = "none")}
-          ></img>
-        )}
-        <span
-          className={
-            bet.selected === "home" ? "font-semibold text-gray-50" : ""
-          }
-        >
-          {innerWidth > 720 && game.homeTeam?.name}
-          {innerWidth < 720 && innerWidth > 448 && home?.shortName}
-          {innerWidth < 448 && home?.abbreviation}
-        </span>
-      </button>
-      <input
-        className={`h-10 w-11 ml-1 p-px text-center border dark:bg-gray-300 dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
-          points !== bet.points ? "text-yellow-600" : "text-black"
-        }`}
-        type="number"
-        disabled={!bet.selected || new Date(game.date) < new Date()}
-        value={points ?? ""}
-        onChange={(ev) => {
-          const points = isNaN(parseInt(ev.target.value, 10))
-            ? undefined
-            : parseInt(ev.target.value, 10);
-          setPoints(points);
-
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-          }
-          setTimeoutId(
-            setTimeout(() => {
-              if (bet.points !== points) {
-                setBet({ ...bet, points });
-              }
-            }, 1500)
-          );
-        }}
-        onBlur={() => setBet({ ...bet, points })}
-      ></input>
+      ></TeamButton>
+      <MatchupInput game={game}></MatchupInput>
       <div
         role="button"
         className="flex justify-end items-center p-1 w-6 h-10"
@@ -146,8 +65,7 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
             home={home}
             away={away}
             bets={bet.bets}
-            isCompact={innerWidth < 720}
-            hidden={hidden}
+            weekId={weekId}
           ></Stats>
         </Suspense>
       )}
@@ -155,24 +73,9 @@ function MatchUp({ game, home, away, doubler, setDoubler, hidden }: Props) {
   );
 }
 
-function styleByTeam(team: Team | undefined, selected: boolean) {
-  return selected
-    ? {
-        borderColor: `#${team?.color2}ff`,
-        backgroundColor: `#${team?.color1}aa`,
-      }
-    : {
-        borderColor: `#${team?.color1 || "000000"}ff`,
-      };
-}
-
 interface Props {
   game: Game;
-  home?: Team;
-  away?: Team;
-  doubler: boolean;
-  setDoubler: Function;
-  hidden: boolean;
+  weekId: string;
 }
 
 export default MatchUp;

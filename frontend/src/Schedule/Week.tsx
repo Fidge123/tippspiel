@@ -1,40 +1,32 @@
-import { useEffect, useRef } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useEffect, useRef, lazy, Suspense } from "react";
+import { useRecoilValue } from "recoil";
 
-import { doublerState, teamsState, hiddenState } from "../State/states";
+import { currentWeekState } from "../State/states";
 
-import MatchUp from "./Matchup";
 import { IWeek } from "./types";
+const MatchUp = lazy(() => import("./Matchup"));
+const MatchupFallback = lazy(() => import("./MatchupFallback"));
+const HideButton = lazy(() => import("./HideButton"));
 
-function Week({ week }: Props) {
-  const weekId = `${week.year}-${week.seasontype}-${week.week}`;
+function Week({ id, week }: Props) {
   const ref = useRef<HTMLElement>(null);
-  const [doubler, setDoubler] = useRecoilState(doublerState(weekId));
-  const teams = useRecoilValue(teamsState);
-  const [hidden, setHidden] = useRecoilState(hiddenState(weekId));
+  const isCurrent = useRecoilValue(currentWeekState(id));
 
   useEffect(() => {
-    if (new Date(week.start) < new Date() && new Date() < new Date(week.end)) {
+    if (isCurrent) {
       ref.current?.scrollIntoView();
     }
-  }, [week.end, week.start]);
+  }, [isCurrent]);
 
   return (
     <article className="pt-4" key={week.label} ref={ref}>
       <div className="flex justify-between pr-6">
-        <span className="text-2xl dark:text-gray-100">{week.label}</span>
-        {new Date(week.start) < new Date() && (
-          <button
-            onClick={() => setHidden(!hidden)}
-            className={`border border-gray-800 dark:border-black rounded ${
-              hidden
-                ? "text-white dark:text-white bg-gray-600 dark:bg-gray-900"
-                : "text-gray-800 dark:text-gray-900 bg-gray-100 dark:bg-gray-400"
-            }`}
-          >
-            Spoilerschutz {hidden ? "an" : "aus"}
-          </button>
-        )}
+        <span className="text-2xl dark:text-gray-100 truncate w-52 sm:w-64 md:w-80">
+          {week.label}
+        </span>
+        <Suspense fallback={<></>}>
+          <HideButton id={id} start={new Date(week.start)}></HideButton>
+        </Suspense>
       </div>
       {week.teamsOnBye && week.teamsOnBye.length > 0 && (
         <div className="pb-1.5 max-w-sm sm:max-w-md dark:text-gray-300">
@@ -52,15 +44,14 @@ function Week({ week }: Props) {
             .map(
               (g, idx) =>
                 g && (
-                  <MatchUp
+                  <Suspense
                     key={idx}
-                    game={g}
-                    doubler={doubler === g.id}
-                    setDoubler={setDoubler}
-                    home={teams.find((t) => t.id === g.homeTeam?.id)}
-                    away={teams.find((t) => t.id === g.awayTeam?.id)}
-                    hidden={hidden}
-                  ></MatchUp>
+                    fallback={
+                      <MatchupFallback weekId={id} game={g}></MatchupFallback>
+                    }
+                  >
+                    <MatchUp weekId={id} game={g}></MatchUp>
+                  </Suspense>
                 )
             )}
         </div>
@@ -81,6 +72,7 @@ function formatDate(date: string) {
 }
 
 interface Props {
+  id: string;
   week: IWeek;
 }
 
