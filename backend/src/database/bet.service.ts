@@ -151,10 +151,12 @@ export class BetDataService {
   }
 
   async findCurrentWeek(): Promise<WeekEntity> {
-    return await this.weekRepo.findOne({
-      where: { end: MoreThan(new Date()) },
-      order: { end: 'ASC' },
-    });
+    return (
+      (await this.weekRepo.findOne({
+        where: { end: MoreThan(new Date()) },
+        order: { end: 'ASC' },
+      })) || (await this.weekRepo.findOne({ order: { end: 'DESC' } }))
+    );
   }
 
   async findSbWinner(year: number): Promise<TeamEntity> {
