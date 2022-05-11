@@ -1,4 +1,17 @@
 {
   "private": true,
-  "workspaces": ["workspace-a", "workspace-b"]
+  "workspaces": [
+    "packages/backend",
+    "packages/frontend"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "prettier": "^2.6.2",
+    "turbo": "^1.2.8",
+    "typescript": "^4.6.4"
+  }
 }
