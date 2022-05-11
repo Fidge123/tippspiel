@@ -7,55 +7,55 @@ import {
   Res,
   BadRequestException,
   Get,
-} from '@nestjs/common';
-import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
-import { AuthGuard } from '@nestjs/passport';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
+import { AuthGuard } from "@nestjs/passport";
+import { Request, Response } from "express";
 
-import { loadHTML, loadTXT } from '../templates/loadTemplate';
-import { getTransporter } from '../email';
+import { loadHTML, loadTXT } from "../templates/loadTemplate";
+import { getTransporter } from "../email";
 
-import { UserDataService } from '../database/user.service';
-import { AuthService } from '../auth/auth.service';
-import { HiddenDto } from './hidden.dto';
-import { CurrentUser, User } from 'src/user.decorator';
+import { UserDataService } from "../database/user.service";
+import { AuthService } from "../auth/auth.service";
+import { HiddenDto } from "./hidden.dto";
+import { CurrentUser, User } from "src/user.decorator";
 
 interface RequestWithUser extends Request {
   user: User;
 }
 
-@Controller('user')
+@Controller("user")
 export class UserController {
   constructor(
     private readonly databaseService: UserDataService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthService
   ) {}
 
-  @UseGuards(AuthGuard('local'), ThrottlerGuard)
-  @Post('login')
+  @UseGuards(AuthGuard("local"), ThrottlerGuard)
+  @Post("login")
   async login(@Req() req: RequestWithUser, @Res() res: Response) {
     const { access_token, refresh_token } = await this.authService.login(
-      req.user,
+      req.user
     );
-    res.cookie('refreshToken', refresh_token, {
+    res.cookie("refreshToken", refresh_token, {
       secure: true,
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: "strict",
       maxAge: 29 * 24 * 60 * 60 * 10000, // 29 days
     });
     return res.json(access_token);
   }
 
-  @UseGuards(AuthGuard('refresh'), ThrottlerGuard)
-  @Post('refresh')
+  @UseGuards(AuthGuard("refresh"), ThrottlerGuard)
+  @Post("refresh")
   async refresh(@Req() req: RequestWithUser, @Res() res: Response) {
     const { access_token, refresh_token } = await this.authService.login(
-      req.user,
+      req.user
     );
-    res.cookie('refreshToken', refresh_token, {
+    res.cookie("refreshToken", refresh_token, {
       secure: true,
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: "strict",
       maxAge: 29 * 24 * 60 * 60 * 10000, // 29 days
     });
     return res.json(access_token);
@@ -63,34 +63,34 @@ export class UserController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(3, 60)
-  @Post('register')
+  @Post("register")
   async register(
-    @Body('email') email: string,
-    @Body('name') name: string,
-    @Body('consent') consent: boolean,
-    @Body('password') password: string,
+    @Body("email") email: string,
+    @Body("name") name: string,
+    @Body("consent") consent: boolean,
+    @Body("password") password: string
   ): Promise<void> {
     if (password.length < 8) {
       throw new BadRequestException(
-        'Password needs to be longer than 8 characters',
+        "Password needs to be longer than 8 characters"
       );
     }
     const [id, token] = await this.databaseService.createUser(
       email,
       name,
       consent,
-      password,
+      password
     );
     const now = new Date();
     const link = `https://6v4.de/tippspiel/#/verify?id=${id}&token=${token}`;
     const transporter = await getTransporter();
     await transporter
       .sendEmail({
-        From: 'Tippspiel <tippspiel@6v4.de>',
+        From: "Tippspiel <tippspiel@6v4.de>",
         To: process.env.EMAIL,
-        Subject: 'Neuer Nutzer registriert',
-        TextBody: await loadTXT('newUserAlert'),
-        HtmlBody: await loadHTML('newUserAlert', {
+        Subject: "Neuer Nutzer registriert",
+        TextBody: await loadTXT("newUserAlert"),
+        HtmlBody: await loadHTML("newUserAlert", {
           id,
           time: now.toLocaleString(),
         }),
@@ -98,20 +98,20 @@ export class UserController {
       .catch((error) => console.error(error));
     await transporter
       .sendEmail({
-        From: 'Tippspiel <tippspiel@6v4.de>',
+        From: "Tippspiel <tippspiel@6v4.de>",
         To: email,
-        Subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
-        TextBody: await loadTXT('verifyUser', { name, link }),
-        HtmlBody: await loadHTML('verifyUser', { name, link }),
+        Subject: "Bitte verifiziere deinen neuen Tippspiel Account",
+        TextBody: await loadTXT("verifyUser", { name, link }),
+        HtmlBody: await loadHTML("verifyUser", { name, link }),
       })
       .catch((error) => console.error(error));
   }
 
   @UseGuards(ThrottlerGuard)
-  @Post('verify')
+  @Post("verify")
   async verify(
-    @Body('id') id: string,
-    @Body('token') token: string,
+    @Body("id") id: string,
+    @Body("token") token: string
   ): Promise<void> {
     const now = new Date();
 
@@ -119,11 +119,11 @@ export class UserController {
     await this.databaseService.verify(id, token);
     await transporter
       .sendEmail({
-        From: 'Tippspiel <tippspiel@6v4.de>',
+        From: "Tippspiel <tippspiel@6v4.de>",
         To: process.env.EMAIL,
-        Subject: 'Nutzer verifiziert',
-        TextBody: await loadTXT('userVerifiedAlert'),
-        HtmlBody: await loadHTML('userVerifiedAlert', {
+        Subject: "Nutzer verifiziert",
+        TextBody: await loadTXT("userVerifiedAlert"),
+        HtmlBody: await loadHTML("userVerifiedAlert", {
           id,
           time: now.toLocaleString(),
         }),
@@ -132,8 +132,8 @@ export class UserController {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Post('request-reset')
-  async requestReset(@Body('email') email: string): Promise<void> {
+  @Post("request-reset")
+  async requestReset(@Body("email") email: string): Promise<void> {
     const now = new Date();
 
     const reset = await this.databaseService.sendReset(email);
@@ -143,11 +143,11 @@ export class UserController {
       const transporter = await getTransporter();
       await transporter
         .sendEmail({
-          From: 'Tippspiel <tippspiel@6v4.de>',
+          From: "Tippspiel <tippspiel@6v4.de>",
           To: process.env.EMAIL,
-          Subject: 'Passwort Reset angefragt',
-          TextBody: await loadTXT('passwordResetAlert'),
-          HtmlBody: await loadHTML('passwordResetAlert', {
+          Subject: "Passwort Reset angefragt",
+          TextBody: await loadTXT("passwordResetAlert"),
+          HtmlBody: await loadHTML("passwordResetAlert", {
             id: user.id,
             time: now.toLocaleString(),
           }),
@@ -155,11 +155,11 @@ export class UserController {
         .catch((error) => console.error(error));
       await transporter
         .sendEmail({
-          From: 'Tippspiel <tippspiel@6v4.de>',
+          From: "Tippspiel <tippspiel@6v4.de>",
           To: email,
-          Subject: 'Tippspiel Passwort zurücksetzen',
-          TextBody: await loadTXT('passwordReset', { name: user.name, link }),
-          HtmlBody: await loadHTML('passwordReset', { name: user.name, link }),
+          Subject: "Tippspiel Passwort zurücksetzen",
+          TextBody: await loadTXT("passwordReset", { name: user.name, link }),
+          HtmlBody: await loadHTML("passwordReset", { name: user.name, link }),
         })
         .catch((error) => console.error(error));
     }
@@ -167,37 +167,37 @@ export class UserController {
 
   @UseGuards(ThrottlerGuard)
   @Throttle(1, 60)
-  @Post('reset')
+  @Post("reset")
   async reset(
-    @Body('id') id: number,
-    @Body('token') token: string,
-    @Body('password') password: string,
+    @Body("id") id: number,
+    @Body("token") token: string,
+    @Body("password") password: string
   ): Promise<void> {
     if (password.length < 8) {
       throw new BadRequestException(
-        'Password needs to be longer than 8 characters',
+        "Password needs to be longer than 8 characters"
       );
     }
     return this.databaseService.resetPassword(id, password, token);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('settings')
+  @UseGuards(AuthGuard("jwt"))
+  @Get("settings")
   async getSettings(@CurrentUser() user: User): Promise<void> {
     const u = await this.databaseService.getSettings(user.id);
     return u.settings;
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post('hidden')
+  @UseGuards(AuthGuard("jwt"))
+  @Post("hidden")
   async setHidden(
     @Body() hidden: HiddenDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: User
   ): Promise<void> {
     return this.databaseService.setHidden(
       user.id,
       hidden.weekId,
-      hidden.hidden,
+      hidden.hidden
     );
   }
 }

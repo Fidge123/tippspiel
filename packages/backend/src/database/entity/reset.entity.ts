@@ -4,12 +4,12 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-} from 'typeorm';
-import { UserEntity } from './user.entity';
+} from "typeorm";
+import { UserEntity } from "./user.entity";
 
-@Entity('reset')
+@Entity("reset")
 export class ResetEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(() => UserEntity, (user) => user.resetTokens)

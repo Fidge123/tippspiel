@@ -1,8 +1,8 @@
-import { env } from 'process';
+import { env } from "process";
 
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/user.decorator';
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { User } from "src/user.decorator";
 
 @Injectable()
 export class AuthService {
@@ -14,15 +14,15 @@ export class AuthService {
         { id, name, email },
         {
           secret: env.JWT_SECRET,
-          expiresIn: '15m',
-        },
+          expiresIn: "15m",
+        }
       ),
       refresh_token: this.jwtService.sign(
         { id, name, email },
         {
           secret: env.REFRESH_SECRET,
-          expiresIn: '1y',
-        },
+          expiresIn: "1y",
+        }
       ),
     };
   }

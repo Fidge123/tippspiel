@@ -85,7 +85,7 @@ export class LineScore {
 }
 
 export class Competitors {
-  homeAway: 'home' | 'away';
+  homeAway: "home" | "away";
   id: string;
   linescores?: LineScore[];
   order: number;
@@ -150,7 +150,7 @@ export class NFLEvent {
   uid: string;
 }
 export class Records {
-  name: 'YTD' | 'Home' | 'Road';
+  name: "YTD" | "Home" | "Road";
   abbreviation?: string;
   summary: string;
   type: string;

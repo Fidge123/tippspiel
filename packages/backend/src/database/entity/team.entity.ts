@@ -6,14 +6,14 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
-} from 'typeorm';
-import { GameEntity } from './game.entity';
-import { ByeEntity } from './bye.entity';
-import { DivisionEntity } from './division.entity';
-import { DivisionBetEntity } from './divisionBet.entity';
-import { SuperbowlBetEntity } from './superbowlBet.entity';
+} from "typeorm";
+import { GameEntity } from "./game.entity";
+import { ByeEntity } from "./bye.entity";
+import { DivisionEntity } from "./division.entity";
+import { DivisionBetEntity } from "./divisionBet.entity";
+import { SuperbowlBetEntity } from "./superbowlBet.entity";
 
-@Entity({ name: 'team' })
+@Entity({ name: "team" })
 export class TeamEntity {
   @PrimaryColumn()
   id: string;

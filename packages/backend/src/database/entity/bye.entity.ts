@@ -1,8 +1,8 @@
-import { Entity, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { WeekEntity } from './week.entity';
-import { TeamEntity } from './team.entity';
+import { Entity, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { WeekEntity } from "./week.entity";
+import { TeamEntity } from "./team.entity";
 
-@Entity({ name: 'bye' })
+@Entity({ name: "bye" })
 export class ByeEntity {
   @ManyToOne(() => WeekEntity, (week) => week.byes, { primary: true })
   week: WeekEntity;

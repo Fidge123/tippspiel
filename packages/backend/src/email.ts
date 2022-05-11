@@ -1,5 +1,5 @@
-import { ServerClient } from 'postmark';
-import { env } from 'process';
+import { ServerClient } from "postmark";
+import { env } from "process";
 
 const transporter = createTransport();
 

@@ -5,14 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-} from 'typeorm';
-import { GameEntity } from './game.entity';
-import { LeagueEntity } from './league.entity';
-import { UserEntity } from './user.entity';
+} from "typeorm";
+import { GameEntity } from "./game.entity";
+import { LeagueEntity } from "./league.entity";
+import { UserEntity } from "./user.entity";
 
-@Entity('bet')
+@Entity("bet")
 export class BetEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(() => GameEntity, (game) => game.bets)

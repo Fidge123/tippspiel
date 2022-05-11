@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { DatabaseModule } from '../database/database.module';
-import { AuthModule } from '../auth/auth.module';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { Module } from "@nestjs/common";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { DatabaseModule } from "../database/database.module";
+import { AuthModule } from "../auth/auth.module";
+import { UserService } from "./user.service";
+import { UserController } from "./user.controller";
 
 @Module({
   imports: [

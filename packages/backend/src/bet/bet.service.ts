@@ -1,46 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { loadHTML, loadTXT } from 'src/templates/loadTemplate';
+import { Injectable } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
+import { loadHTML, loadTXT } from "src/templates/loadTemplate";
 
-import { BetDataService } from '../database/bet.service';
-import { getTransporter } from '../email';
+import { BetDataService } from "../database/bet.service";
+import { getTransporter } from "../email";
 
 @Injectable()
 export class BetService {
   constructor(private readonly databaseService: BetDataService) {}
 
-  @Cron('0 18 * Sep-Dec,Jan,Feb *')
+  @Cron("0 18 * Sep-Dec,Jan,Feb *")
   async betReminder(): Promise<void> {
     const users = await this.databaseService.findAllUsers();
     for (const user of users) {
       const games = await this.databaseService.findGamesWithoutBets(user.id);
       if (games.length) {
-        console.log('Found', games.length, 'games without bets for', user.name);
+        console.log("Found", games.length, "games without bets for", user.name);
         const transporter = await getTransporter();
         const countString =
           games.length > 1 ? `${games.length} Spiele` : `ein Spiel`;
         await transporter
           .sendEmail({
-            From: 'Tippspiel <tippspiel@6v4.de>',
+            From: "Tippspiel <tippspiel@6v4.de>",
             To: user.email,
             Subject: `Du hast ${countString} noch nicht getippt`,
-            TextBody: await loadTXT('betReminder', {
+            TextBody: await loadTXT("betReminder", {
               name: user.name,
               list: games
                 .map(
                   (game) =>
                     `  - ${game.awayTeam.name} @ ${
                       game.homeTeam.name
-                    } (${game.date.toLocaleString('de', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })})`,
+                    } (${game.date.toLocaleString("de", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })})`
                 )
-                .join('\n'),
+                .join("\n"),
             }),
-            HtmlBody: await loadHTML('betReminder', {
+            HtmlBody: await loadHTML("betReminder", {
               name: user.name,
               count: countString,
               list: games
@@ -48,14 +48,14 @@ export class BetService {
                   (game) =>
                     `    <li>${game.awayTeam.name} @ ${
                       game.homeTeam.name
-                    } (${game.date.toLocaleString('de', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })})</li>`,
+                    } (${game.date.toLocaleString("de", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })})</li>`
                 )
-                .join('\n'),
+                .join("\n"),
             }),
           })
           .catch((error) => console.error(error));

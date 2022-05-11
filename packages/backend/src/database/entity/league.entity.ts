@@ -6,24 +6,24 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   JoinTable,
-} from 'typeorm';
-import { BetEntity } from './bet.entity';
-import { BetDoublerEntity } from './betDoubler.entity';
-import { DivisionBetEntity } from './divisionBet.entity';
-import { SuperbowlBetEntity } from './superbowlBet.entity';
-import { UserEntity } from './user.entity';
+} from "typeorm";
+import { BetEntity } from "./bet.entity";
+import { BetDoublerEntity } from "./betDoubler.entity";
+import { DivisionBetEntity } from "./divisionBet.entity";
+import { SuperbowlBetEntity } from "./superbowlBet.entity";
+import { UserEntity } from "./user.entity";
 
-@Entity('league')
+@Entity("league")
 export class LeagueEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToMany(() => UserEntity, (user) => user.memberIn)
-  @JoinTable({ name: 'member' })
+  @JoinTable({ name: "member" })
   members: UserEntity[];
 
   @ManyToMany(() => UserEntity, (user) => user.adminIn)
-  @JoinTable({ name: 'admin' })
+  @JoinTable({ name: "admin" })
   admins: UserEntity[];
 
   @OneToMany(() => BetEntity, (bet) => bet.league)

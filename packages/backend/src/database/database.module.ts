@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import {
   BetEntity,
   BetDoublerEntity,
@@ -14,10 +14,10 @@ import {
   UserEntity,
   VerifyEntity,
   WeekEntity,
-} from './entity/';
-import { BetDataService } from './bet.service';
-import { ScheduleDataService } from './schedule.service';
-import { UserDataService } from './user.service';
+} from "./entity/";
+import { BetDataService } from "./bet.service";
+import { ScheduleDataService } from "./schedule.service";
+import { UserDataService } from "./user.service";
 
 @Module({
   imports: [

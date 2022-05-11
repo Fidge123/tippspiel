@@ -1,22 +1,22 @@
-import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, UseGuards, Param, Query } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 
-import { CurrentUser, User } from '../user.decorator';
-import { BetDoublerEntity, BetEntity, GameEntity } from '../database/entity';
-import { BetDataService } from '../database/bet.service';
+import { CurrentUser, User } from "../user.decorator";
+import { BetDoublerEntity, BetEntity, GameEntity } from "../database/entity";
+import { BetDataService } from "../database/bet.service";
 
-@Controller('leaderboard')
+@Controller("leaderboard")
 export class LeaderboardController {
   constructor(private readonly databaseService: BetDataService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('games')
-  async getBetsForStartedGames(@Query('season') season: string): Promise<any> {
+  @UseGuards(AuthGuard("jwt"))
+  @Get("games")
+  async getBetsForStartedGames(@Query("season") season: string): Promise<any> {
     const games = await this.databaseService.findBetsForStartedGames(
-      parseInt(season, 10),
+      parseInt(season, 10)
     );
     const doublers = await this.databaseService.findBetDoublersForStartedGames(
-      parseInt(season, 10),
+      parseInt(season, 10)
     );
 
     return games.reduce(
@@ -27,36 +27,36 @@ export class LeaderboardController {
           winner: bet.winner,
           bet: bet.pointDiff,
           doubler: doublers.some(
-            (d) => d.user.id === bet.user.id && d.game.id === game.id,
+            (d) => d.user.id === bet.user.id && d.game.id === game.id
           ),
           points: calculatePoints(
             game,
             bet,
-            doublers.filter((d) => d.user.id === bet.user.id),
+            doublers.filter((d) => d.user.id === bet.user.id)
           ).points.reduce((a, b) => a + b, 0),
         })),
       }),
-      {},
+      {}
     );
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get(':season')
+  @UseGuards(AuthGuard("jwt"))
+  @Get(":season")
   async getAll(
-    @Param('season') season: string,
-    @CurrentUser() currentUser: User,
+    @Param("season") season: string,
+    @CurrentUser() currentUser: User
   ): Promise<any> {
     const users = await this.databaseService.findBetsByUser(
-      parseInt(season, 10),
+      parseInt(season, 10)
     );
 
     const st = await this.databaseService.findCurrentWeek();
     const sbWinner = await this.databaseService.findSbWinner(
-      parseInt(season, 10),
+      parseInt(season, 10)
     );
 
     const doublers = await this.databaseService.findBetDoublersForStartedGames(
-      parseInt(season, 10),
+      parseInt(season, 10)
     );
 
     return users.map((user) => ({
@@ -65,8 +65,8 @@ export class LeaderboardController {
         calculatePoints(
           bet.game,
           bet,
-          doublers.filter((d) => d.user.id === user.id),
-        ),
+          doublers.filter((d) => d.user.id === user.id)
+        )
       ),
       divBets: user.divisionBets.map((bet) => ({
         name: bet.division.name,
@@ -97,16 +97,16 @@ function withinPoints(
   pointDiff: number,
   winner: string,
   correctDiff: number,
-  allowedDiff: number,
+  allowedDiff: number
 ) {
-  const multi = winner === 'home' ? 1 : -1;
+  const multi = winner === "home" ? 1 : -1;
   return Math.abs(multi * pointDiff - correctDiff) <= allowedDiff ? 1 : 0;
 }
 
 function calculatePoints(
   { homeScore, awayScore, winner: actualWinner, id }: GameEntity,
   { pointDiff, winner: predictedWinnner }: BetEntity,
-  doublers: BetDoublerEntity[],
+  doublers: BetDoublerEntity[]
 ) {
   const correctDiff = homeScore - awayScore;
   const multi = doublers.some((d) => d.game.id === id) ? 2 : 1;

@@ -6,18 +6,18 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
-} from 'typeorm';
-import { BetEntity } from './bet.entity';
-import { BetDoublerEntity } from './betDoubler.entity';
-import { DivisionBetEntity } from './divisionBet.entity';
-import { LeagueEntity } from './league.entity';
-import { ResetEntity } from './reset.entity';
-import { SuperbowlBetEntity } from './superbowlBet.entity';
-import { VerifyEntity } from './verify.entity';
+} from "typeorm";
+import { BetEntity } from "./bet.entity";
+import { BetDoublerEntity } from "./betDoubler.entity";
+import { DivisionBetEntity } from "./divisionBet.entity";
+import { LeagueEntity } from "./league.entity";
+import { ResetEntity } from "./reset.entity";
+import { SuperbowlBetEntity } from "./superbowlBet.entity";
+import { VerifyEntity } from "./verify.entity";
 
-@Entity('user')
+@Entity("user")
 export class UserEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true })
@@ -32,7 +32,7 @@ export class UserEntity {
   @Column()
   name: string;
 
-  @Column('jsonb')
+  @Column("jsonb")
   settings: any;
 
   @ManyToMany(() => LeagueEntity, (league) => league.members)

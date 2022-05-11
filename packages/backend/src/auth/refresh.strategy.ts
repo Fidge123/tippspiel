@@ -1,15 +1,15 @@
-import { env } from 'process';
+import { env } from "process";
 
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Request } from 'express';
-import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { Request } from "express";
+import { PassportStrategy } from "@nestjs/passport";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 
-import { UserDataService } from '../database/user.service';
-import { User } from '../user.decorator';
+import { UserDataService } from "../database/user.service";
+import { User } from "../user.decorator";
 
 @Injectable()
-export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
+export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
   constructor(private userDataService: UserDataService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([

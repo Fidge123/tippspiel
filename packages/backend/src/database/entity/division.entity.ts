@@ -4,11 +4,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-} from 'typeorm';
-import { DivisionBetEntity } from './divisionBet.entity';
-import { TeamEntity } from './team.entity';
+} from "typeorm";
+import { DivisionBetEntity } from "./divisionBet.entity";
+import { TeamEntity } from "./team.entity";
 
-@Entity('division')
+@Entity("division")
 export class DivisionEntity {
   @PrimaryColumn()
   name: string;

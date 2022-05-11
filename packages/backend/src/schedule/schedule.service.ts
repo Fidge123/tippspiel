@@ -1,12 +1,12 @@
-import { stringify } from 'querystring';
-import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import axios from 'axios';
-import { ScheduleDataService } from '../database/schedule.service';
-import { Scoreboard, Team } from '../database/api.type';
+import { stringify } from "querystring";
+import { Injectable } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
+import axios from "axios";
+import { ScheduleDataService } from "../database/schedule.service";
+import { Scoreboard, Team } from "../database/api.type";
 
 export const BASE_URL =
-  'https://site.api.espn.com/apis/site/v2/sports/football/nfl/';
+  "https://site.api.espn.com/apis/site/v2/sports/football/nfl/";
 
 export const regularSeason = {
   year: 2021,
@@ -30,15 +30,15 @@ export class ScheduleService {
     await this.importSchedule();
   }
 
-  @Cron('3 7 * Aug-Dec,Jan,Feb *')
+  @Cron("3 7 * Aug-Dec,Jan,Feb *")
   async importMasterData(): Promise<void> {
     const response = (await axios.get(`${BASE_URL}groups`)).data;
     for (const conf of response.groups) {
       console.log(`--- Loading ${conf.abbreviation} divisions ---`);
       await Promise.all(
         conf.children.map((division: any) =>
-          this.importTeamsOfDivision(division),
-        ),
+          this.importTeamsOfDivision(division)
+        )
       );
     }
   }
@@ -49,8 +49,8 @@ export class ScheduleService {
     });
     const teamResponses = await Promise.all(
       division.teams.map((team: Team) =>
-        axios.get(`${BASE_URL}teams/${team.id}`),
-      ),
+        axios.get(`${BASE_URL}teams/${team.id}`)
+      )
     );
     const teams = teamResponses.map((team: any) => team.data.team);
     for (const t of teams) {
@@ -66,8 +66,8 @@ export class ScheduleService {
   }): Promise<void> {
     console.log(
       `Loading ${key.year} ${
-        key.seasontype === 2 ? 'regular season' : 'postseason'
-      } week ${key.week} ...`,
+        key.seasontype === 2 ? "regular season" : "postseason"
+      } week ${key.week} ...`
     );
     const response = await load(key);
     const calendar =
@@ -77,20 +77,20 @@ export class ScheduleService {
 
     await Promise.all(
       response.events.map((event) =>
-        this.databaseService.createOrUpdateGame(event, week),
-      ),
+        this.databaseService.createOrUpdateGame(event, week)
+      )
     );
 
     if (response.week.teamsOnBye) {
       await Promise.all(
         response.week.teamsOnBye.map((t) =>
-          this.databaseService.createOrUpdateBye(t, week),
-        ),
+          this.databaseService.createOrUpdateBye(t, week)
+        )
       );
     }
   }
 
-  @Cron('48 7 * Aug-Dec,Jan,Feb *')
+  @Cron("48 7 * Aug-Dec,Jan,Feb *")
   async importSchedule(): Promise<void> {
     for (let weekNumber = 1; weekNumber <= regularSeason.weeks; weekNumber++) {
       this.importWeek({
@@ -120,8 +120,8 @@ export class ScheduleService {
             year: game.week.year,
             seasontype: game.week.seasontype,
             week: game.week.week,
-          }),
-        ),
+          })
+        )
       );
     }
   }

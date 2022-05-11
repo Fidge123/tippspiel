@@ -6,15 +6,15 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
-} from 'typeorm';
-import { BetEntity } from './bet.entity';
-import { BetDoublerEntity } from './betDoubler.entity';
-import { DivisionBetEntity } from './divisionBet.entity';
-import { SuperbowlBetEntity } from './superbowlBet.entity';
-import { TeamEntity } from './team.entity';
-import { WeekEntity } from './week.entity';
+} from "typeorm";
+import { BetEntity } from "./bet.entity";
+import { BetDoublerEntity } from "./betDoubler.entity";
+import { DivisionBetEntity } from "./divisionBet.entity";
+import { SuperbowlBetEntity } from "./superbowlBet.entity";
+import { TeamEntity } from "./team.entity";
+import { WeekEntity } from "./week.entity";
 
-@Entity({ name: 'game' })
+@Entity({ name: "game" })
 export class GameEntity {
   @PrimaryColumn()
   id: string;
@@ -50,7 +50,7 @@ export class GameEntity {
   homeScore: number;
 
   @Column()
-  winner: 'home' | 'away' | 'none';
+  winner: "home" | "away" | "none";
 
   @Column()
   status: string;

@@ -5,15 +5,15 @@ import {
   UpdateDateColumn,
   ManyToOne,
   Column,
-} from 'typeorm';
-import { TeamEntity } from './team.entity';
-import { LeagueEntity } from './league.entity';
-import { UserEntity } from './user.entity';
-import { DivisionEntity } from './division.entity';
+} from "typeorm";
+import { TeamEntity } from "./team.entity";
+import { LeagueEntity } from "./league.entity";
+import { UserEntity } from "./user.entity";
+import { DivisionEntity } from "./division.entity";
 
-@Entity('divisionBet')
+@Entity("divisionBet")
 export class DivisionBetEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(() => DivisionEntity, (division) => division.bets)

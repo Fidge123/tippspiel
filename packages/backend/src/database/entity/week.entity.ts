@@ -5,12 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-} from 'typeorm';
-import { BetDoublerEntity } from './betDoubler.entity';
-import { ByeEntity } from './bye.entity';
-import { GameEntity } from './game.entity';
+} from "typeorm";
+import { BetDoublerEntity } from "./betDoubler.entity";
+import { ByeEntity } from "./bye.entity";
+import { GameEntity } from "./game.entity";
 
-@Entity({ name: 'week' })
+@Entity({ name: "week" })
 export class WeekEntity {
   @PrimaryColumn()
   year: number;

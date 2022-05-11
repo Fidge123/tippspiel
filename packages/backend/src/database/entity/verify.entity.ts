@@ -4,12 +4,12 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
-} from 'typeorm';
-import { UserEntity } from './user.entity';
+} from "typeorm";
+import { UserEntity } from "./user.entity";
 
-@Entity('verify')
+@Entity("verify")
 export class VerifyEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(() => UserEntity, (user) => user.verifyTokens)

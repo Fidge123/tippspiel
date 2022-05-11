@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
-import { ByeEntity, WeekEntity, GameEntity, TeamEntity } from './entity';
-import { Competitors, NFLEvent, Team } from './api.type';
-import { DivisionEntity } from './entity/division.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Between, Repository } from "typeorm";
+import { ByeEntity, WeekEntity, GameEntity, TeamEntity } from "./entity";
+import { Competitors, NFLEvent, Team } from "./api.type";
+import { DivisionEntity } from "./entity/division.entity";
 
 @Injectable()
 export class ScheduleDataService {
@@ -17,83 +17,83 @@ export class ScheduleDataService {
     @InjectRepository(TeamEntity)
     private teamRepo: Repository<TeamEntity>,
     @InjectRepository(WeekEntity)
-    private weekRepo: Repository<WeekEntity>,
+    private weekRepo: Repository<WeekEntity>
   ) {}
 
   async getByes(year: number): Promise<WeekEntity[]> {
     return this.weekRepo
-      .createQueryBuilder('week')
-      .leftJoinAndSelect('week.byes', 'bye')
-      .leftJoin('bye.team', 'team')
-      .addSelect(['team.id', 'team.name', 'team.shortName'])
-      .where('week.year = :year', { year })
-      .orderBy('week.seasontype', 'ASC')
-      .addOrderBy('week.week', 'ASC')
+      .createQueryBuilder("week")
+      .leftJoinAndSelect("week.byes", "bye")
+      .leftJoin("bye.team", "team")
+      .addSelect(["team.id", "team.name", "team.shortName"])
+      .where("week.year = :year", { year })
+      .orderBy("week.seasontype", "ASC")
+      .addOrderBy("week.week", "ASC")
       .getMany();
   }
 
   async getByesForWeek(
     year: number,
     seasontype: number,
-    week: number,
+    week: number
   ): Promise<WeekEntity> {
     return this.weekRepo
-      .createQueryBuilder('week')
-      .leftJoinAndSelect('week.byes', 'bye')
-      .leftJoin('bye.team', 'team')
-      .addSelect(['team.id', 'team.name', 'team.shortName'])
-      .where('week.year = :year', { year })
-      .andWhere('week.seasontype = :seasontype', { seasontype })
-      .andWhere('week.week = :week', { week })
-      .orderBy('week.seasontype', 'ASC')
-      .addOrderBy('week.week', 'ASC')
+      .createQueryBuilder("week")
+      .leftJoinAndSelect("week.byes", "bye")
+      .leftJoin("bye.team", "team")
+      .addSelect(["team.id", "team.name", "team.shortName"])
+      .where("week.year = :year", { year })
+      .andWhere("week.seasontype = :seasontype", { seasontype })
+      .andWhere("week.week = :week", { week })
+      .orderBy("week.seasontype", "ASC")
+      .addOrderBy("week.week", "ASC")
       .getOne();
   }
 
   async getSchedule(year: number): Promise<WeekEntity[]> {
     return this.weekRepo
-      .createQueryBuilder('week')
-      .leftJoinAndSelect('week.games', 'game')
-      .leftJoin('game.homeTeam', 'home')
-      .addSelect(['home.id', 'home.name'])
-      .leftJoin('game.awayTeam', 'away')
-      .addSelect(['away.id', 'away.name'])
-      .where('week.year = :year', { year })
-      .orderBy('week.seasontype', 'ASC')
-      .addOrderBy('week.week', 'ASC')
-      .addOrderBy('game.date', 'ASC')
+      .createQueryBuilder("week")
+      .leftJoinAndSelect("week.games", "game")
+      .leftJoin("game.homeTeam", "home")
+      .addSelect(["home.id", "home.name"])
+      .leftJoin("game.awayTeam", "away")
+      .addSelect(["away.id", "away.name"])
+      .where("week.year = :year", { year })
+      .orderBy("week.seasontype", "ASC")
+      .addOrderBy("week.week", "ASC")
+      .addOrderBy("game.date", "ASC")
       .getMany();
   }
 
   async getWeek(
     year: number,
     seasontype: number,
-    week: number,
+    week: number
   ): Promise<WeekEntity> {
     return this.weekRepo
-      .createQueryBuilder('week')
-      .where('week.year = :year', { year })
-      .andWhere('week.seasontype = :seasontype', { seasontype })
-      .andWhere('week.week = :week', { week })
-      .leftJoinAndSelect('week.games', 'game')
-      .leftJoin('game.homeTeam', 'home')
-      .addSelect(['home.id', 'home.name'])
-      .leftJoin('game.awayTeam', 'away')
-      .addSelect(['away.id', 'away.name'])
-      .leftJoinAndSelect('bye.team', 'team')
-      .addSelect(['team.id', 'team.name'])
-      .orderBy('week.seasontype', 'ASC')
-      .addOrderBy('week.week', 'ASC')
-      .addOrderBy('game.date', 'ASC')
+      .createQueryBuilder("week")
+      .where("week.year = :year", { year })
+      .andWhere("week.seasontype = :seasontype", { seasontype })
+      .andWhere("week.week = :week", { week })
+      .leftJoinAndSelect("week.games", "game")
+      .leftJoin("game.homeTeam", "home")
+      .addSelect(["home.id", "home.name"])
+      .leftJoin("game.awayTeam", "away")
+      .addSelect(["away.id", "away.name"])
+      .leftJoinAndSelect("bye.team", "team")
+      .addSelect(["team.id", "team.name"])
+      .orderBy("week.seasontype", "ASC")
+      .addOrderBy("week.week", "ASC")
+      .addOrderBy("game.date", "ASC")
       .getOne();
   }
 
   async getDivisions(): Promise<DivisionEntity[]> {
     return this.divisonRepo
-      .createQueryBuilder('division')
-      .leftJoinAndSelect('division.teams', 'team')
-      .leftJoinAndSelect('division.bets', 'bets')
-      .leftJoinAndSelect('bets.team', 't')
+      .createQueryBuilder("division")
+      .leftJoinAndSelect("division.teams", "team")
+      .leftJoinAndSelect("division.bets", "bets")
+      .leftJoinAndSelect("bets.team", "t")
       .getMany();
   }
 
@@ -114,22 +114,22 @@ export class ScheduleDataService {
 
   async createOrUpdateTeam(
     team: Team,
-    division: DivisionEntity,
+    division: DivisionEntity
   ): Promise<TeamEntity> {
     const t = (await this.teamRepo.findOne(team.uid)) || new TeamEntity();
     t.id = team.uid;
-    t.logo = team.logos[0].href.split('/').reverse()[0];
+    t.logo = team.logos[0].href.split("/").reverse()[0];
     t.abbreviation = team.abbreviation;
     t.shortName = team.shortDisplayName;
     t.name = team.displayName;
     t.division = division;
-    t.playoffSeed = findStat(team, 'playoffSeed');
-    t.wins = findStat(team, 'wins');
-    t.losses = findStat(team, 'losses');
-    t.ties = findStat(team, 'ties');
-    t.pointsFor = findStat(team, 'pointsFor');
-    t.pointsAgainst = findStat(team, 'pointsAgainst');
-    t.streak = findStat(team, 'streak');
+    t.playoffSeed = findStat(team, "playoffSeed");
+    t.wins = findStat(team, "wins");
+    t.losses = findStat(team, "losses");
+    t.ties = findStat(team, "ties");
+    t.pointsFor = findStat(team, "pointsFor");
+    t.pointsAgainst = findStat(team, "pointsAgainst");
+    t.streak = findStat(team, "streak");
     t.color1 = team.color;
     t.color2 = team.alternateColor;
     return this.teamRepo.save(t);
@@ -148,12 +148,12 @@ export class ScheduleDataService {
 
   async createOrUpdateGame(
     event: NFLEvent,
-    week: WeekEntity,
+    week: WeekEntity
   ): Promise<GameEntity> {
     const competition = event.competitions[0];
     const teams = competition.competitors;
-    const home = teams.find((c) => c.homeAway === 'home');
-    const away = teams.find((c) => c.homeAway === 'away');
+    const home = teams.find((c) => c.homeAway === "home");
+    const away = teams.find((c) => c.homeAway === "away");
 
     const game = (await this.gameRepo.findOne(event.uid)) || new GameEntity();
     game.id = event.uid;
@@ -183,9 +183,9 @@ export class ScheduleDataService {
     return this.gameRepo.find({
       where: [
         { date: Between(fourHoursAgo, now) },
-        { status: 'STATUS_IN_PROGRESS' },
+        { status: "STATUS_IN_PROGRESS" },
       ],
-      relations: ['week'],
+      relations: ["week"],
     });
   }
 }
@@ -200,13 +200,13 @@ function findStat(team: Team, name: string): number {
 
 function getWinner(
   home: Competitors,
-  away: Competitors,
-): 'home' | 'away' | 'none' {
+  away: Competitors
+): "home" | "away" | "none" {
   if (home.winner) {
-    return 'home';
+    return "home";
   }
   if (away.winner) {
-    return 'away';
+    return "away";
   }
-  return 'none';
+  return "none";
 }
