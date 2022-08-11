@@ -53,7 +53,7 @@ export class BetDataService {
   }
 
   async findGame(game: string): Promise<BetEntity[]> {
-    return this.betRepo.find({ where: { game } });
+    return this.betRepo.find({ where: { game: { id: game } } });
   }
 
   async findAllUsers(): Promise<UserEntity[]> {
@@ -190,7 +190,7 @@ export class BetDataService {
     user: string,
   ): Promise<DivisionBetEntity[]> {
     return this.divBetRepo.find({
-      where: { user, year },
+      where: { user: { id: user }, year },
       join: {
         alias: 'bet',
         leftJoinAndSelect: { team: 'bet.team', division: 'bet.division' },
@@ -200,7 +200,7 @@ export class BetDataService {
 
   async findSbBets(year: number, user: string): Promise<SuperbowlBetEntity> {
     return this.sbBetRepo.findOne({
-      where: { user, year },
+      where: { user: { id: user }, year },
       join: {
         alias: 'bet',
         leftJoinAndSelect: { team: 'bet.team' },
@@ -229,7 +229,7 @@ export class BetDataService {
     user: string,
   ): Promise<BetDoublerEntity[]> {
     return this.doublerRepo.find({
-      where: { user },
+      where: { user: { id: user } },
       join: {
         alias: 'bet',
         leftJoinAndSelect: { game: 'bet.game', week: 'bet.week' },
@@ -242,14 +242,14 @@ export class BetDataService {
     userId: string,
   ): Promise<DivisionBetEntity> {
     const [user, division, team] = await Promise.all([
-      this.userRepo.findOneOrFail(userId),
-      this.divisionRepo.findOneOrFail({ where: { name: div } }),
-      this.teamRepo.findOneOrFail(t),
+      this.userRepo.findOneByOrFail({ id: userId }),
+      this.divisionRepo.findOneByOrFail({ name: div }),
+      this.teamRepo.findOneByOrFail({ id: t }),
     ]);
 
     if (new Date() < new Date(2022, 8, 12, 19) && user) {
       const bet =
-        (await this.divBetRepo.findOne({ division, user })) ||
+        (await this.divBetRepo.findOneBy({ division, user })) ||
         new DivisionBetEntity();
       bet.user = user;
       bet.team = team;
@@ -265,13 +265,13 @@ export class BetDataService {
     userId: string,
   ): Promise<SuperbowlBetEntity> {
     const [user, team] = await Promise.all([
-      this.userRepo.findOneOrFail(userId),
-      this.teamRepo.findOneOrFail(teamId),
+      this.userRepo.findOneByOrFail({ id: userId }),
+      this.teamRepo.findOneByOrFail({ id: teamId }),
     ]);
 
     if (new Date() < new Date(2022, 8, 12, 19) && user) {
       const bet =
-        (await this.sbBetRepo.findOne({ user })) || new SuperbowlBetEntity();
+        (await this.sbBetRepo.findOneBy({ user })) || new SuperbowlBetEntity();
       bet.user = user;
       bet.year = year;
       bet.team = team;
@@ -285,9 +285,9 @@ export class BetDataService {
     userId: string,
   ): Promise<BetDoublerEntity> {
     const [user, game, week] = await Promise.all([
-      this.userRepo.findOneOrFail(userId),
-      this.gameRepo.findOneOrFail(gameId),
-      this.weekRepo.findOneOrFail(weekId),
+      this.userRepo.findOneByOrFail({ id: userId }),
+      this.gameRepo.findOneByOrFail({ id: gameId }),
+      this.weekRepo.findOneByOrFail({ ...weekId }),
     ]);
     const betDoubler = await this.doublerRepo
       .createQueryBuilder('doubler')
@@ -317,14 +317,14 @@ export class BetDataService {
     { gameId, pointDiff, winner }: CreateBetDto,
     userId: string,
   ): Promise<BetEntity> {
-    const user = await this.userRepo.findOne(userId);
-    const game = await this.gameRepo.findOne(gameId);
+    const user = await this.userRepo.findOneBy({ id: userId });
+    const game = await this.gameRepo.findOneBy({ id: gameId });
 
     console.log(`User ${user.name} posted bet for ${game.id}`);
 
     if (new Date() < new Date(game.date) && user && game.id === gameId) {
       const bet =
-        (await this.betRepo.findOne({ user, game })) || new BetEntity();
+        (await this.betRepo.findOneBy({ user, game })) || new BetEntity();
       bet.user = user;
       bet.game = game;
       bet.pointDiff = pointDiff;

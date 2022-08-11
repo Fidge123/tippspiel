@@ -76,7 +76,10 @@ export class BetController {
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<any> {
-    return await this.databaseService.findSbBets(parseInt(season, 10), user.id);
+    return (
+      (await this.databaseService.findSbBets(parseInt(season, 10), user.id)) ||
+      {}
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))

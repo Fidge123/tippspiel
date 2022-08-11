@@ -169,7 +169,7 @@ export class UserController {
   @Throttle(1, 60)
   @Post('reset')
   async reset(
-    @Body('id') id: number,
+    @Body('id') id: string,
     @Body('token') token: string,
     @Body('password') password: string,
   ): Promise<void> {

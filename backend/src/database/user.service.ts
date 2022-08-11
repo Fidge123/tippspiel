@@ -35,12 +35,12 @@ export class UserDataService {
   }
 
   async findOne(id: string): Promise<UserEntity> {
-    return this.userRepo.findOne(id);
+    return this.userRepo.findOneBy({ id });
   }
 
   async login(email: string, password: string): Promise<User> {
     const user = await this.userRepo.findOne({
-      select: ['id', 'name', 'email', 'salt', 'password'],
+      select: { id: true, name: true, email: true, salt: true, password: true },
       where: { email, verified: true },
     });
     if (
@@ -93,7 +93,7 @@ export class UserDataService {
   }
 
   async verify(id: string, token: string): Promise<void> {
-    const user = await this.userRepo.findOne(id).catch(() => {
+    const user = await this.userRepo.findOneBy({ id }).catch(() => {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     });
     const tokenEntity = await this.verifyRepo
@@ -112,9 +112,11 @@ export class UserDataService {
   }
 
   async getSettings(id: string): Promise<any> {
-    return this.userRepo.findOne(id, { select: ['settings'] }).catch(() => {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-    });
+    return this.userRepo
+      .findOne({ where: { id }, select: { settings: true } })
+      .catch(() => {
+        throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+      });
   }
 
   async setHidden(
@@ -122,7 +124,7 @@ export class UserDataService {
     weekId: string,
     hidden: boolean,
   ): Promise<void> {
-    const user = await this.userRepo.findOne(userId).catch(() => {
+    const user = await this.userRepo.findOneBy({ id: userId }).catch(() => {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     });
 
@@ -145,11 +147,11 @@ export class UserDataService {
   }
 
   async resetPassword(
-    id: number,
+    id: string,
     password: string,
     token: string,
   ): Promise<void> {
-    const user = await this.userRepo.findOne(id).catch(() => {
+    const user = await this.userRepo.findOneBy({ id }).catch(() => {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     });
     const tokenEntity = await this.resetRepo

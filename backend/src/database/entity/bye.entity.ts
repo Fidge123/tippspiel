@@ -1,13 +1,31 @@
-import { Entity, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { WeekEntity } from './week.entity';
 import { TeamEntity } from './team.entity';
 
 @Entity({ name: 'bye' })
 export class ByeEntity {
-  @ManyToOne(() => WeekEntity, (week) => week.byes, { primary: true })
+  @PrimaryColumn()
+  teamId: string;
+
+  @PrimaryColumn()
+  weekWeek: number;
+
+  @PrimaryColumn()
+  weekYear: number;
+
+  @PrimaryColumn()
+  weekSeasontype: number;
+
+  @ManyToOne(() => WeekEntity, (week) => week.byes)
   week: WeekEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.byes, { primary: true })
+  @ManyToOne(() => TeamEntity, (team) => team.byes)
   team: TeamEntity;
 
   @CreateDateColumn({ select: false })

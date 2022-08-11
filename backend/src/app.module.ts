@@ -26,7 +26,10 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { UserModule } from './user/user.module';
 
 const extra = env.DATABASE_URL.includes('localhost')
-  ? { ssl: false }
+  ? {
+      // synchronize: true,
+      ssl: false,
+    }
   : {
       extra: {
         ssl: {
@@ -56,7 +59,6 @@ const extra = env.DATABASE_URL.includes('localhost')
         VerifyEntity,
         WeekEntity,
       ],
-      synchronize: true,
       ...extra,
     }),
     SchedulerModule.forRoot(),

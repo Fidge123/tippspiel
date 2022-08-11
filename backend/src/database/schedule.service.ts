@@ -102,12 +102,13 @@ export class ScheduleDataService {
   }
 
   async getTeam(id: string): Promise<TeamEntity> {
-    return this.teamRepo.findOne(id);
+    return this.teamRepo.findOneBy({ id });
   }
 
   async createOrUpdateDivision(div: any): Promise<DivisionEntity> {
     const division =
-      (await this.divisonRepo.findOne(div.name)) || new DivisionEntity();
+      (await this.divisonRepo.findOneBy({ name: div.name })) ||
+      new DivisionEntity();
     division.name = div.name;
     return this.divisonRepo.save(division);
   }
@@ -116,7 +117,8 @@ export class ScheduleDataService {
     team: Team,
     division: DivisionEntity,
   ): Promise<TeamEntity> {
-    const t = (await this.teamRepo.findOne(team.uid)) || new TeamEntity();
+    const t =
+      (await this.teamRepo.findOneBy({ id: team.uid })) || new TeamEntity();
     t.id = team.uid;
     t.logo = team.logos[0].href.split('/').reverse()[0];
     t.abbreviation = team.abbreviation;
@@ -136,7 +138,8 @@ export class ScheduleDataService {
   }
 
   async createOrUpdateWeek(key: any, calendar: any): Promise<WeekEntity> {
-    const week = (await this.weekRepo.findOne(key)) || new WeekEntity();
+    const week =
+      (await this.weekRepo.findOneBy({ ...key })) || new WeekEntity();
     week.year = key.year;
     week.seasontype = key.seasontype;
     week.week = key.week;
@@ -155,12 +158,13 @@ export class ScheduleDataService {
     const home = teams.find((c) => c.homeAway === 'home');
     const away = teams.find((c) => c.homeAway === 'away');
 
-    const game = (await this.gameRepo.findOne(event.uid)) || new GameEntity();
+    const game =
+      (await this.gameRepo.findOneBy({ id: event.uid })) || new GameEntity();
     game.id = event.uid;
     game.date = new Date(event.date);
     game.week = week;
-    game.awayTeam = await this.teamRepo.findOne(away.uid);
-    game.homeTeam = await this.teamRepo.findOne(home.uid);
+    game.awayTeam = await this.teamRepo.findOneBy({ id: away.uid });
+    game.homeTeam = await this.teamRepo.findOneBy({ id: home.uid });
     game.awayScore = parseInt(away.score, 10);
     game.homeScore = parseInt(home.score, 10);
     game.winner = getWinner(home, away);
@@ -169,8 +173,9 @@ export class ScheduleDataService {
   }
 
   async createOrUpdateBye(t: any, week: any): Promise<ByeEntity> {
-    const team = await this.teamRepo.findOne(t.uid);
-    const bye = (await this.byeRepo.findOne({ week, team })) || new ByeEntity();
+    const team = await this.teamRepo.findOneBy({ id: t.uid });
+    const bye =
+      (await this.byeRepo.findOneBy({ week, team })) || new ByeEntity();
     bye.week = week;
     bye.team = team;
     return this.byeRepo.save(bye);
