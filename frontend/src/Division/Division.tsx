@@ -22,7 +22,7 @@ function Division() {
     return await fetchFromAPI("bet/division", token, "POST", {
       division,
       team,
-      year: 2021,
+      year: 2022,
     });
   }
 
@@ -30,7 +30,7 @@ function Division() {
     setSBBet(teamId);
     return await fetchFromAPI("bet/superbowl", token, "POST", {
       teamId,
-      year: 2021,
+      year: 2022,
     });
   }
 
@@ -50,7 +50,7 @@ function Division() {
                 .map((team) => (
                   <button
                     key={"Div" + team.id}
-                    disabled={new Date(2021, 8, 12, 19) < new Date()}
+                    disabled={new Date(2022, 8, 12, 19) < new Date()}
                     className="team-l"
                     style={styleByTeam(
                       team,
@@ -95,7 +95,7 @@ function Division() {
         {teams.map((team) => (
           <button
             key={"SB" + team.id}
-            disabled={new Date(2021, 8, 12, 19) < new Date()}
+            disabled={new Date(2022, 8, 12, 19) < new Date()}
             className="team-l"
             style={styleByTeam(team, sbBet === team.id)}
             onClick={() => selectSBWinner(team.id)}
