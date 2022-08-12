@@ -88,13 +88,12 @@ export class ScheduleDataService {
       .getOne();
   }
 
-  async getDivisions(season: number): Promise<DivisionEntity[]> {
+  async getDivisions(): Promise<DivisionEntity[]> {
     return this.divisonRepo
       .createQueryBuilder('division')
       .leftJoinAndSelect('division.teams', 'team')
       .leftJoinAndSelect('division.bets', 'bets')
       .leftJoinAndSelect('bets.team', 't')
-      .where('bets.year = :season', { season })
       .getMany();
   }
 

@@ -49,9 +49,9 @@ export const divisionsState = atom<Division[]>({
   default: selector({
     key: "divisions/Default",
     get: async ({ get }) =>
-      (
-        await fetchFromAPI<Division[]>("division?season=2022", get(tokenState))
-      ).sort((divA, divB) => divA.name.localeCompare(divB.name)),
+      (await fetchFromAPI<Division[]>("division", get(tokenState))).sort(
+        (divA, divB) => divA.name.localeCompare(divB.name)
+      ),
   }),
 });
 
