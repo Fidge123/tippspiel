@@ -247,7 +247,7 @@ export class BetDataService {
       this.teamRepo.findOneByOrFail({ id: t }),
     ]);
 
-    if (new Date() < new Date(2022, 8, 12, 19) && user) {
+    if (new Date() < new Date(2022, 8, 11, 19) && user) {
       const bet =
         (await this.divBetRepo.findOneBy({ division, user })) ||
         new DivisionBetEntity();
@@ -269,7 +269,7 @@ export class BetDataService {
       this.teamRepo.findOneByOrFail({ id: teamId }),
     ]);
 
-    if (new Date() < new Date(2022, 8, 12, 19) && user) {
+    if (new Date() < new Date(2022, 8, 11, 19) && user) {
       const bet =
         (await this.sbBetRepo.findOneBy({ user })) || new SuperbowlBetEntity();
       bet.user = user;

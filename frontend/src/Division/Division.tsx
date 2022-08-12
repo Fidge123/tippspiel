@@ -50,7 +50,7 @@ function Division() {
                 .map((team) => (
                   <button
                     key={"Div" + team.id}
-                    disabled={new Date(2022, 8, 12, 19) < new Date()}
+                    disabled={new Date(2022, 8, 11, 19) < new Date()}
                     className="team-l"
                     style={styleByTeam(
                       team,
@@ -95,7 +95,7 @@ function Division() {
         {teams.map((team) => (
           <button
             key={"SB" + team.id}
-            disabled={new Date(2022, 8, 12, 19) < new Date()}
+            disabled={new Date(2022, 8, 11, 19) < new Date()}
             className="team-l"
             style={styleByTeam(team, sbBet === team.id)}
             onClick={() => selectSBWinner(team.id)}
