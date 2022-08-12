@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { DivisionEntity } from '../database/entity';
@@ -10,7 +10,7 @@ export class DivisionController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getAll(): Promise<DivisionEntity[]> {
-    return await this.databaseService.getDivisions();
+  async getAll(@Query('season') season: string): Promise<DivisionEntity[]> {
+    return await this.databaseService.getDivisions(parseInt(season, 10));
   }
 }
