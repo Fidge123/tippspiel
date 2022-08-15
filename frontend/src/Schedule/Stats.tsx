@@ -39,7 +39,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
     return (
       <div className="flex flex-row text-gray-800 dark:text-gray-300 font-xs leading-tight">
         <div
-          className={`w-7r sm:w-8.5r md:w-14.5r font-xs truncate grid auto-rows-min gap-x-0.5 ${
+          className={`w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 ${
             finished ? "stat-grid-4" : "stat-grid-3"
           } `}
         >
@@ -66,7 +66,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
           {finished && homeWon && " >"}
         </div>
         <div
-          className={`w-7r sm:w-8.5r md:w-14.5r font-xs truncate grid auto-rows-min gap-x-0.5 ${
+          className={`w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 ${
             finished ? "stat-grid-4" : "stat-grid-3"
           }`}
         >
@@ -92,7 +92,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
   }
   return (
     <div className="flex flex-row dark:text-gray-300">
-      <div className="w-7r sm:w-8.5r md:w-14.5r px-0.5">
+      <div className="w-28 sm:w-36 md:w-60 px-0.5">
         <div>
           {bets.away || "0"} {bets.away === 1 ? "Stimme" : "Stimmen"}
         </div>
@@ -104,7 +104,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
         )}
       </div>
       <div className="flex w-16 sm:w-20 mx-1 items-center justify-center"></div>
-      <div className="w-7r sm:w-8.5r md:w-14.5r px-0.5">
+      <div className="w-28 sm:w-36 md:w-60 px-0.5">
         <div>
           {bets.home || "0"} {bets.home === 1 ? "Stimme" : "Stimmen"}
         </div>

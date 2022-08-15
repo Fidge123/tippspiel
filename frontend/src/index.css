@@ -24,7 +24,7 @@
 }
 
 .team {
-  @apply py-1.5 px-2 h-10 w-7r sm:w-8.5r md:w-14.5r;
+  @apply py-1.5 px-2 h-10 w-28 sm:w-36 md:w-60;
   @apply truncate text-base outline-none;
   @apply disabled:opacity-50 dark:disabled:opacity-70 shadow-none;
   @apply border-2 dark:bg-gray-500;

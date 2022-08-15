@@ -28,35 +28,37 @@ function MatchUp({ game, weekId }: Props) {
   }
 
   return (
-    <div className="w-23r sm:w-27r md:w-39r flex flex-wrap py-1">
-      <TeamButton
-        team={away}
-        selected={bet.selected === "away"}
-        setSelected={() => select("away")}
-        disabled={new Date(game.date) < new Date()}
-      ></TeamButton>
-      <Suspense fallback={<div className="w-16 sm:w-20">...</div>}>
-        <Scores game={game} selected={bet.selected} weekId={weekId}></Scores>
-      </Suspense>
-      <TeamButton
-        team={home}
-        selected={bet.selected === "home"}
-        setSelected={() => select("home")}
-        disabled={new Date(game.date) < new Date()}
-      ></TeamButton>
-      <MatchupInput game={game}></MatchupInput>
-      <div
-        role="button"
-        className="flex justify-end items-center p-1 w-6 h-10"
-        onClick={() => setOpen(!open)}
-      >
+    <div className="w-fit py-1">
+      <div className="flex">
+        <TeamButton
+          team={away}
+          selected={bet.selected === "away"}
+          setSelected={() => select("away")}
+          disabled={new Date(game.date) < new Date()}
+        ></TeamButton>
+        <Suspense fallback={<div className="w-16 sm:w-20">...</div>}>
+          <Scores game={game} selected={bet.selected} weekId={weekId}></Scores>
+        </Suspense>
+        <TeamButton
+          team={home}
+          selected={bet.selected === "home"}
+          setSelected={() => select("home")}
+          disabled={new Date(game.date) < new Date()}
+        ></TeamButton>
+        <MatchupInput game={game}></MatchupInput>
         <div
-          className={`inline-block h-2 w-2 p-0.5 border-r-2 border-b-2 border-black dark:border-gray-200 ${
-            open
-              ? "transform duration-200 -rotate-135"
-              : "transform duration-200 rotate-45"
-          }`}
-        ></div>
+          role="button"
+          className="flex justify-end items-center p-1 w-6 h-10"
+          onClick={() => setOpen(!open)}
+        >
+          <div
+            className={`inline-block h-2 w-2 p-0.5 border-r-2 border-b-2 border-black dark:border-gray-200 ${
+              open
+                ? "transform duration-200 -rotate-135"
+                : "transform duration-200 rotate-45"
+            }`}
+          ></div>
+        </div>
       </div>
       {open && (
         <Suspense fallback={<div>Loading...</div>}>
