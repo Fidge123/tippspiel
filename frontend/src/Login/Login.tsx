@@ -9,8 +9,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [credentials, setCredentials] =
-    useState<{ email: string; password: string }>();
+  const [credentials, setCredentials] = useState<{
+    email: string;
+    password: string;
+  }>();
   const navigate = useNavigate();
   const setToken = useSetRecoilState(tokenState);
 
@@ -72,7 +74,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center">
-      <h2>Login</h2>
+      <h1>Login</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <div className="flex flex-col items-center space-y-4 pb-4">

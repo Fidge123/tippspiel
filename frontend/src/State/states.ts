@@ -14,6 +14,8 @@ import {
 } from "./response-types";
 import { formatLb } from "./util";
 
+const currentSeason = 2022;
+
 export const tokenState = atom<string>({
   key: "accessToken",
   default: window.localStorage.getItem("access_token") || "",
@@ -50,7 +52,10 @@ export const divisionsState = atom<Division[]>({
     key: "divisions/Default",
     get: async ({ get }) =>
       (
-        await fetchFromAPI<Division[]>("division?season=2022", get(tokenState))
+        await fetchFromAPI<Division[]>(
+          `division?season=${currentSeason}`,
+          get(tokenState)
+        )
       ).sort((divA, divB) => divA.name.localeCompare(divB.name)),
   }),
 });
@@ -77,7 +82,9 @@ export const leaderboardState = atom<Leaderboard[]>({
   default: selector({
     key: "leaderboard/Default",
     get: async ({ get }) =>
-      formatLb(await fetchFromAPI("leaderboard/2022", get(tokenState))),
+      formatLb(
+        await fetchFromAPI(`leaderboard/${currentSeason}`, get(tokenState))
+      ),
   }),
 });
 
@@ -86,7 +93,7 @@ export const weeksState = atom<Week[]>({
   default: selector({
     key: "weeks/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Week[]>("schedule/2022", get(tokenState)),
+      await fetchFromAPI<Week[]>(`schedule/${currentSeason}`, get(tokenState)),
   }),
 });
 
@@ -125,7 +132,7 @@ export const statsState = atom<Stats>({
     key: "stats/Default",
     get: async ({ get }) =>
       await fetchFromAPI<Stats>(
-        "leaderboard/games?season=2022",
+        `leaderboard/games?season=${currentSeason}`,
         get(tokenState)
       ),
   }),
@@ -144,7 +151,7 @@ export const allGameBetsState = atom<Bet[]>({
   default: selector({
     key: "allGameBets/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Bet[]>("bet?season=2022", get(tokenState)),
+      await fetchFromAPI<Bet[]>(`bet?season=${currentSeason}`, get(tokenState)),
   }),
 });
 
@@ -186,7 +193,10 @@ export const doublersState = atom<Doubler[]>({
   default: selector({
     key: "doublers/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Doubler[]>("bet/doubler?season=2022", get(tokenState)),
+      await fetchFromAPI<Doubler[]>(
+        `bet/doubler?season=${currentSeason}`,
+        get(tokenState)
+      ),
   }),
 });
 
@@ -230,7 +240,7 @@ export const divisionBetsState = atom<Record<string, string>>({
     key: "divisionBets/Default",
     get: async ({ get }) =>
       await fetchFromAPI<Record<string, string>>(
-        "bet/division?season=2022",
+        `bet/division?season=${currentSeason}`,
         get(tokenState)
       ),
   }),
@@ -241,8 +251,12 @@ export const sbBetState = atom<string>({
   default: selector({
     key: "sbBet/Default",
     get: async ({ get }) =>
-      (await fetchFromAPI("bet/superbowl?season=2022", get(tokenState)))?.team
-        ?.id,
+      (
+        await fetchFromAPI(
+          `bet/superbowl?season=${currentSeason}`,
+          get(tokenState)
+        )
+      )?.team?.id,
   }),
 });
 

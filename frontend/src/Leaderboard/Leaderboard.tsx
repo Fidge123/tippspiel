@@ -10,7 +10,7 @@ function Leaderboard() {
 
   return (
     <div className="p-4 pt-0">
-      <h2 className="text-xl">Leaderboard</h2>
+      <h1 className="text-xl">Leaderboard</h1>
 
       <div className="mt-4 mb-12 w-full overflow-x-auto">
         <OverviewTable leaderboard={leaderboard}></OverviewTable>

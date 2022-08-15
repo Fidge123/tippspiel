@@ -1,7 +1,7 @@
 function TermsAndConditions() {
   return (
     <div className="flex w-9/12 flex-col m-auto">
-      <h2>Datenschutz</h2>
+      <h1>Datenschutz</h1>
       <p>
         Diese Website verwendet Cookies zum Speichern von Login-Tokens. Diese
         Verwendung fällt unter die berechtigten Interessen der Websitebetreiber

@@ -42,52 +42,44 @@ function App() {
 
   return (
     <div className="w-screen h-screen">
-      <header className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex">
-        <nav className="flex w-full items-center justify-between">
-          <div>
-            {token ? (
-              <>
-                <Link to="/">
-                  <span className="text-white font-semibold pr-4">
-                    Tippspiel
-                  </span>
-                </Link>
-                <Link to="/leaderboard">
-                  <span className="text-white font-semibold pr-4">Tabelle</span>
-                </Link>
-                <Link to="/division">
-                  <span className="text-white font-semibold pr-4">
-                    Divisions
-                  </span>
-                </Link>
-              </>
-            ) : (
-              ""
-            )}
-          </div>
-          <div>
-            {token ? (
-              <button
-                onClick={() => {
-                  setToken("");
-                  navigate("/login", { replace: true });
-                }}
-              >
-                Ausloggen
-              </button>
-            ) : location.pathname === "/login" ? (
-              <Link to="/register">
-                <button>Registrieren</button>
+      <header className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex items-center justify-between">
+        <nav className="w-full text-white font-semibold">
+          {token ? (
+            <>
+              <Link to="/">
+                <h1 className="inline pr-4">Tippspiel</h1>
               </Link>
-            ) : (
-              <Link to="/login">
-                <button>Einloggen</button>
+              <Link to="/leaderboard">
+                <h2 className="inline pr-4">Tabelle</h2>
               </Link>
-            )}
-          </div>
+              <Link to="/division">
+                <h2 className="inline pr-4">Divisions</h2>
+              </Link>
+            </>
+          ) : (
+            ""
+          )}
         </nav>
+        {token ? (
+          <button
+            onClick={() => {
+              setToken("");
+              navigate("/login", { replace: true });
+            }}
+          >
+            Ausloggen
+          </button>
+        ) : location.pathname === "/login" ? (
+          <Link to="/register">
+            <button>Registrieren</button>
+          </Link>
+        ) : (
+          <Link to="/login">
+            <button>Einloggen</button>
+          </Link>
+        )}
       </header>
-      <main className="pt-12 dark:text-gray-100 min-h-full">
+      <div className="pt-12 dark:text-gray-100 min-h-full">
         <ErrorBoundary FallbackComponent={Placeholder}>
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
@@ -162,7 +154,7 @@ function App() {
             </Routes>
           </Suspense>
         </ErrorBoundary>
-      </main>
+      </div>
     </div>
   );
 }

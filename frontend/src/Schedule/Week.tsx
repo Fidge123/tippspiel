@@ -20,24 +20,24 @@ function Week({ id, week }: Props) {
 
   return (
     <article className="pt-4" key={week.label} ref={ref}>
-      <div className="flex justify-between pr-6">
-        <span className="text-2xl dark:text-gray-100 truncate w-52 sm:w-64 md:w-80">
+      <hgroup className="flex justify-between pr-6">
+        <h1 className="text-2xl dark:text-gray-100 truncate w-52 sm:w-64 md:w-80">
           {week.label}
-        </span>
+        </h1>
         <Suspense fallback={<></>}>
           <HideButton id={id} start={new Date(week.start)}></HideButton>
         </Suspense>
-      </div>
+      </hgroup>
       {week.teamsOnBye && week.teamsOnBye.length > 0 && (
-        <div className="pb-1.5 max-w-sm sm:max-w-md dark:text-gray-300">
+        <div className="pb-1.5 max-w-fit dark:text-gray-300">
           Bye: {week.teamsOnBye?.map((t) => t.shortName).join(", ")}
         </div>
       )}
       {[...new Set(week.games!.map((g) => g.date))].map((time) => (
-        <div key={time}>
-          <div className="text-gray-400 py-0.5 leading-none">
-            {formatDate(time)}
-          </div>
+        <section key={time}>
+          <h1 className="text-gray-400 py-0.5 leading-none">
+            <time dateTime={time}>{formatDate(time)}</time>
+          </h1>
           {week
             .games!.filter((game) => game.date === time)
             .sort((a, b) => a.id.localeCompare(b.id))
@@ -54,7 +54,7 @@ function Week({ id, week }: Props) {
                   </Suspense>
                 )
             )}
-        </div>
+        </section>
       ))}
     </article>
   );

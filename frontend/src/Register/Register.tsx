@@ -52,7 +52,7 @@ function Register() {
 
   return (
     <div className="flex flex-col items-center">
-      <h2>Register</h2>
+      <h1>Register</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <div className="flex flex-col items-center space-y-4 pb-4">

@@ -13,14 +13,6 @@
     @apply text-sm px-1.5;
     @apply disabled:pointer-events-none;
   }
-
-  h2 {
-    @apply text-2xl my-4;
-  }
-
-  h3 {
-    @apply text-xl my-4;
-  }
 }
 
 .stat-grid-3 {

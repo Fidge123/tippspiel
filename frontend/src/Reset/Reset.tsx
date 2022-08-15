@@ -54,7 +54,7 @@ function Reset() {
 
   return (
     <div className="flex flex-col items-center">
-      <h2>Password Reset</h2>
+      <h1>Password Reset</h1>
       <form onSubmit={reset} className="flex flex-col items-center m-4">
         <div className="space-y-4 space-x-2">
           <label id="pw-label">Neues Password</label>
