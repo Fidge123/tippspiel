@@ -6,6 +6,7 @@ type availableTemplates =
   | 'passwordReset'
   | 'passwordResetAlert'
   | 'userVerifiedAlert'
+  | 'requestFailed'
   | 'verifyUser';
 
 export async function loadHTML(

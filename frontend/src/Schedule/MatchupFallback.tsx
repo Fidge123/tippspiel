@@ -7,7 +7,7 @@ const TeamButton = lazy(() => import("./TeamButton"));
 
 function MatchupFallback({ game, weekId }: Props) {
   return (
-    <div className="w-23r sm:w-27r md:w-39r flex flex-wrap py-1">
+    <div className="w-fit flex py-1">
       <TeamButton
         selected={false}
         setSelected={() => {}}

@@ -1,9 +1,11 @@
 import { stringify } from 'querystring';
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import axios from 'axios';
 import { ScheduleDataService } from '../database/schedule.service';
 import { Scoreboard, Team } from '../database/api.type';
+import { getTransporter } from '../email';
+import { env } from 'process';
+import { loadHTML, loadTXT } from 'src/templates/loadTemplate';
 
 export const BASE_URL =
   'https://site.api.espn.com/apis/site/v2/sports/football/nfl/';
@@ -19,6 +21,19 @@ export const postSeason = {
   weeks: [1, 2, 3, 5],
 };
 
+async function notify() {
+  const transporter = await getTransporter();
+  await transporter
+    .sendEmail({
+      From: 'Tippspiel <tippspiel@6v4.de>',
+      To: env.EMAIL,
+      Subject: `API Request failed`,
+      TextBody: await loadTXT('requestFailed'),
+      HtmlBody: await loadHTML('requestFailed'),
+    })
+    .catch((error) => console.error(error));
+}
+
 @Injectable()
 export class ScheduleService {
   constructor(private readonly databaseService: ScheduleDataService) {
@@ -32,8 +47,14 @@ export class ScheduleService {
 
   @Cron('3 7 * Aug-Dec,Jan,Feb *')
   async importMasterData(): Promise<void> {
-    const response = (await axios.get(`${BASE_URL}groups`)).data;
-    for (const conf of response.groups) {
+    const response = await fetch(`${BASE_URL}groups`);
+    if (!response.ok) {
+      console.error('Error loading divisions!');
+      await notify();
+      return;
+    }
+    const data = await response.json();
+    for (const conf of data.groups) {
       console.log(`--- Loading ${conf.abbreviation} divisions ---`);
       await Promise.all(
         conf.children.map((division: any) =>
@@ -47,15 +68,19 @@ export class ScheduleService {
     const divEntity = await this.databaseService.createOrUpdateDivision({
       name: division.name,
     });
-    const teamResponses = await Promise.all(
-      division.teams.map((team: Team) =>
-        axios.get(`${BASE_URL}teams/${team.id}`),
-      ),
-    );
-    const teams = teamResponses.map((team: any) => team.data.team);
-    for (const t of teams) {
-      console.log(`Creating ${t.displayName}`);
-      await this.databaseService.createOrUpdateTeam(t, divEntity);
+    try {
+      const teamResponses = await Promise.all(
+        division.teams.map(async (team: Team) =>
+          fetch(`${BASE_URL}teams/${team.id}`).then(async (r) => r.json()),
+        ),
+      );
+      for (const t of teamResponses.map((t) => t.team)) {
+        console.log(`Creating ${t.displayName}`);
+        await this.databaseService.createOrUpdateTeam(t, divEntity);
+      }
+    } catch (e: unknown) {
+      await notify();
+      console.error('Error during import of divisions', (e as Error)?.stack);
     }
   }
 
@@ -133,5 +158,11 @@ async function load({ year, seasontype, week }): Promise<Scoreboard> {
     seasontype,
     week,
   });
-  return (await axios.get(`${BASE_URL}scoreboard?${q}`)).data;
+  const response = await fetch(`${BASE_URL}scoreboard?${q}`);
+  if (!response.ok) {
+    console.error('Failed to load scoreboard!');
+    await notify();
+    return;
+  }
+  return await response.json();
 }

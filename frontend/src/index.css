@@ -32,7 +32,7 @@
 }
 
 .team-l {
-  @apply py-1.5 px-2 h-10 w-21r;
+  @apply my-1 py-1.5 px-2 h-10 w-21r;
   @apply truncate text-base outline-none;
   @apply disabled:opacity-70 dark:disabled:opacity-80 shadow-none;
   @apply border-2 dark:bg-gray-500;

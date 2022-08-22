@@ -35,63 +35,65 @@ function Division() {
   }
 
   return (
-    <div className="grid grid-cols-23 mx-4 sm:mx-8 gap-2 pb-8">
-      <div className="flex flex-col flex-wrap w-21r">
-        <h1>Wähle den Sieger je Division:</h1>
+    <div className="grid grid-cols-23 mx-4 sm:mx-8 gap-2 py-4">
+      <article>
+        <h1 className="text-xl font-semibold">Wähle den Sieger je Division:</h1>
         {divisions.map((division) => (
-          <div key={division.name}>
-            <h3>{division.name}</h3>
-            <div className="flex flex-col flex-wrap space-y-2">
-              {[...division.teams]
-                .sort(
-                  (a, b) =>
-                    b.wins - a.wins || b.ties - a.ties || a.losses - b.losses
-                )
-                .map((team) => (
-                  <button
-                    key={"Div" + team.id}
-                    disabled={new Date(2022, 8, 11, 19) < new Date()}
-                    className="team-l"
-                    style={styleByTeam(
-                      team,
-                      divisionBets[division.name] === team.id
-                    )}
-                    onClick={() => selectDivisionWinner(division.name, team.id)}
-                  >
-                    {team.logo && (
-                      <img
-                        src={process.env.REACT_APP_IMG_URL + team.logo}
-                        className="float-left"
-                        width="24"
-                        height="24"
-                        alt="logo home team"
-                        onError={(event: any) =>
-                          (event.target.style.display = "none")
-                        }
-                      ></img>
-                    )}
-                    <span
-                      className={
-                        divisionBets[division.name] === team.id
-                          ? "font-semibold text-gray-50"
-                          : ""
+          <section key={division.name}>
+            <h2 className="text-lg">{division.name}</h2>
+
+            {[...division.teams]
+              .sort(
+                (a, b) =>
+                  b.wins - a.wins || b.ties - a.ties || a.losses - b.losses
+              )
+              .map((team) => (
+                <button
+                  key={"Div" + team.id}
+                  disabled={new Date(2022, 8, 11, 19) < new Date()}
+                  className="team-l"
+                  style={styleByTeam(
+                    team,
+                    divisionBets[division.name] === team.id
+                  )}
+                  onClick={() => selectDivisionWinner(division.name, team.id)}
+                >
+                  {team.logo && (
+                    <img
+                      src={process.env.REACT_APP_IMG_URL + team.logo}
+                      className="float-left"
+                      width="24"
+                      height="24"
+                      alt="logo home team"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
                       }
-                    >
-                      {`${team.name} ${team.wins}-${team.losses}`}
-                      {team.ties > 0 ? "-" + team.ties : ""}
-                      {` (${
-                        division.bets.filter((bet) => bet.team.id === team.id)
-                          .length
-                      })`}
-                    </span>
-                  </button>
-                ))}
-            </div>
-          </div>
+                    ></img>
+                  )}
+                  <span
+                    className={
+                      divisionBets[division.name] === team.id
+                        ? "font-semibold text-gray-50"
+                        : ""
+                    }
+                  >
+                    {`${team.name} ${team.wins}-${team.losses}`}
+                    {team.ties > 0 ? "-" + team.ties : ""}
+                    {` (${
+                      division.bets.filter((bet) => bet.team.id === team.id)
+                        .length
+                    })`}
+                  </span>
+                </button>
+              ))}
+          </section>
         ))}
-      </div>
-      <div className="flex flex-col flex-wrap w-21r space-y-2">
-        <h1>Wähle den Sieger des Superbowls:</h1>
+      </article>
+
+      <article>
+        <h1 className="text-xl font-semibold">
+          Wähle den Sieger des Superbowls:
+        </h1>
         {teams.map((team) => (
           <button
             key={"SB" + team.id}
@@ -117,7 +119,7 @@ function Division() {
             </span>
           </button>
         ))}
-      </div>
+      </article>
     </div>
   );
 }
