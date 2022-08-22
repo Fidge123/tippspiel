@@ -19,7 +19,6 @@ const Schedule = lazy(() => import("./Schedule/Schedule"));
 const Login = lazy(() => import("./Login/Login"));
 const Register = lazy(() => import("./Register/Register"));
 const Reset = lazy(() => import("./Reset/Reset"));
-const TermsAndConditions = lazy(() => import("./T&C/TermsAndConditions"));
 const Verify = lazy(() => import("./Verify/Verify"));
 const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Division = lazy(() => import("./Division/Division"));
@@ -118,10 +117,6 @@ function App() {
               <Route
                 path="/impressum"
                 element={<Impressum></Impressum>}
-              ></Route>
-              <Route
-                path="/terms"
-                element={<TermsAndConditions></TermsAndConditions>}
               ></Route>
               <Route
                 path="/division"

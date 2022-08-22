@@ -52,8 +52,7 @@ function Register() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1>Register</h1>
-
+      <h1 className="font-bold my-4">Ein neues Konto registrieren:</h1>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="name-label">Name</label>
@@ -80,7 +79,7 @@ function Register() {
           />
         </div>
         <div className="flex flex-col items-center space-y-4 pb-4">
-          <label id="pw-label">Password</label>
+          <label id="pw-label">Passwort</label>
           <input
             className="text-black px-2 border"
             disabled={credentials}
@@ -124,7 +123,7 @@ function Register() {
           </button>
         </div>
         {success && <p>{success}</p>}
-        {error && <p>An error occured: {error}</p>}
+        {error && <p>Ein Fehler ist aufgetreten: {error}</p>}
       </form>
     </div>
   );

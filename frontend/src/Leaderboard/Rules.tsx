@@ -6,15 +6,17 @@ export default function Rules() {
         folgenden Regeln bei der Punkteverteilung:
       </p>
       <ul className="list-disc list-outside pl-12 py-4">
-        <li>Ein korrekter Tipp auf den Sieger eines Spiels gibt 2 Punkte</li>
+        <li>Pro Tipp können zwischen 1 und 5 Punkte gesetzt werden</li>
+        <li>Der Einsatz wird gutgeschrieben wenn das Team gewinnt</li>
+        <li>Der Einsatz wird abgezogen wenn das Team verliert</li>
+        <li>Bei Unendschieden Punkte weder abgezogen noch gutgeschrieben</li>
         <li>
-          Ein Tipp mit 0 / 3 / 6 Punkte Abstand zur korrekten Ergebnisdifferenz
-          bekommt 3 / 2 / 1 Extrapunkte (nicht kumuluativ)
+          Wird ein Spiel nicht getippt, verliert man automatisch einen Punkt
         </li>
         <li>Ein korrekter Tipp auf den Sieger einer Division gibt 5 Punkte</li>
         <li>
           Ein korrekter Tipp auf den Superbowlsieger gibt 10 Punkte (zusätzlich
-          zum eigentlich Match)
+          zum eigentlichen Match)
         </li>
         <li>
           Jeder Spieler kann wöchentlich ein Spiel auswählen, welches doppelte

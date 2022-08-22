@@ -54,10 +54,10 @@ function Reset() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1>Password Reset</h1>
-      <form onSubmit={reset} className="flex flex-col items-center m-4">
+      <h1 className="my-4 font-bold">Passwort zurücksetzen</h1>
+      <form onSubmit={reset} className="flex flex-col items-center">
         <div className="space-y-4 space-x-2">
-          <label id="pw-label">Neues Password</label>
+          <label id="pw-label">Neues Passwort</label>
           <input
             className="text-black px-2 border"
             type="password"
@@ -69,10 +69,10 @@ function Reset() {
             aria-required="true"
           />
         </div>
-        <button type="submit" className="m-4">
-          Submit
+        <button type="submit" className="m-8">
+          Zurücksetzen
         </button>
-        {error && <p>An error occured: {error}</p>}
+        {error && <p>Ein Fehler ist aufgetreten: {error}</p>}
         {success && <p>{success}</p>}
       </form>
     </div>

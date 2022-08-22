@@ -55,7 +55,7 @@ function Verify() {
 
   return (
     <div className="verify">
-      {error && <p>Error occured: {error}</p>}
+      {error && <p>Ein Fehler ist aufgetreten: {error}</p>}
       {success && <p>{success}</p>}
     </div>
   );

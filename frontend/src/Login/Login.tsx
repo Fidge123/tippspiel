@@ -74,8 +74,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1>Login</h1>
-
+      <h1 className="font-bold my-4">Mit bestehendem Konto einloggen:</h1>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <div className="flex flex-col items-center space-y-4 pb-4">
           <label id="email-label">E-Mail</label>
@@ -89,7 +88,7 @@ export default function Login() {
           />
         </div>
         <div className="flex flex-col items-center space-y-4">
-          <label id="pw-label">Password</label>
+          <label id="pw-label">Passwort</label>
           <input
             className="text-black px-2 border"
             type="password"
@@ -101,19 +100,19 @@ export default function Login() {
             aria-required="true"
           />
         </div>
-        <button type="submit" className="m-4">
-          Submit
+        <button type="submit" className="mt-8">
+          Einloggen
         </button>
 
         <div className="flex flex-col items-center">
           <button
-            className="m-4 italic border-0 bg-transparent"
+            className="mt-4 italic border-0 bg-transparent"
             onClick={() => forgot()}
           >
-            Forgot Password?
+            Passwort vergessen?
           </button>
         </div>
-        {error && <p>An error occured: {error}</p>}
+        {error && <p>Ein Fehler ist aufgetreten: {error}</p>}
       </form>
     </div>
   );
