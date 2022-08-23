@@ -35,8 +35,8 @@ function Division() {
   }
 
   return (
-    <div className="grid grid-cols-23 mx-4 sm:mx-8 gap-2 py-4">
-      <article>
+    <div className="flex flex-wrap sm:mx-4">
+      <article className="w-min ml-4 py-4">
         <h1 className="text-xl font-semibold">Wähle den Sieger je Division:</h1>
         {divisions.map((division) => (
           <section key={division.name}>
@@ -90,7 +90,7 @@ function Division() {
         ))}
       </article>
 
-      <article>
+      <article className="w-min ml-4 py-4">
         <h1 className="text-xl font-semibold">
           Wähle den Sieger des Superbowls:
         </h1>

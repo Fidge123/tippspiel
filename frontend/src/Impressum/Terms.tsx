@@ -5,9 +5,8 @@ function Terms() {
       <p className="py-2">
         Diese Website verwendet Cookies zum Speichern von Login-Tokens. Diese
         Verwendung fällt unter die berechtigten Interessen der Websitebetreiber
-        und bedarf keiner expliziten Einwilligung laut TTDSG. Diese Website
-        nutzt Durch die weitere Nutzung der Webseite stimmen Sie der Verwendung
-        von Cookies zu.
+        und bedarf keiner expliziten Einwilligung laut TTDSG. Durch die weitere
+        Nutzung der Webseite stimmen Sie der Verwendung dieser Cookies zu.
       </p>
       <p className="py-2">
         Diese Website speichert personenbezogene Daten im Rahmen der
