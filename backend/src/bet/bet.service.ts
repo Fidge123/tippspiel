@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { loadHTML, loadTXT } from 'src/templates/loadTemplate';
+import { loadHTML, loadTXT } from '../templates/loadTemplate';
 
 import { BetDataService } from '../database/bet.service';
 import { getTransporter } from '../email';

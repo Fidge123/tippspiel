@@ -2,7 +2,7 @@ import { env } from 'process';
 
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/user.decorator';
+import { User } from '../user.decorator';
 
 @Injectable()
 export class AuthService {

@@ -22,7 +22,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:5001/",
+  "proxy": "http://localhost:5000/",
   "homepage": "https://6v4.de/tippspiel/",
   "browserslist": {
     "production": [

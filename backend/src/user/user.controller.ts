@@ -18,7 +18,7 @@ import { getTransporter } from '../email';
 import { UserDataService } from '../database/user.service';
 import { AuthService } from '../auth/auth.service';
 import { HiddenDto } from './hidden.dto';
-import { CurrentUser, User } from 'src/user.decorator';
+import { CurrentUser, User } from '../user.decorator';
 
 interface RequestWithUser extends Request {
   user: User;

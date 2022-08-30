@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateDivisionBetDto } from 'src/bet/division.dto';
+import { CreateDivisionBetDto } from '../bet/division.dto';
 import { MoreThan, Repository } from 'typeorm';
 
 import { CreateBetDto } from '../bet/bet.dto';

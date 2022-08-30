@@ -5,7 +5,7 @@ import { ScheduleDataService } from '../database/schedule.service';
 import { Scoreboard, Team } from '../database/api.type';
 import { getTransporter } from '../email';
 import { env } from 'process';
-import { loadHTML, loadTXT } from 'src/templates/loadTemplate';
+import { loadHTML, loadTXT } from '../templates/loadTemplate';
 
 export const BASE_URL =
   'https://site.api.espn.com/apis/site/v2/sports/football/nfl/';
