@@ -16,7 +16,9 @@ export default function Rules() {
           <li>Pro Tipp können zwischen 1 und 5 Punkte gesetzt werden</li>
           <li>Der Einsatz wird gutgeschrieben wenn das Team gewinnt</li>
           <li>Der Einsatz wird abgezogen wenn das Team verliert</li>
-          <li>Bei Unendschieden Punkte weder abgezogen noch gutgeschrieben</li>
+          <li>
+            Bei Unentschieden werden Punkte weder abgezogen noch gutgeschrieben
+          </li>
           <li>
             Wird ein Spiel nicht getippt, verliert man automatisch einen Punkt
           </li>

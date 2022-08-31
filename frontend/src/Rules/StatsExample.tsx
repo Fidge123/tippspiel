@@ -17,12 +17,8 @@ function Stats({ game, stats }: Props) {
   const homeWon = homeScore > awayScore;
   const awayWon = awayScore > homeScore;
 
-  const awayVotes = stats
-    .filter((value) => value.winner === "away")
-    .sort((a, b) => Math.abs(a.bet - wonBy) - Math.abs(b.bet - wonBy));
-  const homeVotes = stats
-    .filter((value) => value.winner === "home")
-    .sort((a, b) => Math.abs(a.bet - wonBy) - Math.abs(b.bet - wonBy));
+  const awayVotes = stats.filter((value) => value?.winner === "away");
+  const homeVotes = stats.filter((value) => value?.winner === "home");
 
   return (
     <div className="flex flex-row text-gray-800 dark:text-gray-300 font-xs leading-tight">
@@ -37,10 +33,10 @@ function Stats({ game, stats }: Props) {
         )}
         {awayVotes.map((value, i) => (
           <Fragment key={`away${i}`}>
-            <span>{value.name}</span>
-            <span>{value.doubler ? "🌟" : ""}</span>
-            <span className="text-center">{value.bet}</span>
-            <span className="text-center">{value.points}</span>
+            <span>{value?.name}</span>
+            <span>{value?.doubler ? "🌟" : ""}</span>
+            <span className="text-center">{value?.bet}</span>
+            <span className="text-center">{value?.points}</span>
           </Fragment>
         ))}
       </div>
@@ -60,10 +56,10 @@ function Stats({ game, stats }: Props) {
         )}
         {homeVotes.map((value, i) => (
           <Fragment key={`home${i}`}>
-            <span>{value.name}</span>
-            <span>{value.doubler ? "🌟" : ""}</span>
-            <span className="text-center">{value.bet}</span>
-            <span className="text-center">{value.points}</span>
+            <span>{value?.name}</span>
+            <span>{value?.doubler ? "🌟" : ""}</span>
+            <span className="text-center">{value?.bet}</span>
+            <span className="text-center">{value?.points}</span>
           </Fragment>
         ))}
       </div>
@@ -73,7 +69,7 @@ function Stats({ game, stats }: Props) {
 
 interface Props {
   game: Game;
-  stats: IStats[];
+  stats: Partial<IStats>[];
 }
 
 export default Stats;

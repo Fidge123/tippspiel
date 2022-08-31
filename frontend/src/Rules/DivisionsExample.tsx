@@ -102,7 +102,7 @@ function DivisionExample() {
           </div>
         ))}
       </div>
-      <div>Score: {score}</div>
+      <div>Punkte: {score}</div>
     </>
   );
 }

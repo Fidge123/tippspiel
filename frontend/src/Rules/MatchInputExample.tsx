@@ -6,7 +6,7 @@ function MatchupInput({ points, setPoints }: any) {
       value={points ?? ""}
       onChange={(ev) => {
         const p = isNaN(parseInt(ev.target.value, 10))
-          ? undefined
+          ? setPoints(undefined)
           : parseInt(ev.target.value, 10);
         if (p && p <= 5 && p >= 1) {
           setPoints(p);
