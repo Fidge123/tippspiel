@@ -22,6 +22,7 @@ const Reset = lazy(() => import("./Reset/Reset"));
 const Verify = lazy(() => import("./Verify/Verify"));
 const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Division = lazy(() => import("./Division/Division"));
+const Rules = lazy(() => import("./Rules/Rules"));
 
 function Placeholder({ resetErrorBoundary }: FallbackProps) {
   const setToken = useSetRecoilState(tokenState);
@@ -53,6 +54,9 @@ function App() {
               </Link>
               <Link to="/division">
                 <h2 className="inline pr-4">Divisions</h2>
+              </Link>
+              <Link to="/rules">
+                <h2 className="inline pr-4">Rules</h2>
               </Link>
             </>
           ) : (
@@ -118,6 +122,7 @@ function App() {
                 path="/impressum"
                 element={<Impressum></Impressum>}
               ></Route>
+              <Route path="/rules" element={<Rules></Rules>}></Route>
               <Route
                 path="/division"
                 element={

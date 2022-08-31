@@ -2,7 +2,6 @@ import { useRecoilValue } from "recoil";
 
 import OverviewTable from "./OverviewTable";
 import DivisonTable from "./DivisionTable";
-import Rules from "./Rules";
 import { leaderboardState } from "../State/states";
 
 function Leaderboard() {
@@ -18,7 +17,6 @@ function Leaderboard() {
       <div className="mt-4 mb-12 w-full overflow-x-auto">
         <DivisonTable leaderboard={leaderboard}></DivisonTable>
       </div>
-      <Rules></Rules>
     </div>
   );
 }
