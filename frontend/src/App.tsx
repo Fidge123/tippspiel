@@ -13,6 +13,7 @@ import { tokenState } from "./State/states";
 import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { refresh } from "./api";
+import Hamburger from "./Hamburger";
 
 const Leaderboard = lazy(() => import("./Leaderboard/Leaderboard"));
 const Schedule = lazy(() => import("./Schedule/Schedule"));
@@ -21,6 +22,8 @@ const Register = lazy(() => import("./Register/Register"));
 const Reset = lazy(() => import("./Reset/Reset"));
 const Verify = lazy(() => import("./Verify/Verify"));
 const Impressum = lazy(() => import("./Impressum/Impressum"));
+const Account = lazy(() => import("./Account/Account"));
+const Leagues = lazy(() => import("./Leagues/Leagues"));
 const Division = lazy(() => import("./Division/Division"));
 const Rules = lazy(() => import("./Rules/Rules"));
 
@@ -42,36 +45,20 @@ function App() {
 
   return (
     <div className="w-screen h-screen">
-      <header className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex items-center justify-between">
-        <nav className="w-full text-white font-semibold">
+      <div className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex items-center justify-between">
+        <nav className="w-full text-white font-semibold space-x-4">
           {token ? (
             <>
-              <Link to="/">
-                <h1 className="inline pr-4">Tippspiel</h1>
-              </Link>
-              <Link to="/leaderboard">
-                <h2 className="inline pr-4">Tabelle</h2>
-              </Link>
-              <Link to="/division">
-                <h2 className="inline pr-4">Divisions</h2>
-              </Link>
-              <Link to="/rules">
-                <h2 className="inline pr-4">Rules</h2>
-              </Link>
+              <Link to="/">Tippspiel</Link>
+              <Link to="/leaderboard">Tabelle</Link>
+              <Link to="/division">Divisions</Link>
             </>
           ) : (
             ""
           )}
         </nav>
         {token ? (
-          <button
-            onClick={() => {
-              setToken("");
-              navigate("/login", { replace: true });
-            }}
-          >
-            Ausloggen
-          </button>
+          <Hamburger />
         ) : location.pathname === "/login" ? (
           <Link to="/register">
             <button>Registrieren</button>
@@ -81,7 +68,7 @@ function App() {
             <button>Einloggen</button>
           </Link>
         )}
-      </header>
+      </div>
       <div className="pt-12 dark:text-gray-100 min-h-full">
         <ErrorBoundary FallbackComponent={Placeholder}>
           <Suspense fallback={<div>Loading...</div>}>
@@ -122,6 +109,8 @@ function App() {
                 path="/impressum"
                 element={<Impressum></Impressum>}
               ></Route>
+              <Route path="/account" element={<Account></Account>}></Route>
+              <Route path="/leagues" element={<Leagues></Leagues>}></Route>
               <Route path="/rules" element={<Rules></Rules>}></Route>
               <Route
                 path="/division"
