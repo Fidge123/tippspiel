@@ -55,9 +55,9 @@ function DivisionExample() {
               ></img>
             )}
             <span className="font-semibold text-gray-50">{team.name}</span>
-            <span className="space-x-1">
+            <span>
               <button
-                className="disabled:opacity-50"
+                className="bg-transparent border-0 text-xl disabled:opacity-50"
                 disabled={i === 0}
                 onClick={() => {
                   setDivisionBets(
@@ -78,7 +78,7 @@ function DivisionExample() {
                 ⬆️
               </button>
               <button
-                className="disabled:opacity-50"
+                className="bg-transparent border-0 text-xl disabled:opacity-50"
                 disabled={i === 3}
                 onClick={() => {
                   setDivisionBets(

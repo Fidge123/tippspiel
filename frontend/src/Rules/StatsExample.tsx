@@ -25,7 +25,7 @@ function Stats({ game, stats }: Props) {
       <div className="w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 stat-grid-4">
         {awayVotes.length > 0 && (
           <span className="col-start-3 text-center">
-            {isCompact ? "T" : "Tipp"}
+            {isCompact ? "E" : "Einsatz"}
           </span>
         )}
         {awayVotes.length > 0 && (
@@ -48,7 +48,7 @@ function Stats({ game, stats }: Props) {
       <div className="w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 stat-grid-4">
         {homeVotes.length > 0 && (
           <span className="col-start-3 text-center">
-            {isCompact ? "T" : "Tipp"}
+            {isCompact ? "E" : "Einsatz"}
           </span>
         )}
         {homeVotes.length > 0 && (
