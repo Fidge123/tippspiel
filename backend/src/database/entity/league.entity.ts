@@ -1,5 +1,6 @@
 import {
   Entity,
+  Column,
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToMany,
@@ -17,6 +18,12 @@ import { UserEntity } from './user.entity';
 export class LeagueEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  season: number;
 
   @ManyToMany(() => UserEntity, (user) => user.memberIn)
   @JoinTable({ name: 'member' })

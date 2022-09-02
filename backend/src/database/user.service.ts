@@ -30,10 +30,6 @@ export class UserDataService {
     this.cleanUp();
   }
 
-  async findAll(): Promise<UserEntity[]> {
-    return this.userRepo.find();
-  }
-
   async findOne(id: string): Promise<UserEntity> {
     return this.userRepo.findOneBy({ id });
   }

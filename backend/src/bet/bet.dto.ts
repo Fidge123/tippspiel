@@ -1,5 +1,6 @@
 export class CreateBetDto {
   gameId: string;
-  winner: string;
+  leagueId: string;
+  winner: 'home' | 'away';
   pointDiff: number;
 }

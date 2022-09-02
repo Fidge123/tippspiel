@@ -4,6 +4,7 @@ import { DatabaseModule } from '../database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
+import { LeagueController } from './league.controller';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { UserController } from './user.controller';
       limit: 10,
     }),
   ],
-  controllers: [UserController],
+  controllers: [UserController, LeagueController],
   providers: [UserService],
 })
 export class UserModule {}

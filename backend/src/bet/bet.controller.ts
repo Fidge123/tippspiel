@@ -22,10 +22,14 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getAll(
+    @Query('league') league: string,
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<any> {
-    const games = await this.databaseService.findBets(parseInt(season, 10));
+    const games = await this.databaseService.findBets(
+      league,
+      parseInt(season, 10),
+    );
 
     return games.map((game) => ({
       id: game.id,
@@ -50,11 +54,16 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Get('division')
   async getDivisionBets(
+    @Query('league') league: string,
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<any> {
     return (
-      await this.databaseService.findDivisionBets(parseInt(season, 10), user.id)
+      await this.databaseService.findDivisionBets(
+        league,
+        parseInt(season, 10),
+        user.id,
+      )
     ).reduce(
       (result, bet) => ({ ...result, [bet.division.name]: bet.team.id }),
       {},
@@ -73,12 +82,16 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Get('superbowl')
   async getSbBets(
+    @Query('league') league: string,
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<any> {
     return (
-      (await this.databaseService.findSbBets(parseInt(season, 10), user.id)) ||
-      {}
+      (await this.databaseService.findSbBets(
+        league,
+        parseInt(season, 10),
+        user.id,
+      )) || {}
     );
   }
 
@@ -88,26 +101,25 @@ export class BetController {
     @Body() createBet: CreateSBBetDto,
     @CurrentUser() user: User,
   ): Promise<SuperbowlBetEntity> {
-    return this.databaseService.setSbBet(
-      createBet.teamId,
-      createBet.year,
-      user.id,
-    );
+    return this.databaseService.setSbBet(createBet, user.id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('doubler')
   async getBetDoublers(
+    @Query('league') league: string,
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<GetDoublerDto[]> {
     const doublers = await this.databaseService.findBetDoublers(
+      league,
       parseInt(season, 10),
       user.id,
     );
     return doublers.map((d) => ({
       game: d.game.id,
       week: `${d.week.year}-${d.week.seasontype}-${d.week.week}`,
+      league: d.league.id,
     }));
   }
 
@@ -117,13 +129,6 @@ export class BetController {
     @Body() createBet: CreateDoublerDto,
     @CurrentUser() user: User,
   ): Promise<BetDoublerEntity> {
-    const [year, seasontype, week] = createBet.week
-      .split('-')
-      .map((n) => parseInt(n, 10));
-    return this.databaseService.setBetDoubler(
-      createBet.game,
-      { year, seasontype, week },
-      user.id,
-    );
+    return this.databaseService.setBetDoubler(createBet, user.id);
   }
 }

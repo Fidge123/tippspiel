@@ -18,6 +18,7 @@ import {
 import { BetDataService } from './bet.service';
 import { ScheduleDataService } from './schedule.service';
 import { UserDataService } from './user.service';
+import { LeagueDataService } from './league.service';
 
 @Module({
   imports: [
@@ -37,7 +38,17 @@ import { UserDataService } from './user.service';
       WeekEntity,
     ]),
   ],
-  providers: [BetDataService, ScheduleDataService, UserDataService],
-  exports: [BetDataService, ScheduleDataService, UserDataService],
+  providers: [
+    BetDataService,
+    ScheduleDataService,
+    UserDataService,
+    LeagueDataService,
+  ],
+  exports: [
+    BetDataService,
+    ScheduleDataService,
+    UserDataService,
+    LeagueDataService,
+  ],
 })
 export class DatabaseModule {}
