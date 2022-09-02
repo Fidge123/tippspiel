@@ -57,16 +57,15 @@ function Reset() {
       <h1 className="my-4 font-bold">Passwort zurücksetzen</h1>
       <form onSubmit={reset} className="flex flex-col items-center">
         <div className="space-y-4 space-x-2">
-          <label id="pw-label">Neues Passwort</label>
+          <label htmlFor="pw-input">Neues Passwort</label>
           <input
+            id="pw-input"
             className="text-black px-2 border"
             type="password"
             minLength={8}
             maxLength={100}
             onChange={(e) => setPassword(e.target.value)}
             required
-            aria-labelledby="pw-label"
-            aria-required="true"
           />
         </div>
         <button type="submit" className="m-8">

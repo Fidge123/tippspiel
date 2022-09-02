@@ -77,27 +77,25 @@ export default function Login() {
       <h1 className="font-bold my-4">Mit bestehendem Konto einloggen:</h1>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <div className="flex flex-col items-center space-y-4 pb-4">
-          <label id="email-label">E-Mail</label>
+          <label htmlFor="email-input">E-Mail</label>
           <input
+            id="email-input"
             className="text-black px-2 border"
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             required
-            aria-labelledby="email-label"
-            aria-required="true"
           />
         </div>
         <div className="flex flex-col items-center space-y-4">
-          <label id="pw-label">Passwort</label>
+          <label htmlFor="password-input">Passwort</label>
           <input
+            id="password-input"
             className="text-black px-2 border"
             type="password"
             minLength={8}
             maxLength={100}
             onChange={(e) => setPassword(e.target.value)}
             required
-            aria-labelledby="pw-label"
-            aria-required="true"
           />
         </div>
         <button type="submit" className="mt-8">

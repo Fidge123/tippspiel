@@ -1,13 +1,6 @@
 import { Suspense, lazy, useEffect } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  Route,
-  Link,
-  Routes,
-  Navigate,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { Route, Link, Routes, Navigate, useLocation } from "react-router-dom";
 
 import { tokenState } from "./State/states";
 import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
@@ -39,8 +32,7 @@ function Placeholder({ resetErrorBoundary }: FallbackProps) {
 }
 
 function App() {
-  const [token, setToken] = useRecoilState(tokenState);
-  const navigate = useNavigate();
+  const [token] = useRecoilState(tokenState);
   const location = useLocation();
 
   return (
