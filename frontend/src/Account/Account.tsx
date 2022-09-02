@@ -7,11 +7,14 @@ function Account() {
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  // const [error, setError] = useState("");
+  const [error, setError] = useState("");
   const [token] = useRecoilState(tokenState);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (false) {
+      setError("Oh no!");
+    }
   }
 
   return (
@@ -81,6 +84,7 @@ function Account() {
 
         <p>Spoilermodus-Standard</p>
       </section>
+      {error && <p>Ein Fehler ist aufgetreten: {error}</p>}
     </article>
   );
 }

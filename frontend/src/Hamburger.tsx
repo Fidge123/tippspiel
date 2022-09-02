@@ -29,16 +29,44 @@ function Hamburger() {
         }`}
       >
         <li>
-          <Link to="/account">Account</Link>
+          <Link
+            onClick={() => {
+              setOpen(false);
+            }}
+            to="/account"
+          >
+            Account
+          </Link>
         </li>
         <li>
-          <Link to="/leagues">Ligen</Link>
+          <Link
+            onClick={() => {
+              setOpen(false);
+            }}
+            to="/leagues"
+          >
+            Ligen
+          </Link>
         </li>
         <li>
-          <Link to="/rules">Regeln</Link>
+          <Link
+            onClick={() => {
+              setOpen(false);
+            }}
+            to="/rules"
+          >
+            Regeln
+          </Link>
         </li>
         <li>
-          <Link to="/impressum">Impressum</Link>
+          <Link
+            onClick={() => {
+              setOpen(false);
+            }}
+            to="/impressum"
+          >
+            Impressum
+          </Link>
         </li>
         <li>
           <button
