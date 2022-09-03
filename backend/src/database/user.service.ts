@@ -35,6 +35,15 @@ export class UserDataService {
     return this.userRepo.findOneBy({ id });
   }
 
+  async renameUser(id: string, name: string) {
+    if (!name) {
+      throw new BadRequestException();
+    }
+    const user = await this.userRepo.findOneBy({ id });
+    user.name = name;
+    return this.userRepo.save(user);
+  }
+
   async login(email: string, password: string): Promise<User> {
     const user = await this.userRepo.findOne({
       select: { id: true, name: true, email: true, salt: true, password: true },
@@ -131,6 +140,28 @@ export class UserDataService {
     };
 
     await this.userRepo.save(user);
+  }
+
+  async setHideByDefault(
+    userId: string,
+    hideByDefault: boolean,
+  ): Promise<void> {
+    if (userId) {
+      const user = await this.userRepo
+        .findOneByOrFail({ id: userId })
+        .catch(() => {
+          throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        });
+
+      user.settings = {
+        ...user.settings,
+        hideByDefault,
+      };
+
+      await this.userRepo.save(user);
+    } else {
+      throw new BadRequestException();
+    }
   }
 
   async setActiveLeague(userId: string, league: string): Promise<void> {

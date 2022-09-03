@@ -19,6 +19,7 @@ import { UserDataService } from '../database/user.service';
 import { AuthService } from '../auth/auth.service';
 import { HiddenDto } from './hidden.dto';
 import { CurrentUser, User } from '../user.decorator';
+import { UserEntity } from 'src/database/entity';
 
 interface RequestWithUser extends Request {
   user: User;
@@ -105,6 +106,15 @@ export class UserController {
         HtmlBody: await loadHTML('verifyUser', { name, link }),
       })
       .catch((error) => console.error(error));
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('change/name')
+  async changeName(
+    @Body('name') name: string,
+    @CurrentUser() user: User,
+  ): Promise<UserEntity> {
+    return await this.databaseService.renameUser(user.id, name);
   }
 
   @UseGuards(ThrottlerGuard)
@@ -199,6 +209,15 @@ export class UserController {
       hidden.weekId,
       hidden.hidden,
     );
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('hidden/default')
+  async setHideByDefault(
+    @Body('hideByDefault') hideByDefault: boolean,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.databaseService.setHideByDefault(user.id, hideByDefault);
   }
 
   @UseGuards(AuthGuard('jwt'))

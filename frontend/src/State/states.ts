@@ -15,6 +15,31 @@ import {
 } from "./response-types";
 import { formatLb } from "./util";
 
+export const nameState = selector<string>({
+  key: "accessToken/name",
+  get: ({ get }) => {
+    const payload = JSON.parse(window.atob(get(tokenState).split(".")[1]));
+    return payload.name;
+  },
+  set: ({ get, reset }, newValue) => {
+    if (newValue instanceof DefaultValue) {
+      throw new Error("Can't reset name");
+    }
+
+    fetchFromAPI(
+      "user/change/name",
+      get(tokenState),
+      "POST",
+      {
+        name: newValue,
+      },
+      true
+    );
+
+    reset(tokenState);
+  },
+});
+
 export const tokenState = atom<string>({
   key: "accessToken",
   default: window.localStorage.getItem("access_token") || "",
@@ -23,7 +48,7 @@ export const tokenState = atom<string>({
       const item = window.localStorage.getItem("access_token");
       const refreshSelf = async () => {
         const token = await refresh();
-        if (token) {
+        if (token && !token.startsWith("[object")) {
           setSelf(token);
           window.localStorage.setItem("access_token", token);
         }
@@ -39,7 +64,9 @@ export const tokenState = atom<string>({
       }
 
       onSet((newValue, _, isReset) =>
-        window.localStorage.setItem("access_token", isReset ? "" : newValue)
+        isReset
+          ? refreshSelf()
+          : window.localStorage.setItem("access_token", newValue)
       );
     },
   ],
@@ -319,6 +346,30 @@ export const sbBetState = atom<string>({
   }),
 });
 
+export const hideByDefaultState = selector<boolean>({
+  key: "hidden/Default",
+  get: ({ get }) => {
+    return get(userState).hideByDefault ?? true;
+  },
+  set: ({ get, set }, newValue) => {
+    const hideByDefault = newValue instanceof DefaultValue ? true : newValue;
+    fetchFromAPI(
+      "user/hidden/default",
+      get(tokenState),
+      "POST",
+      {
+        hideByDefault,
+      },
+      true
+    );
+
+    set(userState, {
+      ...get(userState),
+      hideByDefault,
+    });
+  },
+});
+
 export const hiddenState = selectorFamily<boolean, string>({
   key: "hidden",
   get:
@@ -327,13 +378,14 @@ export const hiddenState = selectorFamily<boolean, string>({
       const { hidden } = get(userState);
       return hidden && typeof hidden[weekId] !== "undefined"
         ? hidden[weekId]
-        : true;
+        : get(hideByDefaultState);
     },
 
   set:
     (weekId) =>
     ({ get, set }, newValue) => {
-      const hidden = newValue instanceof DefaultValue ? true : newValue;
+      const hidden =
+        newValue instanceof DefaultValue ? get(hideByDefaultState) : newValue;
 
       fetchFromAPI(
         "user/hidden",

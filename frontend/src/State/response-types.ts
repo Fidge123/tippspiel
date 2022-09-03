@@ -56,7 +56,8 @@ export interface Doubler {
 
 export interface UserSettings {
   hidden?: Record<string, boolean>;
-  league: string;
+  hideByDefault?: boolean;
+  league?: string;
 }
 
 export interface LBResponse {

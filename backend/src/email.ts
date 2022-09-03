@@ -9,7 +9,15 @@ export async function getTransporter() {
 
 async function createTransport() {
   try {
-    return new ServerClient(env.POSTMARK);
+    if (env.POSTMARK) {
+      return new ServerClient(env.POSTMARK);
+    } else {
+      return {
+        sendEmail() {
+          return Promise.reject('No Postmark token was set');
+        },
+      };
+    }
   } catch (error) {
     console.log(error);
   }
