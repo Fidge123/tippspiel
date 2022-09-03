@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -130,6 +131,25 @@ export class UserDataService {
     };
 
     await this.userRepo.save(user);
+  }
+
+  async setActiveLeague(userId: string, league: string): Promise<void> {
+    if (userId && league) {
+      const user = await this.userRepo
+        .findOneByOrFail({ id: userId })
+        .catch(() => {
+          throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        });
+
+      user.settings = {
+        ...user.settings,
+        league,
+      };
+
+      await this.userRepo.save(user);
+    } else {
+      throw new BadRequestException();
+    }
   }
 
   async sendReset(email: string): Promise<ResetEntity> {

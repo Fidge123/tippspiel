@@ -6,6 +6,7 @@ import {
   teamsState,
   divisionBetsState,
   sbBetState,
+  activeLeagueState,
 } from "../State/states";
 import { fetchFromAPI } from "../api";
 import { Team } from "../State/response-types";
@@ -14,6 +15,7 @@ function Division() {
   const token = useRecoilValue(tokenState);
   const divisions = useRecoilValue(divisionsState);
   const teams = useRecoilValue(teamsState);
+  const league = useRecoilValue(activeLeagueState);
   const [divisionBets, setDivisionBets] = useRecoilState(divisionBetsState);
   const [sbBet, setSBBet] = useRecoilState(sbBetState);
 
@@ -22,6 +24,7 @@ function Division() {
     return await fetchFromAPI("bet/division", token, "POST", {
       division,
       team,
+      league: league.id,
       year: 2022,
     });
   }
@@ -30,6 +33,7 @@ function Division() {
     setSBBet(teamId);
     return await fetchFromAPI("bet/superbowl", token, "POST", {
       teamId,
+      league: league.id,
       year: 2022,
     });
   }

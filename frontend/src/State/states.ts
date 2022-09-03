@@ -4,6 +4,7 @@ import { ApiBet } from "../Schedule/types";
 import {
   Division,
   Team,
+  League,
   Leaderboard,
   Bet,
   Stat,
@@ -13,8 +14,6 @@ import {
   Doubler,
 } from "./response-types";
 import { formatLb } from "./util";
-
-const currentSeason = 2022;
 
 export const tokenState = atom<string>({
   key: "accessToken",
@@ -46,6 +45,43 @@ export const tokenState = atom<string>({
   ],
 });
 
+export const activeLeagueState = selector<League>({
+  key: "leagues/Active",
+  get: ({ get }) => {
+    return (
+      get(leaguesState).find((l) => l.id === get(userState).league) ??
+      get(leaguesState)[0]
+    );
+  },
+  set: ({ get, set }, newValue) => {
+    const id =
+      newValue instanceof DefaultValue ? get(leaguesState)[0].id : newValue.id;
+    fetchFromAPI(
+      "user/league",
+      get(tokenState),
+      "POST",
+      {
+        league: id,
+      },
+      true
+    );
+
+    set(userState, {
+      ...get(userState),
+      league: id,
+    });
+  },
+});
+
+export const leaguesState = atom<League[]>({
+  key: "leagues",
+  default: selector({
+    key: "leagues/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<League[]>(`leagues`, get(tokenState)),
+  }),
+});
+
 export const divisionsState = atom<Division[]>({
   key: "divisions",
   default: selector({
@@ -53,7 +89,7 @@ export const divisionsState = atom<Division[]>({
     get: async ({ get }) =>
       (
         await fetchFromAPI<Division[]>(
-          `division?season=${currentSeason}`,
+          `division?season=${get(activeLeagueState).season}`,
           get(tokenState)
         )
       ).sort((divA, divB) => divA.name.localeCompare(divB.name)),
@@ -83,7 +119,12 @@ export const leaderboardState = atom<Leaderboard[]>({
     key: "leaderboard/Default",
     get: async ({ get }) =>
       formatLb(
-        await fetchFromAPI(`leaderboard/${currentSeason}`, get(tokenState))
+        await fetchFromAPI(
+          `leaderboard?season=${get(activeLeagueState).season}&league=${
+            get(activeLeagueState).id
+          }`,
+          get(tokenState)
+        )
       ),
   }),
 });
@@ -93,7 +134,10 @@ export const weeksState = atom<Week[]>({
   default: selector({
     key: "weeks/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Week[]>(`schedule/${currentSeason}`, get(tokenState)),
+      await fetchFromAPI<Week[]>(
+        `schedule/${get(activeLeagueState).season}`,
+        get(tokenState)
+      ),
   }),
 });
 
@@ -104,8 +148,8 @@ export const currentWeekState = selectorFamily<boolean, string>({
     ({ get }) => {
       const now = new Date();
       const week = get(weeksState).reduce((prev, curr) => {
-        const startA = new Date(curr.start);
-        const endA = new Date(curr.end);
+        const startA = new Date(prev.start);
+        const endA = new Date(prev.end);
         const startB = new Date(curr.start);
         const endB = new Date(curr.end);
         if (now <= endA && now >= startA) {
@@ -132,7 +176,9 @@ export const statsState = atom<Stats>({
     key: "stats/Default",
     get: async ({ get }) =>
       await fetchFromAPI<Stats>(
-        `leaderboard/games?season=${currentSeason}`,
+        `leaderboard/games?season=${get(activeLeagueState).season}&league=${
+          get(activeLeagueState).id
+        }`,
         get(tokenState)
       ),
   }),
@@ -151,7 +197,12 @@ export const allGameBetsState = atom<Bet[]>({
   default: selector({
     key: "allGameBets/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Bet[]>(`bet?season=${currentSeason}`, get(tokenState)),
+      await fetchFromAPI<Bet[]>(
+        `bet?season=${get(activeLeagueState).season}&league=${
+          get(activeLeagueState).id
+        }`,
+        get(tokenState)
+      ),
   }),
 });
 
@@ -181,6 +232,7 @@ export const gameBetsState = selectorFamily<Bet, string>({
             gameId: gameId,
             winner: newValue.selected,
             pointDiff: newValue.points,
+            leagueId: get(activeLeagueState).id,
           };
           fetchFromAPI("bet", get(tokenState), "POST", body, true);
         }
@@ -194,7 +246,9 @@ export const doublersState = atom<Doubler[]>({
     key: "doublers/Default",
     get: async ({ get }) =>
       await fetchFromAPI<Doubler[]>(
-        `bet/doubler?season=${currentSeason}`,
+        `bet/doubler?season=${get(activeLeagueState).season}&league=${
+          get(activeLeagueState).id
+        }`,
         get(tokenState)
       ),
   }),
@@ -225,6 +279,7 @@ export const doublerState = selectorFamily<string, string>({
           get(tokenState),
           "POST",
           {
+            league: get(activeLeagueState).id,
             game: newValue,
             week: weekId,
           },
@@ -240,7 +295,9 @@ export const divisionBetsState = atom<Record<string, string>>({
     key: "divisionBets/Default",
     get: async ({ get }) =>
       await fetchFromAPI<Record<string, string>>(
-        `bet/division?season=${currentSeason}`,
+        `bet/division?season=${get(activeLeagueState).season}&league=${
+          get(activeLeagueState).id
+        }`,
         get(tokenState)
       ),
   }),
@@ -253,7 +310,9 @@ export const sbBetState = atom<string>({
     get: async ({ get }) =>
       (
         await fetchFromAPI(
-          `bet/superbowl?season=${currentSeason}`,
+          `bet/superbowl?season=${get(activeLeagueState).season}&league=${
+            get(activeLeagueState).id
+          }`,
           get(tokenState)
         )
       )?.team?.id,
@@ -274,12 +333,14 @@ export const hiddenState = selectorFamily<boolean, string>({
   set:
     (weekId) =>
     ({ get, set }, newValue) => {
+      const hidden = newValue instanceof DefaultValue ? true : newValue;
+
       fetchFromAPI(
         "user/hidden",
         get(tokenState),
         "POST",
         {
-          hidden: newValue,
+          hidden,
           weekId,
         },
         true
@@ -289,7 +350,7 @@ export const hiddenState = selectorFamily<boolean, string>({
         ...get(userState),
         hidden: {
           ...get(userState).hidden,
-          [weekId]: !!newValue, // FIXME
+          [weekId]: hidden,
         },
       });
     },

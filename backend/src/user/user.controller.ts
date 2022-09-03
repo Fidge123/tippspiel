@@ -200,4 +200,13 @@ export class UserController {
       hidden.hidden,
     );
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('league')
+  async setActiveLeague(
+    @Body('league') league: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.databaseService.setActiveLeague(user.id, league);
+  }
 }

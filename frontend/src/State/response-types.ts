@@ -12,6 +12,14 @@ export type Stats = C;
 export type Bet = B;
 export type Team = T;
 
+export interface League {
+  id: string;
+  name: string;
+  season: string;
+  members: { id: string; name: string }[];
+  admins: { id: string; name: string }[];
+}
+
 export interface Division {
   name: string;
   bets: {
@@ -48,6 +56,7 @@ export interface Doubler {
 
 export interface UserSettings {
   hidden?: Record<string, boolean>;
+  league: string;
 }
 
 export interface LBResponse {

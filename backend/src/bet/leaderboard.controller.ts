@@ -23,7 +23,6 @@ export class LeaderboardController {
       league,
       parseInt(season, 10),
     );
-
     return games.reduce(
       (result, game) => ({
         ...result,
@@ -46,10 +45,10 @@ export class LeaderboardController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get(':season')
+  @Get()
   async getAll(
-    @Param('league') league: string,
-    @Param('season') season: string,
+    @Query('league') league: string,
+    @Query('season') season: string,
     @CurrentUser() currentUser: User,
   ): Promise<any> {
     const users = await this.databaseService.findBetsByUser(

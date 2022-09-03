@@ -10,7 +10,13 @@ export class DivisionController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getAll(@Query('season') season: string): Promise<DivisionEntity[]> {
-    return await this.databaseService.getDivisions(parseInt(season, 10));
+  async getAll(
+    @Query('league') league: string,
+    @Query('season') season: string,
+  ): Promise<DivisionEntity[]> {
+    return await this.databaseService.getDivisions(
+      league,
+      parseInt(season, 10),
+    );
   }
 }

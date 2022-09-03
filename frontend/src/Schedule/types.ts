@@ -13,6 +13,7 @@ export interface ApiBet {
   gameId: string;
   winner?: "home" | "away";
   pointDiff?: number;
+  leagueId: string;
 }
 
 export interface Votes {

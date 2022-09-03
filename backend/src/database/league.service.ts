@@ -18,11 +18,31 @@ export class LeagueDataService {
   }
 
   async getParticipatedLeagues(user: string): Promise<LeagueEntity[]> {
-    return this.leagueRepo.find({ where: { members: { id: user } } });
+    return this.leagueRepo.find({
+      select: {
+        id: true,
+        name: true,
+        season: true,
+        members: { id: true, name: true },
+        admins: { id: true, name: true },
+      },
+      where: { members: { id: user } },
+      relations: { members: true, admins: true },
+    });
   }
 
   async getAdministeredLeague(user: string): Promise<LeagueEntity[]> {
-    return this.leagueRepo.find({ where: { admins: { id: user } } });
+    return this.leagueRepo.find({
+      select: {
+        id: true,
+        name: true,
+        season: true,
+        members: { id: true, name: true },
+        admins: { id: true, name: true },
+      },
+      where: { admins: { id: user } },
+      relations: { members: true, admins: true },
+    });
   }
 
   async getLeague(leagueId: string): Promise<LeagueEntity> {

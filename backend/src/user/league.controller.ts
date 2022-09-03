@@ -28,7 +28,10 @@ export class LeagueController {
   async getLeagues(@CurrentUser() user: User): Promise<LeagueEntity[]> {
     const memberIn = await this.databaseService.getParticipatedLeagues(user.id);
     const adminIn = await this.databaseService.getAdministeredLeague(user.id);
-    return [...memberIn, ...adminIn];
+    return [
+      ...memberIn,
+      ...adminIn.filter((league) => !memberIn.some((l) => l.id === league.id)),
+    ];
   }
 
   @UseGuards(AuthGuard('jwt'))

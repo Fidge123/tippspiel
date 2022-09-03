@@ -44,11 +44,11 @@ export class BetController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async setBet(
+  async setGameBet(
     @Body() createBet: CreateBetDto,
     @CurrentUser() user: User,
   ): Promise<BetEntity> {
-    return this.databaseService.update(createBet, user.id);
+    return this.databaseService.setGameBet(createBet, user.id);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -119,7 +119,7 @@ export class BetController {
     return doublers.map((d) => ({
       game: d.game.id,
       week: `${d.week.year}-${d.week.seasontype}-${d.week.week}`,
-      league: d.league.id,
+      league: d.league?.id,
     }));
   }
 

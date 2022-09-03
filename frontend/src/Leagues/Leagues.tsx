@@ -1,10 +1,12 @@
 import { FormEvent, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { fetchFromAPI } from "../api";
-import { tokenState } from "../State/states";
+import { activeLeagueState, leaguesState, tokenState } from "../State/states";
 
 function Leagues() {
   const [leagueName, setLeagueName] = useState("");
+  const [activeLeague, setActiveLeague] = useRecoilState(activeLeagueState);
+  const leagues = useRecoilValue(leaguesState);
   const token = useRecoilValue(tokenState);
 
   async function handleSubmit(e: FormEvent) {
@@ -19,14 +21,30 @@ function Leagues() {
       <h1 className="text-xl font-bold">Liga-Verwaltung</h1>
       <section>
         <h1 className="text-l font-bold">Aktive Ligen</h1>
-        {[].map((league) => (
-          <div>
-            <p>Name</p>
-            <p>Teilnehmer</p>
-            <p>Rolle</p>
-            <p>Aktionen (umbenennen, einladen, löschen)</p>
-          </div>
-        ))}
+        <table>
+          <thead>
+            <th>Name</th>
+            <th>Teilnehmer</th>
+            <th>Admins</th>
+            <th>Saison</th>
+            <th>Aktiv?</th>
+          </thead>
+          <tbody>
+            {leagues.map((league) => (
+              <tr>
+                <td>{league.name}</td>
+                <td>{league.members.map((m) => m.name).join(",")}</td>
+                <td>{league.admins.map((m) => m.name).join(",")}</td>
+                <td>{league.season}</td>
+                <td>
+                  <button onClick={() => setActiveLeague(league)}>
+                    {league.id === activeLeague.id ? "Gerade Aktiv" : " "}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
       <section>
         <h1 className="text-l font-bold">Abgeschlossene Ligen</h1>
