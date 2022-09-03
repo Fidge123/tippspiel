@@ -8,10 +8,26 @@
   }
 
   button, [type='submit'] {
-    @apply rounded border border-black;
+    @apply border border-black rounded;
     @apply h-8 bg-white dark:bg-gray-600 dark:text-gray-100;
     @apply text-sm px-1.5;
     @apply disabled:pointer-events-none;
+  }
+
+  table {
+    @apply bg-white border border-collapse shadow-sm border-slate-400 dark:border-slate-500 dark:bg-slate-800;
+  }
+
+  thead {
+    @apply bg-slate-50 dark:bg-slate-700;
+  }
+
+  th {
+    @apply p-4 font-semibold text-left border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-200;
+  }
+
+  td {
+    @apply p-4 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300;
   }
 }
 
@@ -25,16 +41,16 @@
 
 .team {
   @apply py-1.5 px-2 h-10 w-28 sm:w-36 md:w-60;
-  @apply truncate text-base outline-none;
-  @apply disabled:opacity-50 dark:disabled:opacity-70 shadow-none;
+  @apply text-base truncate outline-none;
+  @apply shadow-none disabled:opacity-50 dark:disabled:opacity-70;
   @apply border-2 dark:bg-gray-500;
   @apply disabled:bg-gray-100 dark:disabled:bg-gray-600;
 }
 
 .team-l {
   @apply my-1 py-1.5 px-2 h-10 w-21r;
-  @apply truncate text-base outline-none;
-  @apply disabled:opacity-70 dark:disabled:opacity-80 shadow-none;
+  @apply text-base truncate outline-none;
+  @apply shadow-none disabled:opacity-70 dark:disabled:opacity-80;
   @apply border-2 dark:bg-gray-500;
   @apply disabled:bg-gray-100 dark:disabled:bg-gray-700;
 }

@@ -15,7 +15,7 @@ export type Team = T;
 export interface League {
   id: string;
   name: string;
-  season: string;
+  season: number;
   members: { id: string; name: string }[];
   admins: { id: string; name: string }[];
 }

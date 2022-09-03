@@ -20,8 +20,8 @@ function Leagues() {
     <article className="p-4 m-auto space-y-4 max-w-prose">
       <h1 className="text-xl font-bold">Liga-Verwaltung</h1>
       <section>
-        <h1 className="font-bold text-l">Aktive Ligen</h1>
-        <table>
+        <h1 className="pb-4 font-bold">Aktive Ligen</h1>
+        <table className="w-full text-sm">
           <thead>
             <th>Name</th>
             <th>Teilnehmer</th>
@@ -30,23 +30,30 @@ function Leagues() {
             <th>Aktiv?</th>
           </thead>
           <tbody>
-            {leagues.map((league) => (
-              <tr>
-                <td>{league.name}</td>
-                <td>{league.members.map((m) => m.name).join(",")}</td>
-                <td>{league.admins.map((m) => m.name).join(",")}</td>
-                <td>{league.season}</td>
-                <td>
-                  <button onClick={() => setActiveLeague(league)}>
-                    {league.id === activeLeague.id ? "Gerade Aktiv" : " "}
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {leagues
+              .filter((l) => l.season === 2022)
+              .map((league) => (
+                <tr>
+                  <td>{league.name}</td>
+                  <td>{league.members.map((m) => m.name).join(",")}</td>
+                  <td>{league.admins.map((m) => m.name).join(",")}</td>
+                  <td>{league.season}</td>
+
+                  {league.id === activeLeague.id ? (
+                    <td>Gerade aktiv</td>
+                  ) : (
+                    <td className="py-2">
+                      <button onClick={() => setActiveLeague(league)}>
+                        Aktivieren
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
           </tbody>
         </table>
       </section>
-      <section>
+      {/* <section>
         <h1 className="font-bold text-l">Abgeschlossene Ligen</h1>
         {[].map((league) => (
           <div>
@@ -55,15 +62,13 @@ function Leagues() {
             <p>Platzierung</p>
           </div>
         ))}
-      </section>
+      </section> */}
       <form onSubmit={handleSubmit}>
-        <p>Neue Liga erstellen</p>
-        <label htmlFor="email-input">
-          <h1 className="font-bold">Name der Liga</h1>
-        </label>
+        <h1 className="font-bold">Neue Liga erstellen</h1>
+        <label htmlFor="email-input">Name der Liga</label>
         <input
           id="email-input"
-          className="px-2 mt-4 mr-4 text-black border"
+          className="px-2 mx-4 mt-4 text-black border"
           value={leagueName}
           onChange={(e) => setLeagueName(e.target.value)}
           required
