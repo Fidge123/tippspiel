@@ -1,16 +1,5 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Req,
-  Res,
-  BadRequestException,
-  Get,
-} from '@nestjs/common';
-import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Request, Response } from 'express';
 
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
 import { getTransporter } from '../email';
@@ -26,12 +15,12 @@ export class LeagueController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getLeagues(@CurrentUser() user: User): Promise<LeagueEntity[]> {
-    const memberIn = await this.databaseService.getParticipatedLeagues(user.id);
-    const adminIn = await this.databaseService.getAdministeredLeague(user.id);
-    return [
-      ...memberIn,
-      ...adminIn.filter((league) => !memberIn.some((l) => l.id === league.id)),
-    ];
+    const leagues = await this.databaseService.getAllLeagues();
+    return leagues.filter(
+      (l) =>
+        l.members.some((m) => m.id === user.id) ||
+        l.admins.some((a) => a.id === user.id),
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -41,5 +30,15 @@ export class LeagueController {
     @CurrentUser() user: User,
   ): Promise<LeagueEntity> {
     return await this.databaseService.createLeague(name, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add')
+  async addMember(
+    @Body('leagueId') leagueId: string,
+    @Body('email') email: string,
+  ): Promise<LeagueEntity> {
+    // Send notification or sign up mail?
+    return await this.databaseService.addMember(leagueId, email);
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,7 +18,7 @@ export class LeagueDataService {
   ) {}
 
   async getAllLeagues(): Promise<LeagueEntity[]> {
-    return this.leagueRepo.find();
+    return this.leagueRepo.find({ relations: { members: true, admins: true } });
   }
 
   async getParticipatedLeagues(user: string): Promise<LeagueEntity[]> {
@@ -75,9 +79,21 @@ export class LeagueDataService {
 
   async addAdmin(leagueId: string, userId: string): Promise<LeagueEntity> {
     const [league, user] = await Promise.all([
-      this.leagueRepo.findOneByOrFail({ id: leagueId }),
+      this.leagueRepo.findOne({
+        where: { id: leagueId },
+        relations: { members: true, admins: true },
+      }),
+      ,
       this.userRepo.findOneByOrFail({ id: userId }),
     ]);
+
+    if (league.admins.some((a) => a.id === user.id)) {
+      throw new BadRequestException('User is already member of this league');
+    }
+
+    if (!league.members.some((m) => m.id === user.id)) {
+      throw new BadRequestException('Only members can be made admins');
+    }
 
     if (league && user) {
       league.admins = [...league.admins, user];
@@ -87,7 +103,11 @@ export class LeagueDataService {
 
   async removeAdmin(leagueId: string, userId: string) {
     const [league, user] = await Promise.all([
-      this.leagueRepo.findOneByOrFail({ id: leagueId }),
+      this.leagueRepo.findOne({
+        where: { id: leagueId },
+        relations: { members: true, admins: true },
+      }),
+      ,
       this.userRepo.findOneByOrFail({ id: userId }),
     ]);
 
@@ -97,11 +117,24 @@ export class LeagueDataService {
     }
   }
 
-  async addMember(leagueId: string, userId: string) {
+  async addMember(leagueId: string, email: string) {
+    if (!leagueId || !email) {
+      throw new BadRequestException();
+    }
+
     const [league, user] = await Promise.all([
-      this.leagueRepo.findOneByOrFail({ id: leagueId }),
-      this.userRepo.findOneByOrFail({ id: userId }),
+      this.leagueRepo.findOne({
+        where: { id: leagueId },
+        relations: { members: true },
+      }),
+      this.userRepo.findOneByOrFail({ email }).catch(() => {
+        throw new NotFoundException('No user for this email found');
+      }),
     ]);
+
+    if (league.members.some((m) => m.id === user.id)) {
+      throw new BadRequestException('User is already member of this league');
+    }
 
     if (league && user) {
       league.members = [...league.members, user];
@@ -111,11 +144,16 @@ export class LeagueDataService {
 
   async removeMember(leagueId: string, userId: string) {
     const [league, user] = await Promise.all([
-      this.leagueRepo.findOneByOrFail({ id: leagueId }),
+      this.leagueRepo.findOne({
+        where: { id: leagueId },
+        relations: { members: true, admins: true },
+      }),
+      ,
       this.userRepo.findOneByOrFail({ id: userId }),
     ]);
 
     if (league && user) {
+      league.admins = league.admins.filter((admin) => admin.id !== user.id);
       league.members = league.members.filter((admin) => admin.id !== user.id);
       return this.leagueRepo.save(league);
     }

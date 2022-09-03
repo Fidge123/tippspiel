@@ -113,7 +113,7 @@ export const leaguesState = atom<League[]>({
   default: selector({
     key: "leagues/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<League[]>(`leagues`, get(tokenState)),
+      await fetchFromAPI<League[]>("leagues", get(tokenState)),
   }),
 });
 

@@ -25,11 +25,11 @@ export class LeagueEntity {
   @Column()
   season: number;
 
-  @ManyToMany(() => UserEntity, (user) => user.memberIn)
+  @ManyToMany(() => UserEntity, (user) => user.memberIn, { cascade: true })
   @JoinTable({ name: 'member' })
   members: UserEntity[];
 
-  @ManyToMany(() => UserEntity, (user) => user.adminIn)
+  @ManyToMany(() => UserEntity, (user) => user.adminIn, { cascade: true })
   @JoinTable({ name: 'admin' })
   admins: UserEntity[];
 
