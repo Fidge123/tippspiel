@@ -52,35 +52,35 @@ function Register() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="font-bold my-4">Ein neues Konto registrieren:</h1>
+      <h1 className="my-4 font-bold">Ein neues Konto registrieren:</h1>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <div className="flex flex-col items-center space-y-4 pb-4">
+        <div className="flex flex-col items-center pb-4 space-y-4">
           <label htmlFor="name-input">Name</label>
           <input
             id="name-input"
-            className="text-black px-2 border"
+            className="px-2 text-black border"
             disabled={credentials}
             type="text"
             onChange={(e) => setName(e.target.value)}
             required
           />
         </div>
-        <div className="flex flex-col items-center space-y-4 pb-4">
+        <div className="flex flex-col items-center pb-4 space-y-4">
           <label htmlFor="email-input">E-Mail</label>
           <input
             id="email-input"
-            className="text-black px-2 border"
+            className="px-2 text-black border"
             disabled={credentials}
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
-        <div className="flex flex-col items-center space-y-4 pb-4">
+        <div className="flex flex-col items-center pb-4 space-y-4">
           <label htmlFor="pw-input">Passwort</label>
           <input
             id="pw-input"
-            className="text-black px-2 border"
+            className="px-2 text-black border"
             disabled={credentials}
             type="password"
             onChange={(e) => setPassword(e.target.value)}
@@ -103,7 +103,7 @@ function Register() {
           </label>
           <span>
             <input
-              className="text-black px-2 border"
+              className="px-2 text-black border"
               disabled={credentials}
               type="checkbox"
               onChange={(e) => setConsent(e.target.checked)}

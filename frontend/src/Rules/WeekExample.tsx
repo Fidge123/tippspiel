@@ -7,13 +7,12 @@ function WeekExample() {
     createGameAndBets(1, 24, 12),
     createGameAndBets(3, 7, 7),
     createGameAndBets(5, 44, 45),
+    createGameAndBets(7, 3, 12),
   ]);
 
   return (
     <>
-      <p>
-        Ausgangspunktestand Spieler 1 (4), Spieler 2 (29) und Spieler 3 (-9)
-      </p>
+      <p className="pb-4">Lade die Seite neu um die Tipps neu zu generieren.</p>
       {gamesAndBets.map(([game, bets], i) => (
         <MatchUp
           key={game.id}
@@ -24,14 +23,17 @@ function WeekExample() {
               ...gamesAndBets.slice(0, i),
               [
                 game,
-                [
-                  {
-                    ...bets[0],
-                    winner,
-                    points: calcPoints({ ...bets[0], winner }, game),
-                  },
-                  ...bets.slice(1),
-                ],
+                calcAllPoints(
+                  [
+                    {
+                      ...bets[0],
+                      winner,
+                      points: calcPoints({ ...bets[0], winner }, bets, game),
+                    },
+                    ...bets.slice(1),
+                  ],
+                  game
+                ),
               ],
               ...gamesAndBets.slice(i + 1),
             ])
@@ -41,14 +43,17 @@ function WeekExample() {
               ...setDoublerToFalse(gamesAndBets.slice(0, i)),
               [
                 game,
-                [
-                  {
-                    ...bets[0],
-                    doubler,
-                    points: calcPoints({ ...bets[0], doubler }, game),
-                  },
-                  ...bets.slice(1),
-                ],
+                calcAllPoints(
+                  [
+                    {
+                      ...bets[0],
+                      doubler,
+                      points: calcPoints({ ...bets[0], doubler }, bets, game),
+                    },
+                    ...bets.slice(1),
+                  ],
+                  game
+                ),
               ],
               ...setDoublerToFalse(gamesAndBets.slice(i + 1)),
             ])
@@ -58,38 +63,47 @@ function WeekExample() {
               ...gamesAndBets.slice(0, i),
               [
                 game,
-                [
-                  {
-                    ...bets[0],
-                    bet,
-                    points: calcPoints({ ...bets[0], bet }, game),
-                  },
-                  ...bets.slice(1),
-                ],
+                calcAllPoints(
+                  [
+                    {
+                      ...bets[0],
+                      bet,
+                      points: calcPoints({ ...bets[0], bet }, bets, game),
+                    },
+                    ...bets.slice(1),
+                  ],
+                  game
+                ),
               ],
               ...gamesAndBets.slice(i + 1),
             ])
           }
         ></MatchUp>
       ))}
-      <p>
-        Endpunktestand Spieler 1 (
-        {4 +
-          gamesAndBets
-            .map(([, bet]) => bet.find((b) => b.name === "Spieler 1"))
-            .reduce((a, b) => a + (b?.points ?? -1), 0)}
-        ), Spieler 2 (
-        {29 +
-          gamesAndBets
-            .map(([, bet]) => bet.find((b) => b.name === "Spieler 2"))
-            .reduce((a, b) => a + (b?.points ?? -1), 0)}
-        ) und Spieler 3 (
-        {-9 +
-          gamesAndBets
-            .map(([, bet]) => bet.find((b) => b.name === "Spieler 3"))
-            .reduce((a, b) => a + (b?.points ?? -1), 0)}
-        )
-      </p>
+      <h2 className="pt-4">Beispiel Punktestand</h2>
+      <ul className="pl-4 list-disc">
+        <li>
+          Spieler 1: vorher 4, danach{" "}
+          {4 +
+            gamesAndBets
+              .map(([, bet]) => bet.find((b) => b.name === "Spieler 1"))
+              .reduce((a, b) => a + (b?.points ?? -1), 0)}
+        </li>
+        <li>
+          Spieler 2: 29 ➡️{" "}
+          {29 +
+            gamesAndBets
+              .map(([, bet]) => bet.find((b) => b.name === "Spieler 2"))
+              .reduce((a, b) => a + (b?.points ?? -1), 0)}
+        </li>
+        <li>
+          Spieler 3: -9 ➡️{" "}
+          {-9 +
+            gamesAndBets
+              .map(([, bet]) => bet.find((b) => b.name === "Spieler 3"))
+              .reduce((a, b) => a + (b?.points ?? -1), 0)}
+        </li>
+      </ul>
     </>
   );
 }
@@ -101,20 +115,32 @@ function setDoublerToFalse(input: [Game, IStats[]][]): [Game, IStats[]][] {
       {
         ...bets[0],
         doubler: false,
-        points: calcPoints({ ...bets[0], doubler: false }, game),
+        points: calcPoints({ ...bets[0], doubler: false }, bets, game),
       },
-      ...bets.slice(1),
+      ...calcAllPoints(bets.slice(1), game),
     ],
   ]);
 }
 
-function calcPoints(bet: IStats, game: Game) {
+function calcPoints(bet: IStats, bets: IStats[], game: Game) {
   let mult = bet.doubler ? 2 : 1;
   if (bet.bet && game.homeScore > game.awayScore) {
-    return bet.winner === "home" ? bet.bet * mult : -bet.bet;
+    if (bet.winner === "home") {
+      return bets.filter((bet) => bet.winner === "home").length * 3 <=
+        bets.length
+        ? (bet.bet + 1) * mult
+        : bet.bet * mult;
+    }
+    return -bet.bet;
   }
   if (bet.bet && game.awayScore > game.homeScore) {
-    return bet.winner === "away" ? bet.bet * mult : -bet.bet;
+    if (bet.winner === "away") {
+      return bets.filter((bet) => bet.winner === "away").length * 3 <=
+        bets.length
+        ? (bet.bet + 1) * mult
+        : bet.bet * mult;
+    }
+    return -bet.bet;
   }
   if (bet.bet && game.awayScore === game.homeScore) {
     return 0;
@@ -147,44 +173,33 @@ function createGameAndBets(
     status: "STATUS_FINAL",
   };
 
-  const bet1 = {
-    name: "Spieler 1",
-    winner: "home",
-    doubler: false,
-    bet: getRandomBet(),
-  } as IStats;
-
-  const bet2 = {
-    name: "Spieler 2",
-    winner: "away",
-    doubler: false,
-    bet: getRandomBet(),
-  } as IStats;
-
-  const bet3 = {
-    name: "Spieler 3",
-    winner: "home",
-    doubler: false,
-    bet: getRandomBet(),
-  } as IStats;
-
   return [
     game,
-    [
-      {
-        ...bet1,
-        points: calcPoints(bet1, game),
-      },
-      {
-        ...bet2,
-        points: calcPoints(bet2, game),
-      },
-      {
-        ...bet3,
-        points: calcPoints(bet3, game),
-      },
-    ],
+    calcAllPoints(
+      [
+        createBetWithoutPoints("Spieler 1"),
+        createBetWithoutPoints("Spieler 2"),
+        createBetWithoutPoints("Spieler 3"),
+      ],
+      game
+    ),
   ];
+}
+
+function calcAllPoints(bets: IStats[], game: Game) {
+  return bets.map((bet, _, bets) => ({
+    ...bet,
+    points: calcPoints(bet, bets, game),
+  }));
+}
+
+function createBetWithoutPoints(name: string) {
+  return {
+    name,
+    winner: Math.random() > 0.5 ? "home" : "away",
+    doubler: false,
+    bet: getRandomBet(),
+  } as IStats;
 }
 
 export default WeekExample;

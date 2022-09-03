@@ -28,7 +28,7 @@ function MatchUp({ game, weekId }: Props) {
   }
 
   return (
-    <div className="w-fit py-1">
+    <div className="py-1 w-fit">
       <div className="flex">
         <TeamButton
           team={away}
@@ -48,7 +48,7 @@ function MatchUp({ game, weekId }: Props) {
         <MatchupInput game={game}></MatchupInput>
         <div
           role="button"
-          className="flex justify-end items-center p-1 w-6 h-10"
+          className="flex items-center justify-end w-6 h-10 p-1"
           onClick={() => setOpen(!open)}
         >
           <div

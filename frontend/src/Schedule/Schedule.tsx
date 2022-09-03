@@ -17,7 +17,7 @@ function Schedule() {
   }, [setInnerWidth]);
 
   return (
-    <div className="grid gap-x-2 sm:gap-x-4 grid-cols-23 sm:grid-cols-27 md:grid-cols-45 gap-y-12 justify-items-center px-1 pb-8 min-w-min">
+    <div className="grid px-1 pb-8 gap-x-2 sm:gap-x-4 grid-cols-23 sm:grid-cols-27 md:grid-cols-45 gap-y-12 justify-items-center min-w-min">
       {weeks.map((week, i) => (
         <Week
           id={`${week.year}-${week.seasontype}-${week.week}`}

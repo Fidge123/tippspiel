@@ -34,11 +34,11 @@ function DivisionExample() {
 
   return (
     <>
-      <div className="w-min ml-4 py-4">
+      <div className="py-4 ml-4 w-min">
         {divisionBets.map((team, i) => (
           <div
             key={"Div" + team.id}
-            className="team-l rounded flex justify-between items-center"
+            className="flex items-center justify-between rounded team-l"
             style={{
               borderColor: `#${team?.color2}ff`,
               backgroundColor: `#${team?.color1}aa`,
@@ -57,7 +57,7 @@ function DivisionExample() {
             <span className="font-semibold text-gray-50">{team.name}</span>
             <span>
               <button
-                className="bg-transparent border-0 text-xl disabled:opacity-50"
+                className="text-xl bg-transparent border-0 disabled:opacity-50"
                 disabled={i === 0}
                 onClick={() => {
                   setDivisionBets(
@@ -78,7 +78,7 @@ function DivisionExample() {
                 ⬆️
               </button>
               <button
-                className="bg-transparent border-0 text-xl disabled:opacity-50"
+                className="text-xl bg-transparent border-0 disabled:opacity-50"
                 disabled={i === 3}
                 onClick={() => {
                   setDivisionBets(

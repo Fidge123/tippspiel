@@ -37,7 +37,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
       );
 
     return (
-      <div className="flex flex-row text-gray-800 dark:text-gray-300 font-xs leading-tight">
+      <div className="flex flex-row leading-tight text-gray-800 dark:text-gray-300 font-xs">
         <div
           className={`w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 ${
             finished ? "stat-grid-4" : "stat-grid-3"
@@ -60,7 +60,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
             </Fragment>
           ))}
         </div>
-        <div className="flex w-16 sm:w-20 mx-1 items-center justify-center">
+        <div className="flex items-center justify-center w-16 mx-1 sm:w-20">
           {finished && awayWon && "< "}
           {finished && wonBy}
           {finished && homeWon && " >"}
@@ -103,7 +103,7 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
           </div>
         )}
       </div>
-      <div className="flex w-16 sm:w-20 mx-1 items-center justify-center"></div>
+      <div className="flex items-center justify-center w-16 mx-1 sm:w-20"></div>
       <div className="w-28 sm:w-36 md:w-60 px-0.5">
         <div>
           {bets.home || "0"} {bets.home === 1 ? "Stimme" : "Stimmen"}

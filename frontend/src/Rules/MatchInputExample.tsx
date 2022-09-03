@@ -1,7 +1,7 @@
 function MatchupInput({ points, setPoints }: any) {
   return (
     <input
-      className="h-10 w-11 ml-1 p-px text-center border dark:bg-gray-300 border-gray-700 rounded text-black"
+      className="h-10 p-px ml-1 text-center text-black border border-gray-700 rounded w-11 dark:bg-gray-300"
       type="number"
       value={points ?? ""}
       onChange={(ev) => {

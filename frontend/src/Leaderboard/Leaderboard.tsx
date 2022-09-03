@@ -11,10 +11,10 @@ function Leaderboard() {
     <div className="p-4 pt-0">
       <h1 className="text-xl">Leaderboard</h1>
 
-      <div className="mt-4 mb-12 w-full overflow-x-auto">
+      <div className="w-full mt-4 mb-12 overflow-x-auto">
         <OverviewTable leaderboard={leaderboard}></OverviewTable>
       </div>
-      <div className="mt-4 mb-12 w-full overflow-x-auto">
+      <div className="w-full mt-4 mb-12 overflow-x-auto">
         <DivisonTable leaderboard={leaderboard}></DivisonTable>
       </div>
     </div>

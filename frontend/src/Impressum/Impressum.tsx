@@ -3,7 +3,7 @@ import Legal from "./Legal";
 
 function Impressum() {
   return (
-    <div className="max-w-prose m-auto p-4">
+    <div className="p-4 m-auto max-w-prose">
       <article>
         <h1 className="text-xl font-bold">Impressum</h1>
         <p className="py-1">Seitenbetreiber:</p>

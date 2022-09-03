@@ -74,13 +74,13 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="font-bold my-4">Mit bestehendem Konto einloggen:</h1>
+      <h1 className="my-4 font-bold">Mit bestehendem Konto einloggen:</h1>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <div className="flex flex-col items-center space-y-4 pb-4">
+        <div className="flex flex-col items-center pb-4 space-y-4">
           <label htmlFor="email-input">E-Mail</label>
           <input
             id="email-input"
-            className="text-black px-2 border"
+            className="px-2 text-black border"
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -90,7 +90,7 @@ export default function Login() {
           <label htmlFor="password-input">Passwort</label>
           <input
             id="password-input"
-            className="text-black px-2 border"
+            className="px-2 text-black border"
             type="password"
             minLength={8}
             maxLength={100}
@@ -104,7 +104,7 @@ export default function Login() {
 
         <div className="flex flex-col items-center">
           <button
-            className="mt-4 italic border-0 bg-transparent"
+            className="mt-4 italic bg-transparent border-0"
             onClick={() => forgot()}
           >
             Passwort vergessen?

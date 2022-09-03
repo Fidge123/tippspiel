@@ -37,8 +37,8 @@ function App() {
 
   return (
     <div className="w-screen h-screen">
-      <div className="h-12 w-screen px-4 fixed bg-gray-900 pointer-events-auto z-50 flex items-center justify-between">
-        <nav className="w-full text-white font-semibold space-x-4">
+      <div className="fixed z-50 flex items-center justify-between w-screen h-12 px-4 bg-gray-900 pointer-events-auto">
+        <nav className="w-full space-x-4 font-semibold text-white">
           {token ? (
             <>
               <Link to="/">Tippspiel</Link>
@@ -61,7 +61,7 @@ function App() {
           </Link>
         )}
       </div>
-      <div className="pt-12 dark:text-gray-100 min-h-full">
+      <div className="min-h-full pt-12 dark:text-gray-100">
         <ErrorBoundary FallbackComponent={Placeholder}>
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
@@ -101,9 +101,30 @@ function App() {
                 path="/impressum"
                 element={<Impressum></Impressum>}
               ></Route>
-              <Route path="/account" element={<Account></Account>}></Route>
-              <Route path="/leagues" element={<Leagues></Leagues>}></Route>
-              <Route path="/rules" element={<Rules></Rules>}></Route>
+              <Route
+                path="/account"
+                element={
+                  <LoggedInRoute>
+                    <Account></Account>
+                  </LoggedInRoute>
+                }
+              ></Route>
+              <Route
+                path="/leagues"
+                element={
+                  <LoggedInRoute>
+                    <Leagues></Leagues>
+                  </LoggedInRoute>
+                }
+              ></Route>
+              <Route
+                path="/rules"
+                element={
+                  <LoggedInRoute>
+                    <Rules></Rules>
+                  </LoggedInRoute>
+                }
+              ></Route>
               <Route
                 path="/division"
                 element={

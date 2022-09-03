@@ -1,7 +1,7 @@
 function Legal() {
   return (
     <article>
-      <h1 className="text-xl font-bold py-2">Legal information</h1>
+      <h1 className="py-2 text-xl font-bold">Legal information</h1>
       <p className="py-2">
         NFL and the NFL shield design are registered trademarks of the National
         Football League. The team names, logos and uniform designs are

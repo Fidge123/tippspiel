@@ -17,10 +17,10 @@ function Leagues() {
   }
 
   return (
-    <article className="max-w-prose m-auto p-4 space-y-4">
+    <article className="p-4 m-auto space-y-4 max-w-prose">
       <h1 className="text-xl font-bold">Liga-Verwaltung</h1>
       <section>
-        <h1 className="text-l font-bold">Aktive Ligen</h1>
+        <h1 className="font-bold text-l">Aktive Ligen</h1>
         <table>
           <thead>
             <th>Name</th>
@@ -47,7 +47,7 @@ function Leagues() {
         </table>
       </section>
       <section>
-        <h1 className="text-l font-bold">Abgeschlossene Ligen</h1>
+        <h1 className="font-bold text-l">Abgeschlossene Ligen</h1>
         {[].map((league) => (
           <div>
             <p>Name</p>
@@ -63,7 +63,7 @@ function Leagues() {
         </label>
         <input
           id="email-input"
-          className="text-black px-2 mt-4 mr-4 border"
+          className="px-2 mt-4 mr-4 text-black border"
           value={leagueName}
           onChange={(e) => setLeagueName(e.target.value)}
           required

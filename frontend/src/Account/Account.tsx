@@ -12,14 +12,11 @@ function Account() {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (false) {
-      setError("Oh no!");
-    }
   }
 
   return (
-    <article className="max-w-prose m-auto p-4 space-y-4">
-      <h1 className="text-xl font-bold pb-4">Account Details</h1>
+    <article className="p-4 m-auto space-y-4 max-w-prose">
+      <h1 className="pb-4 text-xl font-bold">Account Details</h1>
       <section className="space-y-8">
         <form onSubmit={handleSubmit}>
           <label htmlFor="username-input">
@@ -27,7 +24,7 @@ function Account() {
           </label>
           <input
             id="username-input"
-            className="text-black px-2 mt-4 mr-4 border"
+            className="px-2 mt-4 mr-4 text-black border"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -41,7 +38,7 @@ function Account() {
           </label>
           <input
             id="email-input"
-            className="text-black px-2 mt-4 mr-4 border"
+            className="px-2 mt-4 mr-4 text-black border"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -61,7 +58,7 @@ function Account() {
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               required
-              className="text-black px-2 mt-4 ml-4 border"
+              className="px-2 mt-4 ml-4 text-black border"
             />
           </div>
           <div>
@@ -74,7 +71,7 @@ function Account() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
-              className="text-black px-2 mt-4 ml-4 border"
+              className="px-2 mt-4 ml-4 text-black border"
             />
           </div>
           <button type="submit" className="mt-4">

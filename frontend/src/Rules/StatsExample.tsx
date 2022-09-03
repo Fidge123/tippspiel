@@ -21,7 +21,7 @@ function Stats({ game, stats }: Props) {
   const homeVotes = stats.filter((value) => value?.winner === "home");
 
   return (
-    <div className="flex flex-row text-gray-800 dark:text-gray-300 font-xs leading-tight">
+    <div className="flex flex-row leading-tight text-gray-800 dark:text-gray-300 font-xs">
       <div className="w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 stat-grid-4">
         {awayVotes.length > 0 && (
           <span className="col-start-3 text-center">
@@ -40,7 +40,7 @@ function Stats({ game, stats }: Props) {
           </Fragment>
         ))}
       </div>
-      <div className="flex w-16 sm:w-20 mx-1 items-center justify-center">
+      <div className="flex items-center justify-center w-16 mx-1 sm:w-20">
         {awayWon && "< "}
         {wonBy}
         {homeWon && " >"}

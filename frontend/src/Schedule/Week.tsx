@@ -21,7 +21,7 @@ function Week({ id, week }: Props) {
   return (
     <article className="pt-4" key={week.label} ref={ref}>
       <hgroup className="flex justify-between pr-6">
-        <h1 className="text-2xl dark:text-gray-100 truncate w-52 sm:w-64 md:w-80">
+        <h1 className="text-2xl truncate dark:text-gray-100 w-52 sm:w-64 md:w-80">
           {week.label}
         </h1>
         <Suspense fallback={<></>}>

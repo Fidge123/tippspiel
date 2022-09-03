@@ -7,7 +7,7 @@ function Scores({ game, selected, doubler, setDoubler }: Props) {
   const awayWon = awayScore > homeScore;
 
   return (
-    <div className="w-16 sm:w-20 flex items-center text-gray-700 dark:text-gray-200">
+    <div className="flex items-center w-16 text-gray-700 sm:w-20 dark:text-gray-200">
       <span
         className={`sm:w-6 text-center m-auto ${awayWon && "font-extrabold"} ${
           selected === "away" && awayWon && "text-green-500"

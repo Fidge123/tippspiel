@@ -19,7 +19,7 @@ function MatchUpExample({
   const away = useRecoilValue(teamState(`s:20~l:28~t:${game.awayTeam!.id}`));
 
   return (
-    <div className="w-fit py-1">
+    <div className="py-1 w-fit">
       <div className="flex">
         <TeamButton
           team={away}

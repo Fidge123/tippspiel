@@ -56,11 +56,11 @@ function Reset() {
     <div className="flex flex-col items-center">
       <h1 className="my-4 font-bold">Passwort zurücksetzen</h1>
       <form onSubmit={reset} className="flex flex-col items-center">
-        <div className="space-y-4 space-x-2">
+        <div className="space-x-2 space-y-4">
           <label htmlFor="pw-input">Neues Passwort</label>
           <input
             id="pw-input"
-            className="text-black px-2 border"
+            className="px-2 text-black border"
             type="password"
             minLength={8}
             maxLength={100}

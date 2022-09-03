@@ -4,22 +4,22 @@ function DivisionTable({ leaderboard }: Props) {
       <thead className="lb-header">
         <tr>
           <th className="text-left">Name</th>
-          <th className="text-center px-2">AFC North</th>
-          <th className="text-center px-2">AFC South</th>
-          <th className="text-center px-2">AFC West</th>
-          <th className="text-center px-2">AFC East</th>
-          <th className="text-center px-2">NFC North</th>
-          <th className="text-center px-2">NFC South</th>
-          <th className="text-center px-2">NFC West</th>
-          <th className="text-center px-2">NFC East</th>
-          <th className="text-center px-2">SB</th>
-          <th className="text-center px-2">Points</th>
+          <th className="px-2 text-center">AFC North</th>
+          <th className="px-2 text-center">AFC South</th>
+          <th className="px-2 text-center">AFC West</th>
+          <th className="px-2 text-center">AFC East</th>
+          <th className="px-2 text-center">NFC North</th>
+          <th className="px-2 text-center">NFC South</th>
+          <th className="px-2 text-center">NFC West</th>
+          <th className="px-2 text-center">NFC East</th>
+          <th className="px-2 text-center">SB</th>
+          <th className="px-2 text-center">Points</th>
         </tr>
       </thead>
       <tbody className="lb-body">
         {leaderboard.map((l) => (
           <tr key={`LB-${l.name}`}>
-            <td className="pr-2 pt-2">{l.name}</td>
+            <td className="pt-2 pr-2">{l.name}</td>
             {l.divBets.map((bet, i) => (
               <td key={"divbet" + i} className="p-1 pt-2 text-center">
                 {bet?.logo && (
@@ -56,7 +56,7 @@ function DivisionTable({ leaderboard }: Props) {
               )}
               {l.sbBet?.logo === null && "?"}
             </td>
-            <td className="cpr-2 pt-2 text-center">
+            <td className="pt-2 text-center cpr-2">
               {l.divBets.reduce((p, c) => p + c.points, 0) + l.sbBet.points}
             </td>
           </tr>

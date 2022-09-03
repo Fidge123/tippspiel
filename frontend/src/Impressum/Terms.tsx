@@ -1,7 +1,7 @@
 function Terms() {
   return (
-    <article className="flex max-w-prose flex-col m-auto">
-      <h1 className="text-xl font-bold py-2">Datenschutz</h1>
+    <article className="flex flex-col m-auto max-w-prose">
+      <h1 className="py-2 text-xl font-bold">Datenschutz</h1>
       <p className="py-2">
         Diese Website verwendet Cookies zum Speichern von Login-Tokens. Diese
         Verwendung fällt unter die berechtigten Interessen der Websitebetreiber
