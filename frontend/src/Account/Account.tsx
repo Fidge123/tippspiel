@@ -25,7 +25,7 @@ function Account() {
           </label>
           <input
             id="username-input"
-            className="px-2 mt-4 mr-4 text-black border"
+            className="px-2 mt-4 mr-4"
             type="text"
             value={localName}
             onChange={(e) => setLocalName(e.target.value)}
@@ -39,7 +39,7 @@ function Account() {
           </label>
           <input
             id="email-input"
-            className="px-2 mt-4 mr-4 text-black border"
+            className="px-2 mt-4 mr-4"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +59,7 @@ function Account() {
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               required
-              className="px-2 mt-4 ml-4 text-black border"
+              className="px-2 mt-4 ml-4"
             />
           </div>
           <div>
@@ -72,7 +72,7 @@ function Account() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
-              className="px-2 mt-4 ml-4 text-black border"
+              className="px-2 mt-4 ml-4"
             />
           </div>
           <button type="submit" className="mt-4">
@@ -82,7 +82,7 @@ function Account() {
         <h1 className="font-bold">Spoilermodus-Standard</h1>
         <input
           id="spoiler-input"
-          className="mr-4 text-black border"
+          className="mr-4"
           type="checkbox"
           checked={hideByDefault}
           onChange={(e) => setHideByDefault(e.target.checked)}

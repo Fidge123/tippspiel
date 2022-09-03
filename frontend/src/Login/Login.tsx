@@ -80,7 +80,7 @@ export default function Login() {
           <label htmlFor="email-input">E-Mail</label>
           <input
             id="email-input"
-            className="px-2 text-black border"
+            className="px-2"
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -90,7 +90,7 @@ export default function Login() {
           <label htmlFor="password-input">Passwort</label>
           <input
             id="password-input"
-            className="px-2 text-black border"
+            className="px-2"
             type="password"
             minLength={8}
             maxLength={100}

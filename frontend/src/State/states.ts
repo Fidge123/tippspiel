@@ -15,6 +15,14 @@ import {
 } from "./response-types";
 import { formatLb } from "./util";
 
+export const userIdState = selector<string>({
+  key: "accessToken/id",
+  get: ({ get }) => {
+    const payload = JSON.parse(window.atob(get(tokenState).split(".")[1]));
+    return payload.id;
+  },
+});
+
 export const nameState = selector<string>({
   key: "accessToken/name",
   get: ({ get }) => {

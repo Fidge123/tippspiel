@@ -58,7 +58,7 @@ function Register() {
           <label htmlFor="name-input">Name</label>
           <input
             id="name-input"
-            className="px-2 text-black border"
+            className="px-2"
             disabled={credentials}
             type="text"
             onChange={(e) => setName(e.target.value)}
@@ -69,7 +69,7 @@ function Register() {
           <label htmlFor="email-input">E-Mail</label>
           <input
             id="email-input"
-            className="px-2 text-black border"
+            className="px-2"
             disabled={credentials}
             type="email"
             onChange={(e) => setEmail(e.target.value)}
@@ -80,7 +80,7 @@ function Register() {
           <label htmlFor="pw-input">Passwort</label>
           <input
             id="pw-input"
-            className="px-2 text-black border"
+            className="px-2"
             disabled={credentials}
             type="password"
             onChange={(e) => setPassword(e.target.value)}
@@ -103,7 +103,7 @@ function Register() {
           </label>
           <span>
             <input
-              className="px-2 text-black border"
+              className="px-2"
               disabled={credentials}
               type="checkbox"
               onChange={(e) => setConsent(e.target.checked)}

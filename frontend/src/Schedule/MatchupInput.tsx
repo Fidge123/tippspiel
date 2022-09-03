@@ -13,7 +13,7 @@ function MatchupInput({ game }: Props) {
 
   return (
     <input
-      className={`h-10 w-11 ml-1 p-px text-center border dark:bg-gray-300 dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
+      className={`h-10 w-11 ml-1 p-px text-center dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
         points !== bet.points ? "text-yellow-600" : "text-black"
       }`}
       type="number"

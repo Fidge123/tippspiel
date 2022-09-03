@@ -60,7 +60,7 @@ function Reset() {
           <label htmlFor="pw-input">Neues Passwort</label>
           <input
             id="pw-input"
-            className="px-2 text-black border"
+            className="px-2"
             type="password"
             minLength={8}
             maxLength={100}

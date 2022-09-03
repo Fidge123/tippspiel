@@ -1,9 +1,15 @@
 import { FormEvent, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fetchFromAPI } from "../api";
-import { activeLeagueState, leaguesState, tokenState } from "../State/states";
+import {
+  activeLeagueState,
+  leaguesState,
+  userIdState,
+  tokenState,
+} from "../State/states";
 
 function Leagues() {
+  const me = useRecoilValue(userIdState);
   const [leagueName, setLeagueName] = useState("");
   const [activeLeague, setActiveLeague] = useRecoilState(activeLeagueState);
   const leagues = useRecoilValue(leaguesState);
@@ -25,7 +31,6 @@ function Leagues() {
           <thead>
             <th>Name</th>
             <th>Teilnehmer</th>
-            <th>Admins</th>
             <th>Saison</th>
             <th>Aktiv?</th>
           </thead>
@@ -35,8 +40,22 @@ function Leagues() {
               .map((league) => (
                 <tr>
                   <td>{league.name}</td>
-                  <td>{league.members.map((m) => m.name).join(",")}</td>
-                  <td>{league.admins.map((m) => m.name).join(",")}</td>
+                  <td>
+                    {league.members.map((m) =>
+                      league.admins.some((a) => a.id === m.id) ? (
+                        <div>{m.name} (Admin)</div>
+                      ) : (
+                        <div>{m.name}</div>
+                      )
+                    )}
+                    {league.admins.some((a) => a.id === me) && (
+                      <form>
+                        <input className="p-0.5 mr-2" />
+                        <button>Hinzufügen</button>
+                      </form>
+                    )}
+                  </td>
+
                   <td>{league.season}</td>
 
                   {league.id === activeLeague.id ? (
