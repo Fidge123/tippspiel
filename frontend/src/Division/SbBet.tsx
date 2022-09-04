@@ -19,7 +19,7 @@ function SbBet() {
     setSBBet(teamId);
     return await fetchFromAPI("bet/superbowl", token, "POST", {
       teamId,
-      league: league.id,
+      leagueId: league.id,
       year: 2022,
     });
   }
