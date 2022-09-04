@@ -83,7 +83,7 @@ export class UserController {
       password,
     );
     const now = new Date();
-    const link = `https://6v4.de/tippspiel/#/verify?id=${id}&token=${token}`;
+    const link = `https://nfl-tippspiel.de/tippspiel/verify?id=${id}&token=${token}`;
     const transporter = await getTransporter();
     await transporter
       .sendEmail({
@@ -149,7 +149,7 @@ export class UserController {
     const reset = await this.databaseService.sendReset(email);
     if (reset) {
       const { user, token } = reset;
-      const link = `https://6v4.de/tippspiel/#/reset?id=${user.id}&token=${token}`;
+      const link = `https://nfl-tippspiel.de/tippspiel/reset?id=${user.id}&token=${token}`;
       const transporter = await getTransporter();
       await transporter
         .sendEmail({
