@@ -28,6 +28,7 @@ export interface Team {
   abbreviation: string;
   color1: string;
   color2: string;
+  playoffSeed: number;
   logo: string;
   wins: number;
   losses: number;

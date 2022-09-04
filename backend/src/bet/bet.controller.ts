@@ -58,16 +58,15 @@ export class BetController {
     @Query('season') season: string,
     @CurrentUser() user: User,
   ): Promise<any> {
-    return (
-      await this.databaseService.findDivisionBets(
-        league,
-        parseInt(season, 10),
-        user.id,
-      )
-    ).reduce(
-      (result, bet) => ({ ...result, [bet.division.name]: bet.team.id }),
-      {},
+    const bets = await this.databaseService.findDivisionBets(
+      league,
+      parseInt(season, 10),
+      user.id,
     );
+    return bets.map((bet) => ({
+      name: bet.division.name,
+      teams: [bet.first, bet.second, bet.third, bet.fourth],
+    }));
   }
 
   @UseGuards(AuthGuard('jwt'))

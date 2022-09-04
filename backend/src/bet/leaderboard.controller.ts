@@ -2,7 +2,12 @@ import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { CurrentUser, User } from '../user.decorator';
-import { BetDoublerEntity, BetEntity, GameEntity } from '../database/entity';
+import {
+  BetDoublerEntity,
+  BetEntity,
+  DivisionBetEntity,
+  GameEntity,
+} from '../database/entity';
 import { BetDataService } from '../database/bet.service';
 
 @Controller('leaderboard')
@@ -51,6 +56,7 @@ export class LeaderboardController {
     @Query('season') season: string,
     @CurrentUser() currentUser: User,
   ): Promise<any> {
+    // TODO verify that this is correct
     const users = await this.databaseService.findBetsByUser(
       league,
       parseInt(season, 10),
@@ -66,6 +72,28 @@ export class LeaderboardController {
       parseInt(season, 10),
     );
 
+    function calcDivisionPoints(bet: DivisionBetEntity) {
+      let score = 0;
+      const bets = [bet.first, bet.second, bet.third, bet.fourth];
+      const correctOrder = bets.sort((a, b) => a.playoffSeed - b.playoffSeed);
+      if (bets[0].id === correctOrder[0].id) {
+        score += 7;
+      }
+      if (bet[1].id === correctOrder[1].id) {
+        score += 1;
+      }
+      if (bet[2].id === correctOrder[2].id) {
+        score += 1;
+      }
+      if (bet[3].id === correctOrder[3].id) {
+        score += 1;
+      }
+      if (score === 10) {
+        score += 5;
+      }
+      return score;
+    }
+
     return users.map((user) => ({
       user: user.name,
       bets: user.bets.map((bet) =>
@@ -77,20 +105,23 @@ export class LeaderboardController {
       ),
       divBets: user.divisionBets.map((bet) => ({
         name: bet.division.name,
-        team: st.seasontype === 3 || user.id === currentUser.id ? bet.team : {},
-        points:
-          st.seasontype === 3 &&
-          bet.team.playoffSeed > 0 &&
-          bet.team.playoffSeed <= 4
-            ? 5
-            : 0,
+        first:
+          st.seasontype === 3 || user.id === currentUser.id ? bet.first : {},
+        second:
+          st.seasontype === 3 || user.id === currentUser.id ? bet.second : {},
+        third:
+          st.seasontype === 3 || user.id === currentUser.id ? bet.third : {},
+        fourth:
+          st.seasontype === 3 || user.id === currentUser.id ? bet.fourth : {},
+        points: st.seasontype === 3 ? calcDivisionPoints(bet) : 0,
       })),
       sbBet: {
         team:
           (st.seasontype === 3 && st.week === 5) || user.id === currentUser.id
             ? user.superbowlBets[0]?.team
             : {},
-        points: sbWinner ? user.superbowlBets[0]?.team.id === sbWinner.id : 0,
+        points:
+          sbWinner && user.superbowlBets[0]?.team.id === sbWinner.id ? 20 : 0,
       },
     }));
   }

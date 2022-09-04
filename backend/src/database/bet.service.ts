@@ -210,9 +210,12 @@ export class BetDataService {
     }
     return this.divBetRepo.find({
       where: { user: { id: user }, year, league: { id: league } },
-      join: {
-        alias: 'bet',
-        leftJoinAndSelect: { team: 'bet.team', division: 'bet.division' },
+      relations: {
+        first: true,
+        second: true,
+        third: true,
+        fourth: true,
+        division: true,
       },
     });
   }
@@ -273,36 +276,45 @@ export class BetDataService {
   async setDivisionBet(
     {
       division: divisionId,
-      team: teamId,
+      teams: teamIds,
       year,
       league: leagueId,
     }: CreateDivisionBetDto,
     userId: string,
   ): Promise<DivisionBetEntity> {
-    if (!divisionId || !teamId || !leagueId || !userId) {
+    if (!divisionId || !teamIds || !leagueId || !userId) {
       throw new BadRequestException();
     }
 
-    // TODO new scoring
-    const [user, division, team, league] = await Promise.all([
-      this.userRepo.findOneOrFail({ where: { id: userId } }),
-      this.divisionRepo.findOneOrFail({ where: { name: divisionId } }),
-      this.teamRepo.findOneOrFail({ where: { id: teamId } }),
-      this.leagueRepo.findOneOrFail({ where: { id: leagueId } }),
-    ]);
+    const [user, division, first, second, third, fourth, league] =
+      await Promise.all([
+        this.userRepo.findOneOrFail({ where: { id: userId } }),
+        this.divisionRepo.findOneOrFail({ where: { name: divisionId } }),
+        this.teamRepo.findOneOrFail({ where: { id: teamIds[0] } }),
+        this.teamRepo.findOneOrFail({ where: { id: teamIds[1] } }),
+        this.teamRepo.findOneOrFail({ where: { id: teamIds[2] } }),
+        this.teamRepo.findOneOrFail({ where: { id: teamIds[3] } }),
+        this.leagueRepo.findOneOrFail({ where: { id: leagueId } }),
+      ]);
 
     if (
       new Date() < new Date(2022, 8, 11, 19) &&
       user &&
       division &&
-      team &&
+      first &&
+      second &&
+      third &&
+      fourth &&
       league
     ) {
       const bet =
         (await this.divBetRepo.findOneBy({ league, division, user })) ||
         new DivisionBetEntity();
       bet.user = user;
-      bet.team = team;
+      bet.first = first;
+      bet.second = second;
+      bet.third = third;
+      bet.fourth = fourth;
       bet.year = year;
       bet.league = league;
       bet.division = division;

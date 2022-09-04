@@ -22,12 +22,12 @@ export interface League {
 
 export interface Division {
   name: string;
-  bets: {
-    id: string;
-    team: T;
-    year: number;
-  }[];
   teams: T[];
+}
+
+export interface DivisionBet {
+  name: string;
+  teams: (T | null)[];
 }
 
 export interface Leaderboard {

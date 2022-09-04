@@ -1,6 +1,6 @@
 export class CreateDivisionBetDto {
   division: string;
-  team: string;
+  teams: string[];
   year: number;
   league: string;
 }

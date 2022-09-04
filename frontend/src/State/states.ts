@@ -12,6 +12,7 @@ import {
   Week,
   UserSettings,
   Doubler,
+  DivisionBet,
 } from "./response-types";
 import { formatLb } from "./util";
 
@@ -122,12 +123,9 @@ export const divisionsState = atom<Division[]>({
   default: selector({
     key: "divisions/Default",
     get: async ({ get }) =>
-      (
-        await fetchFromAPI<Division[]>(
-          `division?season=${get(activeLeagueState).season}`,
-          get(tokenState)
-        )
-      ).sort((divA, divB) => divA.name.localeCompare(divB.name)),
+      (await fetchFromAPI<Division[]>(`division`, get(tokenState))).sort(
+        (divA, divB) => divA.name.localeCompare(divB.name)
+      ),
   }),
 });
 
@@ -324,12 +322,12 @@ export const doublerState = selectorFamily<string, string>({
     },
 });
 
-export const divisionBetsState = atom<Record<string, string>>({
+export const divisionBetsState = atom<DivisionBet[]>({
   key: "divisionBets",
   default: selector({
     key: "divisionBets/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Record<string, string>>(
+      await fetchFromAPI<DivisionBet[]>(
         `bet/division?season=${get(activeLeagueState).season}&league=${
           get(activeLeagueState).id
         }`,

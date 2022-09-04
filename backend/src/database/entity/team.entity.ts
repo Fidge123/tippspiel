@@ -60,8 +60,17 @@ export class TeamEntity {
   @ManyToOne(() => DivisionEntity, (division) => division.teams)
   division: DivisionEntity;
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.team)
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.first)
   divisionBets: DivisionBetEntity[];
+
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.second)
+  divisionBets2: DivisionBetEntity[];
+
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.third)
+  divisionBets3: DivisionBetEntity[];
+
+  @OneToMany(() => DivisionBetEntity, (bet) => bet.fourth)
+  divisionBets4: DivisionBetEntity[];
 
   @OneToMany(() => SuperbowlBetEntity, (bet) => bet.team)
   superbowlBets: SuperbowlBetEntity[];

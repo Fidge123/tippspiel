@@ -20,7 +20,16 @@ export class DivisionBetEntity {
   division: DivisionEntity;
 
   @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
-  team: TeamEntity;
+  first: TeamEntity;
+
+  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  second: TeamEntity;
+
+  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  third: TeamEntity;
+
+  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  fourth: TeamEntity;
 
   @Column()
   year: number;

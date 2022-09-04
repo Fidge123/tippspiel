@@ -1,143 +1,99 @@
-import { useRecoilValue, useRecoilState } from "recoil";
+import { Division as DivisionType, DivisionBet } from "../State/response-types";
 
-import {
-  tokenState,
-  divisionsState,
-  teamsState,
-  divisionBetsState,
-  sbBetState,
-  activeLeagueState,
-} from "../State/states";
-import { fetchFromAPI } from "../api";
-import { Team } from "../State/response-types";
+function Division({ division, divisionBets, setDivisionBets }: Props) {
+  function getIndex(teamId: string) {
+    const index = divisionBets?.teams.findIndex((t) => t?.id === teamId) ?? -1;
 
-function Division() {
-  const token = useRecoilValue(tokenState);
-  const divisions = useRecoilValue(divisionsState);
-  const teams = useRecoilValue(teamsState);
-  const league = useRecoilValue(activeLeagueState);
-  const [divisionBets, setDivisionBets] = useRecoilState(divisionBetsState);
-  const [sbBet, setSBBet] = useRecoilState(sbBetState);
-
-  async function selectDivisionWinner(division: string, team: string) {
-    setDivisionBets({ ...divisionBets, [division]: team });
-    return await fetchFromAPI("bet/division", token, "POST", {
-      division,
-      team,
-      league: league.id,
-      year: 2022,
-    });
-  }
-
-  async function selectSBWinner(teamId: string) {
-    setSBBet(teamId);
-    return await fetchFromAPI("bet/superbowl", token, "POST", {
-      teamId,
-      league: league.id,
-      year: 2022,
-    });
+    return index === -1 ? 4 : index;
   }
 
   return (
-    <div className="flex flex-wrap sm:mx-4">
-      <article className="py-4 ml-4 w-min">
-        <h1 className="text-xl font-semibold">Wähle den Sieger je Division:</h1>
-        {divisions.map((division) => (
-          <section key={division.name}>
-            <h2 className="text-lg">{division.name}</h2>
+    <section>
+      <h2 className="text-lg">{division.name}</h2>
 
-            {[...division.teams]
-              .sort(
-                (a, b) =>
-                  b.wins - a.wins || b.ties - a.ties || a.losses - b.losses
-              )
-              .map((team) => (
-                <button
-                  key={"Div" + team.id}
-                  disabled={new Date(2022, 8, 11, 19) < new Date()}
-                  className="team-l"
-                  style={styleByTeam(
-                    team,
-                    divisionBets[division.name] === team.id
-                  )}
-                  onClick={() => selectDivisionWinner(division.name, team.id)}
-                >
-                  {team.logo && (
-                    <img
-                      src={process.env.REACT_APP_IMG_URL + team.logo}
-                      className="float-left"
-                      width="24"
-                      height="24"
-                      alt="logo home team"
-                      onError={(event: any) =>
-                        (event.target.style.display = "none")
-                      }
-                    ></img>
-                  )}
-                  <span
-                    className={
-                      divisionBets[division.name] === team.id
-                        ? "font-semibold text-gray-50"
-                        : ""
-                    }
-                  >
-                    {`${team.name} ${team.wins}-${team.losses}`}
-                    {team.ties > 0 ? "-" + team.ties : ""}
-                    {` (${
-                      division.bets.filter((bet) => bet.team.id === team.id)
-                        .length
-                    })`}
-                  </span>
-                </button>
-              ))}
-          </section>
-        ))}
-      </article>
-
-      <article className="py-4 ml-4 w-min">
-        <h1 className="text-xl font-semibold">
-          Wähle den Sieger des Superbowls:
-        </h1>
-        {teams.map((team) => (
-          <button
-            key={"SB" + team.id}
-            disabled={new Date(2022, 8, 11, 19) < new Date()}
-            className="team-l"
-            style={styleByTeam(team, sbBet === team.id)}
-            onClick={() => selectSBWinner(team.id)}
+      {[...division.teams]
+        .sort((a, b) => getIndex(a.id) - getIndex(b.id))
+        // .sort((a, b) => a.playoffSeed - b.playoffSeed)
+        .map((team, i) => (
+          <div
+            key={"Div" + team.id}
+            className="flex items-center justify-between pr-0 rounded team-l"
+            style={{
+              borderColor: `#${team?.color2}ff`,
+              backgroundColor: `#${team?.color1}aa`,
+            }}
           >
             {team.logo && (
               <img
                 src={process.env.REACT_APP_IMG_URL + team.logo}
-                className="float-left"
                 width="24"
                 height="24"
                 alt="logo home team"
                 onError={(event: any) => (event.target.style.display = "none")}
               ></img>
             )}
-            <span
-              className={sbBet === team.id ? "font-semibold text-gray-50" : ""}
-            >
-              {team.name}
+            <span className="text-gray-50">
+              <span className="font-semibold">{team.name}</span>
+              {` ${team.wins}-${team.losses}${
+                team.ties > 0 ? "-" + team.ties : ""
+              }`}
             </span>
-          </button>
+            <span className="space-x-0.5">
+              <button
+                className="p-0 text-xl bg-transparent border-0 disabled:opacity-50"
+                disabled={new Date(2022, 8, 11, 19) < new Date() || i === 0}
+                onClick={() => {
+                  setDivisionBets({
+                    name: division.name,
+                    teams: [...division.teams].sort((a, b) => {
+                      let aIndex = getIndex(a.id);
+                      let bIndex = getIndex(b.id);
+                      if (a.id === team.id) {
+                        aIndex -= 1.1;
+                      }
+                      if (b.id === team.id) {
+                        bIndex -= 1.1;
+                      }
+                      return aIndex - bIndex;
+                    }),
+                  });
+                }}
+              >
+                ⬆️
+              </button>
+              <button
+                className="text-xl bg-transparent border-0 disabled:opacity-50"
+                disabled={new Date(2022, 8, 11, 19) < new Date() || i === 3}
+                onClick={() => {
+                  setDivisionBets({
+                    name: division.name,
+                    teams: [...division.teams].sort((a, b) => {
+                      let aIndex = getIndex(a.id);
+                      let bIndex = getIndex(b.id);
+                      if (a.id === team.id) {
+                        aIndex += 1.1;
+                      }
+                      if (b.id === team.id) {
+                        bIndex += 1.1;
+                      }
+                      return aIndex - bIndex;
+                    }),
+                  });
+                }}
+              >
+                ⬇️
+              </button>
+            </span>
+          </div>
         ))}
-      </article>
-    </div>
+    </section>
   );
 }
 
-function styleByTeam(team: Team | undefined, selected: boolean) {
-  return selected
-    ? {
-        borderColor: `#${team?.color2}ff`,
-        backgroundColor: `#${team?.color1}aa`,
-        opacity: 1,
-      }
-    : {
-        borderColor: `#${team?.color1 || "000000"}ff`,
-      };
+interface Props {
+  division: DivisionType;
+  divisionBets?: DivisionBet;
+  setDivisionBets: (teams: DivisionBet) => void;
 }
 
 export default Division;

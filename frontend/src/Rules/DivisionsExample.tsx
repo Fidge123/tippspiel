@@ -42,7 +42,6 @@ function DivisionExample() {
             style={{
               borderColor: `#${team?.color2}ff`,
               backgroundColor: `#${team?.color1}aa`,
-              opacity: 1,
             }}
           >
             {team.logo && (

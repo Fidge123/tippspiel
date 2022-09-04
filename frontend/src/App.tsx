@@ -17,7 +17,7 @@ const Verify = lazy(() => import("./Verify/Verify"));
 const Impressum = lazy(() => import("./Impressum/Impressum"));
 const Account = lazy(() => import("./Account/Account"));
 const Leagues = lazy(() => import("./Leagues/Leagues"));
-const Division = lazy(() => import("./Division/Division"));
+const DivisionAndSbBet = lazy(() => import("./Division/DivisionAndSbBet"));
 const Rules = lazy(() => import("./Rules/Rules"));
 
 function Placeholder({ resetErrorBoundary }: FallbackProps) {
@@ -129,7 +129,7 @@ function App() {
                 path="/division"
                 element={
                   <LoggedInRoute>
-                    <Division></Division>
+                    <DivisionAndSbBet></DivisionAndSbBet>
                   </LoggedInRoute>
                 }
               ></Route>
