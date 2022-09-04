@@ -2,7 +2,9 @@ import { Division as DivisionType, DivisionBet } from "../State/response-types";
 
 function Division({ division, divisionBets, setDivisionBets }: Props) {
   function getIndex(teamId: string) {
-    const index = divisionBets?.teams.findIndex((t) => t?.id === teamId) ?? -1;
+    const index =
+      divisionBets?.teams.findIndex((t) => t?.id === teamId) ??
+      division.teams.findIndex((t) => t?.id === teamId);
 
     return index === -1 ? 4 : index;
   }
