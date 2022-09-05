@@ -1,24 +1,18 @@
 import { FormEvent, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { fetchFromAPI, validateToken, refresh } from "../api";
-import { leaguesState, tokenState } from "../State/states";
+import { useRecoilState } from "recoil";
+import { fetchFromAPI } from "../api";
+import { leaguesState } from "../State/states";
 import LeagueRow from "./League";
 
 function Leagues() {
   const [leagueName, setLeagueName] = useState("");
   const [leagues, setLeagues] = useRecoilState(leaguesState);
-  const token = useRecoilValue(tokenState);
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault();
-    const res = await fetchFromAPI(
-      "leagues/create",
-      validateToken(token) ? token : await refresh(),
-      "POST",
-      {
-        name: leagueName,
-      }
-    );
+    const res = await fetchFromAPI("leagues/create", "POST", {
+      name: leagueName,
+    });
     setLeagues([...leagues, res]);
     return res;
   }

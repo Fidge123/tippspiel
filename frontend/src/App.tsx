@@ -1,12 +1,17 @@
-import { Suspense, lazy, useEffect } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { Route, Link, Routes, Navigate, useLocation } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import {
+  Route,
+  Link,
+  Routes,
+  Navigate,
+  useLocation,
+  NavLink,
+} from "react-router-dom";
 
-import { tokenState } from "./State/states";
 import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
-import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-import { refresh } from "./api";
+import { ErrorBoundary } from "react-error-boundary";
 import Hamburger from "./Hamburger";
+import { isLoggedIn } from "./api";
 
 const Leaderboard = lazy(() => import("./Leaderboard/Leaderboard"));
 const Schedule = lazy(() => import("./Schedule/Schedule"));
@@ -20,36 +25,34 @@ const Leagues = lazy(() => import("./Leagues/Leagues"));
 const DivisionAndSbBet = lazy(() => import("./Division/DivisionAndSbBet"));
 const Rules = lazy(() => import("./Rules/Rules"));
 
-function Placeholder({ resetErrorBoundary }: FallbackProps) {
-  const setToken = useSetRecoilState(tokenState);
-  useEffect(() => {
-    (async () => {
-      setToken(await refresh());
-      resetErrorBoundary();
-    })();
-  }, [setToken, resetErrorBoundary]);
-  return <div>Error!</div>;
+function Placeholder() {
+  return (
+    <div className="flex flex-col items-center justify-center w-screen h-60">
+      <p className="p-4">Ein Fehler ist aufgetreten.</p>
+      <button onClick={() => window.location.reload()}>Seite neu laden</button>
+    </div>
+  );
 }
 
 function App() {
-  const [token] = useRecoilState(tokenState);
+  const loggedIn = isLoggedIn();
   const location = useLocation();
 
   return (
     <div className="w-screen h-screen">
       <div className="fixed z-50 flex items-center justify-between w-screen h-12 px-4 bg-gray-900 pointer-events-auto">
         <nav className="w-full space-x-4 font-semibold text-white">
-          {token ? (
+          {loggedIn ? (
             <>
-              <Link to="/">Tippspiel</Link>
-              <Link to="/leaderboard">Tabelle</Link>
-              <Link to="/division">Divisions</Link>
+              <NavLink to="/">Tippspiel</NavLink>
+              <NavLink to="/leaderboard">Tabelle</NavLink>
+              <NavLink to="/division">Divisions</NavLink>
             </>
           ) : (
             ""
           )}
         </nav>
-        {token ? (
+        {loggedIn ? (
           <Hamburger />
         ) : location.pathname === "/login" ? (
           <Link to="/register">
@@ -62,7 +65,7 @@ function App() {
         )}
       </div>
       <div className="min-h-full pt-12 dark:text-gray-100">
-        <ErrorBoundary FallbackComponent={Placeholder}>
+        <ErrorBoundary FallbackComponent={Placeholder} resetKeys={[location]}>
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route

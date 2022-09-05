@@ -1,26 +1,20 @@
 import { FormEvent, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { fetchFromAPI, validateToken, refresh } from "../api";
+import { useRecoilState } from "recoil";
+import { fetchFromAPI, getDecodedToken } from "../api";
 import { League } from "../State/response-types";
-import { activeLeagueState, tokenState, userIdState } from "../State/states";
+import { activeLeagueState } from "../State/states";
 
 function LeagueRow({ league, setLeague }: Props) {
   const [email, setEmail] = useState("");
-  const me = useRecoilValue(userIdState);
+  const me = getDecodedToken().id;
   const [activeLeague, setActiveLeague] = useRecoilState(activeLeagueState);
-  const token = useRecoilValue(tokenState);
 
   async function handleAdd(e: FormEvent) {
     e.preventDefault();
-    const res = await fetchFromAPI(
-      "leagues/add",
-      validateToken(token) ? token : await refresh(),
-      "POST",
-      {
-        leagueId: league.id,
-        email,
-      }
-    );
+    const res = await fetchFromAPI("leagues/add", "POST", {
+      leagueId: league.id,
+      email,
+    });
     setLeague({ ...league, members: res.members });
     return res;
   }

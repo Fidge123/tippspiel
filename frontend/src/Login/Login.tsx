@@ -1,24 +1,37 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
 
-import { BASE_URL } from "../api";
-import { tokenState } from "../State/states";
+import { BASE_URL, setToken } from "../api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [credentials, setCredentials] = useState<{
-    email: string;
-    password: string;
-  }>();
   const navigate = useNavigate();
-  const setToken = useSetRecoilState(tokenState);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setCredentials({ email, password });
+    try {
+      const res = await fetch(BASE_URL + "user/login", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (res.ok) {
+        const token = await res.json();
+        setToken(token);
+        navigate("/", { replace: true });
+      } else {
+        const error = await res.json();
+        setPassword("");
+        setError(error.message);
+      }
+    } catch (err: any) {
+      setError(err);
+    }
   };
 
   async function forgot() {
@@ -44,33 +57,6 @@ export default function Login() {
       setError(err);
     }
   }
-
-  useEffect(() => {
-    (async () => {
-      if (credentials) {
-        try {
-          const res = await fetch(BASE_URL + "user/login", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(credentials),
-          });
-          if (res.ok) {
-            const token = await res.json();
-            setToken(token);
-          } else {
-            const error = await res.json();
-            setPassword("");
-            setError(error.message);
-          }
-        } catch (err: any) {
-          setError(err);
-        }
-      }
-    })();
-  }, [credentials, setToken]);
 
   return (
     <div className="flex flex-col items-center">

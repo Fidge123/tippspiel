@@ -1,31 +1,20 @@
 import { useRecoilState, useRecoilValue } from "recoil";
-import { fetchFromAPI, refresh, validateToken } from "../api";
+import { fetchFromAPI } from "../api";
 import { Team } from "../State/response-types";
-import {
-  activeLeagueState,
-  sbBetState,
-  teamsState,
-  tokenState,
-} from "../State/states";
+import { activeLeagueState, sbBetState, teamsState } from "../State/states";
 
 function SbBet() {
-  const token = useRecoilValue(tokenState);
   const league = useRecoilValue(activeLeagueState);
 
   const teams = useRecoilValue(teamsState);
   const [sbBet, setSBBet] = useRecoilState(sbBetState);
 
   async function selectSBWinner(teamId: string) {
-    const res = await fetchFromAPI(
-      "bet/superbowl",
-      validateToken(token) ? token : await refresh(),
-      "POST",
-      {
-        teamId,
-        leagueId: league.id,
-        year: 2022,
-      }
-    );
+    const res = await fetchFromAPI("bet/superbowl", "POST", {
+      teamId,
+      leagueId: league.id,
+      year: 2022,
+    });
     setSBBet(teamId);
     return res;
   }

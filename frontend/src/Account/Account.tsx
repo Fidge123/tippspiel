@@ -1,16 +1,14 @@
 import { FormEvent, useState } from "react";
 import { useRecoilState } from "recoil";
-import {
-  hideByDefaultState,
-  nameState,
-  sendReminderState,
-} from "../State/states";
+import { fetchFromAPI, getDecodedToken, refresh } from "../api";
+import { hideByDefaultState, sendReminderState } from "../State/states";
 
 function Account() {
-  const [name, setName] = useRecoilState(nameState);
+  const name = getDecodedToken().name;
   const [localName, setLocalName] = useState(name);
   const [hideByDefault, setHideByDefault] = useRecoilState(hideByDefaultState);
   const [sendReminder, setSendReminder] = useRecoilState(sendReminderState);
+  const [error, setError] = useState<string | undefined>();
   // const [email, setEmail] = useState("");
   // const [oldPassword, setOldPassword] = useState("");
   // const [newPassword, setNewPassword] = useState("");
@@ -19,10 +17,25 @@ function Account() {
     <article className="p-4 m-auto space-y-4 max-w-prose">
       <h1 className="pb-4 text-xl font-bold">Account Details</h1>
       <section className="space-y-8">
+        {error && <p>🚨 Ein Fehler ist aufgetreten: {error}</p>}
         <form
-          onSubmit={(e: FormEvent) => {
+          onSubmit={async (e: FormEvent) => {
+            setError(undefined);
             e.preventDefault();
-            setName(localName);
+            try {
+              await fetchFromAPI(
+                "user/change/name",
+                "POST",
+                {
+                  name: localName,
+                },
+                true
+              );
+              await refresh(true);
+            } catch {
+              setError("Name konnte nicht geändert werden");
+              setLocalName(name);
+            }
           }}
         >
           <label htmlFor="username-input">
@@ -98,14 +111,19 @@ function Account() {
         </label>
         <h1 className="font-bold">Erinnerungsmails</h1>
         <input
-          id="spoiler-input"
+          id="email-reminder-input"
           className="mr-4"
           type="checkbox"
           checked={sendReminder}
-          onChange={(e) => setSendReminder(e.target.checked)}
+          onChange={(e) => {
+            setError(undefined);
+            setSendReminder(e.target.checked);
+          }}
           required
         />
-        <label htmlFor="spoiler-input">Erinnerungsmails aktivieren</label>
+        <label htmlFor="email-reminder-input">
+          Erinnerungsmails aktivieren
+        </label>
       </section>
     </article>
   );

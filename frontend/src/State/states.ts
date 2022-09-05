@@ -1,5 +1,5 @@
 import { atom, DefaultValue, selector, selectorFamily } from "recoil";
-import { refresh, fetchFromAPI, validateToken } from "../api";
+import { fetchFromAPI } from "../api";
 import { ApiBet } from "../Schedule/types";
 import {
   Division,
@@ -16,89 +16,6 @@ import {
 } from "./response-types";
 import { formatLb } from "./util";
 
-export const userIdState = selector<string>({
-  key: "accessToken/id",
-  get: ({ get }) => {
-    const payload = JSON.parse(window.atob(get(tokenState).split(".")[1]));
-    return payload.id;
-  },
-});
-
-export const nameState = selector<string>({
-  key: "accessToken/name",
-  get: ({ get }) => {
-    const payload = JSON.parse(window.atob(get(tokenState).split(".")[1]));
-    return payload.name;
-  },
-  set: ({ get, reset }, newValue) => {
-    if (newValue instanceof DefaultValue) {
-      throw new Error("Can't reset name");
-    }
-
-    fetchFromAPI(
-      "user/change/name",
-      get(tokenState),
-      "POST",
-      {
-        name: newValue,
-      },
-      true
-    );
-
-    reset(tokenState);
-  },
-});
-
-async function getDefaultToken() {
-  const storedToken = window.localStorage.getItem("access_token") ?? "";
-  const defaultToken = validateToken(storedToken)
-    ? storedToken
-    : await refresh();
-  if (!validateToken(defaultToken)) {
-    console.error("Something is wrong with the token!");
-  }
-  return defaultToken;
-}
-
-export const tokenState = atom<string>({
-  key: "accessToken",
-  default: getDefaultToken(),
-  effects: [
-    ({ setSelf, onSet }) => {
-      const item = window.localStorage.getItem("access_token");
-      const refreshSelf = async () => {
-        const token = await refresh();
-        if (token && !token.startsWith("[object")) {
-          setSelf(token);
-        }
-      };
-
-      if (item) {
-        if (validateToken(item)) {
-          setSelf(item);
-        } else {
-          refreshSelf();
-        }
-      }
-
-      onSet((newValue, oldValue, isReset) => {
-        if (isReset) {
-          fetchFromAPI(
-            "user/logout",
-            oldValue as string,
-            "POST",
-            undefined,
-            true
-          );
-          window.localStorage.removeItem("access_token");
-        } else {
-          window.localStorage.setItem("access_token", newValue);
-        }
-      });
-    },
-  ],
-});
-
 export const activeLeagueState = selector<League>({
   key: "leagues/Active",
   get: ({ get }) => {
@@ -112,7 +29,6 @@ export const activeLeagueState = selector<League>({
       newValue instanceof DefaultValue ? get(leaguesState)[0].id : newValue.id;
     fetchFromAPI(
       "user/league",
-      get(tokenState),
       "POST",
       {
         league: id,
@@ -131,8 +47,7 @@ export const leaguesState = atom<League[]>({
   key: "leagues",
   default: selector({
     key: "leagues/Default",
-    get: async ({ get }) =>
-      await fetchFromAPI<League[]>("leagues", get(tokenState)),
+    get: async ({ get }) => await fetchFromAPI<League[]>("leagues"),
   }),
 });
 
@@ -141,8 +56,8 @@ export const divisionsState = atom<Division[]>({
   default: selector({
     key: "divisions/Default",
     get: async ({ get }) =>
-      (await fetchFromAPI<Division[]>(`division`, get(tokenState))).sort(
-        (divA, divB) => divA.name.localeCompare(divB.name)
+      (await fetchFromAPI<Division[]>(`division`)).sort((divA, divB) =>
+        divA.name.localeCompare(divB.name)
       ),
   }),
 });
@@ -173,8 +88,7 @@ export const leaderboardState = atom<Leaderboard[]>({
         await fetchFromAPI(
           `leaderboard?season=${get(activeLeagueState).season}&league=${
             get(activeLeagueState).id
-          }`,
-          get(tokenState)
+          }`
         )
       ),
   }),
@@ -185,10 +99,7 @@ export const weeksState = atom<Week[]>({
   default: selector({
     key: "weeks/Default",
     get: async ({ get }) =>
-      await fetchFromAPI<Week[]>(
-        `schedule/${get(activeLeagueState).season}`,
-        get(tokenState)
-      ),
+      await fetchFromAPI<Week[]>(`schedule/${get(activeLeagueState).season}`),
   }),
 });
 
@@ -229,8 +140,7 @@ export const statsState = atom<Stats>({
       await fetchFromAPI<Stats>(
         `leaderboard/games?season=${get(activeLeagueState).season}&league=${
           get(activeLeagueState).id
-        }`,
-        get(tokenState)
+        }`
       ),
   }),
 });
@@ -251,8 +161,7 @@ export const allGameBetsState = atom<Bet[]>({
       await fetchFromAPI<Bet[]>(
         `bet?season=${get(activeLeagueState).season}&league=${
           get(activeLeagueState).id
-        }`,
-        get(tokenState)
+        }`
       ),
   }),
 });
@@ -285,7 +194,7 @@ export const gameBetsState = selectorFamily<Bet, string>({
             pointDiff: newValue.points,
             leagueId: get(activeLeagueState).id,
           };
-          fetchFromAPI("bet", get(tokenState), "POST", body, true);
+          fetchFromAPI("bet", "POST", body, true);
         }
       }
     },
@@ -299,8 +208,7 @@ export const doublersState = atom<Doubler[]>({
       await fetchFromAPI<Doubler[]>(
         `bet/doubler?season=${get(activeLeagueState).season}&league=${
           get(activeLeagueState).id
-        }`,
-        get(tokenState)
+        }`
       ),
   }),
 });
@@ -317,7 +225,6 @@ export const doublerState = selectorFamily<string, string>({
       if (newValue instanceof DefaultValue) {
         fetchFromAPI(
           "bet/doubler",
-          get(tokenState),
           "DELETE",
           {
             league: get(activeLeagueState).id,
@@ -336,7 +243,6 @@ export const doublerState = selectorFamily<string, string>({
       ) {
         fetchFromAPI(
           "bet/doubler",
-          get(tokenState),
           "POST",
           {
             league: get(activeLeagueState).id,
@@ -364,8 +270,7 @@ export const divisionBetsState = atom<DivisionBet[]>({
       await fetchFromAPI<DivisionBet[]>(
         `bet/division?season=${get(activeLeagueState).season}&league=${
           get(activeLeagueState).id
-        }`,
-        get(tokenState)
+        }`
       ),
   }),
 });
@@ -379,8 +284,7 @@ export const sbBetState = atom<string>({
         await fetchFromAPI(
           `bet/superbowl?season=${get(activeLeagueState).season}&league=${
             get(activeLeagueState).id
-          }`,
-          get(tokenState)
+          }`
         )
       )?.team?.id,
   }),
@@ -395,7 +299,6 @@ export const hideByDefaultState = selector<boolean>({
     const hideByDefault = newValue instanceof DefaultValue ? true : newValue;
     fetchFromAPI(
       "user/hidden/default",
-      get(tokenState),
       "POST",
       {
         hideByDefault,
@@ -419,7 +322,6 @@ export const sendReminderState = selector<boolean>({
     const sendReminder = newValue instanceof DefaultValue ? true : newValue;
     fetchFromAPI(
       "user/send-reminder",
-      get(tokenState),
       "POST",
       {
         sendReminder,
@@ -453,7 +355,6 @@ export const hiddenState = selectorFamily<boolean, string>({
 
       fetchFromAPI(
         "user/hidden",
-        get(tokenState),
         "POST",
         {
           hidden,
@@ -476,8 +377,7 @@ export const userState = atom<UserSettings>({
   key: "user",
   default: selector({
     key: "user/Default",
-    get: async ({ get }) =>
-      await fetchFromAPI<UserSettings>("user/settings", get(tokenState)),
+    get: async ({ get }) => await fetchFromAPI<UserSettings>("user/settings"),
   }),
 });
 

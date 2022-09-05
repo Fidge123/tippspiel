@@ -1,11 +1,9 @@
 import { useState, Suspense, lazy } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useResetRecoilState } from "recoil";
-import { tokenState } from "./State/states";
+import { fetchFromAPI, resetToken } from "./api";
 const LeagueDisplay = lazy(() => import("./LeagueDisplay"));
 
 function Hamburger() {
-  const resetToken = useResetRecoilState(tokenState);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -76,7 +74,8 @@ function Hamburger() {
           </li>
           <li>
             <button
-              onClick={() => {
+              onClick={async () => {
+                await fetchFromAPI("user/logout", "POST", undefined, true);
                 resetToken();
                 navigate("/login", { replace: true });
               }}
