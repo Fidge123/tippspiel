@@ -295,17 +295,26 @@ export const doublerState = selectorFamily<string, string>({
   set:
     (weekId) =>
     ({ set, get }, newValue) => {
+      if (newValue instanceof DefaultValue) {
+        fetchFromAPI(
+          "bet/doubler",
+          get(tokenState),
+          "DELETE",
+          {
+            league: get(activeLeagueState).id,
+            week: weekId,
+          },
+          true
+        );
+        set(
+          doublersState,
+          get(doublersState).filter(({ week }) => week !== weekId)
+        );
+      }
       if (
         !(newValue instanceof DefaultValue) &&
         get(doublerState(weekId)) !== newValue
       ) {
-        set(doublersState, [
-          ...get(doublersState).filter(({ week }) => week !== weekId),
-          {
-            game: newValue,
-            week: weekId,
-          },
-        ]);
         fetchFromAPI(
           "bet/doubler",
           get(tokenState),
@@ -317,6 +326,13 @@ export const doublerState = selectorFamily<string, string>({
           },
           true
         );
+        set(doublersState, [
+          ...get(doublersState).filter(({ week }) => week !== weekId),
+          {
+            game: newValue,
+            week: weekId,
+          },
+        ]);
       }
     },
 });

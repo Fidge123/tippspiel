@@ -4,6 +4,11 @@ export class CreateDoublerDto {
   league: string;
 }
 
+export class DeleteDoublerDto {
+  week: string;
+  league: string;
+}
+
 export class GetDoublerDto {
   game: string;
   week: string;

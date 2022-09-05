@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDivisionBetDto } from '../bet/division.dto';
-import { MoreThan, Repository } from 'typeorm';
+import { DeleteResult, MoreThan, Repository } from 'typeorm';
 
 import { CreateBetDto } from '../bet/bet.dto';
 
@@ -18,7 +18,7 @@ import {
   LeagueEntity,
 } from './entity';
 import { CreateSBBetDto } from 'src/bet/superbowl.dto';
-import { CreateDoublerDto } from 'src/bet/doubler.dto';
+import { CreateDoublerDto, DeleteDoublerDto } from 'src/bet/doubler.dto';
 
 @Injectable()
 export class BetDataService {
@@ -385,6 +385,40 @@ export class BetDataService {
       bet.league = league;
       bet.week = week;
       return this.doublerRepo.save(bet);
+    } else {
+      throw new BadRequestException();
+    }
+  }
+
+  async deleteBetDoubler(
+    { league: leagueId, week: weekId }: DeleteDoublerDto,
+    userId: string,
+  ): Promise<void> {
+    if (!leagueId || !weekId || !userId) {
+      throw new BadRequestException();
+    }
+
+    const [y, st, w] = weekId.split('-').map((n) => parseInt(n, 10));
+
+    const [user, league, week] = await Promise.all([
+      this.userRepo.findOneByOrFail({ id: userId }),
+      this.leagueRepo.findOneByOrFail({ id: leagueId }),
+      this.weekRepo.findOneByOrFail({ year: y, seasontype: st, week: w }),
+    ]);
+    const betDoubler = await this.doublerRepo
+      .createQueryBuilder('doubler')
+      .where('doubler.user = :user', { user: user.id })
+      .andWhere('doubler.weekYear = :year', { year: week.year })
+      .andWhere('doubler.weekSeasontype = :st', { st: week.seasontype })
+      .andWhere('doubler.weekWeek = :week', { week: week.week })
+      .andWhere('doubler.league = :league', { league: league.id })
+      .leftJoinAndSelect('doubler.game', 'game')
+      .getOne();
+
+    if (user && betDoubler && new Date() < betDoubler?.game?.date) {
+      const bet = betDoubler;
+      this.doublerRepo.delete(bet);
+      return;
     } else {
       throw new BadRequestException();
     }

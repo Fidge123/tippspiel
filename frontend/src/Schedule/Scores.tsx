@@ -1,9 +1,10 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { doublerState, hiddenState } from "../State/states";
 import { Game } from "./types";
 
 function Scores({ game, selected, weekId }: Props) {
   const [doubler, setDoubler] = useRecoilState(doublerState(weekId));
+  const resetDoubler = useResetRecoilState(doublerState(weekId));
   const hidden = useRecoilValue(hiddenState(weekId));
 
   const inProgress = [
@@ -37,7 +38,11 @@ function Scores({ game, selected, weekId }: Props) {
           "@"
         )
       ) : (
-        <button onClick={() => setDoubler(game.id)}>
+        <button
+          onClick={() =>
+            doubler === game.id ? resetDoubler() : setDoubler(game.id)
+          }
+        >
           {doubler === game.id ? "🌟" : "@"}
         </button>
       )}

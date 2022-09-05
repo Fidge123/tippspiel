@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Query,
+  Delete,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { CurrentUser, User } from '../user.decorator';
@@ -12,7 +20,11 @@ import {
 } from '../database/entity';
 import { CreateBetDto } from './bet.dto';
 import { CreateDivisionBetDto } from './division.dto';
-import { CreateDoublerDto, GetDoublerDto } from './doubler.dto';
+import {
+  CreateDoublerDto,
+  DeleteDoublerDto,
+  GetDoublerDto,
+} from './doubler.dto';
 import { CreateSBBetDto } from './superbowl.dto';
 
 @Controller('bet')
@@ -125,9 +137,18 @@ export class BetController {
   @UseGuards(AuthGuard('jwt'))
   @Post('doubler')
   async setBetDoublers(
-    @Body() createBet: CreateDoublerDto,
+    @Body() createDoubler: CreateDoublerDto,
     @CurrentUser() user: User,
   ): Promise<BetDoublerEntity> {
-    return this.databaseService.setBetDoubler(createBet, user.id);
+    return this.databaseService.setBetDoubler(createDoubler, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete('doubler')
+  async removeBetDoublers(
+    @Body() deleteDoubler: DeleteDoublerDto,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.databaseService.deleteBetDoubler(deleteDoubler, user.id);
   }
 }
