@@ -41,6 +41,10 @@ function DivisionAndSbBet() {
     <div className="flex flex-wrap sm:mx-4">
       <article className="py-4 ml-4 w-min">
         <h1 className="text-xl font-semibold">Wähle den Sieger je Division:</h1>
+        <p>
+          Sortiere die Teams mit ⬆️ und ⬇️. Für Teams mit weißem Hintergrund
+          wurde noch kein Tipp übermittelt.
+        </p>
         {divisions.map((division) => (
           <Division
             key={division.name}

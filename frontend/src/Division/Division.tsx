@@ -1,4 +1,8 @@
-import { Division as DivisionType, DivisionBet } from "../State/response-types";
+import {
+  Division as DivisionType,
+  DivisionBet,
+  Team,
+} from "../State/response-types";
 
 function Division({ division, divisionBets, setDivisionBets }: Props) {
   function getIndex(teamId: string) {
@@ -12,7 +16,6 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
   return (
     <section>
       <h2 className="text-lg">{division.name}</h2>
-
       {[...division.teams]
         .sort((a, b) => getIndex(a.id) - getIndex(b.id))
         // .sort((a, b) => a.playoffSeed - b.playoffSeed)
@@ -20,10 +23,10 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
           <div
             key={"Div" + team.id}
             className="flex items-center justify-between pr-0 rounded team-l"
-            style={{
-              borderColor: `#${team?.color2}ff`,
-              backgroundColor: `#${team?.color1}aa`,
-            }}
+            style={styleByTeam(
+              team,
+              divisionBets?.teams.some((t) => t?.id === team.id)
+            )}
           >
             {team.logo && (
               <img
@@ -34,7 +37,13 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
                 onError={(event: any) => (event.target.style.display = "none")}
               ></img>
             )}
-            <span className="text-gray-50">
+            <span
+              className={
+                divisionBets?.teams.some((t) => t?.id === team.id)
+                  ? "text-gray-50"
+                  : ""
+              }
+            >
               <span className="font-semibold">{team.name}</span>
               {` ${team.wins}-${team.losses}${
                 team.ties > 0 ? "-" + team.ties : ""
@@ -96,6 +105,18 @@ interface Props {
   division: DivisionType;
   divisionBets?: DivisionBet;
   setDivisionBets: (teams: DivisionBet) => void;
+}
+
+function styleByTeam(team: Team | undefined, betSubmitted: boolean = false) {
+  return betSubmitted
+    ? {
+        borderColor: `#${team?.color2}ff`,
+        backgroundColor: `#${team?.color1}aa`,
+        opacity: 1,
+      }
+    : {
+        borderColor: `#${team?.color1 || "000000"}ff`,
+      };
 }
 
 export default Division;
