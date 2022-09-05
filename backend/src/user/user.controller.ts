@@ -47,6 +47,13 @@ export class UserController {
     return res.json(access_token);
   }
 
+  @UseGuards(AuthGuard('jwt'), ThrottlerGuard)
+  @Post('logout')
+  async logout(@Res() res: Response) {
+    res.clearCookie('refreshToken');
+    return res.sendStatus(200);
+  }
+
   @UseGuards(AuthGuard('refresh'), ThrottlerGuard)
   @Post('refresh')
   async refresh(@Req() req: RequestWithUser, @Res() res: Response) {

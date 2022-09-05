@@ -1,6 +1,6 @@
 Hallo {{name}},
 
-du hast gerade einen Account auf https://6v4.de/tippspiel erstellt.
+du hast gerade einen Account auf https://nfl-tippspiel.de/ erstellt.
 Bitte verifiziere deinen Account indem du auf den unten stehenden Link klickst.
 
 {{link}}

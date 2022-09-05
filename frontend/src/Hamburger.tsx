@@ -1,11 +1,11 @@
 import { useState, Suspense, lazy } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useResetRecoilState } from "recoil";
 import { tokenState } from "./State/states";
 const LeagueDisplay = lazy(() => import("./LeagueDisplay"));
 
 function Hamburger() {
-  const setToken = useSetRecoilState(tokenState);
+  const resetToken = useResetRecoilState(tokenState);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -77,7 +77,7 @@ function Hamburger() {
           <li>
             <button
               onClick={() => {
-                setToken("");
+                resetToken();
                 navigate("/login", { replace: true });
               }}
             >

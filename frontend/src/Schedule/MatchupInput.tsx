@@ -19,22 +19,26 @@ function MatchupInput({ game }: Props) {
       type="number"
       disabled={!bet.selected || new Date(game.date) < new Date()}
       value={points ?? ""}
+      min={1}
+      max={5}
       onChange={(ev) => {
         const points = isNaN(parseInt(ev.target.value, 10))
-          ? undefined
+          ? setPoints(undefined)
           : parseInt(ev.target.value, 10);
-        setPoints(points);
 
-        if (timeoutId) {
-          clearTimeout(timeoutId);
+        if (points && points <= 5 && points >= 1) {
+          setPoints(points);
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          setTimeoutId(
+            setTimeout(() => {
+              if (bet.points !== points) {
+                setBet({ ...bet, points });
+              }
+            }, 1500)
+          );
         }
-        setTimeoutId(
-          setTimeout(() => {
-            if (bet.points !== points) {
-              setBet({ ...bet, points });
-            }
-          }, 1500)
-        );
       }}
       onBlur={() => setBet({ ...bet, points })}
     ></input>

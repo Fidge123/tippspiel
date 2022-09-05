@@ -23,7 +23,7 @@
     "extends": "react-app"
   },
   "proxy": "http://localhost:5001/",
-  "homepage": "https://6v4.de/tippspiel/",
+  "homepage": "https://nfl-tippspiel.de/tippspiel/",
   "browserslist": {
     "production": [
       ">0.2%",

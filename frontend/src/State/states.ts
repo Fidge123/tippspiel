@@ -49,9 +49,21 @@ export const nameState = selector<string>({
   },
 });
 
+async function getDefaultToken() {
+  const storedToken = window.localStorage.getItem("access_token") ?? "";
+  const defaultToken = validateToken(storedToken)
+    ? storedToken
+    : await refresh();
+  if (!validateToken(defaultToken)) {
+    console.error("Something is wrong with the token!");
+  }
+  window.localStorage.setItem("access_token", defaultToken);
+  return defaultToken;
+}
+
 export const tokenState = atom<string>({
   key: "accessToken",
-  default: window.localStorage.getItem("access_token") || "",
+  default: getDefaultToken(),
   effects: [
     ({ setSelf, onSet }) => {
       const item = window.localStorage.getItem("access_token");
@@ -71,11 +83,20 @@ export const tokenState = atom<string>({
         }
       }
 
-      onSet((newValue, _, isReset) =>
-        isReset
-          ? refreshSelf()
-          : window.localStorage.setItem("access_token", newValue)
-      );
+      onSet((newValue, oldValue, isReset) => {
+        if (isReset) {
+          fetchFromAPI(
+            "user/logout",
+            oldValue as string,
+            "POST",
+            undefined,
+            true
+          );
+          window.localStorage.removeItem("access_token");
+        } else {
+          window.localStorage.setItem("access_token", newValue);
+        }
+      });
     },
   ],
 });

@@ -42,6 +42,10 @@ export async function refresh() {
 }
 
 export function validateToken(token: string): boolean {
-  const payload = JSON.parse(window.atob(token.split(".")[1]));
-  return new Date(payload.exp * 1000) >= new Date();
+  try {
+    const payload = JSON.parse(window.atob(token.split(".")[1]));
+    return new Date(payload.exp * 1000) >= new Date();
+  } catch {
+    return token === "";
+  }
 }

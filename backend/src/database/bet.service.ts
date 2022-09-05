@@ -428,7 +428,7 @@ export class BetDataService {
     { gameId, pointDiff, winner, leagueId }: CreateBetDto,
     userId: string,
   ): Promise<BetEntity> {
-    if (!gameId || !leagueId || !userId) {
+    if (!gameId || !leagueId || !userId || pointDiff < 1 || pointDiff > 5) {
       throw new BadRequestException();
     }
     const [user, game, league] = await Promise.all([
