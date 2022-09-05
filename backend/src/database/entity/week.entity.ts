@@ -12,13 +12,13 @@ import { GameEntity } from './game.entity';
 
 @Entity({ name: 'week' })
 export class WeekEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int4' })
   year: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int4' })
   seasontype: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int4' })
   week: number;
 
   @Column()

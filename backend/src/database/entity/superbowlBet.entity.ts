@@ -21,7 +21,7 @@ export class SuperbowlBetEntity {
   @ManyToOne(() => UserEntity, (user) => user.superbowlBets)
   user: UserEntity;
 
-  @Column()
+  @Column({ type: 'int4' })
   year: number;
 
   @ManyToOne(() => LeagueEntity, (league) => league.superbowlBets)

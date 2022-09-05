@@ -22,7 +22,7 @@ export class LeagueEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'int4' })
   season: number;
 
   @ManyToMany(() => UserEntity, (user) => user.memberIn, { cascade: true })

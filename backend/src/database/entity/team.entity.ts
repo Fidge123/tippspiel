@@ -30,25 +30,25 @@ export class TeamEntity {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   playoffSeed?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   wins?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   losses?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   ties?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   pointsFor?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   pointsAgainst?: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int4', nullable: true })
   streak?: number;
 
   @Column({ nullable: true })

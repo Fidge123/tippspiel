@@ -33,6 +33,6 @@ export class BetEntity {
   @Column()
   winner: string;
 
-  @Column()
+  @Column({ type: 'int4' })
   pointDiff: number;
 }

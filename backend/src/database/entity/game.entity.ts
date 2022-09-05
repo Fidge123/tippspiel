@@ -43,10 +43,10 @@ export class GameEntity {
   @OneToMany(() => BetDoublerEntity, (doubler) => doubler.user)
   doubler: BetDoublerEntity[];
 
-  @Column()
+  @Column({ type: 'int4' })
   awayScore: number;
 
-  @Column()
+  @Column({ type: 'int4' })
   homeScore: number;
 
   @Column()

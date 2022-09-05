@@ -13,13 +13,13 @@ export class ByeEntity {
   @PrimaryColumn()
   teamId: string;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int4' })
   weekWeek: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int4' })
   weekYear: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'int4' })
   weekSeasontype: number;
 
   @ManyToOne(() => WeekEntity, (week) => week.byes)

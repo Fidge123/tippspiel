@@ -31,7 +31,7 @@ export class DivisionBetEntity {
   @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
   fourth: TeamEntity;
 
-  @Column()
+  @Column({ type: 'int4' })
   year: number;
 
   @ManyToOne(() => UserEntity, (user) => user.divisionBets)
