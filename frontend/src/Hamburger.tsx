@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { tokenState, activeLeagueState } from "./State/states";
+import { useSetRecoilState } from "recoil";
+import { tokenState } from "./State/states";
+const LeagueDisplay = lazy(() => import("./LeagueDisplay"));
 
 function Hamburger() {
   const setToken = useSetRecoilState(tokenState);
-  const league = useRecoilValue(activeLeagueState);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   return (
     <div className="flex items-center gap-1">
-      <span className="text-xs text-center text-white">{league.name}</span>
+      <Suspense fallback={<span>League loading...</span>}>
+        <LeagueDisplay />
+      </Suspense>
+
       <nav className="relative pointer-events-auto">
         <button onClick={() => setOpen(!open)}>
           <svg
