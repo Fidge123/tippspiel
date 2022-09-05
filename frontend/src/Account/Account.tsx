@@ -1,11 +1,16 @@
 import { FormEvent, useState } from "react";
 import { useRecoilState } from "recoil";
-import { hideByDefaultState, nameState } from "../State/states";
+import {
+  hideByDefaultState,
+  nameState,
+  sendReminderState,
+} from "../State/states";
 
 function Account() {
   const [name, setName] = useRecoilState(nameState);
   const [localName, setLocalName] = useState(name);
   const [hideByDefault, setHideByDefault] = useRecoilState(hideByDefaultState);
+  const [sendReminder, setSendReminder] = useRecoilState(sendReminderState);
   // const [email, setEmail] = useState("");
   // const [oldPassword, setOldPassword] = useState("");
   // const [newPassword, setNewPassword] = useState("");
@@ -91,6 +96,16 @@ function Account() {
         <label htmlFor="spoiler-input">
           Spielergebnisse automatisch verstecken
         </label>
+        <h1 className="font-bold">Erinnerungsmails</h1>
+        <input
+          id="spoiler-input"
+          className="mr-4"
+          type="checkbox"
+          checked={sendReminder}
+          onChange={(e) => setSendReminder(e.target.checked)}
+          required
+        />
+        <label htmlFor="spoiler-input">Erinnerungsmails aktivieren</label>
       </section>
     </article>
   );

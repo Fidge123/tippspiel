@@ -50,16 +50,18 @@ export class BetDataService {
   }
 
   async findGamesWithoutBets(user: string): Promise<GameEntity[]> {
-    //TODO leagues
-
     const now = new Date();
     const thirtyFourHours = 34 * 60 * 60 * 1000;
     const soon = new Date(now.getTime() + thirtyFourHours);
     const status = 'STATUS_SCHEDULED';
+    const leagues = await this.leagueRepo.find({
+      where: { members: { id: user } },
+    });
     const bets = await this.betRepo
       .createQueryBuilder('bets')
       .leftJoin('bets.game', 'game')
-      .select(['bets.id', 'game.id'])
+      .leftJoin('bets.league', 'league')
+      .select(['bets.id', 'game.id', 'league.id'])
       .where('bets.user = :user')
       .andWhere('game.date > :now')
       .andWhere('game.date <= :soon')
@@ -75,7 +77,13 @@ export class BetDataService {
       .andWhere('game.date <= :soon')
       .setParameters({ now, soon, status })
       .getMany();
-    return games.filter((game) => !bets.some((bet) => bet.game.id === game.id));
+    return games.filter((game) => {
+      !leagues.every((l) =>
+        bets
+          .filter((bet) => bet.league.id === l.id)
+          .some((bet) => bet.game.id === game.id),
+      );
+    });
   }
 
   async findBetsForStartedGames(

@@ -183,6 +183,25 @@ export class UserDataService {
     }
   }
 
+  async setSendReminder(userId: string, sendReminder: boolean): Promise<void> {
+    if (userId && typeof sendReminder !== 'undefined') {
+      const user = await this.userRepo
+        .findOneByOrFail({ id: userId })
+        .catch(() => {
+          throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        });
+
+      user.settings = {
+        ...user.settings,
+        sendReminder,
+      };
+
+      await this.userRepo.save(user);
+    } else {
+      throw new BadRequestException();
+    }
+  }
+
   async sendReset(email: string): Promise<ResetEntity> {
     const user = await this.userRepo.findOne({ where: { email } });
     if (user) {

@@ -13,6 +13,9 @@ export class BetService {
   async betReminder(): Promise<void> {
     const users = await this.databaseService.findAllUsers();
     for (const user of users) {
+      if (!(user.settings.sendReminder ?? true)) {
+        continue;
+      }
       const games = await this.databaseService.findGamesWithoutBets(user.id);
       if (games.length) {
         console.log('Found', games.length, 'games without bets for', user.name);

@@ -57,7 +57,6 @@ async function getDefaultToken() {
   if (!validateToken(defaultToken)) {
     console.error("Something is wrong with the token!");
   }
-  window.localStorage.setItem("access_token", defaultToken);
   return defaultToken;
 }
 
@@ -71,7 +70,6 @@ export const tokenState = atom<string>({
         const token = await refresh();
         if (token && !token.startsWith("[object")) {
           setSelf(token);
-          window.localStorage.setItem("access_token", token);
         }
       };
 
@@ -408,6 +406,30 @@ export const hideByDefaultState = selector<boolean>({
     set(userState, {
       ...get(userState),
       hideByDefault,
+    });
+  },
+});
+
+export const sendReminderState = selector<boolean>({
+  key: "sendReminder",
+  get: ({ get }) => {
+    return get(userState).sendReminder ?? true;
+  },
+  set: ({ get, set }, newValue) => {
+    const sendReminder = newValue instanceof DefaultValue ? true : newValue;
+    fetchFromAPI(
+      "user/send-reminder",
+      get(tokenState),
+      "POST",
+      {
+        sendReminder,
+      },
+      true
+    );
+
+    set(userState, {
+      ...get(userState),
+      sendReminder,
     });
   },
 });

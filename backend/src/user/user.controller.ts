@@ -235,4 +235,13 @@ export class UserController {
   ): Promise<void> {
     return this.databaseService.setActiveLeague(user.id, league);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('send-reminder')
+  async setSendReminder(
+    @Body('sendReminder') sendReminder: boolean,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.databaseService.setSendReminder(user.id, sendReminder);
+  }
 }

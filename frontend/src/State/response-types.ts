@@ -57,6 +57,7 @@ export interface Doubler {
 export interface UserSettings {
   hidden?: Record<string, boolean>;
   hideByDefault?: boolean;
+  sendReminder?: boolean;
   league?: string;
 }
 

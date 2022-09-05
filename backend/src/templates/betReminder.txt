@@ -1,6 +1,6 @@
 Hallo {{ name }},
 
-du hast folgende Spiele noch nicht getippt:
+du hast folgende Spiele noch nicht in allen Ligen getippt:
 {{ list }}
 
 Tippe die Spiele hier: https://nfl-tippspiel.de/tippspiel

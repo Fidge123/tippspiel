@@ -36,7 +36,12 @@ export async function refresh() {
     cache = fetch(`${BASE_URL}user/refresh`, {
       method: "POST",
       credentials: "include",
-    }).then((res) => res.json());
+    })
+      .then((res) => res.json())
+      .then((token) => {
+        window.localStorage.setItem("access_token", token);
+        return token;
+      });
   }
   return cache;
 }
