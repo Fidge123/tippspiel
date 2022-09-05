@@ -1,1 +1,1 @@
-Ein API Request ist fehlgeschlagen.
+Ein API Request ({{url}}) ist fehlgeschlagen.

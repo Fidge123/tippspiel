@@ -21,15 +21,15 @@ export const postSeason = {
   weeks: [1, 2, 3, 5],
 };
 
-async function notify() {
+async function notify(url: string) {
   const transporter = await getTransporter();
   await transporter
     .sendEmail({
       From: 'Tippspiel <tippspiel@6v4.de>',
       To: env.EMAIL,
       Subject: `API Request failed`,
-      TextBody: await loadTXT('requestFailed'),
-      HtmlBody: await loadHTML('requestFailed'),
+      TextBody: await loadTXT('requestFailed', { url }),
+      HtmlBody: await loadHTML('requestFailed', { url }),
     })
     .catch((error) => console.error(error));
 }
@@ -50,7 +50,7 @@ export class ScheduleService {
     const response = await fetch(`${BASE_URL}groups`);
     if (!response.ok) {
       console.error('Error loading divisions!');
-      await notify();
+      await notify(`${BASE_URL}groups`);
       return;
     }
     const data = await response.json();
@@ -79,7 +79,7 @@ export class ScheduleService {
         await this.databaseService.createOrUpdateTeam(t, divEntity);
       }
     } catch (e: unknown) {
-      await notify();
+      await notify(`${BASE_URL}teams/<team.id>`);
       console.error('Error during import of divisions', (e as Error)?.stack);
     }
   }
@@ -161,7 +161,7 @@ async function load({ year, seasontype, week }): Promise<Scoreboard> {
   const response = await fetch(`${BASE_URL}scoreboard?${q}`);
   if (!response.ok) {
     console.error('Failed to load scoreboard!');
-    await notify();
+    await notify(`${BASE_URL}scoreboard?${q}`);
     return;
   }
   return await response.json();
