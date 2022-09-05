@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue } from "recoil";
-import { fetchFromAPI } from "../api";
+import { fetchFromAPI, refresh, validateToken } from "../api";
 import { Team } from "../State/response-types";
 import {
   activeLeagueState,
@@ -16,12 +16,18 @@ function SbBet() {
   const [sbBet, setSBBet] = useRecoilState(sbBetState);
 
   async function selectSBWinner(teamId: string) {
+    const res = await fetchFromAPI(
+      "bet/superbowl",
+      validateToken(token) ? token : await refresh(),
+      "POST",
+      {
+        teamId,
+        leagueId: league.id,
+        year: 2022,
+      }
+    );
     setSBBet(teamId);
-    return await fetchFromAPI("bet/superbowl", token, "POST", {
-      teamId,
-      leagueId: league.id,
-      year: 2022,
-    });
+    return res;
   }
 
   return (

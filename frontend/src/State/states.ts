@@ -1,5 +1,5 @@
 import { atom, DefaultValue, selector, selectorFamily } from "recoil";
-import { refresh, fetchFromAPI } from "../api";
+import { refresh, fetchFromAPI, validateToken } from "../api";
 import { ApiBet } from "../Schedule/types";
 import {
   Division,
@@ -64,11 +64,10 @@ export const tokenState = atom<string>({
       };
 
       if (item) {
-        const payload = JSON.parse(window.atob(item.split(".")[1]));
-        if (new Date(payload.exp * 1000) <= new Date()) {
-          refreshSelf();
-        } else {
+        if (validateToken(item)) {
           setSelf(item);
+        } else {
+          refreshSelf();
         }
       }
 
