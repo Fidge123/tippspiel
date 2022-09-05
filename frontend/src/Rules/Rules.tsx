@@ -32,8 +32,9 @@ export default function Rules() {
             richtigen Tipps einen Extrapunkt gutgeschrieben
           </li>
           <li>
-            Jeder Spieler kann wöchentlich ein Spiel auswählen, welches doppelte
-            Punkte bringt.
+            Jeder Spieler kann wöchentlich einen Doppler (🌟) durch Klick auf
+            das "@" setzen. Der Doppler verdoppelt gutgeschriebene Punkte bei
+            einem korrekten Tipp.
           </li>
         </ul>
         <p>
