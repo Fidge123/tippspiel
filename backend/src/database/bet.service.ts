@@ -364,20 +364,16 @@ export class BetDataService {
       throw new BadRequestException();
     }
 
-    const [y, st, w] = weekId.split('-').map((n) => parseInt(n, 10));
-
     const [user, game, league, week] = await Promise.all([
       this.userRepo.findOneByOrFail({ id: userId }),
       this.gameRepo.findOneByOrFail({ id: gameId }),
       this.leagueRepo.findOneByOrFail({ id: leagueId }),
-      this.weekRepo.findOneByOrFail({ year: y, seasontype: st, week: w }),
+      this.weekRepo.findOneByOrFail({ id: weekId }),
     ]);
     const betDoubler = await this.doublerRepo
       .createQueryBuilder('doubler')
       .where('doubler.user = :user', { user: user.id })
-      .andWhere('doubler.weekYear = :year', { year: week.year })
-      .andWhere('doubler.weekSeasontype = :st', { st: week.seasontype })
-      .andWhere('doubler.weekWeek = :week', { week: week.week })
+      .andWhere('doubler.week = :week', { week: week.id })
       .andWhere('doubler.league = :league', { league: league.id })
       .leftJoinAndSelect('doubler.game', 'game')
       .getOne();
@@ -406,19 +402,15 @@ export class BetDataService {
       throw new BadRequestException();
     }
 
-    const [y, st, w] = weekId.split('-').map((n) => parseInt(n, 10));
-
     const [user, league, week] = await Promise.all([
       this.userRepo.findOneByOrFail({ id: userId }),
       this.leagueRepo.findOneByOrFail({ id: leagueId }),
-      this.weekRepo.findOneByOrFail({ year: y, seasontype: st, week: w }),
+      this.weekRepo.findOneByOrFail({ id: weekId }),
     ]);
     const betDoubler = await this.doublerRepo
       .createQueryBuilder('doubler')
       .where('doubler.user = :user', { user: user.id })
-      .andWhere('doubler.weekYear = :year', { year: week.year })
-      .andWhere('doubler.weekSeasontype = :st', { st: week.seasontype })
-      .andWhere('doubler.weekWeek = :week', { week: week.week })
+      .andWhere('doubler.week = :week', { week: week.id })
       .andWhere('doubler.league = :league', { league: league.id })
       .leftJoinAndSelect('doubler.game', 'game')
       .getOne();

@@ -27,16 +27,8 @@ export class ScheduleController {
     @Param('week') week: string,
   ): Promise<any> {
     const [schedule, byes] = await Promise.all([
-      this.databaseService.getWeek(
-        parseInt(year, 10),
-        parseInt(seasontype, 10),
-        parseInt(week, 10),
-      ),
-      this.databaseService.getByesForWeek(
-        parseInt(year, 10),
-        parseInt(seasontype, 10),
-        parseInt(week, 10),
-      ),
+      this.databaseService.getWeek(`${year}-${seasontype}-${week}`),
+      this.databaseService.getByesForWeek(`${year}-${seasontype}-${week}`),
     ]);
     return { ...schedule, teamsOnBye: byes.byes.map((b) => b.team) };
   }

@@ -3,29 +3,20 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WeekEntity } from './week.entity';
 import { TeamEntity } from './team.entity';
 
 @Entity({ name: 'bye' })
 export class ByeEntity {
-  @PrimaryColumn()
-  teamId: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @PrimaryColumn({ type: 'int4' })
-  weekWeek: number;
-
-  @PrimaryColumn({ type: 'int4' })
-  weekYear: number;
-
-  @PrimaryColumn({ type: 'int4' })
-  weekSeasontype: number;
-
-  @ManyToOne(() => WeekEntity, (week) => week.byes)
+  @ManyToOne(() => WeekEntity, (week) => week.byes, { nullable: false })
   week: WeekEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.byes)
+  @ManyToOne(() => TeamEntity, (team) => team.byes, { nullable: false })
   team: TeamEntity;
 
   @CreateDateColumn({ select: false })

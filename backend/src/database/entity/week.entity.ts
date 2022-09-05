@@ -5,20 +5,25 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Unique,
 } from 'typeorm';
 import { BetDoublerEntity } from './betDoubler.entity';
 import { ByeEntity } from './bye.entity';
 import { GameEntity } from './game.entity';
 
 @Entity({ name: 'week' })
+@Unique(['year', 'seasontype', 'week'])
 export class WeekEntity {
-  @PrimaryColumn({ type: 'int4' })
+  @PrimaryColumn()
+  id: string;
+
+  @Column({ type: 'int4' })
   year: number;
 
-  @PrimaryColumn({ type: 'int4' })
+  @Column({ type: 'int4' })
   seasontype: number;
 
-  @PrimaryColumn({ type: 'int4' })
+  @Column({ type: 'int4' })
   week: number;
 
   @Column()

@@ -129,7 +129,7 @@ export class BetController {
     );
     return doublers.map((d) => ({
       game: d.game.id,
-      week: `${d.week.year}-${d.week.seasontype}-${d.week.week}`,
+      week: d.week.id,
       league: d.league?.id,
     }));
   }
