@@ -13,8 +13,8 @@ import {
   UserSettings,
   Doubler,
   DivisionBet,
+  DivBet,
 } from "./response-types";
-import { formatLb } from "./util";
 
 export const activeLeagueState = selector<League>({
   key: "leagues/Active",
@@ -79,17 +79,28 @@ export const teamState = selectorFamily<Team | undefined, string | undefined>({
       get(teamsState).find((t) => t.id === id),
 });
 
+export const divisionLeaderboardState = selectorFamily<
+  DivBet | undefined,
+  [string, string]
+>({
+  key: "leaderboard/Division",
+  get:
+    ([userId, divisionName]) =>
+    ({ get }) =>
+      get(leaderboardState)
+        .find((l) => l.user.id === userId)
+        ?.divBets.find((bet) => bet.name === divisionName),
+});
+
 export const leaderboardState = atom<Leaderboard[]>({
   key: "leaderboard",
   default: selector({
     key: "leaderboard/Default",
     get: async ({ get }) =>
-      formatLb(
-        await fetchFromAPI(
-          `leaderboard?season=${get(activeLeagueState).season}&league=${
-            get(activeLeagueState).id
-          }`
-        )
+      await fetchFromAPI<Leaderboard[]>(
+        `leaderboard?season=${get(activeLeagueState).season}&league=${
+          get(activeLeagueState).id
+        }`
       ),
   }),
 });

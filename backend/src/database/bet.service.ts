@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateDivisionBetDto } from '../bet/division.dto';
-import { DeleteResult, MoreThan, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 
 import { CreateBetDto } from '../bet/bet.dto';
 
@@ -87,23 +87,53 @@ export class BetDataService {
     );
   }
 
-  async findBetsForStartedGames(
-    league: string,
-    year: number,
-  ): Promise<GameEntity[]> {
+  async startedGames(league: string, year: number): Promise<GameEntity[]> {
     if (!league || !year) {
       throw new BadRequestException();
     }
-    return this.gameRepo
-      .createQueryBuilder('game')
-      .where('game.date < :now', { now: new Date() })
-      .leftJoin('game.week', 'week')
-      .andWhere('week.year = :year', { year })
-      .leftJoinAndSelect('game.bets', 'bets', 'bets.league = :league', {
-        league,
-      })
-      .leftJoinAndSelect('bets.user', 'user')
-      .getMany();
+    return this.gameRepo.find({
+      where: {
+        week: { year },
+        status: In([
+          'STATUS_IN_PROGRESS',
+          'STATUS_HALFTIME',
+          'STATUS_END_PERIOD',
+          'STATUS_FINAL',
+        ]),
+        bets: { league: { id: league } },
+      },
+      relations: {
+        week: true,
+        bets: { user: true, league: true },
+      },
+    });
+  }
+
+  async startedDoublers(
+    league: string,
+    year: number,
+  ): Promise<BetDoublerEntity[]> {
+    if (!league || !year) {
+      throw new BadRequestException();
+    }
+    return this.doublerRepo.find({
+      where: {
+        week: { year },
+        game: {
+          status: In([
+            'STATUS_IN_PROGRESS',
+            'STATUS_HALFTIME',
+            'STATUS_END_PERIOD',
+            'STATUS_FINAL',
+          ]),
+        },
+        league: { id: league },
+      },
+      relations: {
+        game: true,
+        user: true,
+      },
+    });
   }
 
   async findBets(league: string, year: number): Promise<GameEntity[]> {
@@ -137,30 +167,44 @@ export class BetDataService {
       .getMany();
   }
 
-  async findGameBetsForUser(
-    user: string,
-    league: string,
-    year: number,
-  ): Promise<BetEntity[]> {
-    if (!user || !league || !year) {
+  async finishedGames(league: string, year: number): Promise<GameEntity[]> {
+    if (!league || !year) {
       throw new BadRequestException();
     }
-    return this.betRepo.find({
+    return this.gameRepo.find({
       where: {
-        user: { id: user },
-        league: { id: league },
-        game: {
-          week: { year },
-          status: 'STATUS_FINAL',
-        },
+        week: { year },
+        status: 'STATUS_FINAL',
+        bets: { league: { id: league } },
       },
       relations: {
-        game: { week: true },
+        week: true,
+        bets: { user: true, league: true },
       },
     });
   }
 
-  async findDivisionBetsForUser(
+  async finishedDoublers(
+    league: string,
+    year: number,
+  ): Promise<BetDoublerEntity[]> {
+    if (!league || !year) {
+      throw new BadRequestException();
+    }
+    return this.doublerRepo.find({
+      where: {
+        week: { year },
+        game: { status: 'STATUS_FINAL' },
+        league: { id: league },
+      },
+      relations: {
+        game: true,
+        user: true,
+      },
+    });
+  }
+
+  async userDivBets(
     user: string,
     league: string,
     year: number,
@@ -184,7 +228,7 @@ export class BetDataService {
     });
   }
 
-  async findSbBetsForUser(
+  async userSbBets(
     user: string,
     league: string,
     year: number,
@@ -273,24 +317,6 @@ export class BetDataService {
         leftJoinAndSelect: { team: 'bet.team' },
       },
     });
-  }
-
-  async findBetDoublersForStartedGames(
-    league: string,
-    year: number,
-  ): Promise<BetDoublerEntity[]> {
-    if (!league || !year) {
-      throw new BadRequestException();
-    }
-    return this.doublerRepo
-      .createQueryBuilder('doubler')
-      .leftJoinAndSelect('doubler.game', 'game')
-      .where('game.date < :now', { now: new Date() })
-      .leftJoin('doubler.week', 'week')
-      .andWhere('week.year = :year', { year })
-      .andWhere('doubler.league = :league', { league })
-      .leftJoinAndSelect('doubler.user', 'user')
-      .getMany();
   }
 
   async findBetDoublers(

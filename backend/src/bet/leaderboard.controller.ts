@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   UseGuards,
-  Param,
   Query,
   BadRequestException,
 } from '@nestjs/common';
@@ -11,10 +10,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, User } from '../user.decorator';
 import type {
   BetDoublerEntity,
-  BetEntity,
   DivisionBetEntity,
   GameEntity,
-  SuperbowlBetEntity,
   UserEntity,
 } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
@@ -23,7 +20,7 @@ import { LeagueDataService } from '../database/league.service';
 @Controller('leaderboard')
 export class LeaderboardController {
   constructor(
-    private readonly databaseService: BetDataService,
+    private readonly dbService: BetDataService,
     private readonly leagueService: LeagueDataService,
   ) {}
 
@@ -33,14 +30,10 @@ export class LeaderboardController {
     @Query('league') league: string,
     @Query('season') season: string,
   ): Promise<any> {
-    const games = await this.databaseService.findBetsForStartedGames(
-      league,
-      parseInt(season, 10),
-    );
-    const doublers = await this.databaseService.findBetDoublersForStartedGames(
-      league,
-      parseInt(season, 10),
-    );
+    const [games, doublers] = await Promise.all([
+      this.dbService.startedGames(league, parseInt(season, 10)),
+      this.dbService.startedDoublers(league, parseInt(season, 10)),
+    ]);
     return games.reduce(
       (result, game) => ({
         ...result,
@@ -49,13 +42,9 @@ export class LeaderboardController {
           winner: bet.winner,
           bet: bet.pointDiff,
           doubler: doublers.some(
-            (d) => d.user.id === bet.user.id && d.game.id === game.id,
+            (d) => d.game.id === game.id && d.user.id === bet.user.id,
           ),
-          points: calculatePoints2021(
-            game,
-            bet,
-            doublers.filter((d) => d.user.id === bet.user.id),
-          ).points.reduce((a, b) => a + b, 0),
+          points: calcPoints(game, bet.user, doublers),
         })),
       }),
       {},
@@ -76,117 +65,159 @@ export class LeaderboardController {
       throw new BadRequestException();
     }
 
-    const { seasontype, week: currentWeek } =
-      await this.databaseService.findCurrentWeek();
-    const [sbWinner, doublers] = await Promise.all([
-      this.databaseService.findSbWinner(season),
-      this.databaseService.findBetDoublersForStartedGames(league, season),
+    const w = await this.dbService.findCurrentWeek();
+    const isPlayoffs = w.seasontype === 3;
+    const isFinalGame = isPlayoffs && w.week === 5;
+
+    const [games, doublers, sbWinner] = await Promise.all([
+      this.dbService.finishedGames(league, season),
+      this.dbService.finishedDoublers(league, season),
+      this.dbService.findSbWinner(season),
     ]);
 
-    function calcDivisionPoints(bet: DivisionBetEntity) {
-      let score = 0;
-      const bets = [bet.first, bet.second, bet.third, bet.fourth];
-      const correctOrder = bets.sort((a, b) => a.playoffSeed - b.playoffSeed);
-      if (bets[0].id === correctOrder[0].id) {
-        score += 7;
-      }
-      if (bet[1].id === correctOrder[1].id) {
-        score += 1;
-      }
-      if (bet[2].id === correctOrder[2].id) {
-        score += 1;
-      }
-      if (bet[3].id === correctOrder[3].id) {
-        score += 1;
-      }
-      if (score === 10) {
-        score += 5;
-      }
-      return score;
-    }
+    return (
+      await Promise.all(
+        users.map(async (user) => {
+          const divBets =
+            isPlayoffs || user.id === me.id
+              ? await this.dbService.userDivBets(user.id, league, season)
+              : [];
+          const sbBet =
+            isFinalGame || user.id === me.id
+              ? await this.dbService.userSbBets(user.id, league, season)
+              : null;
+          const response = {
+            user: { id: user.id, name: user.name },
+            bets: games.map((game) => ({
+              game: game.id,
+              bet: game.bets.find((bet) => bet.user.id === user.id),
+              points: calcPoints(game, user, doublers),
+            })),
+            divBets: divBets.map((bet) => ({
+              name: bet.division.name,
+              first: bet.first,
+              second: bet.second,
+              third: bet.third,
+              fourth: bet.fourth,
+              points: isPlayoffs ? calcDivisionPoints(bet) : 0,
+            })),
+            sbBet: {
+              team: sbBet?.team ?? {},
+              points: sbWinner && sbBet?.team.id === sbWinner.id ? 20 : 0,
+            },
+          };
+          const sums = {
+            bets: response.bets.reduce((a, b) => a + b.points, 0),
+            divBets: response.divBets.reduce((a, b) => a + b.points, 0),
+            sbBet: response.sbBet.points,
+          };
 
-    function formatSbBet(
-      sbBet: SuperbowlBetEntity | undefined,
-      user: UserEntity,
-    ) {
-      return {
-        team:
-          sbBet?.team &&
-          ((seasontype === 3 && currentWeek === 5) || user.id === me.id)
-            ? sbBet.team
-            : {},
-        points: sbWinner && sbBet?.team.id === sbWinner.id ? 20 : 0,
-      };
-    }
-
-    return Promise.all(
-      users.map(async (user) => ({
-        user: user.name,
-        bets: (
-          await this.databaseService.findGameBetsForUser(
-            user.id,
-            league,
-            season,
-          )
-        ).map((bet) =>
-          calculatePoints2021(
-            bet.game,
-            bet,
-            doublers.filter((d) => d.user.id === user.id),
-          ),
-        ),
-        divBets: (
-          await this.databaseService.findDivisionBetsForUser(
-            user.id,
-            league,
-            season,
-          )
-        ).map((bet) => ({
-          name: bet.division.name,
-          first: seasontype === 3 || user.id === me.id ? bet.first : {},
-          second: seasontype === 3 || user.id === me.id ? bet.second : {},
-          third: seasontype === 3 || user.id === me.id ? bet.third : {},
-          fourth: seasontype === 3 || user.id === me.id ? bet.fourth : {},
-          points: seasontype === 3 ? calcDivisionPoints(bet) : 0,
-        })),
-        sbBet: formatSbBet(
-          await this.databaseService.findSbBetsForUser(user.id, league, season),
-          user,
-        ),
-      })),
-    );
+          return {
+            ...response,
+            points: { ...sums, all: sums.bets + sums.divBets + sums.sbBet },
+          };
+        }),
+      )
+    ).sort((u1, u2) => u2.points.all - u1.points.all);
   }
 }
 
-function correctTeam(bet: string, winner: string) {
-  return bet === winner ? 1 : 0;
+function calcDivisionPoints(bet: DivisionBetEntity) {
+  let score = 0;
+  const bets = [bet.first, bet.second, bet.third, bet.fourth];
+  const correctOrder = bets.sort((a, b) => a.playoffSeed - b.playoffSeed);
+  if (bet.first && bet.first.id === correctOrder[0].id) {
+    score += 7;
+  }
+  if (bet.second && bet.second.id === correctOrder[1].id) {
+    score += 1;
+  }
+  if (bet.third && bet.third.id === correctOrder[2].id) {
+    score += 1;
+  }
+  if (bet.fourth && bet.fourth.id === correctOrder[3].id) {
+    score += 1;
+  }
+  if (score === 10) {
+    score += 5;
+  }
+  return score;
 }
 
-function withinPoints(
-  pointDiff: number,
-  winner: string,
-  correctDiff: number,
-  allowedDiff: number,
-) {
-  const multi = winner === 'home' ? 1 : -1;
-  return Math.abs(multi * pointDiff - correctDiff) <= allowedDiff ? 1 : 0;
+function getMult(
+  doublers: BetDoublerEntity[],
+  game: GameEntity,
+  user: UserEntity,
+): 1 | 2 {
+  return doublers.some((d) => d.game.id === game.id && d.user.id === user.id)
+    ? 2
+    : 1;
 }
 
-function calculatePoints2021(
-  { homeScore, awayScore, winner: actualWinner, id }: GameEntity,
-  { pointDiff, winner: predictedWinnner }: BetEntity,
+function calcPoints(
+  game: GameEntity,
+  user: UserEntity,
   doublers: BetDoublerEntity[],
 ) {
-  const correctDiff = homeScore - awayScore;
-  const multi = doublers.some((d) => d.game.id === id) ? 2 : 1;
+  const bet = game.bets.find((bet) => bet.user.id === user.id);
 
-  return {
-    id,
-    points: [
-      correctTeam(predictedWinnner, actualWinner) * 2 * multi,
-      withinPoints(pointDiff, predictedWinnner, correctDiff, 0) * 1 * multi,
-      withinPoints(pointDiff, predictedWinnner, correctDiff, 3) * 1 * multi,
-      withinPoints(pointDiff, predictedWinnner, correctDiff, 6) * 1 * multi,
-    ],
-  };
+  if (!bet) {
+    return -1;
+  }
+
+  const multi = getMult(doublers, game, user);
+  const extraPoint =
+    game.bets.filter((b) => b.winner !== bet.winner).length * 3 <=
+    game.bets.length;
+
+  if (game.homeScore > game.awayScore) {
+    if (bet.winner === 'home') {
+      return (bet.pointDiff + (extraPoint ? 1 : 0)) * multi;
+    }
+    return -bet.pointDiff;
+  }
+
+  if (game.awayScore > game.homeScore) {
+    if (bet.winner === 'away') {
+      return (bet.pointDiff + (extraPoint ? 1 : 0)) * multi;
+    }
+    return -bet.pointDiff;
+  }
+
+  if (game.awayScore === game.homeScore) {
+    return 0;
+  }
 }
+
+// function correctTeam(bet: string, winner: string) {
+//   return bet === winner ? 1 : 0;
+// }
+
+// function withinPoints(
+//   pointDiff: number,
+//   winner: string,
+//   correctDiff: number,
+//   allowedDiff: number,
+// ) {
+//   const multi = winner === 'home' ? 1 : -1;
+//   return Math.abs(multi * pointDiff - correctDiff) <= allowedDiff ? 1 : 0;
+// }
+
+// function calculatePoints2021(
+//   { homeScore, awayScore, winner: actualWinner, id }: GameEntity,
+//   { pointDiff, winner: predictedWinnner }: BetEntity,
+//   doublers: BetDoublerEntity[],
+// ) {
+//   const correctDiff = homeScore - awayScore;
+//   const multi = doublers.some((d) => d.game.id === id) ? 2 : 1;
+
+//   return {
+//     id,
+//     points: [
+//       correctTeam(predictedWinnner, actualWinner) * 2 * multi,
+//       withinPoints(pointDiff, predictedWinnner, correctDiff, 0) * 1 * multi,
+//       withinPoints(pointDiff, predictedWinnner, correctDiff, 3) * 1 * multi,
+//       withinPoints(pointDiff, predictedWinnner, correctDiff, 6) * 1 * multi,
+//     ],
+//   };
+// }

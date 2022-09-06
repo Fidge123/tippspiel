@@ -30,28 +30,6 @@ export interface DivisionBet {
   teams: (T | null)[];
 }
 
-export interface Leaderboard {
-  name: string;
-  points: number;
-  correct: number;
-  exact: number;
-  offThree: number;
-  offSix: number;
-  doubler: number;
-  total: number;
-  divBets: {
-    first: { logo?: string };
-    second: { logo?: string };
-    third: { logo?: string };
-    fourth: { logo?: string };
-    points: number;
-  }[];
-  sbBet: {
-    logo: string;
-    points: number;
-  };
-}
-
 export interface Doubler {
   game: string;
   week: string;
@@ -64,44 +42,55 @@ export interface UserSettings {
   league?: string;
 }
 
-export interface LBResponse {
-  user: string;
+export interface DivBet {
+  name: string;
+  points: number;
+  first: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    logo: string;
+    playoffSeed: number;
+  };
+  second: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    logo: string;
+    playoffSeed: number;
+  };
+  third: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    logo: string;
+    playoffSeed: number;
+  };
+  fourth: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    logo: string;
+    playoffSeed: number;
+  };
+}
+
+export interface Leaderboard {
+  user: {
+    id: string;
+    name: string;
+  };
+  points: {
+    bets: number;
+    divBets: number;
+    sbBet: number;
+    all: number;
+  };
   bets: {
     id: string;
     points: number[];
   }[];
-  divBets: {
-    name: string;
-    points: number;
-    first: {
-      id: string;
-      name: string;
-      abbreviation: string;
-      logo: string;
-      playoffSeed: number;
-    };
-    second: {
-      id: string;
-      name: string;
-      abbreviation: string;
-      logo: string;
-      playoffSeed: number;
-    };
-    third: {
-      id: string;
-      name: string;
-      abbreviation: string;
-      logo: string;
-      playoffSeed: number;
-    };
-    fourth: {
-      id: string;
-      name: string;
-      abbreviation: string;
-      logo: string;
-      playoffSeed: number;
-    };
-  }[];
+  divBets: DivBet[];
   sbBet: {
     points: number;
     team: {
