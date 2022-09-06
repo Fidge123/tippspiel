@@ -1,18 +1,31 @@
-import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Param,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { CurrentUser, User } from '../user.decorator';
-import {
+import type {
   BetDoublerEntity,
   BetEntity,
   DivisionBetEntity,
   GameEntity,
+  SuperbowlBetEntity,
+  UserEntity,
 } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
+import { LeagueDataService } from '../database/league.service';
 
 @Controller('leaderboard')
 export class LeaderboardController {
-  constructor(private readonly databaseService: BetDataService) {}
+  constructor(
+    private readonly databaseService: BetDataService,
+    private readonly leagueService: LeagueDataService,
+  ) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Get('games')
@@ -38,7 +51,7 @@ export class LeaderboardController {
           doubler: doublers.some(
             (d) => d.user.id === bet.user.id && d.game.id === game.id,
           ),
-          points: calculatePoints(
+          points: calculatePoints2021(
             game,
             bet,
             doublers.filter((d) => d.user.id === bet.user.id),
@@ -53,24 +66,22 @@ export class LeaderboardController {
   @Get()
   async getAll(
     @Query('league') league: string,
-    @Query('season') season: string,
-    @CurrentUser() currentUser: User,
+    @Query('season') seasonStr: string,
+    @CurrentUser() me: User,
   ): Promise<any> {
-    // TODO verify that this is correct
-    const users = await this.databaseService.findBetsByUser(
+    const { members: users, season } = await this.leagueService.getLeague(
       league,
-      parseInt(season, 10),
     );
+    if (parseInt(seasonStr, 10) !== season) {
+      throw new BadRequestException();
+    }
 
-    const st = await this.databaseService.findCurrentWeek();
-    const sbWinner = await this.databaseService.findSbWinner(
-      parseInt(season, 10),
-    );
-
-    const doublers = await this.databaseService.findBetDoublersForStartedGames(
-      league,
-      parseInt(season, 10),
-    );
+    const { seasontype, week: currentWeek } =
+      await this.databaseService.findCurrentWeek();
+    const [sbWinner, doublers] = await Promise.all([
+      this.databaseService.findSbWinner(season),
+      this.databaseService.findBetDoublersForStartedGames(league, season),
+    ]);
 
     function calcDivisionPoints(bet: DivisionBetEntity) {
       let score = 0;
@@ -94,36 +105,55 @@ export class LeaderboardController {
       return score;
     }
 
-    return users.map((user) => ({
-      user: user.name,
-      bets: user.bets.map((bet) =>
-        calculatePoints(
-          bet.game,
-          bet,
-          doublers.filter((d) => d.user.id === user.id),
-        ),
-      ),
-      divBets: user.divisionBets.map((bet) => ({
-        name: bet.division.name,
-        first:
-          st.seasontype === 3 || user.id === currentUser.id ? bet.first : {},
-        second:
-          st.seasontype === 3 || user.id === currentUser.id ? bet.second : {},
-        third:
-          st.seasontype === 3 || user.id === currentUser.id ? bet.third : {},
-        fourth:
-          st.seasontype === 3 || user.id === currentUser.id ? bet.fourth : {},
-        points: st.seasontype === 3 ? calcDivisionPoints(bet) : 0,
-      })),
-      sbBet: {
+    function formatSbBet(
+      sbBet: SuperbowlBetEntity | undefined,
+      user: UserEntity,
+    ) {
+      return {
         team:
-          (st.seasontype === 3 && st.week === 5) || user.id === currentUser.id
-            ? user.superbowlBets[0]?.team
+          (seasontype === 3 && currentWeek === 5) || user.id === me.id
+            ? sbBet.team
             : {},
-        points:
-          sbWinner && user.superbowlBets[0]?.team.id === sbWinner.id ? 20 : 0,
-      },
-    }));
+        points: sbWinner && sbBet.team.id === sbWinner.id ? 20 : 0,
+      };
+    }
+
+    return Promise.all(
+      users.map(async (user) => ({
+        user: user.name,
+        bets: (
+          await this.databaseService.findGameBetsForUser(
+            user.id,
+            league,
+            season,
+          )
+        ).map((bet) =>
+          calculatePoints2021(
+            bet.game,
+            bet,
+            doublers.filter((d) => d.user.id === user.id),
+          ),
+        ),
+        divBets: (
+          await this.databaseService.findDivisionBetsForUser(
+            user.id,
+            league,
+            season,
+          )
+        ).map((bet) => ({
+          name: bet.division.name,
+          first: seasontype === 3 || user.id === me.id ? bet.first : {},
+          second: seasontype === 3 || user.id === me.id ? bet.second : {},
+          third: seasontype === 3 || user.id === me.id ? bet.third : {},
+          fourth: seasontype === 3 || user.id === me.id ? bet.fourth : {},
+          points: seasontype === 3 ? calcDivisionPoints(bet) : 0,
+        })),
+        sbBet: formatSbBet(
+          await this.databaseService.findSbBetsForUser(user.id, league, season),
+          user,
+        ),
+      })),
+    );
   }
 }
 
@@ -141,7 +171,7 @@ function withinPoints(
   return Math.abs(multi * pointDiff - correctDiff) <= allowedDiff ? 1 : 0;
 }
 
-function calculatePoints(
+function calculatePoints2021(
   { homeScore, awayScore, winner: actualWinner, id }: GameEntity,
   { pointDiff, winner: predictedWinnner }: BetEntity,
   doublers: BetDoublerEntity[],

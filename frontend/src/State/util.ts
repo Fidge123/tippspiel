@@ -2,8 +2,34 @@ import { LBResponse, Leaderboard } from "./response-types";
 
 function formatBet(bet: any) {
   return {
-    logo: bet?.team?.logo
-      ? process.env.REACT_APP_IMG_URL + bet?.team?.logo
+    first: {
+      logo: bet?.first?.logo
+        ? process.env.REACT_APP_IMG_URL + bet?.first?.logo
+        : null,
+    },
+    second: {
+      logo: bet?.second?.logo
+        ? process.env.REACT_APP_IMG_URL + bet?.second?.logo
+        : null,
+    },
+    third: {
+      logo: bet?.third?.logo
+        ? process.env.REACT_APP_IMG_URL + bet?.third?.logo
+        : null,
+    },
+    fourth: {
+      logo: bet?.fourth?.logo
+        ? process.env.REACT_APP_IMG_URL + bet?.fourth?.logo
+        : null,
+    },
+    points: bet?.points || 0,
+  };
+}
+
+function formatSbBet(bet: any) {
+  return {
+    logo: bet?.second?.logo
+      ? process.env.REACT_APP_IMG_URL + bet?.second?.logo
       : null,
     points: bet?.points || 0,
   };
@@ -41,7 +67,7 @@ export function formatLb(res: LBResponse[]): Leaderboard[] {
         formatBet(user.divBets.find((bet) => bet.name === "NFC West")),
         formatBet(user.divBets.find((bet) => bet.name === "NFC East")),
       ],
-      sbBet: formatBet(user.sbBet),
+      sbBet: formatSbBet(user.sbBet),
     }))
     .sort((a, b) =>
       a.points === b.points ? b.total - a.total : b.points - a.points

@@ -50,7 +50,10 @@ export class LeagueDataService {
   }
 
   async getLeague(leagueId: string): Promise<LeagueEntity> {
-    return this.leagueRepo.findOneBy({ id: leagueId });
+    return this.leagueRepo.findOne({
+      where: { id: leagueId },
+      relations: { members: true, admins: true },
+    });
   }
 
   async createLeague(name: string, userId: string): Promise<LeagueEntity> {

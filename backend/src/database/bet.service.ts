@@ -46,7 +46,7 @@ export class BetDataService {
   ) {}
 
   async findAllUsers(): Promise<UserEntity[]> {
-    return this.userRepo.find();
+    return this.userRepo.find({ relations: { memberIn: true } });
   }
 
   async findGamesWithoutBets(user: string): Promise<GameEntity[]> {
@@ -77,13 +77,14 @@ export class BetDataService {
       .andWhere('game.date <= :soon')
       .setParameters({ now, soon, status })
       .getMany();
-    return games.filter((game) => {
-      !leagues.every((l) =>
-        bets
-          .filter((bet) => bet.league.id === l.id)
-          .some((bet) => bet.game.id === game.id),
-      );
-    });
+    return games.filter(
+      (game) =>
+        !leagues.every((l) =>
+          bets
+            .filter((bet) => bet.league.id === l.id)
+            .some((bet) => bet.game.id === game.id),
+        ),
+    );
   }
 
   async findBetsForStartedGames(
@@ -136,40 +137,69 @@ export class BetDataService {
       .getMany();
   }
 
-  async findBetsByUser(league: string, year: number): Promise<UserEntity[]> {
-    if (!league || !year) {
+  async findGameBetsForUser(
+    user: string,
+    league: string,
+    year: number,
+  ): Promise<BetEntity[]> {
+    if (!user || !league || !year) {
       throw new BadRequestException();
     }
-    return this.userRepo
-      .createQueryBuilder('user')
-      .andWhere('user.memberIn = :league', { league })
-      .leftJoinAndSelect('user.bets', 'bets', 'bets.league = :league', {
-        league,
-      })
-      .leftJoinAndSelect(
-        'user.divisionBets',
-        'divisionBets',
-        'divisionBets.league = :league',
-        { league },
-      )
-      .leftJoinAndSelect('divisionBets.team', 'divTeam')
-      .leftJoinAndSelect('divisionBets.division', 'division')
-      .leftJoinAndSelect(
-        'user.superbowlBets',
-        'superbowlBets',
-        'superbowlBets.league = :league',
-        {
-          league,
+    return this.betRepo.find({
+      where: {
+        user: { id: user },
+        league: { id: league },
+        game: {
+          week: { year },
+          status: 'STATUS_FINAL',
         },
-      )
-      .leftJoinAndSelect('superbowlBets.team', 'sbTeam')
-      .leftJoinAndSelect('bets.game', 'game')
-      .where('game.status = :status', { status: 'STATUS_FINAL' })
-      .leftJoin('game.week', 'week')
-      .andWhere('week.year = :year', { year })
-      .andWhere('divisionBets.year = :year', { year })
-      .andWhere('superbowlBets.year = :year', { year })
-      .getMany();
+      },
+      relations: {
+        game: { week: true },
+      },
+    });
+  }
+
+  async findDivisionBetsForUser(
+    user: string,
+    league: string,
+    year: number,
+  ): Promise<DivisionBetEntity[]> {
+    if (!user || !league || !year) {
+      throw new BadRequestException();
+    }
+    return this.divBetRepo.find({
+      where: {
+        user: { id: user },
+        league: { id: league },
+        year,
+      },
+      relations: {
+        division: true,
+        first: true,
+        second: true,
+        third: true,
+        fourth: true,
+      },
+    });
+  }
+
+  async findSbBetsForUser(
+    user: string,
+    league: string,
+    year: number,
+  ): Promise<SuperbowlBetEntity> {
+    if (!user || !league || !year) {
+      throw new BadRequestException();
+    }
+    return this.sbBetRepo.findOne({
+      where: {
+        user: { id: user },
+        league: { id: league },
+        year,
+      },
+      relations: { team: true },
+    });
   }
 
   async findCurrentWeek(): Promise<WeekEntity> {
@@ -276,6 +306,7 @@ export class BetDataService {
       where: {
         user: { id: user },
         league: { id: league },
+        week: { year },
       },
       relations: { game: true, week: true },
     });

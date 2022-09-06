@@ -13,7 +13,11 @@ export class BetService {
   async betReminder(): Promise<void> {
     const users = await this.databaseService.findAllUsers();
     for (const user of users) {
-      if (!(user.settings.sendReminder ?? true)) {
+      if (
+        !(user.settings.sendReminder ?? true) ||
+        !user.memberIn.some((l) => l.season === 2022)
+      ) {
+        console.log(`Skipped user ${user.name}`);
         continue;
       }
       const games = await this.databaseService.findGamesWithoutBets(user.id);

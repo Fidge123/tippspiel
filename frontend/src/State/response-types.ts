@@ -40,7 +40,10 @@ export interface Leaderboard {
   doubler: number;
   total: number;
   divBets: {
-    logo: string;
+    first: { logo?: string };
+    second: { logo?: string };
+    third: { logo?: string };
+    fourth: { logo?: string };
     points: number;
   }[];
   sbBet: {
@@ -70,7 +73,28 @@ export interface LBResponse {
   divBets: {
     name: string;
     points: number;
-    team: {
+    first: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+    second: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+    third: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      playoffSeed: number;
+    };
+    fourth: {
       id: string;
       name: string;
       abbreviation: string;

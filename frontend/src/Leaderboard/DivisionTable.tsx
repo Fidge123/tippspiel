@@ -4,39 +4,90 @@ function DivisionTable({ leaderboard }: Props) {
       <thead className="lb-header">
         <tr>
           <th className="text-left">Name</th>
-          <th className="px-2 text-center">AFC North</th>
-          <th className="px-2 text-center">AFC South</th>
-          <th className="px-2 text-center">AFC West</th>
-          <th className="px-2 text-center">AFC East</th>
-          <th className="px-2 text-center">NFC North</th>
-          <th className="px-2 text-center">NFC South</th>
-          <th className="px-2 text-center">NFC West</th>
-          <th className="px-2 text-center">NFC East</th>
-          <th className="px-2 text-center">SB</th>
-          <th className="px-2 text-center">Points</th>
+          <th>AFC North</th>
+          <th>AFC South</th>
+          <th>AFC West</th>
+          <th>AFC East</th>
+          <th>NFC North</th>
+          <th>NFC South</th>
+          <th>NFC West</th>
+          <th>NFC East</th>
+          <th>SB</th>
+          <th>Points</th>
         </tr>
       </thead>
-      <tbody className="lb-body">
+      <tbody>
         {leaderboard.map((l) => (
           <tr key={`LB-${l.name}`}>
             <td className="pt-2 pr-2">{l.name}</td>
             {l.divBets.map((bet, i) => (
-              <td key={"divbet" + i} className="p-1 pt-2 text-center">
-                {bet?.logo && (
-                  <img
-                    src={bet?.logo}
-                    className={`p-1 inline-block border rounded ${
-                      bet.points ? "border-green-500" : "border-red-500"
-                    }`}
-                    width="32"
-                    height="32"
-                    alt="team logo for division bet"
-                    onError={(event: any) =>
-                      (event.target.style.display = "none")
-                    }
-                  ></img>
-                )}
-                {bet?.logo === null && "?"}
+              <td key={"divbet" + i}>
+                <div className="flex flex-col items-center">
+                  {bet?.first?.logo ? (
+                    <img
+                      src={bet.first.logo}
+                      className={`p-1 inline-block border rounded ${
+                        bet.points ? "border-green-500" : "border-red-500"
+                      }`}
+                      width="32"
+                      height="32"
+                      alt="team logo for division bet"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
+                      }
+                    ></img>
+                  ) : (
+                    "?"
+                  )}
+                  {bet?.second?.logo ? (
+                    <img
+                      src={bet.second.logo}
+                      className={`p-1 inline-block border rounded ${
+                        bet.points ? "border-green-500" : "border-red-500"
+                      }`}
+                      width="32"
+                      height="32"
+                      alt="team logo for division bet"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
+                      }
+                    ></img>
+                  ) : (
+                    "?"
+                  )}
+                  {bet?.third?.logo ? (
+                    <img
+                      src={bet.third.logo}
+                      className={`p-1 inline-block border rounded ${
+                        bet.points ? "border-green-500" : "border-red-500"
+                      }`}
+                      width="32"
+                      height="32"
+                      alt="team logo for division bet"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
+                      }
+                    ></img>
+                  ) : (
+                    "?"
+                  )}
+                  {bet?.fourth?.logo ? (
+                    <img
+                      src={bet.fourth.logo}
+                      className={`p-1 inline-block border rounded ${
+                        bet.points ? "border-green-500" : "border-red-500"
+                      }`}
+                      width="32"
+                      height="32"
+                      alt="team logo for division bet"
+                      onError={(event: any) =>
+                        (event.target.style.display = "none")
+                      }
+                    ></img>
+                  ) : (
+                    "?"
+                  )}
+                </div>
               </td>
             ))}
             <td className="p-1 pt-2 text-center">
@@ -76,7 +127,10 @@ interface ILeaderboard {
   doubler: number;
   total: number;
   divBets: {
-    logo: string;
+    first: { logo?: string };
+    second: { logo?: string };
+    third: { logo?: string };
+    fourth: { logo?: string };
     points: number;
   }[];
   sbBet: {
