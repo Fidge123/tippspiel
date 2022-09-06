@@ -87,8 +87,15 @@ export interface Leaderboard {
     all: number;
   };
   bets: {
-    id: string;
-    points: number[];
+    bet: {
+      id: string;
+      winner: "home" | "away";
+      pointDiff: number;
+    };
+    bonus: boolean;
+    doubler: boolean;
+    game: string;
+    points: number;
   }[];
   divBets: DivBet[];
   sbBet: {

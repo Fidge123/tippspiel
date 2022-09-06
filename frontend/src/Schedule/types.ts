@@ -46,6 +46,7 @@ export interface Game {
 }
 
 export interface IWeek {
+  id: string;
   seasontype: number;
   week: number;
   year: number;

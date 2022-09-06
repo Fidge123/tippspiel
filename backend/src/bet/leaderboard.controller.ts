@@ -10,6 +10,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, User } from '../user.decorator';
 import type {
   BetDoublerEntity,
+  BetEntity,
   DivisionBetEntity,
   GameEntity,
   UserEntity,
@@ -90,7 +91,12 @@ export class LeaderboardController {
             user: { id: user.id, name: user.name },
             bets: games.map((game) => ({
               game: game.id,
-              bet: game.bets.find((bet) => bet.user.id === user.id),
+              bet: formatBet(game.bets.find((bet) => bet.user.id === user.id)),
+              doubler: getMult(doublers, game, user) === 2,
+              bonus: getBonus(
+                game.bets.find((bet) => bet.user.id === user.id)?.winner,
+                game.bets,
+              ),
               points: calcPoints(game, user, doublers),
             })),
             divBets: divBets.map((bet) => ({
@@ -120,6 +126,12 @@ export class LeaderboardController {
       )
     ).sort((u1, u2) => u2.points.all - u1.points.all);
   }
+}
+
+function formatBet(bet?: BetEntity) {
+  return bet
+    ? { id: bet.id, pointDiff: bet.pointDiff, winner: bet.winner }
+    : undefined;
 }
 
 function calcDivisionPoints(bet: DivisionBetEntity) {
@@ -154,6 +166,10 @@ function getMult(
     : 1;
 }
 
+function getBonus(winner: string, bets: BetEntity[]) {
+  return bets.filter((b) => b.winner !== winner).length * 3 <= bets.length;
+}
+
 function calcPoints(
   game: GameEntity,
   user: UserEntity,
@@ -166,9 +182,7 @@ function calcPoints(
   }
 
   const multi = getMult(doublers, game, user);
-  const extraPoint =
-    game.bets.filter((b) => b.winner !== bet.winner).length * 3 <=
-    game.bets.length;
+  const extraPoint = getBonus(bet.winner, game.bets);
 
   if (game.homeScore > game.awayScore) {
     if (bet.winner === 'home') {
