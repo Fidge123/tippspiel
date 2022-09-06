@@ -111,10 +111,11 @@ export class LeaderboardController {
     ) {
       return {
         team:
-          (seasontype === 3 && currentWeek === 5) || user.id === me.id
+          sbBet?.team &&
+          ((seasontype === 3 && currentWeek === 5) || user.id === me.id)
             ? sbBet.team
             : {},
-        points: sbWinner && sbBet.team.id === sbWinner.id ? 20 : 0,
+        points: sbWinner && sbBet?.team.id === sbWinner.id ? 20 : 0,
       };
     }
 
