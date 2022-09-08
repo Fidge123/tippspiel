@@ -26,7 +26,7 @@ function Leagues() {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Teilnehmer</th>
+              <th className="text-left">Teilnehmer</th>
               <th>Saison</th>
               <th>Aktiv?</th>
             </tr>

@@ -22,7 +22,7 @@ function LeagueRow({ league, setLeague }: Props) {
   return (
     <tr key={league.id}>
       <td>{league.name}</td>
-      <td>
+      <td className="text-left">
         {league.members.map((m) =>
           league.admins.some((a) => a.id === m.id) ? (
             <div key={m.id}>{m.name} (Admin)</div>

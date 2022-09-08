@@ -13,29 +13,38 @@ function Leaderboard() {
 
   return (
     <div className="p-4">
-      <section className="w-full mb-8 overflow-x-auto">
-        <h1 className="mb-4 text-xl">Punktetabelle</h1>
+      <section className="w-full mb-8 space-y-4 overflow-x-auto">
+        <h1 className="text-xl">Punktetabelle</h1>
         <OverviewTable></OverviewTable>
       </section>
-      <section className="w-full mb-8 overflow-x-auto">
-        <h1 className="mb-4 text-xl">Pre-Season Tipps</h1>
+      <section className="w-full mb-8 space-y-4 overflow-x-auto">
+        <h1 className="text-xl">Pre-Season Tipps</h1>
+        <p className="max-w-prose">
+          Tipps für die Divisions werden zum Start der Post-Season für alle
+          aufgedeckt. Icons mit grünem Rahmen sind korrekt und geben Punkte.
+        </p>
         <DivisonTable></DivisonTable>
       </section>
-      <section className="w-full mb-8 space-y-4 overflow-x-auto">
-        <h1 className="mb-4 text-xl">Statistik</h1>
-        <article>
-          <h1>Punkte je Woche</h1>
-          <button onClick={() => setOpenByWeek(!openByWeek)}>
-            {openByWeek ? "verstecken" : "anzeigen"}
-          </button>
-          {openByWeek && <ByWeek></ByWeek>}
-        </article>
+      <section className="mb-8 space-y-4 overflow-x-auto w-max">
+        <h1 className="text-xl">Statistik</h1>
+        <p className="max-w-prose">
+          Statistiken werden im Format "Korrekte Tipps - Falsche Tipps -
+          Unentschieden" angezeigt. Es werden nur abgeschlossene Spiele in die
+          Statistik einbezogen.
+        </p>
         <article>
           <h1>Erfolg je Einsatz</h1>
           <button onClick={() => setOpenByPoints(!openByPoints)}>
             {openByPoints ? "verstecken" : "anzeigen"}
           </button>
           {openByPoints && <ByPoints></ByPoints>}
+        </article>
+        <article>
+          <h1>Punkte je Woche</h1>
+          <button onClick={() => setOpenByWeek(!openByWeek)}>
+            {openByWeek ? "verstecken" : "anzeigen"}
+          </button>
+          {openByWeek && <ByWeek></ByWeek>}
         </article>
         <article>
           <h1>Punkte je Team</h1>

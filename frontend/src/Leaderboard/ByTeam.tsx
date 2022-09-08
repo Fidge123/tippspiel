@@ -46,6 +46,7 @@ function ByTeam() {
                 alt={team.name}
                 onError={(event: any) => (event.target.style.display = "none")}
               ></img>
+              {team.shortName}
             </th>
           ))}
         </tr>

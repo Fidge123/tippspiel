@@ -39,8 +39,8 @@ function DivisionTable() {
               {l.sbBet?.team.logo ? (
                 <img
                   src={prefix + l.sbBet?.team.logo}
-                  className={`p-1 inline-block border rounded ${
-                    l.sbBet.points ? "border-green-500" : "border-red-500"
+                  className={`p-1 inline-block ${
+                    l.sbBet.points ? "border-green-500 border rounded" : ""
                   }`}
                   width="32"
                   height="32"
