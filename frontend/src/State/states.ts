@@ -14,6 +14,7 @@ import {
   Doubler,
   DivisionBet,
   DivBet,
+  DivBetByTeam,
 } from "./response-types";
 
 export const activeLeagueState = selector<League>({
@@ -47,7 +48,20 @@ export const leaguesState = atom<League[]>({
   key: "leagues",
   default: selector({
     key: "leagues/Default",
-    get: async ({ get }) => await fetchFromAPI<League[]>("leagues"),
+    get: async () => await fetchFromAPI<League[]>("leagues"),
+  }),
+});
+
+export const divBetsByTeamState = atom<DivBetByTeam>({
+  key: "divisionBetsByTeam",
+  default: selector({
+    key: "divisionBetsByTeam/Default",
+    get: async ({ get }) =>
+      await fetchFromAPI<DivBetByTeam>(
+        `leaderboard/divisions?season=${get(activeLeagueState).season}&league=${
+          get(activeLeagueState).id
+        }`
+      ),
   }),
 });
 
@@ -55,7 +69,7 @@ export const divisionsState = atom<Division[]>({
   key: "divisions",
   default: selector({
     key: "divisions/Default",
-    get: async ({ get }) =>
+    get: async () =>
       (await fetchFromAPI<Division[]>(`division`)).sort((divA, divB) =>
         divA.name.localeCompare(divB.name)
       ),

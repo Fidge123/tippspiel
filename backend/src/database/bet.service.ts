@@ -87,6 +87,29 @@ export class BetDataService {
     );
   }
 
+  async divisionBets(
+    league: string,
+    year: number,
+  ): Promise<DivisionBetEntity[]> {
+    return this.divBetRepo.find({
+      where: { league: { id: league }, year },
+      relations: {
+        first: true,
+        second: true,
+        third: true,
+        fourth: true,
+        division: true,
+      },
+    });
+  }
+
+  async sbBets(league: string, year: number): Promise<SuperbowlBetEntity[]> {
+    return this.sbBetRepo.find({
+      where: { league: { id: league }, year },
+      relations: { team: true },
+    });
+  }
+
   async startedGames(league: string, year: number): Promise<GameEntity[]> {
     if (!league || !year) {
       throw new BadRequestException();

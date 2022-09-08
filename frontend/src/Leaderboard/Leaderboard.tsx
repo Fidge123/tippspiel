@@ -5,11 +5,13 @@ import DivisonTable from "./DivisionTable";
 import ByTeam from "./ByTeam";
 import ByPoints from "./ByPoints";
 import ByWeek from "./ByWeek";
+import DivisionByTeam from "./DivisionByTeam";
 
 function Leaderboard() {
   const [openByWeek, setOpenByWeek] = useState(false);
   const [openByPoints, setOpenByPoints] = useState(false);
   const [openByTeam, setOpenByTeam] = useState(false);
+  const [openDivByTeam, setOpenDivByTeam] = useState(false);
 
   return (
     <div className="p-4">
@@ -52,6 +54,13 @@ function Leaderboard() {
             {openByTeam ? "verstecken" : "anzeigen"}
           </button>
           {openByTeam && <ByTeam></ByTeam>}
+        </article>
+        <article>
+          <h1>Division-Tipps je Team</h1>
+          <button onClick={() => setOpenDivByTeam(!openDivByTeam)}>
+            {openDivByTeam ? "verstecken" : "anzeigen"}
+          </button>
+          {openDivByTeam && <DivisionByTeam></DivisionByTeam>}
         </article>
       </section>
     </div>

@@ -53,6 +53,22 @@ export class LeaderboardController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('divisions')
+  async getAnonymousDivisionBets(
+    @Query('league') league: string,
+    @Query('season') season: string,
+  ): Promise<any> {
+    const [division, sb] = await Promise.all([
+      this.dbService.divisionBets(league, parseInt(season, 10)),
+      this.dbService.sbBets(league, parseInt(season, 10)),
+    ]);
+    return {
+      division,
+      sb,
+    };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async getAll(
     @Query('league') league: string,

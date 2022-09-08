@@ -75,6 +75,11 @@ export interface DivBet {
   };
 }
 
+export interface DivBetByTeam {
+  division: DivBet[];
+  sb: { team: Team }[];
+}
+
 export interface Leaderboard {
   user: {
     id: string;
