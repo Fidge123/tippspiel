@@ -17,7 +17,7 @@ function ByWeek() {
     const tieFn = (bet: T) => bet.points === 0;
 
     return (
-      <td key={key} className="text-center">
+      <td key={key}>
         {list.filter(winFn).length}-{list.filter(lossFn).length}
         {list.filter(tieFn).length > 0 && `-${list.filter(tieFn).length}`}
         <br />
@@ -31,7 +31,7 @@ function ByWeek() {
     <table>
       <thead>
         <tr>
-          <th className="text-left">Name</th>
+          <th>Name</th>
           {weeks.map((week) => (
             <th key={week.id}>{week.label}</th>
           ))}

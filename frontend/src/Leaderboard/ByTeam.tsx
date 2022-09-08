@@ -19,7 +19,7 @@ function ByTeam() {
     const lossFn = (bet: T) => bet.points < 0;
     const tieFn = (bet: T) => bet.points === 0;
     return (
-      <td key={key} className="text-center">
+      <td key={key}>
         {list.filter(winFn).length}-{list.filter(lossFn).length}
         {list.filter(tieFn).length > 0 && `-${list.filter(tieFn).length}`}
         <br />
@@ -33,7 +33,7 @@ function ByTeam() {
     <table>
       <thead>
         <tr>
-          <th className="text-left">Name</th>
+          <th>Name</th>
           <th>Home</th>
           <th>Away</th>
           {teams.map((team) => (

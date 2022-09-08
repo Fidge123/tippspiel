@@ -17,7 +17,7 @@ function ByPoints() {
     tieFn: (el: any) => boolean = (bet) => bet.points === 0
   ) {
     return (
-      <td className="text-center">
+      <td>
         {list.filter(winFn).length}-{list.filter(lossFn).length}
         {list.filter(tieFn).length > 0 && `-${list.filter(tieFn).length}`}
         <br />
@@ -31,7 +31,7 @@ function ByPoints() {
     <table>
       <thead>
         <tr>
-          <th className="text-left">Name</th>
+          <th>Name</th>
           <th>Alle</th>
           <th>1</th>
           <th>2</th>

@@ -20,7 +20,7 @@ function DivisionTable() {
     <table>
       <thead className="lb-header">
         <tr>
-          <th className="text-left">Name</th>
+          <th>Name</th>
           {divisions.map((div) => (
             <th key={div}>{div}</th>
           ))}
@@ -31,11 +31,11 @@ function DivisionTable() {
       <tbody>
         {leaderboard.map((l) => (
           <tr key={l.user.id}>
-            <td className="pt-2 pr-2">{l.user.name}</td>
+            <td>{l.user.name}</td>
             {divisions.map((div) => (
               <DivisionCell user={l.user.id} div={div} key={div}></DivisionCell>
             ))}
-            <td className="p-1 pt-2 text-center">
+            <td className="p-1 pt-2">
               {l.sbBet?.team.logo ? (
                 <img
                   src={prefix + l.sbBet?.team.logo}
@@ -53,7 +53,7 @@ function DivisionTable() {
                 "?"
               )}
             </td>
-            <td className="pt-2 text-center cpr-2">
+            <td>
               {l.divBets.reduce((p, c) => p + c.points, 0) + l.sbBet.points}
             </td>
           </tr>

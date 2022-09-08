@@ -24,11 +24,11 @@ function OverviewTable() {
                 ? ""
                 : `${i + 1}.`}
             </td>
-            <td>{l.user.name}</td>
-            <td className="text-center">{l.points.bets}</td>
-            <td className="text-center">{l.points.divBets}</td>
-            <td className="text-center">{l.points.sbBet}</td>
-            <td className="text-center">{l.points.all}</td>
+            <td className="text-left">{l.user.name}</td>
+            <td>{l.points.bets}</td>
+            <td>{l.points.divBets}</td>
+            <td>{l.points.sbBet}</td>
+            <td>{l.points.all}</td>
           </tr>
         ))}
       </tbody>
