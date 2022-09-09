@@ -7,6 +7,9 @@ module.exports = {
       md: "720px",
     },
     extend: {
+      height: {
+        content: "calc(100vh - 3rem)",
+      },
       rotate: {
         "-135": "-135deg",
       },

@@ -17,15 +17,15 @@ function DivisionTable() {
   ];
 
   return (
-    <table>
-      <thead className="lb-header">
+    <table className="table-fixed">
+      <thead>
         <tr>
           <th>Name</th>
           {divisions.map((div) => (
             <th key={div}>{div}</th>
           ))}
           <th>SB</th>
-          <th>Points</th>
+          <th>Punkte</th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +35,7 @@ function DivisionTable() {
             {divisions.map((div) => (
               <DivisionCell user={l.user.id} div={div} key={div}></DivisionCell>
             ))}
-            <td className="p-1 pt-2">
+            <td>
               {l.sbBet?.team.logo ? (
                 <img
                   src={prefix + l.sbBet?.team.logo}

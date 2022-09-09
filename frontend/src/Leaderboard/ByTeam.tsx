@@ -3,7 +3,9 @@ import { leaderboardState, teamsState, weeksState } from "../State/states";
 
 function ByTeam() {
   const leaderboard = useRecoilValue(leaderboardState);
-  const teams = useRecoilValue(teamsState);
+  const teams = [...useRecoilValue(teamsState)].sort((a, b) =>
+    a.shortName.localeCompare(b.shortName)
+  );
   const schedule = useRecoilValue(weeksState);
   const games = schedule.flatMap((w) => w.games);
   const prefix = process.env.REACT_APP_IMG_URL;
@@ -30,17 +32,17 @@ function ByTeam() {
   }
 
   return (
-    <table>
+    <table className="table-fixed">
       <thead>
         <tr>
           <th>Name</th>
-          <th>Home</th>
-          <th>Away</th>
+          <th className="w-32">Home</th>
+          <th className="w-32">Away</th>
           {teams.map((team) => (
-            <th key={team.id}>
+            <th key={team.id} className="w-32 truncate">
               <img
                 src={prefix + team.logo}
-                className={`p-1 inline-block`}
+                className="inline-block p-1"
                 width="32"
                 height="32"
                 alt={team.name}

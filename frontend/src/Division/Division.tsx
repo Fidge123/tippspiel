@@ -5,6 +5,8 @@ import {
 } from "../State/response-types";
 
 function Division({ division, divisionBets, setDivisionBets }: Props) {
+  const seasonStarted = new Date(2022, 8, 11, 19) < new Date();
+
   function getIndex(teamId: string) {
     const index =
       divisionBets?.teams.findIndex((t) => t?.id === teamId) ??
@@ -17,8 +19,11 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
     <section>
       <h2 className="text-lg">{division.name}</h2>
       {[...division.teams]
-        .sort((a, b) => getIndex(a.id) - getIndex(b.id))
-        // .sort((a, b) => a.playoffSeed - b.playoffSeed)
+        .sort((a, b) =>
+          seasonStarted
+            ? a.playoffSeed - b.playoffSeed
+            : getIndex(a.id) - getIndex(b.id)
+        )
         .map((team, i) => (
           <div
             key={"Div" + team.id}
@@ -49,52 +54,62 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
                 team.ties > 0 ? "-" + team.ties : ""
               }`}
             </span>
-            <span className="space-x-0.5">
-              <button
-                className="p-0 text-xl bg-transparent border-0 disabled:opacity-50"
-                disabled={new Date(2022, 8, 11, 19) < new Date() || i === 0}
-                onClick={() => {
-                  setDivisionBets({
-                    name: division.name,
-                    teams: [...division.teams].sort((a, b) => {
-                      let aIndex = getIndex(a.id);
-                      let bIndex = getIndex(b.id);
-                      if (a.id === team.id) {
-                        aIndex -= 1.1;
-                      }
-                      if (b.id === team.id) {
-                        bIndex -= 1.1;
-                      }
-                      return aIndex - bIndex;
-                    }),
-                  });
-                }}
-              >
-                ⬆️
-              </button>
-              <button
-                className="text-xl bg-transparent border-0 disabled:opacity-50"
-                disabled={new Date(2022, 8, 11, 19) < new Date() || i === 3}
-                onClick={() => {
-                  setDivisionBets({
-                    name: division.name,
-                    teams: [...division.teams].sort((a, b) => {
-                      let aIndex = getIndex(a.id);
-                      let bIndex = getIndex(b.id);
-                      if (a.id === team.id) {
-                        aIndex += 1.1;
-                      }
-                      if (b.id === team.id) {
-                        bIndex += 1.1;
-                      }
-                      return aIndex - bIndex;
-                    }),
-                  });
-                }}
-              >
-                ⬇️
-              </button>
-            </span>
+            {seasonStarted ? (
+              <span className="px-1">
+                {getIndex(team.id) === i
+                  ? "✅"
+                  : Intl.NumberFormat("de-DE", {
+                      signDisplay: "always",
+                    }).format(i - getIndex(team.id))}
+              </span>
+            ) : (
+              <span className="space-x-0.5">
+                <button
+                  className="p-0 text-xl bg-transparent border-0 disabled:opacity-50"
+                  disabled={seasonStarted || i === 0}
+                  onClick={() => {
+                    setDivisionBets({
+                      name: division.name,
+                      teams: [...division.teams].sort((a, b) => {
+                        let aIndex = getIndex(a.id);
+                        let bIndex = getIndex(b.id);
+                        if (a.id === team.id) {
+                          aIndex -= 1.1;
+                        }
+                        if (b.id === team.id) {
+                          bIndex -= 1.1;
+                        }
+                        return aIndex - bIndex;
+                      }),
+                    });
+                  }}
+                >
+                  ⬆️
+                </button>
+                <button
+                  className="text-xl bg-transparent border-0 disabled:opacity-50"
+                  disabled={seasonStarted || i === 3}
+                  onClick={() => {
+                    setDivisionBets({
+                      name: division.name,
+                      teams: [...division.teams].sort((a, b) => {
+                        let aIndex = getIndex(a.id);
+                        let bIndex = getIndex(b.id);
+                        if (a.id === team.id) {
+                          aIndex += 1.1;
+                        }
+                        if (b.id === team.id) {
+                          bIndex += 1.1;
+                        }
+                        return aIndex - bIndex;
+                      }),
+                    });
+                  }}
+                >
+                  ⬇️
+                </button>
+              </span>
+            )}
           </div>
         ))}
     </section>

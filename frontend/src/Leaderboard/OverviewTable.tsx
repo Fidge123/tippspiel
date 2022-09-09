@@ -6,14 +6,24 @@ function OverviewTable() {
 
   return (
     <table>
+      <colgroup>
+        <col span={1}></col>
+        <col span={1}></col>
+        <col className="sm:w-24" span={4}></col>
+      </colgroup>
       <thead>
         <tr>
-          <th className="text-left"></th>
+          <th></th>
           <th className="text-left">Name</th>
-          <th>Spiele</th>
-          <th>Division</th>
-          <th>Superbowl</th>
-          <th>Punkte</th>
+          <th scope="col">Spiele</th>
+          <th scope="col" className="sm:hidden">
+            Divs
+          </th>
+          <th scope="col" className="hidden sm:table-cell">
+            Divisions
+          </th>
+          <th scope="col">SB</th>
+          <th scope="col">Summe</th>
         </tr>
       </thead>
       <tbody>

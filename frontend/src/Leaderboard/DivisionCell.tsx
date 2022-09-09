@@ -7,7 +7,7 @@ function DivisionCell({ div, user }: { user: string; div: string }) {
 
   return (
     <td>
-      <div className="items-center">
+      <div className="items-center w-44">
         {bet?.first?.logo ? (
           <img
             src={prefix + bet.first.logo}
@@ -23,7 +23,7 @@ function DivisionCell({ div, user }: { user: string; div: string }) {
           "?"
         )}
         {bet?.second?.logo ? (
-          <span>
+          <span className="text-xs">
             {" > "}
             <img
               src={prefix + bet.second.logo}
@@ -40,7 +40,7 @@ function DivisionCell({ div, user }: { user: string; div: string }) {
           " > ?"
         )}
         {bet?.third?.logo ? (
-          <span>
+          <span className="text-xs">
             {" > "}
             <img
               src={prefix + bet.third.logo}
@@ -57,7 +57,7 @@ function DivisionCell({ div, user }: { user: string; div: string }) {
           " > ?"
         )}
         {bet?.fourth?.logo ? (
-          <span>
+          <span className="text-xs">
             {" > "}
             <img
               src={prefix + bet.fourth.logo}

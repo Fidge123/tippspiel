@@ -18,7 +18,7 @@
     @apply bg-white border border-collapse shadow-sm border-slate-400 dark:border-slate-500 dark:bg-slate-800;
   }
 
-  thead {
+  thead, .thead {
     @apply bg-slate-50 dark:bg-slate-700;
   }
 
@@ -27,7 +27,7 @@
   }
 
   td {
-    @apply p-2 text-center border first:text-left border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 ;
+    @apply p-2 font-normal text-center border first:text-left border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 ;
   }
 
   input {
