@@ -67,6 +67,7 @@ function ByTeam() {
                   if (bet.bet?.winner === "home") {
                     return el?.homeTeam?.id === team.id;
                   }
+                  return false;
                 }),
                 l.user.id + team.id
               )
