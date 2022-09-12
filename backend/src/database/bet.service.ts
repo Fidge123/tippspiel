@@ -80,7 +80,7 @@ export class BetDataService {
     return games.filter(
       (game) =>
         !leagues
-          .filter((l) => l.members.length > 1)
+          .filter((l) => l.members?.length > 1)
           .every((l) =>
             bets
               .filter((bet) => bet.league.id === l.id)
