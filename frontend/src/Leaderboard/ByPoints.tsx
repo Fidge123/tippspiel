@@ -5,9 +5,8 @@ function ByPoints() {
   const leaderboard = useRecoilValue(leaderboardState);
 
   function toPercent(list: any[], fn: (el: any) => boolean) {
-    return list.length
-      ? `${(list.filter(fn).length / list.length) * 100}%`
-      : "";
+    const percent = (list.filter(fn).length / list.length) * 100;
+    return list.length ? `${percent.toFixed(1)}%` : "";
   }
 
   function createCell(

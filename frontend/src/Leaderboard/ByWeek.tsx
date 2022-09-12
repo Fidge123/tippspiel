@@ -6,9 +6,8 @@ function ByWeek() {
   const weeks = useRecoilValue(weeksState);
 
   function toPercent(list: any[], fn: (el: any) => boolean) {
-    return list.length
-      ? `${(list.filter(fn).length / list.length) * 100}%`
-      : "";
+    const percent = (list.filter(fn).length / list.length) * 100;
+    return list.length ? `${percent.toFixed(1)}%` : "";
   }
 
   function createCell<T extends { points: number }>(list: T[], key?: string) {

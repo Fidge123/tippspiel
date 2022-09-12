@@ -23,18 +23,10 @@ function Stats({ game, bets, home, away, weekId }: StatProps) {
 
     const awayVotes = stats
       .filter((value) => value.winner === "away")
-      .sort((a, b) =>
-        finished
-          ? Math.abs(a.bet - wonBy) - Math.abs(b.bet - wonBy)
-          : b.bet - a.bet
-      );
+      .sort((a, b) => (finished ? b.points - a.points : b.bet - a.bet));
     const homeVotes = stats
       .filter((value) => value.winner === "home")
-      .sort((a, b) =>
-        finished
-          ? Math.abs(a.bet - wonBy) - Math.abs(b.bet - wonBy)
-          : b.bet - a.bet
-      );
+      .sort((a, b) => (finished ? b.points - a.points : b.bet - a.bet));
 
     return (
       <div className="flex flex-row leading-tight text-gray-800 dark:text-gray-300 font-xs">
