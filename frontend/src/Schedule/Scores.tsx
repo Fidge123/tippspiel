@@ -1,9 +1,10 @@
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { doublerState, hiddenState } from "../State/states";
+import { doublerState, gameState, hiddenState } from "../State/states";
 import { Game } from "./types";
 
 function Scores({ game, selected, weekId }: Props) {
   const [doubler, setDoubler] = useRecoilState(doublerState(weekId));
+  const doublerGame = useRecoilValue(gameState([weekId, doubler]));
   const resetDoubler = useResetRecoilState(doublerState(weekId));
   const hidden = useRecoilValue(hiddenState(weekId));
 
@@ -31,7 +32,8 @@ function Scores({ game, selected, weekId }: Props) {
       >
         {inProgress || final ? game.awayScore : ""}
       </span>
-      {new Date(game.date) < new Date() ? (
+      {new Date(game.date) < new Date() ||
+      (doublerGame && new Date(doublerGame.date) < new Date()) ? (
         doubler === game.id ? (
           "🌟"
         ) : (

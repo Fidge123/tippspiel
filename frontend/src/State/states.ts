@@ -1,6 +1,6 @@
 import { atom, DefaultValue, selector, selectorFamily } from "recoil";
 import { fetchFromAPI } from "../api";
-import { ApiBet } from "../Schedule/types";
+import { ApiBet, Game } from "../Schedule/types";
 import {
   Division,
   Team,
@@ -117,6 +117,16 @@ export const leaderboardState = atom<Leaderboard[]>({
         }`
       ),
   }),
+});
+
+export const gameState = selectorFamily<Game | undefined, [string, string]>({
+  key: "weeks/Game",
+  get:
+    ([weekId, gameId]) =>
+    ({ get }) =>
+      get(weeksState)
+        .find((week) => week.id === weekId)
+        ?.games?.find((game) => game.id === gameId),
 });
 
 export const weeksState = atom<Week[]>({
