@@ -79,11 +79,13 @@ export class BetDataService {
       .getMany();
     return games.filter(
       (game) =>
-        !leagues.every((l) =>
-          bets
-            .filter((bet) => bet.league.id === l.id)
-            .some((bet) => bet.game.id === game.id),
-        ),
+        !leagues
+          .filter((l) => l.members.length > 1)
+          .every((l) =>
+            bets
+              .filter((bet) => bet.league.id === l.id)
+              .some((bet) => bet.game.id === game.id),
+          ),
     );
   }
 
