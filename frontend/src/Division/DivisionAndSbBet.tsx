@@ -11,6 +11,7 @@ import SbBet from "./SbBet";
 import { DivisionBet } from "../State/response-types";
 
 function DivisionAndSbBet() {
+  const seasonStarted = new Date(2022, 8, 11, 19) < new Date();
   const divisions = useRecoilValue(divisionsState);
   const league = useRecoilValue(activeLeagueState);
   const [divisionBets, setDivisionBets] = useRecoilState(divisionBetsState);
@@ -34,10 +35,17 @@ function DivisionAndSbBet() {
     <div className="flex flex-wrap sm:mx-4">
       <article className="py-4 ml-4 w-min">
         <h1 className="text-xl font-semibold">Wähle den Sieger je Division:</h1>
-        <p>
-          Sortiere die Teams mit ⬆️ und ⬇️. Für Teams mit weißem Hintergrund
-          wurde noch kein Tipp übermittelt.
-        </p>
+        {seasonStarted ? (
+          <p>
+            Divisions werden nach NFL Regeln sortiert angezeigt. Die Zahlen am
+            Rand zeigen den Unterschied zu deinem Tipp an.
+          </p>
+        ) : (
+          <p>
+            Sortiere die Teams mit ⬆️ und ⬇️. Für Teams mit weißem Hintergrund
+            wurde noch kein Tipp übermittelt.
+          </p>
+        )}
         {divisions.map((division) => (
           <Division
             key={division.name}

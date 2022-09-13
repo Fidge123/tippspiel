@@ -54,15 +54,21 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
                 team.ties > 0 ? "-" + team.ties : ""
               }`}
             </span>
-            {seasonStarted ? (
-              <span className="px-1">
-                {getIndex(team.id) === i
-                  ? "✅"
-                  : Intl.NumberFormat("de-DE", {
-                      signDisplay: "always",
-                    }).format(i - getIndex(team.id))}
-              </span>
-            ) : (
+            {seasonStarted &&
+              divisionBets?.teams.some((t) => t?.id === team.id) && (
+                <span className="px-1">
+                  {getIndex(team.id) === i
+                    ? "✅"
+                    : Intl.NumberFormat("de-DE", {
+                        signDisplay: "always",
+                      }).format(getIndex(team.id) - i)}
+                </span>
+              )}
+            {seasonStarted &&
+              !divisionBets?.teams.some((t) => t?.id === team.id) && (
+                <span className="px-1"></span>
+              )}
+            {!seasonStarted && (
               <span className="space-x-0.5">
                 <button
                   className="p-0 text-xl bg-transparent border-0 disabled:opacity-50"
