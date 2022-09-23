@@ -19,7 +19,7 @@ export const config: DataSourceOptions = {
   entities: [__dirname + '/database/entity/*.entity.ts'],
   migrations: [__dirname + '/database/migration/*.ts'],
   migrationsRun: true,
-  maxQueryExecutionTime: 50,
+  maxQueryExecutionTime: 100,
   extra,
 };
 
