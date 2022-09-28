@@ -10,12 +10,10 @@ function ByTeam() {
   const games = schedule.flatMap((w) => w.games);
   const prefix = process.env.REACT_APP_IMG_URL;
 
-  function toPercent(list: any[], fn: (el: any) => boolean) {
-    const percent = (list.filter(fn).length / list.length) * 100;
-    return list.length ? `${percent.toFixed(1)}%` : "";
-  }
-
-  function createCell<T extends { points: number }>(list: T[], key?: string) {
+  function createCell<T extends { points: number; bet: any }>(
+    list: T[],
+    key?: string
+  ) {
     const winFn = (bet: T) => bet.points > 0;
     const lossFn = (bet: T) => bet.points < 0;
     const tieFn = (bet: T) => bet.points === 0;
@@ -24,8 +22,12 @@ function ByTeam() {
         {list.filter(winFn).length}-{list.filter(lossFn).length}
         {list.filter(tieFn).length > 0 && `-${list.filter(tieFn).length}`}
         <br />
-        {toPercent(list, winFn)}-{toPercent(list, lossFn)}
-        {list.filter(tieFn).length > 0 && `-${toPercent(list, tieFn)}`}
+        {list.reduce((sum, bet) => sum + bet.points, 0)} Punkte
+        <br />
+        {list.length > 0 &&
+          `⌀ ${(
+            list.reduce((sum, bet) => sum + bet.bet?.pointDiff, 0) / list.length
+          ).toFixed(1)} Einsatz`}
       </td>
     );
   }

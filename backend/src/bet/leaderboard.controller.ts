@@ -183,7 +183,9 @@ function getMult(
 }
 
 function getBonus(winner: string, bets: BetEntity[]) {
-  return bets.filter((b) => b.winner === winner).length * 3 <= bets.length;
+  return (
+    winner && bets.filter((b) => b.winner === winner).length * 3 <= bets.length
+  );
 }
 
 function calcPoints(

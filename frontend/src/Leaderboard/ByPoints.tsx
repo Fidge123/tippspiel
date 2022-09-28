@@ -32,6 +32,7 @@ function ByPoints() {
         <tr>
           <th>Name</th>
           <th>Alle</th>
+          <th>Kein</th>
           <th>1</th>
           <th>2</th>
           <th>3</th>
@@ -46,6 +47,7 @@ function ByPoints() {
           <tr key={l.user.id}>
             <td>{l.user.name}</td>
             {createCell(l.bets)}
+            {createCell(l.bets.filter((bet) => !bet.bet))}
             {createCell(l.bets.filter((bet) => bet.bet?.pointDiff === 1))}
             {createCell(l.bets.filter((bet) => bet.bet?.pointDiff === 2))}
             {createCell(l.bets.filter((bet) => bet.bet?.pointDiff === 3))}
