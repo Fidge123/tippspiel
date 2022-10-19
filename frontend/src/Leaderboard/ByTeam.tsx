@@ -14,25 +14,30 @@ function ByTeam() {
   const lossFn = (bet: any) => bet.points < 0;
   const tieFn = (bet: any) => bet.points === 0;
 
-  function displayDoubler(doublerCount: number): string {
+  function displayStat(
+    doublerCount: number,
+    symbol: string,
+    skipOne: boolean = false,
+    prefix = ", "
+  ): string {
     if (doublerCount < 1) {
       return "";
     }
-    if (doublerCount === 1) {
-      return ", 🌟";
+    if (skipOne && doublerCount === 1) {
+      return prefix + symbol;
     }
-    if (doublerCount === 2) {
-      return ", 🌟🌟";
-    }
-    return `, ${doublerCount}🌟`;
+    return `${prefix}${doublerCount}${symbol}`;
   }
 
-  function createLine<T extends { points: number; bet: any; doubler: boolean }>(
-    list: T[],
-    className: string = "text-inherit"
-  ) {
+  function createLine<
+    T extends { points: number; bet: any; doubler: boolean; bonus: boolean }
+  >(list: T[], className: string = "text-inherit") {
     const doublerCount = list.reduce(
       (sum, bet) => (bet.doubler ? sum + 1 : sum),
+      0
+    );
+    const bonusCount = list.reduce(
+      (sum, bet) => (bet.bonus ? sum + 1 : sum),
       0
     );
     return (
@@ -45,18 +50,17 @@ function ByTeam() {
               (10 * list.reduce((sum, bet) => sum + bet.bet?.pointDiff, 0)) /
                 list.length
             ) / 10
-          } → ${list.reduce((sum, bet) => sum + bet.points, 0)}${displayDoubler(
-            doublerCount
-          )})`}
+          } → ${list.reduce((sum, bet) => sum + bet.points, 0)}${displayStat(
+            bonusCount,
+            "B"
+          )}${displayStat(doublerCount, "🌟", true)})`}
       </div>
     );
   }
 
-  function createCell<T extends { points: number; bet: any; doubler: boolean }>(
-    listFor: T[],
-    listAgainst?: T[],
-    key?: string
-  ) {
+  function createCell<
+    T extends { points: number; bet: any; doubler: boolean; bonus: boolean }
+  >(listFor: T[], listAgainst?: T[], key?: string) {
     if (!listAgainst) {
       return (
         <td key={key}>
@@ -92,7 +96,8 @@ function ByTeam() {
         Tipps bei denen dieses Team als Sieger gewählt wurde, in
         <span className="text-red-600"> rot </span> sind Tipps bei denen der
         Gegner als Sieger gewählt wurde. In Klammern wird der durchschnittliche
-        Einsatz, der summierte Erlös und die Anzahl der Doppler angezeigt.
+        Einsatz, der summierte Erlös, die Anzahl der Doppler (🌟) und
+        Bonuspunkte (B) angezeigt.
       </div>
       <table className="table-fixed">
         <thead>
