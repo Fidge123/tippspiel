@@ -5,17 +5,33 @@ function ByWeek() {
   const leaderboard = useRecoilValue(leaderboardState);
   const weeks = useRecoilValue(weeksState);
 
-  function createCell<T extends { points: number }>(list: T[], key?: string) {
+  function createCell<T extends { points: number; bet: any }>(
+    list: T[],
+    key?: string
+  ) {
     const winFn = (bet: T) => bet.points > 0;
     const lossFn = (bet: T) => bet.points < 0;
     const tieFn = (bet: T) => bet.points === 0;
+    const points = list.reduce((sum, bet) => sum + bet.points, 0);
+
+    if (list.length === 0) {
+      return <td key={key}></td>;
+    }
 
     return (
       <td key={key}>
         {list.filter(winFn).length}-{list.filter(lossFn).length}
         {list.filter(tieFn).length > 0 && `-${list.filter(tieFn).length}`}
-        <br />
-        {list.reduce((sum, bet) => sum + bet.points, 0)} Punkte
+        <div>
+          {`⌀ ${
+            Math.round(
+              (10 *
+                list.reduce((sum, bet) => sum + (bet.bet?.pointDiff ?? 0), 0)) /
+                list.length
+            ) / 10
+          } Einsatz`}
+        </div>
+        <div>{points} Punkte</div>
       </td>
     );
   }
