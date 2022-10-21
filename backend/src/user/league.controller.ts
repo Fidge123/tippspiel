@@ -33,12 +33,51 @@ export class LeagueController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Post('delete')
+  async deleteLeague(
+    @Body('leagueId') leagueId: string,
+    @CurrentUser() user: User,
+  ): Promise<LeagueEntity> {
+    return await this.databaseService.removeLeague(leagueId, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Post('add')
   async addMember(
     @Body('leagueId') leagueId: string,
     @Body('email') email: string,
+    @CurrentUser() user: User,
   ): Promise<LeagueEntity> {
-    // Send notification or sign up mail?
-    return await this.databaseService.addMember(leagueId, email);
+    return await this.databaseService.addMember(leagueId, email, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('kick')
+  async kickMember(
+    @Body('leagueId') leagueId: string,
+    @Body('userId') userId: string,
+    @CurrentUser() user: User,
+  ): Promise<LeagueEntity> {
+    return await this.databaseService.removeMember(leagueId, userId, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('promote')
+  async promoteMember(
+    @Body('leagueId') leagueId: string,
+    @Body('userId') userId: string,
+    @CurrentUser() user: User,
+  ): Promise<LeagueEntity> {
+    return await this.databaseService.addAdmin(leagueId, userId, user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('demote')
+  async demoteAdmin(
+    @Body('leagueId') leagueId: string,
+    @Body('userId') userId: string,
+    @CurrentUser() user: User,
+  ): Promise<LeagueEntity> {
+    return await this.databaseService.removeAdmin(leagueId, userId, user.id);
   }
 }

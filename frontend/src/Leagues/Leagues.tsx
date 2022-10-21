@@ -39,10 +39,14 @@ function Leagues() {
                   key={league.id}
                   league={league}
                   setLeague={(changed) =>
-                    setLeagues([
-                      ...leagues.filter((el) => el.id !== league.id),
-                      changed,
-                    ])
+                    setLeagues(
+                      changed
+                        ? [
+                            ...leagues.filter((el) => el.id !== league.id),
+                            changed,
+                          ]
+                        : leagues.filter((el) => el.id !== league.id)
+                    )
                   }
                 ></LeagueRow>
               ))}

@@ -1,7 +1,12 @@
 import { useState, Suspense, lazy } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchFromAPI, resetToken } from "./api";
 const LeagueDisplay = lazy(() => import("./LeagueDisplay"));
+
+function Placeholder() {
+  return <span className="text-xs text-center text-white">ERROR</span>;
+}
 
 function Hamburger() {
   const navigate = useNavigate();
@@ -9,9 +14,11 @@ function Hamburger() {
 
   return (
     <div className="flex items-center gap-1">
-      <Suspense fallback={<span>League loading...</span>}>
-        <LeagueDisplay />
-      </Suspense>
+      <ErrorBoundary FallbackComponent={Placeholder}>
+        <Suspense fallback={<span>Lädt...</span>}>
+          <LeagueDisplay />
+        </Suspense>
+      </ErrorBoundary>
 
       <nav className="relative pointer-events-auto">
         <button onClick={() => setOpen(!open)}>

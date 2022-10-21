@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { fetchFromAPI, getDecodedToken } from "../api";
 import { League } from "../State/response-types";
 import { activeLeagueState } from "../State/states";
+import Member from "./Member";
 
 function LeagueRow({ league, setLeague }: Props) {
   const [email, setEmail] = useState("");
@@ -19,17 +20,38 @@ function LeagueRow({ league, setLeague }: Props) {
     return res;
   }
 
+  async function handleDelete(e: FormEvent) {
+    e.preventDefault();
+    const name = prompt(
+      "Are you sure? Enter the name of the league to delete it."
+    );
+    if (league.name === name) {
+      const res = await fetchFromAPI("leagues/delete", "POST", {
+        leagueId: league.id,
+      });
+      setLeague(undefined);
+      return res;
+    }
+  }
+
   return (
     <tr key={league.id}>
-      <td>{league.name}</td>
-      <td className="text-left">
-        {league.members.map((m) =>
-          league.admins.some((a) => a.id === m.id) ? (
-            <div key={m.id}>{m.name} (Admin)</div>
-          ) : (
-            <div key={m.id}>{m.name}</div>
-          )
+      <td>
+        <div>{league.name}</div>
+        {league.admins.some((a) => a.id === me) && (
+          <button onClick={handleDelete}>Delete League</button>
         )}
+      </td>
+      <td className="text-left">
+        {league.members.map((m) => (
+          <Member
+            key={m.id}
+            member={m}
+            league={league}
+            setLeague={setLeague}
+            showControls={league.admins.some((a) => a.id === me)}
+          ></Member>
+        ))}
         {league.admins.some((a) => a.id === me) && (
           <form onSubmit={handleAdd}>
             <input
@@ -57,7 +79,7 @@ function LeagueRow({ league, setLeague }: Props) {
 
 interface Props {
   league: League;
-  setLeague: (league: League) => void;
+  setLeague: (league?: League) => void;
 }
 
 export default LeagueRow;
