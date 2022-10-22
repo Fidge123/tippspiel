@@ -7,6 +7,7 @@ import Member from "./Member";
 
 function LeagueRow({ league, setLeague }: Props) {
   const [email, setEmail] = useState("");
+  const [editMode, setEditMode] = useState(false);
   const me = getDecodedToken().id;
   const [activeLeague, setActiveLeague] = useRecoilState(activeLeagueState);
 
@@ -39,6 +40,11 @@ function LeagueRow({ league, setLeague }: Props) {
       <td>
         <div>{league.name}</div>
         {league.admins.some((a) => a.id === me) && (
+          <button onClick={() => setEditMode(!editMode)}>
+            {editMode ? "Anpassen beenden" : "Anpassen"}
+          </button>
+        )}
+        {league.admins.some((a) => a.id === me) && editMode && (
           <button onClick={handleDelete}>Delete League</button>
         )}
       </td>
@@ -49,10 +55,10 @@ function LeagueRow({ league, setLeague }: Props) {
             member={m}
             league={league}
             setLeague={setLeague}
-            showControls={league.admins.some((a) => a.id === me)}
+            showControls={editMode && league.admins.some((a) => a.id === me)}
           ></Member>
         ))}
-        {league.admins.some((a) => a.id === me) && (
+        {editMode && league.admins.some((a) => a.id === me) && (
           <form onSubmit={handleAdd}>
             <input
               className="p-0.5 mr-2"
