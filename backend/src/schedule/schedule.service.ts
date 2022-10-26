@@ -1,11 +1,17 @@
-import { stringify } from 'querystring';
+import { stringify } from 'node:querystring';
+import { env } from 'node:process';
+import { resolve } from 'node:path';
+import { writeFile, mkdir } from 'node:fs/promises';
+import { promisify } from 'node:util';
+import { gzip as gzipCompress } from 'node:zlib';
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ScheduleDataService } from '../database/schedule.service';
 import { Scoreboard, Team } from '../database/api.type';
 import { getTransporter } from '../email';
-import { env } from 'process';
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
+
+const gzip = promisify(gzipCompress);
 
 export const BASE_URL =
   'https://site.api.espn.com/apis/site/v2/sports/football/nfl/';
@@ -54,6 +60,9 @@ export class ScheduleService {
       return;
     }
     const data = await response.json();
+
+    await recordToFile('groups', data);
+
     for (const conf of data.groups) {
       console.log(`--- Loading ${conf.abbreviation} divisions ---`);
       await Promise.all(
@@ -74,6 +83,9 @@ export class ScheduleService {
           fetch(`${BASE_URL}teams/${team.id}`).then(async (r) => r.json()),
         ),
       );
+
+      await recordToFile(`teams-${division.name}`, teamResponses);
+
       for (const t of teamResponses.map((t) => t.team)) {
         console.log(`Creating ${t.displayName}`);
         await this.databaseService.createOrUpdateTeam(t, divEntity);
@@ -95,6 +107,12 @@ export class ScheduleService {
       } week ${key.week} ...`,
     );
     const response = await load(key);
+
+    await recordToFile(
+      `scoreboard-${key.year}-${key.seasontype}-${key.week}`,
+      response,
+    );
+
     const calendar =
       response.leagues[0].calendar[key.seasontype - 1].entries[key.week - 1];
 
@@ -165,4 +183,17 @@ async function load({ year, seasontype, week }): Promise<Scoreboard> {
     return;
   }
   return await response.json();
+}
+
+async function recordToFile(name: string, data: any) {
+  const today = new Date();
+  if (today.getDay() === 0 && !env.SKIP_BACKUP) {
+    const path = '~/backup';
+    await mkdir(path, { recursive: true });
+    await writeFile(
+      resolve(path, `${name}-${today.toISOString()}.json.gz`),
+      await gzip(JSON.stringify(data)),
+      { encoding: 'utf8' },
+    );
+  }
 }
