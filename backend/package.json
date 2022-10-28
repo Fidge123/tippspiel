@@ -17,6 +17,7 @@
     "typeorm": "typeorm-ts-node-commonjs -d src/datasource.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.198.0",
     "@nestjs/common": "^9.0.9",
     "@nestjs/core": "^9.0.9",
     "@nestjs/jwt": "^9.0.0",

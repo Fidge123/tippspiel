@@ -9,7 +9,9 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { ScheduleDataService } from '../database/schedule.service';
 import { Scoreboard, Team } from '../database/api.type';
 import { getTransporter } from '../email';
+import { s3Client } from '../s3';
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
+import { ListBucketsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const gzip = promisify(gzipCompress);
 
@@ -187,13 +189,31 @@ async function load({ year, seasontype, week }): Promise<Scoreboard> {
 
 async function recordToFile(name: string, data: any) {
   const today = new Date();
-  if (today.getDay() === 0 && !env.SKIP_BACKUP) {
-    const path = '~/backup';
-    await mkdir(path, { recursive: true });
-    await writeFile(
-      resolve(path, `${name}-${today.toISOString()}.json.gz`),
-      await gzip(JSON.stringify(data)),
-      { encoding: 'utf8' },
-    );
+  // if (today.getDay() === 0 && !env.SKIP_BACKUP) {
+  if (!env.SKIP_BACKUP) {
+    if (s3Client) {
+      try {
+        const { Buckets } = await s3Client.send(new ListBucketsCommand(''));
+        if (Buckets.some((b) => b.Name === 'nfl-tippspiel')) {
+          await s3Client.send(
+            new PutObjectCommand({
+              Bucket: 'nfl-tippspiel',
+              Key: `${name}-${today.toISOString()}.json.gz`,
+              Body: await gzip(JSON.stringify(data)),
+            }),
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      const path = '~/backup';
+      await mkdir(path, { recursive: true });
+      await writeFile(
+        resolve(path, `${name}-${today.toISOString()}.json.gz`),
+        await gzip(JSON.stringify(data)),
+        { encoding: 'utf8' },
+      );
+    }
   }
 }
