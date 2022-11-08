@@ -160,13 +160,20 @@ export class ScheduleService {
 
     if (games.length) {
       await Promise.all(
-        games.map((game) =>
-          this.importWeek({
+        games
+          .map((game) => ({
             year: game.week.year,
             seasontype: game.week.seasontype,
             week: game.week.week,
-          }),
-        ),
+          }))
+          .reduce(
+            (weeks, week) =>
+              weeks.some((w) => JSON.stringify(w) === JSON.stringify(week))
+                ? weeks
+                : [...weeks, week],
+            [],
+          )
+          .map((week) => this.importWeek(week)),
       );
     }
   }
