@@ -1,8 +1,5 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Delete } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-
-import { loadHTML, loadTXT } from '../templates/loadTemplate';
-import { getTransporter } from '../email';
 
 import { LeagueDataService } from '../database/league.service';
 import { CurrentUser, User } from '../user.decorator';
@@ -24,7 +21,7 @@ export class LeagueController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('create')
+  @Post()
   async createLeague(
     @Body('name') name: string,
     @CurrentUser() user: User,
@@ -33,7 +30,7 @@ export class LeagueController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('delete')
+  @Delete()
   async deleteLeague(
     @Body('leagueId') leagueId: string,
     @CurrentUser() user: User,

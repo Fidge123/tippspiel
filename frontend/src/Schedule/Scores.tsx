@@ -13,7 +13,7 @@ function Scores({ game, selected, weekId }: Props) {
     "STATUS_HALFTIME",
     "STATUS_END_PERIOD",
   ].includes(game.status);
-  const final = !hidden && game.status === "STATUS_FINAL";
+  const final = game.status === "STATUS_FINAL";
   const homeScore = game.homeScore;
   const awayScore = game.awayScore;
   const homeWon = homeScore > awayScore;
@@ -30,7 +30,7 @@ function Scores({ game, selected, weekId }: Props) {
           final && selected === "away" && awayWon && "text-green-500"
         } ${inProgress && "italic"}`}
       >
-        {inProgress || final ? game.awayScore : ""}
+        {!hidden && (inProgress || final) ? game.awayScore : ""}
       </span>
       {new Date(game.date) < new Date() ||
       (doublerGame && new Date(doublerGame.date) < new Date()) ? (
@@ -53,7 +53,7 @@ function Scores({ game, selected, weekId }: Props) {
           final && selected === "home" && homeWon && "text-green-500"
         } ${inProgress && "italic"}`}
       >
-        {inProgress || final ? game.homeScore : ""}
+        {!hidden && (inProgress || final) ? game.homeScore : ""}
       </span>
     </div>
   );

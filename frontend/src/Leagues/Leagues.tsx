@@ -10,7 +10,7 @@ function Leagues() {
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault();
-    const res = await fetchFromAPI("leagues/create", "POST", {
+    const res = await fetchFromAPI("leagues", "POST", {
       name: leagueName,
     });
     setLeagues([...leagues, res]);

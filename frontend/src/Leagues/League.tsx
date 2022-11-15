@@ -24,10 +24,10 @@ function LeagueRow({ league, setLeague }: Props) {
   async function handleDelete(e: FormEvent) {
     e.preventDefault();
     const name = prompt(
-      "Are you sure? Enter the name of the league to delete it."
+      "Möchtest du wirklich diese Liga löschen? Gebe den Namen der Liga ein um sie zu löschen:"
     );
     if (league.name === name) {
-      const res = await fetchFromAPI("leagues/delete", "POST", {
+      const res = await fetchFromAPI("leagues", "DELETE", {
         leagueId: league.id,
       });
       setLeague(undefined);
@@ -45,7 +45,7 @@ function LeagueRow({ league, setLeague }: Props) {
           </button>
         )}
         {league.admins.some((a) => a.id === me) && editMode && (
-          <button onClick={handleDelete}>Delete League</button>
+          <button onClick={handleDelete}>Löschen</button>
         )}
       </td>
       <td className="text-left">
