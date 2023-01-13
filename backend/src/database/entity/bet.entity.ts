@@ -5,12 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { GameEntity } from './game.entity';
 import { LeagueEntity } from './league.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('bet')
+@Index(['game', 'user', 'league'], { unique: true })
 export class BetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,6 +20,7 @@ export class BetEntity {
   @ManyToOne(() => GameEntity, (game) => game.bets)
   game: GameEntity;
 
+  @Index()
   @ManyToOne(() => UserEntity, (user) => user.bets)
   user: UserEntity;
 

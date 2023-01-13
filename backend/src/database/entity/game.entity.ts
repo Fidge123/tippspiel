@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { BetEntity } from './bet.entity';
 import { BetDoublerEntity } from './betDoubler.entity';
@@ -19,6 +20,7 @@ export class GameEntity {
   @PrimaryColumn()
   id: string;
 
+  @Index()
   @Column()
   date: Date;
 
@@ -52,6 +54,7 @@ export class GameEntity {
   @Column()
   winner: 'home' | 'away' | 'none';
 
+  @Index()
   @Column()
   status: string;
   // | 'STATUS_SCHEDULED'

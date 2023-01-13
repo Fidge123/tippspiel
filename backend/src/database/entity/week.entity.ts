@@ -5,14 +5,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  Unique,
+  Index,
 } from 'typeorm';
 import { BetDoublerEntity } from './betDoubler.entity';
 import { ByeEntity } from './bye.entity';
 import { GameEntity } from './game.entity';
 
 @Entity({ name: 'week' })
-@Unique(['year', 'seasontype', 'week'])
+@Index(['year', 'seasontype', 'week'], { unique: true })
 export class WeekEntity {
   @PrimaryColumn()
   id: string;

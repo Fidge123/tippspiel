@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   Column,
+  Index,
 } from 'typeorm';
 import { TeamEntity } from './team.entity';
 import { LeagueEntity } from './league.entity';
@@ -12,6 +13,7 @@ import { UserEntity } from './user.entity';
 import { DivisionEntity } from './division.entity';
 
 @Entity('divisionBet')
+@Index(['division', 'user', 'league', 'year'], { unique: true })
 export class DivisionBetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

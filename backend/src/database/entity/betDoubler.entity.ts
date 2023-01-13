@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { GameEntity } from './game.entity';
 import { WeekEntity } from './week.entity';
@@ -11,6 +12,7 @@ import { UserEntity } from './user.entity';
 import { LeagueEntity } from './league.entity';
 
 @Entity('betDoubler')
+@Index(['week', 'user', 'league'], { unique: true })
 export class BetDoublerEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
