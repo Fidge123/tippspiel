@@ -205,7 +205,7 @@ async function recordToFile(name: string, data: any) {
           await s3Client.send(
             new PutObjectCommand({
               Bucket: 'nfl-tippspiel',
-              Key: `${name}-${today.toISOString()}.json.gz`,
+              Key: `${name}/${today.toISOString()}.json.gz`,
               Body: await gzip(JSON.stringify(data)),
             }),
           );
