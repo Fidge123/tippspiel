@@ -33,7 +33,7 @@ function Leagues() {
           </thead>
           <tbody>
             {leagues
-              .filter((l) => l.season === 2022)
+              // .filter((l) => l.season === 2022)
               .map((league) => (
                 <LeagueRow
                   key={league.id}

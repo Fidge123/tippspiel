@@ -1,11 +1,16 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fetchFromAPI } from "../api";
 import { Team } from "../State/response-types";
-import { activeLeagueState, sbBetState, teamsState } from "../State/states";
+import {
+  activeLeagueState,
+  sbBetState,
+  seasonStartDateState,
+  teamsState,
+} from "../State/states";
 
 function SbBet() {
   const league = useRecoilValue(activeLeagueState);
-
+  const seasonStart = useRecoilValue(seasonStartDateState);
   const teams = useRecoilValue(teamsState);
   const [sbBet, setSBBet] = useRecoilState(sbBetState);
 
@@ -13,7 +18,7 @@ function SbBet() {
     const res = await fetchFromAPI("bet/superbowl", "POST", {
       teamId,
       leagueId: league.id,
-      year: 2022,
+      year: league.season,
     });
     setSBBet(teamId);
     return res;
@@ -27,7 +32,7 @@ function SbBet() {
       {teams.map((team) => (
         <button
           key={"SB" + team.id}
-          disabled={new Date(2022, 8, 11, 19) < new Date()}
+          disabled={seasonStart < new Date()}
           className="team-l"
           style={styleByTeam(team, sbBet === team.id)}
           onClick={() => selectSBWinner(team.id)}

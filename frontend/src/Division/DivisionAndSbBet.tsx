@@ -4,6 +4,7 @@ import {
   divisionsState,
   divisionBetsState,
   activeLeagueState,
+  seasonStartDateState,
 } from "../State/states";
 import { fetchFromAPI } from "../api";
 import Division from "./Division";
@@ -11,7 +12,7 @@ import SbBet from "./SbBet";
 import { DivisionBet } from "../State/response-types";
 
 function DivisionAndSbBet() {
-  const seasonStarted = new Date(2022, 8, 11, 19) < new Date();
+  const seasonStarted = useRecoilValue(seasonStartDateState) < new Date();
   const divisions = useRecoilValue(divisionsState);
   const league = useRecoilValue(activeLeagueState);
   const [divisionBets, setDivisionBets] = useRecoilState(divisionBetsState);

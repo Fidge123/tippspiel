@@ -15,7 +15,7 @@ export class BetService {
     for (const user of users) {
       if (
         !(user.settings.sendReminder ?? true) ||
-        !user.memberIn.some((l) => l.season === 2022)
+        !user.memberIn.some((l) => l.season === 2023)
       ) {
         console.log(`Skipped user ${user.name}`);
         continue;

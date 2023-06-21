@@ -374,7 +374,7 @@ export class BetDataService {
       throw new BadRequestException();
     }
 
-    const [user, division, first, second, third, fourth, league] =
+    const [user, division, first, second, third, fourth, firstWeek, league] =
       await Promise.all([
         this.userRepo.findOneOrFail({ where: { id: userId } }),
         this.divisionRepo.findOneOrFail({ where: { name: divisionId } }),
@@ -382,11 +382,14 @@ export class BetDataService {
         this.teamRepo.findOneOrFail({ where: { id: teamIds[1] } }),
         this.teamRepo.findOneOrFail({ where: { id: teamIds[2] } }),
         this.teamRepo.findOneOrFail({ where: { id: teamIds[3] } }),
+        this.weekRepo.findOneOrFail({
+          where: { year, seasontype: 2, week: 1 },
+        }),
         this.leagueRepo.findOneOrFail({ where: { id: leagueId } }),
       ]);
 
     if (
-      new Date() < new Date(2022, 8, 11, 19) &&
+      new Date() < new Date(firstWeek.start) &&
       user &&
       division &&
       first &&
@@ -418,13 +421,16 @@ export class BetDataService {
       throw new BadRequestException();
     }
 
-    const [user, team, league] = await Promise.all([
+    const [user, team, firstWeek, league] = await Promise.all([
       this.userRepo.findOneByOrFail({ id: userId }),
       this.teamRepo.findOneByOrFail({ id: teamId }),
+      this.weekRepo.findOneOrFail({
+        where: { year, seasontype: 2, week: 1 },
+      }),
       this.leagueRepo.findOneByOrFail({ id: leagueId }),
     ]);
 
-    if (new Date() < new Date(2022, 8, 11, 19) && user) {
+    if (new Date() < new Date(firstWeek.start) && user) {
       const bet =
         (await this.sbBetRepo.findOneBy({ league, user })) ||
         new SuperbowlBetEntity();

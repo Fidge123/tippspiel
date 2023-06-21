@@ -50,7 +50,7 @@ export default function Rules() {
       <section className="py-2">
         <h2 className="py-4 font-bold text-l">Division und Superbowl</h2>
         <p>
-          Division und Superbowl müssen vor dem Start des ersten Sonntagsspiel
+          Division und Superbowl müssen vor dem Start des ersten Saisonspiels
           getippt werden
         </p>
         <ul className="py-2 pl-12 list-disc list-outside">

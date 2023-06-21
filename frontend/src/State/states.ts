@@ -138,6 +138,19 @@ export const weeksState = atom<Week[]>({
   }),
 });
 
+export const seasonStartDateState = selector<Date>({
+  key: "weeks/first",
+  get: async ({ get }) =>
+    new Date(
+      get(weeksState).find(
+        ({ year, seasontype, week }) =>
+          year === get(activeLeagueState).season &&
+          seasontype === 2 &&
+          week === 1
+      )?.start ?? "no start date available"
+    ),
+});
+
 export const currentWeekState = selectorFamily<boolean, string>({
   key: "weeks/current",
   get:

@@ -1,11 +1,13 @@
+import { useRecoilValue } from "recoil";
 import {
   Division as DivisionType,
   DivisionBet,
   Team,
 } from "../State/response-types";
+import { seasonStartDateState } from "../State/states";
 
 function Division({ division, divisionBets, setDivisionBets }: Props) {
-  const seasonStarted = new Date(2022, 8, 11, 19) < new Date();
+  const seasonStarted = useRecoilValue(seasonStartDateState) < new Date();
 
   function getIndex(teamId: string) {
     const index =
