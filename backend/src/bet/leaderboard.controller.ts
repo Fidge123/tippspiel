@@ -96,7 +96,7 @@ export class LeaderboardController {
       await Promise.all(
         users.map(async (user) => {
           const divBets =
-            isPlayoffs || user.id === me.id
+            isPlayoffs || season !== w.year || user.id === me.id
               ? await this.dbService.userDivBets(user.id, league, season)
               : [];
           const sbBet =
