@@ -96,11 +96,11 @@ export class LeaderboardController {
       await Promise.all(
         users.map(async (user) => {
           const divBets =
-            isPlayoffs || season !== w.year || user.id === me.id
+            isPlayoffs || season < w.year || user.id === me.id
               ? await this.dbService.userDivBets(user.id, league, season)
               : [];
           const sbBet =
-            isFinalGame || user.id === me.id
+            isFinalGame || season < w.year || user.id === me.id
               ? await this.dbService.userSbBets(user.id, league, season)
               : null;
           const response = {
@@ -121,7 +121,8 @@ export class LeaderboardController {
               second: bet.second,
               third: bet.third,
               fourth: bet.fourth,
-              points: isPlayoffs ? calcDivisionPoints(bet) : 0,
+              points:
+                isPlayoffs || season < w.year ? calcDivisionPoints(bet) : 0,
             })),
             sbBet: {
               team: sbBet?.team ?? {},
