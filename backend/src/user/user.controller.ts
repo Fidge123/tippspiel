@@ -94,7 +94,7 @@ export class UserController {
     const transporter = await getTransporter();
     await transporter
       .sendEmail({
-        From: 'Tippspiel <tippspiel@6v4.de>',
+        From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
         To: process.env.EMAIL,
         Subject: 'Neuer Nutzer registriert',
         TextBody: await loadTXT('newUserAlert'),
@@ -106,7 +106,7 @@ export class UserController {
       .catch((error) => console.error(error));
     await transporter
       .sendEmail({
-        From: 'Tippspiel <tippspiel@6v4.de>',
+        From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
         To: email,
         Subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
         TextBody: await loadTXT('verifyUser', { name, link }),
@@ -136,7 +136,7 @@ export class UserController {
     await this.databaseService.verify(id, token);
     await transporter
       .sendEmail({
-        From: 'Tippspiel <tippspiel@6v4.de>',
+        From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
         To: process.env.EMAIL,
         Subject: 'Nutzer verifiziert',
         TextBody: await loadTXT('userVerifiedAlert'),
@@ -160,7 +160,7 @@ export class UserController {
       const transporter = await getTransporter();
       await transporter
         .sendEmail({
-          From: 'Tippspiel <tippspiel@6v4.de>',
+          From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
           To: process.env.EMAIL,
           Subject: 'Passwort Reset angefragt',
           TextBody: await loadTXT('passwordResetAlert'),
@@ -172,7 +172,7 @@ export class UserController {
         .catch((error) => console.error(error));
       await transporter
         .sendEmail({
-          From: 'Tippspiel <tippspiel@6v4.de>',
+          From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
           To: email,
           Subject: 'Tippspiel Passwort zurücksetzen',
           TextBody: await loadTXT('passwordReset', { name: user.name, link }),

@@ -19,7 +19,7 @@ function Legal() {
       <p className="py-2">
         If you expect that the usage of any copyrighted material is not allowed
         under fair use, please contact{" "}
-        <a href="mailto:admin@6v4.de">admin@6v4.de</a>.
+        <a href="mailto:admin@nfl-tippspiel.de">admin@nfl-tippspiel.de</a>.
       </p>
     </article>
   );

@@ -28,7 +28,7 @@ export class BetService {
           games.length > 1 ? `${games.length} Spiele` : `ein Spiel`;
         await transporter
           .sendEmail({
-            From: 'Tippspiel <tippspiel@6v4.de>',
+            From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
             To: user.email,
             Subject: `Du hast ${countString} noch nicht getippt`,
             TextBody: await loadTXT('betReminder', {

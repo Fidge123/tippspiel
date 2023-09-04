@@ -14,7 +14,7 @@ function Impressum() {
           <br />
           14469 Potsdam
         </p>
-        <p className="py-1">E-Mail: admin@6v4.de</p>
+        <p className="py-1">E-Mail: admin@nfl-tippspiel.de</p>
         <p className="py-1">
           Diese Seite ist wird privat betrieben und nicht gewerblich genutzt.
         </p>

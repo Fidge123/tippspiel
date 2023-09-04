@@ -16,7 +16,9 @@ function MatchupInput({ game }: Props) {
       className={`h-10 w-11 ml-1 p-px text-center dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
         points !== bet.points ? "text-yellow-600" : "text-black"
       }`}
-      type="number"
+      type="text"
+      pattern="[0-9]+"
+      inputMode="numeric"
       disabled={!bet.selected || new Date(game.date) < new Date()}
       value={points ?? ""}
       min={1}

@@ -33,7 +33,7 @@ async function notify(url: string) {
   const transporter = await getTransporter();
   await transporter
     .sendEmail({
-      From: 'Tippspiel <tippspiel@6v4.de>',
+      From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
       To: env.EMAIL,
       Subject: `API Request failed`,
       TextBody: await loadTXT('requestFailed', { url }),
