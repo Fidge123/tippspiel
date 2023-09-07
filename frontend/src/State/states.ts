@@ -147,7 +147,7 @@ export const seasonStartDateState = selector<Date>({
           year === get(activeLeagueState).season &&
           seasontype === 2 &&
           week === 1
-      )?.start ?? "no start date available"
+      )?.games?.[0]?.date ?? "no start date available"
     ),
 });
 
