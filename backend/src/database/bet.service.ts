@@ -387,19 +387,20 @@ export class BetDataService {
         this.teamRepo.findOneOrFail({ where: { id: teamIds[3] } }),
         this.weekRepo.findOneOrFail({
           where: { year, seasontype: 2, week: 1 },
+          relations: { games: true },
         }),
         this.leagueRepo.findOneOrFail({ where: { id: leagueId } }),
       ]);
 
     if (
-      new Date() < new Date(firstWeek.start) &&
       user &&
       division &&
       first &&
       second &&
       third &&
       fourth &&
-      league
+      league &&
+      new Date() < new Date(firstWeek.games?.[0]?.date ?? 'no date available')
     ) {
       const bet =
         (await this.divBetRepo.findOneBy({ league, division, user })) ||
@@ -429,11 +430,15 @@ export class BetDataService {
       this.teamRepo.findOneByOrFail({ id: teamId }),
       this.weekRepo.findOneOrFail({
         where: { year, seasontype: 2, week: 1 },
+        relations: { games: true },
       }),
       this.leagueRepo.findOneByOrFail({ id: leagueId }),
     ]);
 
-    if (new Date() < new Date(firstWeek.start) && user) {
+    if (
+      user &&
+      new Date() < new Date(firstWeek.games?.[0]?.date ?? 'no date available')
+    ) {
       const bet =
         (await this.sbBetRepo.findOneBy({ league, user })) ||
         new SuperbowlBetEntity();
