@@ -71,6 +71,7 @@ export class BetDataService {
       .createQueryBuilder('game')
       .leftJoin('game.homeTeam', 'home')
       .leftJoin('game.awayTeam', 'away')
+      .leftJoin('game.week', 'week')
       .select(['game.id', 'game.date', 'home.name', 'away.name'])
       .where('game.date > :now')
       .andWhere('game.status = :status')
@@ -79,11 +80,13 @@ export class BetDataService {
       .getMany();
     return games.filter(
       (game) =>
-        !leagues.every((l) =>
-          bets
-            .filter((bet) => bet.league.id === l.id)
-            .some((bet) => bet.game.id === game.id),
-        ),
+        !leagues
+          .filter((league) => league.season === game.week.year)
+          .every((l) =>
+            bets
+              .filter((bet) => bet.league.id === l.id)
+              .some((bet) => bet.game.id === game.id),
+          ),
     );
   }
 
