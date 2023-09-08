@@ -54,8 +54,9 @@ export class BetDataService {
     const thirtyFourHours = 34 * 60 * 60 * 1000;
     const soon = new Date(now.getTime() + thirtyFourHours);
     const status = 'STATUS_SCHEDULED';
+    const currentWeek = await this.findCurrentWeek();
     const leagues = await this.leagueRepo.find({
-      where: { members: { id: user } },
+      where: { members: { id: user }, season: currentWeek.year },
     });
     const bets = await this.betRepo
       .createQueryBuilder('bets')
@@ -71,7 +72,6 @@ export class BetDataService {
       .createQueryBuilder('game')
       .leftJoin('game.homeTeam', 'home')
       .leftJoin('game.awayTeam', 'away')
-      .leftJoin('game.week', 'week')
       .select(['game.id', 'game.date', 'home.name', 'away.name'])
       .where('game.date > :now')
       .andWhere('game.status = :status')
@@ -80,13 +80,11 @@ export class BetDataService {
       .getMany();
     return games.filter(
       (game) =>
-        !leagues
-          .filter((league) => league.season === game.week.year)
-          .every((l) =>
-            bets
-              .filter((bet) => bet.league.id === l.id)
-              .some((bet) => bet.game.id === game.id),
-          ),
+        !leagues.every((l) =>
+          bets
+            .filter((bet) => bet.league.id === l.id)
+            .some((bet) => bet.game.id === game.id),
+        ),
     );
   }
 
