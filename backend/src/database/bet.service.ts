@@ -275,7 +275,7 @@ export class BetDataService {
       (await this.weekRepo.findOne({
         where: { end: MoreThan(new Date()) },
         order: { end: 'ASC' },
-      })) || (await this.weekRepo.findOne({ order: { end: 'DESC' } }))
+      })) || (await this.weekRepo.find({ take: 1, order: { end: 'DESC' } }))[0]
     );
   }
 
