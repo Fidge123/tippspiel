@@ -75,9 +75,8 @@ export class LeaderboardController {
     @Query('season') seasonStr: string,
     @CurrentUser() me: User,
   ): Promise<any> {
-    const { members: users, season } = await this.leagueService.getLeague(
-      league,
-    );
+    const { members: users, season } =
+      await this.leagueService.getLeague(league);
     if (parseInt(seasonStr, 10) !== season) {
       throw new BadRequestException();
     }

@@ -70,7 +70,9 @@ export class UserController {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle(3, 60)
+  @Throttle({
+    default: { limit: 3, ttl: 60000 },
+  })
   @Post('register')
   async register(
     @Body('email') email: string,
@@ -183,7 +185,9 @@ export class UserController {
   }
 
   @UseGuards(ThrottlerGuard)
-  @Throttle(1, 60)
+  @Throttle({
+    default: { limit: 1, ttl: 60000 },
+  })
   @Post('reset')
   async reset(
     @Body('id') id: string,

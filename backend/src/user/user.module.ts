@@ -11,8 +11,7 @@ import { LeagueController } from './league.controller';
     AuthModule,
     DatabaseModule,
     ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 10,
+      throttlers: [{ ttl: 60000, limit: 10 }],
     }),
   ],
   controllers: [UserController, LeagueController],
