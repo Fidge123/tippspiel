@@ -200,7 +200,7 @@ async function recordToFile(name: string, data: any) {
   if (!env.SKIP_BACKUP) {
     if (s3Client) {
       try {
-        const { Buckets } = await s3Client.send(new ListBucketsCommand(''));
+        const { Buckets } = await s3Client.send(new ListBucketsCommand());
         if (Buckets.some((b) => b.Name === 'nfl-tippspiel')) {
           await s3Client.send(
             new PutObjectCommand({
