@@ -1,14 +1,7 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import type { DefaultSession, NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { db } from "~/server/db";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-} from "~/server/db/schema";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -44,11 +37,11 @@ export const authConfig = {
           return null;
         }
 
-        const user = await db.query.users.findFirst({
+        const user = await db.query.user.findFirst({
           where: (users, { eq, and }) =>
             and(
               eq(users.email, credentials.email as string),
-              eq(users.password, credentials.password as string)
+              eq(users.password, credentials.password as string),
             ),
         });
 
@@ -71,7 +64,6 @@ export const authConfig = {
       ...session,
       user: {
         ...session.user,
-        id: user.id,
       },
     }),
   },

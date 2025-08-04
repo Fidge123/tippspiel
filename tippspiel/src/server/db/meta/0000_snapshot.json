@@ -1,0 +1,1524 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "salt": {
+          "name": "salt",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "settings": {
+          "name": "settings",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "verified": {
+          "name": "verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "consentedAt": {
+          "name": "consentedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "UQ_e12875dfb3b1d92d7d7c5377e22": {
+          "columns": ["email"],
+          "nullsNotDistinct": false,
+          "name": "UQ_e12875dfb3b1d92d7d7c5377e22"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.bet": {
+      "name": "bet",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "winner": {
+          "name": "winner",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pointDiff": {
+          "name": "pointDiff",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gameId": {
+          "name": "gameId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leagueId": {
+          "name": "leagueId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "IDX_23a1f21c2ca2a0b6797564d2b4": {
+          "name": "IDX_23a1f21c2ca2a0b6797564d2b4",
+          "columns": [
+            {
+              "expression": "userId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "IDX_fe022bce1d0feba556dc3c6721": {
+          "name": "IDX_fe022bce1d0feba556dc3c6721",
+          "columns": [
+            {
+              "expression": "gameId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "userId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "leagueId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "FK_23a1f21c2ca2a0b6797564d2b41": {
+          "name": "FK_23a1f21c2ca2a0b6797564d2b41",
+          "tableFrom": "bet",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_d0ef89e99e899c9c225ade76827": {
+          "name": "FK_d0ef89e99e899c9c225ade76827",
+          "tableFrom": "bet",
+          "tableTo": "league",
+          "schemaTo": "public",
+          "columnsFrom": ["leagueId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_f276722ac17d4b80a327a9b8340": {
+          "name": "FK_f276722ac17d4b80a327a9b8340",
+          "tableFrom": "bet",
+          "tableTo": "game",
+          "schemaTo": "public",
+          "columnsFrom": ["gameId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.superbowlBet": {
+      "name": "superbowlBet",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "teamId": {
+          "name": "teamId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leagueId": {
+          "name": "leagueId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_1b5aaa18aa7ee71b9bb2c5a504a": {
+          "name": "FK_1b5aaa18aa7ee71b9bb2c5a504a",
+          "tableFrom": "superbowlBet",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["teamId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_a95035da5676fc3ba76279417c2": {
+          "name": "FK_a95035da5676fc3ba76279417c2",
+          "tableFrom": "superbowlBet",
+          "tableTo": "league",
+          "schemaTo": "public",
+          "columnsFrom": ["leagueId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_db8e24f19e8506b807c15a02660": {
+          "name": "FK_db8e24f19e8506b807c15a02660",
+          "tableFrom": "superbowlBet",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.reset": {
+      "name": "reset",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_667cdc8d0a3d3e5db228ae6fd6f": {
+          "name": "FK_667cdc8d0a3d3e5db228ae6fd6f",
+          "tableFrom": "reset",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.verify": {
+      "name": "verify",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_076d3a77ca71ace5e2d2d47cc9d": {
+          "name": "FK_076d3a77ca71ace5e2d2d47cc9d",
+          "tableFrom": "verify",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.team": {
+      "name": "team",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "logo": {
+          "name": "logo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "abbreviation": {
+          "name": "abbreviation",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shortName": {
+          "name": "shortName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wins": {
+          "name": "wins",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "losses": {
+          "name": "losses",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ties": {
+          "name": "ties",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "color1": {
+          "name": "color1",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "color2": {
+          "name": "color2",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "divisionName": {
+          "name": "divisionName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playoffSeed": {
+          "name": "playoffSeed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pointsFor": {
+          "name": "pointsFor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pointsAgainst": {
+          "name": "pointsAgainst",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "streak": {
+          "name": "streak",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_b26165dec51bf4779372ab399cd": {
+          "name": "FK_b26165dec51bf4779372ab399cd",
+          "tableFrom": "team",
+          "tableTo": "division",
+          "schemaTo": "public",
+          "columnsFrom": ["divisionName"],
+          "columnsTo": ["name"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.division": {
+      "name": "division",
+      "schema": "",
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.bye": {
+      "name": "bye",
+      "schema": "",
+      "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "teamId": {
+          "name": "teamId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "weekId": {
+          "name": "weekId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "FK_64072cdad2912c04f305967a989": {
+          "name": "FK_64072cdad2912c04f305967a989",
+          "tableFrom": "bye",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["teamId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_478aa45033037c58eda5d02e5c0": {
+          "name": "FK_478aa45033037c58eda5d02e5c0",
+          "tableFrom": "bye",
+          "tableTo": "week",
+          "schemaTo": "public",
+          "columnsFrom": ["weekId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.typeorm_metadata": {
+      "name": "typeorm_metadata",
+      "schema": "",
+      "columns": {
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "database": {
+          "name": "database",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "schema": {
+          "name": "schema",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "table": {
+          "name": "table",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.divisionBet": {
+      "name": "divisionBet",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "divisionName": {
+          "name": "divisionName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "firstId": {
+          "name": "firstId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leagueId": {
+          "name": "leagueId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondId": {
+          "name": "secondId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thirdId": {
+          "name": "thirdId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fourthId": {
+          "name": "fourthId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "IDX_321447fccd6338ee2776aa9936": {
+          "name": "IDX_321447fccd6338ee2776aa9936",
+          "columns": [
+            {
+              "expression": "divisionName",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "userId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "int4_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "leagueId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "int4_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "year",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "FK_75bd2d496547e979b0752ce408d": {
+          "name": "FK_75bd2d496547e979b0752ce408d",
+          "tableFrom": "divisionBet",
+          "tableTo": "division",
+          "schemaTo": "public",
+          "columnsFrom": ["divisionName"],
+          "columnsTo": ["name"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_803fb683d12f38c1d8bf1514dba": {
+          "name": "FK_803fb683d12f38c1d8bf1514dba",
+          "tableFrom": "divisionBet",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_9ae306a1080324e5dfa2ac7f3f5": {
+          "name": "FK_9ae306a1080324e5dfa2ac7f3f5",
+          "tableFrom": "divisionBet",
+          "tableTo": "league",
+          "schemaTo": "public",
+          "columnsFrom": ["leagueId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_03c3e8cb0af3416d31fcee760a8": {
+          "name": "FK_03c3e8cb0af3416d31fcee760a8",
+          "tableFrom": "divisionBet",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["secondId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_eebc9b1703cccd6792abde4a548": {
+          "name": "FK_eebc9b1703cccd6792abde4a548",
+          "tableFrom": "divisionBet",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["thirdId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_016828005f3c492f9634962cbde": {
+          "name": "FK_016828005f3c492f9634962cbde",
+          "tableFrom": "divisionBet",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["fourthId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_897c55ab90c7a9710873b8239b2": {
+          "name": "FK_897c55ab90c7a9710873b8239b2",
+          "tableFrom": "divisionBet",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["firstId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.league": {
+      "name": "league",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "season": {
+          "name": "season",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.week": {
+      "name": "week",
+      "schema": "",
+      "columns": {
+        "year": {
+          "name": "year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "seasontype": {
+          "name": "seasontype",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "week": {
+          "name": "week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start": {
+          "name": "start",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end": {
+          "name": "end",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "IDX_960a28d375395804d5ce7a7a0f": {
+          "name": "IDX_960a28d375395804d5ce7a7a0f",
+          "columns": [
+            {
+              "expression": "year",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "int4_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "seasontype",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "int4_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "week",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "int4_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.migrations": {
+      "name": "migrations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.game": {
+      "name": "game",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "awayScore": {
+          "name": "awayScore",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "homeScore": {
+          "name": "homeScore",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "winner": {
+          "name": "winner",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "awayTeamId": {
+          "name": "awayTeamId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "homeTeamId": {
+          "name": "homeTeamId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekId": {
+          "name": "weekId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "IDX_1f2f5fed6227e9266b8e6f4040": {
+          "name": "IDX_1f2f5fed6227e9266b8e6f4040",
+          "columns": [
+            {
+              "expression": "status",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "IDX_585dc8593e1c01b0f5e78477cf": {
+          "name": "IDX_585dc8593e1c01b0f5e78477cf",
+          "columns": [
+            {
+              "expression": "date",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "timestamp_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "FK_1a206693bb12335a59cb181b355": {
+          "name": "FK_1a206693bb12335a59cb181b355",
+          "tableFrom": "game",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["awayTeamId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_6454b249c4795083f0233b59535": {
+          "name": "FK_6454b249c4795083f0233b59535",
+          "tableFrom": "game",
+          "tableTo": "team",
+          "schemaTo": "public",
+          "columnsFrom": ["homeTeamId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_fa3503be7803a0d1b80a76e31c8": {
+          "name": "FK_fa3503be7803a0d1b80a76e31c8",
+          "tableFrom": "game",
+          "tableTo": "week",
+          "schemaTo": "public",
+          "columnsFrom": ["weekId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.betDoubler": {
+      "name": "betDoubler",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "gameId": {
+          "name": "gameId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leagueId": {
+          "name": "leagueId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "weekId": {
+          "name": "weekId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "IDX_e3018c27fdac8174ca49115411": {
+          "name": "IDX_e3018c27fdac8174ca49115411",
+          "columns": [
+            {
+              "expression": "weekId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "userId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "leagueId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "FK_77b48151105414a855067c67e78": {
+          "name": "FK_77b48151105414a855067c67e78",
+          "tableFrom": "betDoubler",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_9710c752a1ce65b0e66714feb1d": {
+          "name": "FK_9710c752a1ce65b0e66714feb1d",
+          "tableFrom": "betDoubler",
+          "tableTo": "game",
+          "schemaTo": "public",
+          "columnsFrom": ["gameId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_c4ff5474eac77625549d97c4554": {
+          "name": "FK_c4ff5474eac77625549d97c4554",
+          "tableFrom": "betDoubler",
+          "tableTo": "league",
+          "schemaTo": "public",
+          "columnsFrom": ["leagueId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_d1e3ccd0aa94c2699caaff0b26b": {
+          "name": "FK_d1e3ccd0aa94c2699caaff0b26b",
+          "tableFrom": "betDoubler",
+          "tableTo": "week",
+          "schemaTo": "public",
+          "columnsFrom": ["weekId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.member": {
+      "name": "member",
+      "schema": "",
+      "columns": {
+        "leagueId": {
+          "name": "leagueId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "IDX_08897b166dee565859b7fb2fcc": {
+          "name": "IDX_08897b166dee565859b7fb2fcc",
+          "columns": [
+            {
+              "expression": "userId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "IDX_439998ed986bab5ccce25fb69d": {
+          "name": "IDX_439998ed986bab5ccce25fb69d",
+          "columns": [
+            {
+              "expression": "leagueId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "FK_08897b166dee565859b7fb2fcc8": {
+          "name": "FK_08897b166dee565859b7fb2fcc8",
+          "tableFrom": "member",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "FK_439998ed986bab5ccce25fb69d5": {
+          "name": "FK_439998ed986bab5ccce25fb69d5",
+          "tableFrom": "member",
+          "tableTo": "league",
+          "schemaTo": "public",
+          "columnsFrom": ["leagueId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "PK_33fb0a114cfa389eaedef7ad4ad": {
+          "name": "PK_33fb0a114cfa389eaedef7ad4ad",
+          "columns": ["leagueId", "userId"]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.admin": {
+      "name": "admin",
+      "schema": "",
+      "columns": {
+        "leagueId": {
+          "name": "leagueId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "IDX_05c82c10f7c651b94c36370112": {
+          "name": "IDX_05c82c10f7c651b94c36370112",
+          "columns": [
+            {
+              "expression": "leagueId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "IDX_f8a889c4362d78f056960ca6da": {
+          "name": "IDX_f8a889c4362d78f056960ca6da",
+          "columns": [
+            {
+              "expression": "userId",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "FK_05c82c10f7c651b94c36370112d": {
+          "name": "FK_05c82c10f7c651b94c36370112d",
+          "tableFrom": "admin",
+          "tableTo": "league",
+          "schemaTo": "public",
+          "columnsFrom": ["leagueId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "FK_f8a889c4362d78f056960ca6dad": {
+          "name": "FK_f8a889c4362d78f056960ca6dad",
+          "tableFrom": "admin",
+          "tableTo": "user",
+          "schemaTo": "public",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "PK_79fcd73148573cf4e07c3606272": {
+          "name": "PK_79fcd73148573cf4e07c3606272",
+          "columns": ["leagueId", "userId"]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {}
+  }
+}
