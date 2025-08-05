@@ -27,6 +27,7 @@
         "@playwright/test": "^1.54.2",
         "@tailwindcss/postcss": "^4.1.11",
         "@types/bun": "latest",
+        "@types/node": "^24.2.0",
         "@types/react": "^19.1.9",
         "@types/react-dom": "^19.1.7",
         "drizzle-kit": "^0.31.4",
