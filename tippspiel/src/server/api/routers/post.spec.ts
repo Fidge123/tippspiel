@@ -3,7 +3,7 @@ import type { inferProcedureInput } from "@trpc/server";
 import { postRouter } from "~/server/api/routers/post";
 import { db } from "~/server/db";
 
-test("add and get post", async () => {
+test("postRouter hello", async () => {
   const headers = new Headers();
   headers.set("x-trpc-source", "test");
   const caller = postRouter.createCaller({
