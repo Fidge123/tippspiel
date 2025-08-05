@@ -1,6 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
+
 CREATE TABLE "user" (
 	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
 	"email" varchar NOT NULL,
@@ -127,12 +127,6 @@ CREATE TABLE "week" (
 	"id" varchar PRIMARY KEY NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "migrations" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"timestamp" bigint NOT NULL,
-	"name" varchar NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE "game" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"date" timestamp NOT NULL,
@@ -209,4 +203,3 @@ CREATE INDEX "IDX_08897b166dee565859b7fb2fcc" ON "member" USING btree ("userId" 
 CREATE INDEX "IDX_439998ed986bab5ccce25fb69d" ON "member" USING btree ("leagueId" uuid_ops);--> statement-breakpoint
 CREATE INDEX "IDX_05c82c10f7c651b94c36370112" ON "admin" USING btree ("leagueId" uuid_ops);--> statement-breakpoint
 CREATE INDEX "IDX_f8a889c4362d78f056960ca6da" ON "admin" USING btree ("userId" uuid_ops);
-*/

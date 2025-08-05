@@ -17,11 +17,9 @@ export const postRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {}),
+    .mutation(async () => {}),
 
-  getLatest: protectedProcedure.query(async ({ ctx }) => {
-    return null;
-  }),
+  getLatest: protectedProcedure.query(async () => null),
 
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";

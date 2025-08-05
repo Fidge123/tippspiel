@@ -60,7 +60,7 @@ export const authConfig = {
   //   verificationTokensTable: verificationTokens,
   // }),
   callbacks: {
-    session: ({ session, user }) => ({
+    session: ({ session }) => ({
       ...session,
       user: {
         ...session.user,

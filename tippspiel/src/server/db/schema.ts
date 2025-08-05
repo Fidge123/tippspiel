@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
   boolean,
   foreignKey,
   index,
@@ -8,7 +7,6 @@ import {
   jsonb,
   pgTable,
   primaryKey,
-  serial,
   text,
   timestamp,
   unique,
@@ -298,13 +296,6 @@ export const week = pgTable(
     ),
   ],
 );
-
-export const migrations = pgTable("migrations", {
-  id: serial().primaryKey().notNull(),
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  timestamp: bigint({ mode: "number" }).notNull(),
-  name: varchar().notNull(),
-});
 
 export const game = pgTable(
   "game",
