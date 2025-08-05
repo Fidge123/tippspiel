@@ -192,14 +192,14 @@ ALTER TABLE "member" ADD CONSTRAINT "FK_08897b166dee565859b7fb2fcc8" FOREIGN KEY
 ALTER TABLE "member" ADD CONSTRAINT "FK_439998ed986bab5ccce25fb69d5" FOREIGN KEY ("leagueId") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "admin" ADD CONSTRAINT "FK_05c82c10f7c651b94c36370112d" FOREIGN KEY ("leagueId") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "admin" ADD CONSTRAINT "FK_f8a889c4362d78f056960ca6dad" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "IDX_23a1f21c2ca2a0b6797564d2b4" ON "bet" USING btree ("userId" uuid_ops);--> statement-breakpoint
-CREATE UNIQUE INDEX "IDX_fe022bce1d0feba556dc3c6721" ON "bet" USING btree ("gameId" uuid_ops,"userId" uuid_ops,"leagueId" uuid_ops);--> statement-breakpoint
-CREATE UNIQUE INDEX "IDX_321447fccd6338ee2776aa9936" ON "divisionBet" USING btree ("divisionName" uuid_ops,"userId" int4_ops,"leagueId" int4_ops,"year" uuid_ops);--> statement-breakpoint
-CREATE UNIQUE INDEX "IDX_960a28d375395804d5ce7a7a0f" ON "week" USING btree ("year" int4_ops,"seasontype" int4_ops,"week" int4_ops);--> statement-breakpoint
-CREATE INDEX "IDX_1f2f5fed6227e9266b8e6f4040" ON "game" USING btree ("status" text_ops);--> statement-breakpoint
-CREATE INDEX "IDX_585dc8593e1c01b0f5e78477cf" ON "game" USING btree ("date" timestamp_ops);--> statement-breakpoint
-CREATE UNIQUE INDEX "IDX_e3018c27fdac8174ca49115411" ON "betDoubler" USING btree ("weekId" uuid_ops,"userId" text_ops,"leagueId" text_ops);--> statement-breakpoint
-CREATE INDEX "IDX_08897b166dee565859b7fb2fcc" ON "member" USING btree ("userId" uuid_ops);--> statement-breakpoint
-CREATE INDEX "IDX_439998ed986bab5ccce25fb69d" ON "member" USING btree ("leagueId" uuid_ops);--> statement-breakpoint
-CREATE INDEX "IDX_05c82c10f7c651b94c36370112" ON "admin" USING btree ("leagueId" uuid_ops);--> statement-breakpoint
-CREATE INDEX "IDX_f8a889c4362d78f056960ca6da" ON "admin" USING btree ("userId" uuid_ops);
+-- CREATE INDEX "IDX_23a1f21c2ca2a0b6797564d2b4" ON "bet" USING btree ("userId" uuid_ops);--> statement-breakpoint
+-- CREATE UNIQUE INDEX "IDX_fe022bce1d0feba556dc3c6721" ON "bet" USING btree ("gameId" uuid_ops,"userId" uuid_ops,"leagueId" uuid_ops);--> statement-breakpoint
+-- CREATE UNIQUE INDEX "IDX_321447fccd6338ee2776aa9936" ON "divisionBet" USING btree ("divisionName" uuid_ops,"userId" int4_ops,"leagueId" int4_ops,"year" uuid_ops);--> statement-breakpoint
+-- CREATE UNIQUE INDEX "IDX_960a28d375395804d5ce7a7a0f" ON "week" USING btree ("year" int4_ops,"seasontype" int4_ops,"week" int4_ops);--> statement-breakpoint
+-- CREATE INDEX "IDX_1f2f5fed6227e9266b8e6f4040" ON "game" USING btree ("status" text_ops);--> statement-breakpoint
+-- CREATE INDEX "IDX_585dc8593e1c01b0f5e78477cf" ON "game" USING btree ("date" timestamp_ops);--> statement-breakpoint
+-- CREATE UNIQUE INDEX "IDX_e3018c27fdac8174ca49115411" ON "betDoubler" USING btree ("weekId" uuid_ops,"userId" text_ops,"leagueId" text_ops);--> statement-breakpoint
+-- CREATE INDEX "IDX_08897b166dee565859b7fb2fcc" ON "member" USING btree ("userId" uuid_ops);--> statement-breakpoint
+-- CREATE INDEX "IDX_439998ed986bab5ccce25fb69d" ON "member" USING btree ("leagueId" uuid_ops);--> statement-breakpoint
+-- CREATE INDEX "IDX_05c82c10f7c651b94c36370112" ON "admin" USING btree ("leagueId" uuid_ops);--> statement-breakpoint
+-- CREATE INDEX "IDX_f8a889c4362d78f056960ca6da" ON "admin" USING btree ("userId" uuid_ops);

@@ -1,4 +1,4 @@
-import type { DefaultSession, NextAuthConfig } from "next-auth";
+import type { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { db } from "~/server/db";
@@ -9,20 +9,13 @@ import { db } from "~/server/db";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-  }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
+// declare module "next-auth" {
+//   interface Session extends DefaultSession {
+//     user: {
+//       id: string;
+//     } & DefaultSession["user"];
+//   }
+// }
 
 export const authConfig = {
   providers: [
@@ -53,18 +46,12 @@ export const authConfig = {
       },
     }),
   ],
-  // adapter: DrizzleAdapter(db, {
-  //   usersTable: users,
-  //   accountsTable: accounts,
-  //   sessionsTable: sessions,
-  //   verificationTokensTable: verificationTokens,
-  // }),
-  callbacks: {
-    session: ({ session }) => ({
-      ...session,
-      user: {
-        ...session.user,
-      },
-    }),
-  },
+  // callbacks: {
+  //   session: ({ session }) => ({
+  //     ...session,
+  //     user: {
+  //       ...session.user,
+  //     },
+  //   }),
+  // },
 } satisfies NextAuthConfig;

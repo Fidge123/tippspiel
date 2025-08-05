@@ -2,7 +2,6 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   foreignKey,
-  index,
   integer,
   jsonb,
   pgTable,
@@ -10,7 +9,6 @@ import {
   text,
   timestamp,
   unique,
-  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -45,16 +43,16 @@ export const bet = pgTable(
     leagueId: uuid(),
   },
   (table) => [
-    index("IDX_23a1f21c2ca2a0b6797564d2b4").using(
-      "btree",
-      table.userId.asc().nullsLast().op("uuid_ops"),
-    ),
-    uniqueIndex("IDX_fe022bce1d0feba556dc3c6721").using(
-      "btree",
-      table.gameId.asc().nullsLast().op("uuid_ops"),
-      table.userId.asc().nullsLast().op("uuid_ops"),
-      table.leagueId.asc().nullsLast().op("uuid_ops"),
-    ),
+    // index("IDX_23a1f21c2ca2a0b6797564d2b4").using(
+    //   "btree",
+    //   table.userId.asc().nullsLast().op("uuid_ops"),
+    // ),
+    // uniqueIndex("IDX_fe022bce1d0feba556dc3c6721").using(
+    //   "btree",
+    //   table.gameId.asc().nullsLast().op("uuid_ops"),
+    //   table.userId.asc().nullsLast().op("uuid_ops"),
+    //   table.leagueId.asc().nullsLast().op("uuid_ops"),
+    // ),
     foreignKey({
       columns: [table.userId],
       foreignColumns: [user.id],
@@ -221,13 +219,13 @@ export const divisionBet = pgTable(
     fourthId: varchar(),
   },
   (table) => [
-    uniqueIndex("IDX_321447fccd6338ee2776aa9936").using(
-      "btree",
-      table.divisionName.asc().nullsLast().op("uuid_ops"),
-      table.userId.asc().nullsLast().op("int4_ops"),
-      table.leagueId.asc().nullsLast().op("int4_ops"),
-      table.year.asc().nullsLast().op("uuid_ops"),
-    ),
+    // uniqueIndex("IDX_321447fccd6338ee2776aa9936").using(
+    //   "btree",
+    //   table.divisionName.asc().nullsLast().op("uuid_ops"),
+    //   table.userId.asc().nullsLast().op("int4_ops"),
+    //   table.leagueId.asc().nullsLast().op("int4_ops"),
+    //   table.year.asc().nullsLast().op("uuid_ops"),
+    // ),
     foreignKey({
       columns: [table.divisionName],
       foreignColumns: [division.name],
@@ -287,14 +285,14 @@ export const week = pgTable(
     updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
     id: varchar().primaryKey().notNull(),
   },
-  (table) => [
-    uniqueIndex("IDX_960a28d375395804d5ce7a7a0f").using(
-      "btree",
-      table.year.asc().nullsLast().op("int4_ops"),
-      table.seasontype.asc().nullsLast().op("int4_ops"),
-      table.week.asc().nullsLast().op("int4_ops"),
-    ),
-  ],
+  // (table) => [
+  //   uniqueIndex("IDX_960a28d375395804d5ce7a7a0f").using(
+  //     "btree",
+  //     table.year.asc().nullsLast().op("int4_ops"),
+  //     table.seasontype.asc().nullsLast().op("int4_ops"),
+  //     table.week.asc().nullsLast().op("int4_ops"),
+  //   ),
+  // ],
 );
 
 export const game = pgTable(
@@ -313,14 +311,14 @@ export const game = pgTable(
     weekId: varchar(),
   },
   (table) => [
-    index("IDX_1f2f5fed6227e9266b8e6f4040").using(
-      "btree",
-      table.status.asc().nullsLast().op("text_ops"),
-    ),
-    index("IDX_585dc8593e1c01b0f5e78477cf").using(
-      "btree",
-      table.date.asc().nullsLast().op("timestamp_ops"),
-    ),
+    // index("IDX_1f2f5fed6227e9266b8e6f4040").using(
+    //   "btree",
+    //   table.status.asc().nullsLast().op("text_ops"),
+    // ),
+    // index("IDX_585dc8593e1c01b0f5e78477cf").using(
+    //   "btree",
+    //   table.date.asc().nullsLast().op("timestamp_ops"),
+    // ),
     foreignKey({
       columns: [table.awayTeamId],
       foreignColumns: [team.id],
@@ -351,12 +349,12 @@ export const betDoubler = pgTable(
     weekId: varchar(),
   },
   (table) => [
-    uniqueIndex("IDX_e3018c27fdac8174ca49115411").using(
-      "btree",
-      table.weekId.asc().nullsLast().op("uuid_ops"),
-      table.userId.asc().nullsLast().op("text_ops"),
-      table.leagueId.asc().nullsLast().op("text_ops"),
-    ),
+    // uniqueIndex("IDX_e3018c27fdac8174ca49115411").using(
+    //   "btree",
+    //   table.weekId.asc().nullsLast().op("uuid_ops"),
+    //   table.userId.asc().nullsLast().op("text_ops"),
+    //   table.leagueId.asc().nullsLast().op("text_ops"),
+    // ),
     foreignKey({
       columns: [table.userId],
       foreignColumns: [user.id],
@@ -387,14 +385,14 @@ export const member = pgTable(
     userId: uuid().notNull(),
   },
   (table) => [
-    index("IDX_08897b166dee565859b7fb2fcc").using(
-      "btree",
-      table.userId.asc().nullsLast().op("uuid_ops"),
-    ),
-    index("IDX_439998ed986bab5ccce25fb69d").using(
-      "btree",
-      table.leagueId.asc().nullsLast().op("uuid_ops"),
-    ),
+    // index("IDX_08897b166dee565859b7fb2fcc").using(
+    //   "btree",
+    //   table.userId.asc().nullsLast().op("uuid_ops"),
+    // ),
+    // index("IDX_439998ed986bab5ccce25fb69d").using(
+    //   "btree",
+    //   table.leagueId.asc().nullsLast().op("uuid_ops"),
+    // ),
     foreignKey({
       columns: [table.userId],
       foreignColumns: [user.id],
@@ -421,14 +419,14 @@ export const admin = pgTable(
     userId: uuid().notNull(),
   },
   (table) => [
-    index("IDX_05c82c10f7c651b94c36370112").using(
-      "btree",
-      table.leagueId.asc().nullsLast().op("uuid_ops"),
-    ),
-    index("IDX_f8a889c4362d78f056960ca6da").using(
-      "btree",
-      table.userId.asc().nullsLast().op("uuid_ops"),
-    ),
+    // index("IDX_05c82c10f7c651b94c36370112").using(
+    //   "btree",
+    //   table.leagueId.asc().nullsLast().op("uuid_ops"),
+    // ),
+    // index("IDX_f8a889c4362d78f056960ca6da").using(
+    //   "btree",
+    //   table.userId.asc().nullsLast().op("uuid_ops"),
+    // ),
     foreignKey({
       columns: [table.leagueId],
       foreignColumns: [league.id],
