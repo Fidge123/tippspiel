@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "~/server/auth";
+import { auth, signIn, signOut } from "~/server/auth";
 
 export async function Nav() {
   const session = await auth();
@@ -22,12 +22,16 @@ export async function Nav() {
             </>
           )}
         </div>
-        <Link
-          href={session ? "/api/auth/signout" : "/api/auth/signin"}
+        <button
+          type="button"
+          onClick={async () => {
+            "use server";
+            session ? await signOut() : await signIn();
+          }}
           className="rounded-full bg-white px-4 py-1 font-semibold text-black transition hover:bg-gray-200"
         >
           {session ? "Abmelden" : "Anmelden"}
-        </Link>
+        </button>
       </nav>
     </header>
   );

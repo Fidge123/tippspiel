@@ -1,7 +1,8 @@
 import type { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
+import zod from "zod";
 import { db } from "~/server/db";
+import { verifyPassword } from "./password";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,32 +18,45 @@ import { db } from "~/server/db";
 //   }
 // }
 
+const schema = zod.object({
+  email: zod.email(),
+  password: zod
+    .string()
+    .min(8, "Password must be more than 8 characters")
+    .max(32, "Password must be less than 64 characters"),
+});
+
 export const authConfig = {
+  pages: {
+    signIn: "/auth/login",
+    signOut: "/auth/logout",
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: {},
+        password: {},
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+        const { email, password } = await schema.parseAsync(credentials);
 
         const user = await db.query.user.findFirst({
-          where: (users, { eq, and }) =>
-            and(
-              eq(users.email, credentials.email as string),
-              eq(users.password, credentials.password as string),
-            ),
+          where: (users, { eq, and }) => and(eq(users.email, email)),
         });
 
-        if (!user) {
-          return null;
+        if (user) {
+          if (!user.verified) {
+            throw Error("User is not verified!");
+          }
+          if (await verifyPassword(password, user.salt, user.password)) {
+            return { id: user.id, email: user.email };
+          } else {
+            throw Error("Invalid password!");
+          }
         }
 
-        return { id: user.id, email: user.email };
+        throw Error("User is not found!");
       },
     }),
   ],

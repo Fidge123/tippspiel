@@ -1,43 +1,6 @@
 import { Button, Description, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { api } from "~/trpc/server";
-
-async function registerUser(formData: FormData) {
-  "use server";
-
-  const email = formData.get("email") as string;
-  const name = formData.get("name") as string;
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
-  const consent = formData.get("consent") as string;
-
-  try {
-    if (!consent) {
-      throw new Error("All fields are required");
-    }
-
-    if (password !== confirmPassword) {
-      throw new Error("Passwords do not match");
-    }
-
-    await api.user.register({
-      email,
-      name: name.trim(),
-      password,
-      consent: new Date(),
-    });
-  } catch (error: unknown) {
-    // TODO Handle errors correctly. This is almost invisible to the user.
-    redirect(
-      `/register?error=${encodeURIComponent(
-        (error as Error).message || "An error occurred",
-      )}`,
-    );
-  }
-
-  redirect("/sign-in");
-}
+import { registerUser } from "./action";
 
 export default function RegisterPage() {
   return (
@@ -139,7 +102,7 @@ export default function RegisterPage() {
           <p className="text-gray-600 text-sm">
             Du hast bereits ein Konto?{" "}
             <Link
-              href="/sign-in"
+              href="/auth/login"
               className="font-medium text-blue-600 underline hover:text-blue-500"
             >
               Anmelden
