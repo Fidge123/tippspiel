@@ -4,14 +4,11 @@ import { env } from "~/env";
 
 const scryptAsync = promisify(scrypt);
 
-export function generateSalt(): string {
+export function generateSalt() {
   return randomBytes(32).toString("hex");
 }
 
-export async function hashPassword(
-  password: string,
-  salt: string,
-): Promise<string> {
+export async function hashPassword(password: string, salt: string) {
   const passwordWithPepper = password + env.PASSWORD_PEPPER;
   const saltBuffer = Buffer.from(salt, "hex");
   const hash = (await scryptAsync(
@@ -27,7 +24,7 @@ export async function verifyPassword(
   password: string,
   salt: string,
   storedHash: string,
-): Promise<boolean> {
+) {
   const hash = await hashPassword(password, salt);
   return hash === storedHash;
 }
