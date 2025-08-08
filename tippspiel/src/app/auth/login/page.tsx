@@ -1,9 +1,16 @@
-import { Button, Description, Field, Input, Label } from "@headlessui/react";
+import { Description, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { signIn } from "~/server/auth";
+import { SubmitButton } from "~/app/auth/_components/submit-button";
+import { auth, signIn } from "~/server/auth";
 
-export default function LoginPage({ searchParams }: Props) {
+export default async function LoginPage({ searchParams }: Props) {
+  const session = await auth();
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
@@ -39,7 +46,7 @@ export default function LoginPage({ searchParams }: Props) {
 
           <Field className="space-y-1">
             <Label>Passwort</Label>
-            <input
+            <Input
               name="password"
               type="password"
               autoComplete="new-password"
@@ -57,12 +64,7 @@ export default function LoginPage({ searchParams }: Props) {
               </Link>
             </Description>
           </Field>
-          <Button
-            type="submit"
-            className="w-full rounded bg-blue-600 px-4 py-2 text-white shadow-sm hover:bg-blue-700 focus:bg-blue-700"
-          >
-            Anmelden
-          </Button>
+          <SubmitButton>Anmelden</SubmitButton>
         </form>
 
         <footer className="mt-6 text-center">

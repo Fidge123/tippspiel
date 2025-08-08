@@ -17,8 +17,8 @@
     "preview": "next build && next start",
     "start": "next start",
     "test": "bun test",
-    "test:e2e": "playwright test",
-    "test:ui": "playwright test --ui",
+    "test:e2e": "bun --env-file=.env run playwright test",
+    "test:ui": "bun --env-file=.env run playwright test --ui",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
