@@ -10,13 +10,14 @@ test.describe("Authentication Flow", () => {
 
   test.beforeEach(async () => {
     testUser = {
-      email: `test-user-${Date.now()}-${Math.random().toString(36).substring(2)}@example.com`,
+      email: `test-user-${Date.now()}-${Math.random().toString(36).slice(2, 4)}@example.com`,
       name: "Test User",
       password: "testpassword123",
     };
   });
 
   test.afterEach(async () => {
+    // TODO they are not always cleaned up...
     await cleanupUser(testUser.email);
   });
 

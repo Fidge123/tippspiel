@@ -23,7 +23,7 @@ const schema = zod.object({
   password: zod
     .string()
     .min(8, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 64 characters"),
+    .max(64, "Password must be less than 64 characters"),
 });
 
 export const authConfig = {

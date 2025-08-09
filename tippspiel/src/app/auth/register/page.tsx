@@ -1,9 +1,7 @@
-import { Description, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SubmitButton } from "~/app/auth/_components/submit-button";
 import { auth } from "~/server/auth";
-import { registerUser } from "./action";
+import RegisterForm from "./_components/register-form";
 
 export default async function RegisterPage() {
   const session = await auth();
@@ -23,83 +21,7 @@ export default async function RegisterPage() {
           </p>
         </header>
 
-        <form action={registerUser} className="space-y-6 text-gray-900 text-sm">
-          <Field className="space-y-1">
-            <Label>E-Mail-Adresse</Label>
-            <Input
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </Field>
-
-          <Field className="space-y-1">
-            <Label>Nutzername</Label>
-            <Input
-              name="name"
-              type="text"
-              autoComplete="username"
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Description className="text-gray-600">
-              Der Nutzername wird anderen Spielern angezeigt.
-            </Description>
-          </Field>
-
-          <Field className="space-y-1">
-            <Label>Passwort</Label>
-            <Input
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              minLength={8}
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Description className="text-gray-600">
-              Mindestlänge 8 Zeichen
-            </Description>
-          </Field>
-
-          <Field>
-            <Label>Passwort bestätigen</Label>
-            <Input
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              minLength={8}
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </Field>
-
-          <Field className="flex">
-            <Input
-              name="consent"
-              type="checkbox"
-              value="agreed"
-              required
-              className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600"
-            />
-            <Label htmlFor="consent" className="ml-2 text-gray-700 text-sm">
-              Ich stimme den{" "}
-              <Link
-                href="/terms"
-                className="text-blue-600 underline hover:text-blue-500"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Nutzungs- und Datenschutzbestimmungen
-              </Link>{" "}
-              zu
-            </Label>
-          </Field>
-
-          <SubmitButton>Konto erstellen</SubmitButton>
-        </form>
+        <RegisterForm />
 
         <footer className="mt-6 text-center">
           <p className="text-gray-600 text-sm">
