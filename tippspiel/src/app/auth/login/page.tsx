@@ -1,8 +1,7 @@
-import { Description, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SubmitButton } from "~/app/auth/_components/submit-button";
-import { auth, signIn } from "~/server/auth";
+import { auth } from "~/server/auth";
+import LoginForm from "./_components/form";
 
 export default async function LoginPage({ searchParams }: Props) {
   const session = await auth();
@@ -21,51 +20,7 @@ export default async function LoginPage({ searchParams }: Props) {
           </p>
         </header>
 
-        <form
-          action={async (formData) => {
-            "use server";
-            await signIn("credentials", {
-              email: formData.get("email") as string,
-              password: formData.get("password") as string,
-              redirect: false,
-            });
-            redirect((await searchParams).callbackUrl || "/");
-          }}
-          className="space-y-6 text-gray-900 text-sm"
-        >
-          <Field className="space-y-1">
-            <Label>E-Mail-Adresse</Label>
-            <Input
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </Field>
-
-          <Field className="space-y-1">
-            <Label>Passwort</Label>
-            <Input
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              minLength={8}
-              maxLength={64}
-              required
-              className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Description className="text-gray-600">
-              <Link
-                href="/auth/forgot"
-                className="font-medium text-blue-600 underline hover:text-blue-500"
-              >
-                Passwort vergessen?
-              </Link>
-            </Description>
-          </Field>
-          <SubmitButton>Anmelden</SubmitButton>
-        </form>
+        <LoginForm callbackUrl={(await searchParams).callbackUrl ?? "/"} />
 
         <footer className="mt-6 text-center">
           <p className="text-gray-600 text-sm">
@@ -84,5 +39,5 @@ export default async function LoginPage({ searchParams }: Props) {
 }
 
 interface Props {
-  searchParams: { callbackUrl: string | undefined };
+  searchParams: Promise<{ callbackUrl: string | undefined }>;
 }
