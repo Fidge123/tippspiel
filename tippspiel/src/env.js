@@ -17,6 +17,11 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     PASSWORD_PEPPER: z.string(),
+    SMTP2GO_API_KEY: z.string(),
+    SMTP2GO_API_URL: z.url(),
+    SMTP2GO_SENDER_EMAIL: z.email(),
+    SMTP2GO_SENDER_NAME: z.string(),
+    APP_URL: z.url(),
   },
 
   /**
@@ -25,7 +30,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_APP_URL: z.url(),
   },
 
   /**
@@ -38,6 +43,12 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     PASSWORD_PEPPER: process.env.PASSWORD_PEPPER,
+    SMTP2GO_API_KEY: process.env.SMTP2GO_API_KEY,
+    SMTP2GO_API_URL: process.env.SMTP2GO_API_URL,
+    SMTP2GO_SENDER_EMAIL: process.env.SMTP2GO_SENDER_EMAIL,
+    SMTP2GO_SENDER_NAME: process.env.SMTP2GO_SENDER_NAME,
+    APP_URL: process.env.APP_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

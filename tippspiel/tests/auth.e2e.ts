@@ -167,7 +167,9 @@ test.describe("Authentication Flow", () => {
 
     await page.getByRole("button", { name: "Konto erstellen" }).click();
 
-    await expect(page.getByText(/Diese E-Mail-Adresse wurde bereits registriert/)).toBeVisible();
+    await expect(
+      page.getByText(/Diese E-Mail-Adresse wurde bereits registriert/),
+    ).toBeVisible();
     await expect(page).toHaveURL("/auth/register");
   });
 
@@ -184,7 +186,9 @@ test.describe("Authentication Flow", () => {
 
     await page.getByRole("button", { name: "Konto erstellen" }).click();
 
-    await expect(page.getByText(/Die Passwörter stimmen nicht überein/)).toBeVisible();
+    await expect(
+      page.getByText(/Die Passwörter stimmen nicht überein/),
+    ).toBeVisible();
     await expect(page).toHaveURL("/auth/register");
   });
 });

@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { CredentialsSignin } from "next-auth";
 import { signIn } from "~/server/auth";
 
 interface FormState {
@@ -25,7 +26,7 @@ export async function login(
       email: [formData.get("email") as string, false],
       password: [formData.get("password") as string, true],
       callbackUrl,
-      message: `Ungültige Anmeldedaten. Bitte versuchen Sie es erneut. ${e instanceof Error ? e.message : ""}`,
+      message: `Ungültige Anmeldedaten. Bitte versuchen Sie es erneut. ${e instanceof CredentialsSignin ? `Error: ${e.name} (${e.code})` : ""}`,
     };
   }
   redirect(callbackUrl || "/");

@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
         <LoginForm callbackUrl={(await searchParams).callbackUrl ?? "/"} />
 
-        <footer className="mt-6 text-center">
+        <footer className="mt-6 space-y-3 text-center">
           <p className="text-gray-600 text-sm">
             Noch kein Konto?{" "}
             <Link

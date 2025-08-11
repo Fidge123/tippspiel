@@ -57,6 +57,16 @@ export default function LoginForm({ callbackUrl }: Props) {
         Anmelden
       </Button>
       <p className="text-red-500 empty:hidden">{state.message}</p>
+      <p
+        className={`${state.message?.includes("Error") ? "" : "hidden"} text-gray-600 text-sm`}
+      >
+        <Link
+          href="/auth/resend-verification"
+          className="font-medium text-blue-600 underline hover:text-blue-500"
+        >
+          Neue Bestätigungsmail anfordern
+        </Link>
+      </p>
     </form>
   );
 }

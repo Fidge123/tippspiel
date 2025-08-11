@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { generateSalt, hashPassword } from "~/server/auth/password";
 import { user, verify } from "~/server/db/schema";
+import { sendVerificationEmail } from "~/server/email";
 
 export const userRouter = createTRPCRouter({
   register: publicProcedure
@@ -55,11 +56,134 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      const verificationToken = randomBytes(32).toString("hex");
       await ctx.db.insert(verify).values({
-        token: randomBytes(32).toString("hex"),
+        token: verificationToken,
         userId: newUser.id,
       });
 
+      // Send verification email
+      try {
+        await sendVerificationEmail(
+          newUser.email,
+          newUser.name,
+          verificationToken,
+        );
+      } catch (error) {
+        console.error("Failed to send verification email:", error);
+        // Note: We don't throw here to avoid breaking registration
+        // The user can still verify later or request a new verification email
+      }
+
       return newUser;
+    }),
+
+  verify: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const verificationRecord = await ctx.db.query.verify.findFirst({
+        where: eq(verify.token, input.token),
+        with: {
+          user: true,
+        },
+      });
+
+      if (!verificationRecord) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invalid verification token",
+        });
+      }
+
+      const tokenAge =
+        Date.now() - new Date(verificationRecord.createdAt).getTime();
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (tokenAge > maxAge) {
+        await ctx.db.delete(verify).where(eq(verify.token, input.token));
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Verification token has expired",
+        });
+      }
+
+      if (!verificationRecord.userId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Invalid verification record",
+        });
+      }
+
+      await ctx.db
+        .update(user)
+        .set({ verified: true })
+        .where(eq(user.id, verificationRecord.userId));
+
+      await ctx.db.delete(verify).where(eq(verify.token, input.token));
+
+      return { success: true };
+    }),
+
+  resendVerification: publicProcedure
+    .input(z.object({ email: z.email() }))
+    .mutation(async ({ ctx, input }) => {
+      const existingUser = await ctx.db.query.user.findFirst({
+        where: eq(user.email, input.email),
+      });
+
+      if (!existingUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      if (existingUser.verified) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User is already verified",
+        });
+      }
+
+      const recentToken = await ctx.db.query.verify.findFirst({
+        where: eq(verify.userId, existingUser.id),
+      });
+
+      if (recentToken) {
+        const tokenAge = Date.now() - new Date(recentToken.createdAt).getTime();
+        const minAge = 5 * 60 * 1000;
+
+        if (tokenAge < minAge) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message:
+              "Please wait 5 minutes before requesting another verification email",
+          });
+        }
+
+        await ctx.db.delete(verify).where(eq(verify.userId, existingUser.id));
+      }
+
+      const verificationToken = randomBytes(32).toString("hex");
+      await ctx.db.insert(verify).values({
+        token: verificationToken,
+        userId: existingUser.id,
+      });
+
+      try {
+        await sendVerificationEmail(
+          existingUser.email,
+          existingUser.name,
+          verificationToken,
+        );
+      } catch (error) {
+        console.error("Failed to send verification email:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send verification email",
+        });
+      }
+
+      return { success: true };
     }),
 });

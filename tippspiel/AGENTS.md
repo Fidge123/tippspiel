@@ -6,7 +6,7 @@ This document contains specific instructions for AI agents working on the Tippsp
 
 Tippspiel is a Next.js application for American Football game prediction among friends.
 Key characteristics:
-- **Tech Stack**: Next.js 15, TypeScript, tRPC, Drizzle ORM, PostgreSQL, NextAuth.js, Tailwind CSS v4
+- **Tech Stack**: Next.js 15, TypeScript, tRPC, Drizzle ORM, PostgreSQL, NextAuth.js, Tailwind CSS v4, Zod v4
 - **Architecture**: T3 Stack with App Router, server-side rendering, and type-safe APIs
 - **Language**: Mixed German/English (UI in German, code in English)
 - **Deployment**: Designed for production with environment validation
@@ -113,15 +113,6 @@ src/
 - Protect routes with session checks in server components
 - Use `protectedProcedure` for authenticated tRPC routes
 
-## Styling Guidelines
-
-### 1. Form Patterns
-- Use HeadlessUI components (`Field`, `Label`, `Input`, `Button`, `Description`)
-- Implement form validation states with `invalid` prop
-- Use `useActionState` hook for form state management
-- Server actions should handle form validation and return structured state
-- Error messages in German for user-facing forms
-
 ## Testing Patterns
 
 ### 1. Unit Testing
@@ -136,6 +127,27 @@ src/
 - Use environment variables for test configuration
 - Follow the existing naming pattern: `[feature].e2e.ts`
 
+## Other Patterns and Guidelines
+
+### 1. HTML & Accessibility
+- Use semantic HTML elements (e.g., `<header>`, `<main>`, `<footer>`)
+- Ensure all interactive elements are accessible (e.g., use `<button>` for actions)
+- Keep ARIA attributes to a minimum, use them only when necessary
+- Markup should be responsive and mobile-friendly
+
+### 2. Form Patterns
+- Use HeadlessUI components (`Field`, `Label`, `Input`, `Button`, `Description`)
+- Implement form validation states with `invalid` prop
+- Use `useActionState` hook for form state management
+- Server actions should handle form validation and return structured state
+- Error messages in German for user-facing forms
+
+### 3. Language Usage
+- UI text: German (following existing patterns)
+- Code: English (variables, functions, comments)
+- Database: English field names, German content where appropriate
+- Error messages: German for user-facing, English for developer logs
+
 ## Code Quality Standards
 
 ### 1. Biome Configuration
@@ -149,19 +161,6 @@ src/
 - Use early returns to reduce nesting
 - Extract complex logic into utility functions
 - Comment complex business logic, especially German-specific features
-
-## Internationalization Considerations
-
-### 1. Language Usage
-- UI text: German (following existing patterns)
-- Code: English (variables, functions, comments)
-- Database: English field names, German content where appropriate
-- Error messages: German for user-facing, English for developer logs
-
-### 2. German UI Patterns
-- "Anmelden" / "Abmelden" for login/logout
-- "Tabelle" for leaderboard/standings
-- Follow existing German terminology in the codebase
 
 ## Security Best Practices
 

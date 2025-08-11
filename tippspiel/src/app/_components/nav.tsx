@@ -17,7 +17,7 @@ export async function Nav() {
                 Tabelle
               </Link>
               <Link href="/divisions" className="font-semibold no-underline">
-                Tabelle
+                Divisions
               </Link>
             </>
           )}

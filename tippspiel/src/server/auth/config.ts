@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from "next-auth";
+import { CredentialsSignin, type NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import zod from "zod";
 import { db } from "~/server/db";
@@ -26,6 +26,18 @@ const schema = zod.object({
     .max(64, "Password must be less than 64 characters"),
 });
 
+class UnverifiedError extends CredentialsSignin {
+  code = "unverified";
+}
+
+class InvalidPasswordError extends CredentialsSignin {
+  code = "invalid_password";
+}
+
+class UnknownUserError extends CredentialsSignin {
+  code = "unknown_user";
+}
+
 export const authConfig = {
   pages: {
     signIn: "/auth/login",
@@ -48,16 +60,15 @@ export const authConfig = {
 
         if (user) {
           if (!user.verified) {
-            throw Error("User is not verified!");
+            throw new UnverifiedError("User is not verified!");
           }
           if (await verifyPassword(password, user.salt, user.password)) {
             return { id: user.id, email: user.email };
           } else {
-            throw Error("Invalid password!");
+            throw new InvalidPasswordError("Invalid password!");
           }
         }
-
-        throw Error("User is not found!");
+        throw new UnknownUserError("User is not found!");
       },
     }),
   ],
