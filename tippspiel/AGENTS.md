@@ -33,6 +33,17 @@ Key characteristics:
 - Use UUIDs for primary keys with `uuid_generate_v4()` default
 - Always include `createdAt` and `updatedAt` timestamps with string mode
 
+### 4. Simplicity & Clarity
+- Keep components and functions small and focused
+- Use clear, descriptive names for variables and functions
+- Avoid unnecessary complexity - prefer simple solutions
+
+### 5. Dependencies
+- Use Bun for package management - NO npm or yarn
+- Make use of existing dependencies and language features
+- Avoid adding new dependencies unless it has a clear benefit
+- Always use the `node:` prefix for Node.js built-in modules (e.g., `node:fs`, `node:path`)
+
 ## Architecture Patterns
 
 ### 1. File Organization
@@ -148,6 +159,12 @@ src/
 - Database: English field names, German content where appropriate
 - Error messages: German for user-facing, English for developer logs
 
+### 4. Documentation
+- Prefer self-explanatory code over adding comments
+- Update README.md if local build instructions change
+- Never add JSDoc comments
+- Use implicit typing for functions and variables if possible
+
 ## Code Quality Standards
 
 ### 1. Biome Configuration
@@ -160,7 +177,6 @@ src/
 - Prefer named exports over default exports (except for pages/layouts)
 - Use early returns to reduce nesting
 - Extract complex logic into utility functions
-- Comment complex business logic, especially German-specific features
 
 ## Security Best Practices
 

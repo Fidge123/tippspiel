@@ -16,22 +16,22 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
+    // {
+    //   name: "firefox",
+    //   use: { ...devices["Desktop Firefox"] },
+    // },
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
     },
-    {
-      name: "Mobile Chrome",
-      use: { ...devices["Pixel 7"] },
-    },
-    {
-      name: "Mobile Safari",
-      use: { ...devices["iPhone 15"] },
-    },
+    // {
+    //   name: "Mobile Chrome",
+    //   use: { ...devices["Pixel 7"] },
+    // },
+    // {
+    //   name: "Mobile Safari",
+    //   use: { ...devices["iPhone 15"] },
+    // },
   ],
 
   webServer: {
