@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { createVerificationEmail } from "./templates";
 
+// TODO check and fix these tests
+
 describe("Email Templates", () => {
   test("renderEmailTemplate should replace variables correctly", async () => {
     // Mock loadTemplate to avoid file system dependency

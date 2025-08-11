@@ -66,3 +66,6 @@ test("fail if user exists and clean up", async () => {
     expect(await db.$count(verify, eq(verify.userId, u.id))).toBe(0);
   }
 });
+
+// TODO
+// Add more tests (verify, resend)

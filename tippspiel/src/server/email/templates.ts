@@ -8,29 +8,10 @@ export interface EmailTemplate {
   text: string;
 }
 
-interface TemplateVariables {
-  [key: string]: string;
-}
-
-function replaceVariables(
-  content: string,
-  variables: TemplateVariables,
-): string {
+function replaceVariables(content: string, variables: Dict<string>): string {
   return content.replace(/\{\{(\w+)\}\}/g, (match, key) => {
     return variables[key] ?? match;
   });
-}
-
-function markdownToText(markdown: string): string {
-  // Simple markdown to text conversion
-  return markdown
-    .replace(/#{1,6}\s+(.+)/g, "$1") // Remove headers
-    .replace(/\*\*(.*?)\*\*/g, "$1") // Remove bold
-    .replace(/\*(.*?)\*/g, "$1") // Remove italic
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Remove links, keep text
-    .replace(/`([^`]+)`/g, "$1") // Remove code formatting
-    .replace(/\n{2,}/g, "\n\n") // Normalize line breaks
-    .trim();
 }
 
 function loadTemplate(templateName: string): string {
@@ -47,19 +28,18 @@ function loadTemplate(templateName: string): string {
 
 export async function renderEmailTemplate(
   templateName: string,
-  variables: TemplateVariables = {},
+  variables: Dict<string> = {},
   subject: string,
 ): Promise<EmailTemplate> {
-  const rawTemplate = loadTemplate(templateName);
-  const processedMarkdown = replaceVariables(rawTemplate, variables);
-
-  const html = await marked(processedMarkdown);
-  const text = markdownToText(processedMarkdown);
+  const processedMarkdown = replaceVariables(
+    loadTemplate(templateName),
+    variables,
+  );
 
   return {
     subject: replaceVariables(subject, variables),
-    html,
-    text,
+    html: await marked(processedMarkdown),
+    text: processedMarkdown,
   };
 }
 

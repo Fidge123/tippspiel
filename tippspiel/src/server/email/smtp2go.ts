@@ -20,15 +20,24 @@ export interface SMTP2GoResponse {
   };
 }
 
-export async function sendEmail(options: EmailOptions): Promise<void> {
+export async function sendEmail({
+  to,
+  subject,
+  html,
+  text,
+}: EmailOptions): Promise<void> {
   const payload = {
     api_key: env.SMTP2GO_API_KEY,
-    to: [options.to],
+    to: [to],
     sender: `${env.SMTP2GO_SENDER_NAME} <${env.SMTP2GO_SENDER_EMAIL}>`,
-    subject: options.subject,
-    html_body: options.html,
-    text_body: options.text,
+    subject: subject,
+    html_body: html,
+    text_body: text,
   };
+
+  if (to.endsWith("example.com")) {
+    return; // Skip sending emails to example.com addresses
+  }
 
   const response = await fetch(`${env.SMTP2GO_API_URL}/email/send`, {
     method: "POST",

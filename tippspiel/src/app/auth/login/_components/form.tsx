@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { login } from "../action";
 
-export default function LoginForm({ callbackUrl }: Props) {
+export default function LoginForm({ callbackUrl, email }: Props) {
   const [state, action, pending] = useActionState(login, {
-    email: ["", false],
+    email: [email, false],
     password: ["", false],
     callbackUrl: callbackUrl,
     message: undefined,
@@ -58,10 +58,10 @@ export default function LoginForm({ callbackUrl }: Props) {
       </Button>
       <p className="text-red-500 empty:hidden">{state.message}</p>
       <p
-        className={`${state.message?.includes("Error") ? "" : "hidden"} text-gray-600 text-sm`}
+        className={`${state.message?.includes("UnverifiedError") ? "" : "hidden"} text-gray-600 text-sm`}
       >
         <Link
-          href="/auth/resend-verification"
+          href={`/auth/resend-verification${state.email[0] ? `?email=${encodeURIComponent(state.email[0])}` : ""}`}
           className="font-medium text-blue-600 underline hover:text-blue-500"
         >
           Neue Bestätigungsmail anfordern
@@ -73,4 +73,5 @@ export default function LoginForm({ callbackUrl }: Props) {
 
 interface Props {
   callbackUrl: string;
+  email: string;
 }

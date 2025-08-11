@@ -192,3 +192,9 @@ test.describe("Authentication Flow", () => {
     await expect(page).toHaveURL("/auth/register");
   });
 });
+
+// TODO add tests for:
+// - Resend verification email
+// - Verify email flow
+// - Password reset flow
+// - Add some way to test the actual email sending functionality

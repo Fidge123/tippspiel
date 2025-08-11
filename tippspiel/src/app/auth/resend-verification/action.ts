@@ -49,7 +49,7 @@ export async function resendVerificationEmail(
             return {
               ...state,
               email: [state.email[0], true],
-              message: "Ihr Konto ist bereits bestätigt.",
+              message: "Dein Konto ist bereits bestätigt.",
             };
           }
           break;
@@ -57,13 +57,13 @@ export async function resendVerificationEmail(
           return {
             ...state,
             message:
-              "Bitte warten Sie 5 Minuten, bevor Sie eine neue Bestätigungs-E-Mail anfordern.",
+              "Bitte warte 5 Minuten, bevor du eine neue Bestätigungs-E-Mail anforderst.",
           };
         case "INTERNAL_SERVER_ERROR":
           return {
             ...state,
             message:
-              "Fehler beim Senden der E-Mail. Bitte versuchen Sie es später erneut.",
+              "Fehler beim Senden der E-Mail. Bitte versuche es später erneut.",
           };
       }
     }

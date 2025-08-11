@@ -1,26 +1,31 @@
 "use client";
 
 import { Button, Description, Field, Input, Label } from "@headlessui/react";
-import Link from "next/link";
-import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useActionState } from "react";
+import Spinner from "~/app/_components/spinner";
+import BackToLogin from "./_components/back-to-login";
 import { resendVerificationEmail } from "./action";
 
-const initialState = {
-  email: ["", false] as [string, boolean],
-  message: undefined as string | undefined,
-  success: undefined as boolean | undefined,
-};
+function ResendVerificationContent() {
+  const searchParams = useSearchParams();
+  const emailFromUrl = searchParams.get("email") ?? "";
 
-export default function ResendVerificationPage() {
+  const initialState = {
+    email: [emailFromUrl, false] as [string, boolean],
+    message: undefined as string | undefined,
+    success: undefined as boolean | undefined,
+  };
+
   const [state, formAction, pending] = useActionState(
     resendVerificationEmail,
     initialState,
   );
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <div className="flex min-h-full flex-1 flex-col justify-center space-y-4 p-6">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center font-bold text-2xl/9 text-gray-900 tracking-tight">
+        <h2 className="text-center font-bold text-2xl text-gray-900 tracking-tight">
           Bestätigungs-E-Mail erneut senden
         </h2>
         <p className="mt-2 text-center text-gray-600 text-sm">
@@ -29,47 +34,34 @@ export default function ResendVerificationPage() {
         </p>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         {state.success ? (
           <div className="space-y-6">
             <div className="rounded bg-green-50 p-4">
-              <div className="ml-3">
-                <p className="font-medium text-green-800 text-sm">
-                  {state.message}
-                </p>
-                <p className="mt-2 text-green-800 text-sm">
-                  Bitte überprüfen Sie Ihr E-Mail-Postfach und klicken Sie auf
-                  den Bestätigungslink.
-                </p>
-              </div>
+              <p className="font-medium text-green-800 text-sm">
+                {state.message}
+              </p>
+              <p className="mt-2 text-green-800 text-sm">
+                Bitte überprüfen Sie Ihr E-Mail-Postfach und klicken Sie auf den
+                Bestätigungslink.
+              </p>
             </div>
 
-            <div className="text-center">
-              <Link
-                href="/auth/login"
-                className="font-semibold text-indigo-600 text-sm hover:text-indigo-500"
-              >
-                Zur Anmeldung
-              </Link>
-            </div>
+            <BackToLogin />
           </div>
         ) : (
-          <form action={formAction} className="space-y-6">
-            <Field>
-              <Label className="block font-medium text-gray-900 text-sm/6">
-                E-Mail-Adresse
-              </Label>
-              <div className="mt-2">
-                <Input
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  defaultValue={state.email[0]}
-                  invalid={state.email[1]}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 focus:ring-inset data-[invalid]:ring-red-300 data-[invalid]:focus:ring-red-500 sm:text-sm/6"
-                />
-              </div>
+          <form action={formAction} className="space-y-4">
+            <Field className="space-y-1">
+              <Label>E-Mail-Adresse</Label>
+              <Input
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                defaultValue={state.email[0]}
+                invalid={state.email[1]}
+                className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+              />
               {state.email[1] && state.message && (
                 <Description className="mt-2 text-red-800 text-sm">
                   {state.message}
@@ -93,17 +85,18 @@ export default function ResendVerificationPage() {
               {pending ? "Wird gesendet..." : "Bestätigungs-E-Mail senden"}
             </Button>
 
-            <div className="text-center">
-              <Link
-                href="/auth/login"
-                className="font-semibold text-indigo-600 text-sm hover:text-indigo-500"
-              >
-                Zurück zur Anmeldung
-              </Link>
-            </div>
+            <BackToLogin />
           </form>
         )}
       </div>
     </div>
+  );
+}
+
+export default function ResendVerificationPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <ResendVerificationContent />
+    </Suspense>
   );
 }
