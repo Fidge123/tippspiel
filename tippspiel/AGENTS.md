@@ -1,10 +1,10 @@
 # Agent Instructions for Tippspiel Project
 
-This document contains specific instructions for AI agents working on the Tippspiel (German NFL prediction game) project.
+This document contains specific instructions for AI agents working on the Tippspiel (German-language American Football prediction game) project.
 
 ## Project Overview
 
-Tippspiel is a Next.js application for NFL game prediction/betting among friends.
+Tippspiel is a Next.js application for American Football game prediction among friends.
 Key characteristics:
 - **Tech Stack**: Next.js 15, TypeScript, tRPC, Drizzle ORM, PostgreSQL, NextAuth.js, Tailwind CSS v4
 - **Architecture**: T3 Stack with App Router, server-side rendering, and type-safe APIs
@@ -115,20 +115,7 @@ src/
 
 ## Styling Guidelines
 
-### 1. Tailwind CSS v4
-- Use the new `@theme` directive in `globals.css`
-- Leverage custom CSS properties for theming
-- Use utility classes exclusively - avoid custom CSS
-- Follow Biome's `useSortedClasses` rule (configured for `cn`, `clsx`, `cva`)
-
-### 2. Layout Patterns
-- Fixed header pattern: `fixed h-12 w-screen bg-gray-900`
-- Flexbox layouts: `flex min-h-screen flex-col`
-- Grid centering: `grid flex-grow place-content-center`
-- Consistent spacing: Use `gap-4`, `p-8`, `px-4` patterns
-- Form styling: Use HeadlessUI components with consistent border and focus styles
-
-### 3. Form Patterns
+### 1. Form Patterns
 - Use HeadlessUI components (`Field`, `Label`, `Input`, `Button`, `Description`)
 - Implement form validation states with `invalid` prop
 - Use `useActionState` hook for form state management
@@ -234,110 +221,11 @@ src/
 3. **Don't** forget to validate environment variables in `env.js`
 4. **Don't** use `any` types - maintain strict TypeScript
 5. **Don't** bypass tRPC error handling - use proper error codes
-6. **Don't** forget to handle potential undefined database results
-7. **Don't** mix German and English within the same text elements
+6. **Don't** call `npm` - use `bun` for package management and scripts
+7. **Don't** use English for user-facing text - keep it in German
 8. **Don't** use Client Components unnecessarily - Server Components are preferred
 9. **Don't** skip Zod validation for API inputs
 10. **Don't** hardcode configuration - use environment variables
-
-## Quick Reference
-
-### Essential Imports
-```typescript
-// Environment
-import { env } from "~/env";
-
-// Database
-import { db } from "~/server/db";
-import { eq } from "drizzle-orm";
-
-// Authentication
-import { auth } from "~/server/auth";
-
-// tRPC
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
-import { TRPCError } from "@trpc/server";
-
-// Validation
-import { z } from "zod";
-
-// Form handling
-import { useActionState } from "react";
-import { Field, Label, Input, Button, Description } from "@headlessui/react";
-```
-
-### Database Query Examples
-```typescript
-// Find user by email
-const user = await db.query.user.findFirst({
-  where: eq(schema.user.email, email)
-});
-
-// Count users
-const userCount = await db.$count(schema.user, eq(schema.user.email, email));
-
-// Insert with returning
-const [newUser] = await db.insert(schema.user)
-  .values({ ... })
-  .returning({ id: schema.user.id });
-```
-
-### Server Action Examples
-```typescript
-// Server action with form state
-"use server";
-
-interface FormState {
-  email: [string, boolean];
-  message?: string;
-}
-
-export async function handleForm(
-  prevState: FormState,
-  formData: FormData,
-): Promise<FormState> {
-  try {
-    // Process form data
-    const email = formData.get("email") as string;
-    // ... validation and processing
-    redirect("/success");
-  } catch (error) {
-    return {
-      email: [formData.get("email") as string, true],
-      message: "Fehler beim Verarbeiten des Formulars.",
-    };
-  }
-}
-```
-
-### Form Component Examples
-```typescript
-"use client";
-import { useActionState } from "react";
-import { Field, Label, Input, Button } from "@headlessui/react";
-
-export function MyForm() {
-  const [state, action, pending] = useActionState(handleForm, {
-    email: ["", false],
-    message: undefined,
-  });
-
-  return (
-    <form action={action} className="space-y-6">
-      <Field>
-        <Label>E-Mail-Adresse</Label>
-        <Input
-          name="email"
-          type="email"
-          invalid={state.email[1]}
-          className="w-full rounded border px-3 py-2 data-invalid:ring-red-500"
-        />
-      </Field>
-      <Button disabled={pending}>Submit</Button>
-    </form>
-  );
-}
-```
 
 This document should be your primary reference when working on the Tippspiel project.
 Follow these patterns consistently to maintain code quality and project coherence.

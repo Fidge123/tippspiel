@@ -1,28 +1,55 @@
-# Create T3 App
+# Tippspiel
+
+This project is a American Football prediction game.
+Currently the UI is only available in German.
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+## Local Development
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+This project uses [bun](https://bun.sh/) as the package manager.
+Make sure you provide environment variables as described in the `.env.example` file.
+To run this project locally, follow these steps:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+``` bash
+# Install bun if you haven't already
+curl -fsSL https://bun.sh/install | bash
 
-- [Next.js](https://nextjs.org)
-- [Auth.js](https://authjs.dev/)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+# Install dependencies
+bun install
 
-## Learn More
+# Start the server
+bun dev # dev server
+bun preview # production-like server
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+# Open your browser and go to http://localhost:3000
+open http://localhost:3000
+```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+To run the tests, you can use:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+``` bash
+# Run bun test runner unit tests
+bun test
 
-## How do I deploy this?
+# Run Playwright end-to-end tests
+bun test:e2e
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+# Biome linting and formatting
+bun check # Print issues to console
+bun check:write # Write fixes to files
+```
+
+## Database
+
+This project uses [Drizzle ORM](https://orm.drizzle.team/) with a PostgreSQL database.
+To manage the database schema, you can use the following commands:
+
+``` bash
+# Push the current schema to the database
+bun db:push
+# Generate migration files based on schema changes
+bun db:generate
+# Apply migrations to the database
+bun db:migrate
+```
