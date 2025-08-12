@@ -42,21 +42,3 @@ export async function renderEmailTemplate(
     text: processedMarkdown,
   };
 }
-
-export async function createVerificationEmail(
-  userName: string,
-  verificationToken: string,
-  appUrl: string,
-): Promise<EmailTemplate> {
-  const verificationUrl = `${appUrl}/auth/verify?token=${verificationToken}`;
-
-  return await renderEmailTemplate(
-    "verification",
-    {
-      userName,
-      verificationUrl,
-      appUrl,
-    },
-    "Tippspiel - E-Mail-Adresse bestätigen",
-  );
-}

@@ -40,14 +40,23 @@ export async function cleanupUser(email: string): Promise<void> {
 }
 
 export async function findUserByEmail(email: string) {
-  return await db.query.user.findFirst({
+  const user = await db.query.user.findFirst({
     where: eq(schema.user.email, email),
   });
+  if (!user) {
+    throw new Error(`User with email ${email} not found`);
+  }
+  return user;
 }
 
 export async function verifyUser(email: string): Promise<void> {
-  await db
+  const user = await db
     .update(schema.user)
     .set({ verified: true })
-    .where(eq(schema.user.email, email));
+    .where(eq(schema.user.email, email))
+    .returning();
+
+  if (!user[0]) {
+    throw new Error(`User with email ${email} not found`);
+  }
 }

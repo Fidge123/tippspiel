@@ -1,20 +1,20 @@
 import Link from "next/link";
-import { ForgotPasswordForm } from "./_components/form";
+import { ResetPasswordForm } from "./_components/form";
 
-export default function ForgotPage() {
+export default function ResetPasswordPage() {
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">
           <h1 className="font-bold text-2xl text-gray-900">
-            Passwort zurücksetzen
+            Neues Passwort setzen
           </h1>
           <p className="mt-2 text-gray-600 text-sm">
-            Gib deine E-Mail ein, um einen Link zum Zurücksetzen zu erhalten.
+            Gib dein neues Passwort ein.
           </p>
         </header>
 
-        <ForgotPasswordForm />
+        <ResetPasswordForm />
 
         <div className="mt-6 text-center text-sm">
           <Link

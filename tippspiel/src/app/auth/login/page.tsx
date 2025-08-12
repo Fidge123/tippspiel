@@ -12,6 +12,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
   const params = await searchParams;
   const email = params.email ?? "";
+  const message = params.message;
 
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-8">
@@ -22,6 +23,13 @@ export default async function LoginPage({ searchParams }: Props) {
             Mit deinem Konto anmelden und am Tippspiel teilnehmen.
           </p>
         </header>
+
+        {message === "password-reset-success" && (
+          <div className="mb-6 rounded bg-green-50 p-4 text-green-800 text-sm">
+            Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt
+            mit deinem neuen Passwort anmelden.
+          </div>
+        )}
 
         <LoginForm callbackUrl={params.callbackUrl ?? "/"} email={email} />
 
@@ -45,5 +53,6 @@ interface Props {
   searchParams: Promise<{
     callbackUrl: string | undefined;
     email: string | undefined;
+    message: string | undefined;
   }>;
 }

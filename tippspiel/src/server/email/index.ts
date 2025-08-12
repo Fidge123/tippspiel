@@ -1,24 +1,41 @@
 import { env } from "~/env";
 import { sendEmail } from "./smtp2go";
-import { createVerificationEmail } from "./templates";
+import { renderEmailTemplate } from "./templates";
 
 export async function sendVerificationEmail(
-  userEmail: string,
+  to: string,
   userName: string,
   verificationToken: string,
 ): Promise<void> {
-  const emailContent = await createVerificationEmail(
-    userName,
-    verificationToken,
-    env.APP_URL,
+  const emailContent = await renderEmailTemplate(
+    "verification",
+    {
+      userName,
+      verificationUrl: `${env.APP_URL}/auth/verify?token=${verificationToken}`,
+      appUrl: env.APP_URL,
+    },
+    "Tippspiel - E-Mail-Adresse bestätigen",
   );
 
-  await sendEmail({
-    to: userEmail,
-    subject: emailContent.subject,
-    html: emailContent.html,
-    text: emailContent.text,
-  });
+  await sendEmail({ to, ...emailContent });
+}
+
+export async function sendPasswordResetEmail(
+  to: string,
+  userName: string,
+  resetToken: string,
+): Promise<void> {
+  const emailContent = await renderEmailTemplate(
+    "reset",
+    {
+      userName,
+      resetUrl: `${env.APP_URL}/auth/reset?token=${resetToken}`,
+      appUrl: env.APP_URL,
+    },
+    "Tippspiel - Passwort zurücksetzen",
+  );
+
+  await sendEmail({ to, ...emailContent });
 }
 
 export { sendEmail } from "./smtp2go";

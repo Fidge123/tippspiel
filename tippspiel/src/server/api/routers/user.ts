@@ -4,8 +4,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { generateSalt, hashPassword } from "~/server/auth/password";
-import { user, verify } from "~/server/db/schema";
-import { sendVerificationEmail } from "~/server/email";
+import { reset, user, verify } from "~/server/db/schema";
+import { sendPasswordResetEmail, sendVerificationEmail } from "~/server/email";
 
 export const userRouter = createTRPCRouter({
   register: publicProcedure
@@ -183,6 +183,128 @@ export const userRouter = createTRPCRouter({
           message: "Failed to send verification email",
         });
       }
+
+      return { success: true };
+    }),
+
+  forgotPassword: publicProcedure
+    .input(z.object({ email: z.email() }))
+    .mutation(async ({ ctx, input }) => {
+      const existingUser = await ctx.db.query.user.findFirst({
+        where: eq(user.email, input.email),
+      });
+
+      if (!existingUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      if (!existingUser.verified) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User is not verified",
+        });
+      }
+
+      const recentToken = await ctx.db.query.reset.findFirst({
+        where: eq(reset.userId, existingUser.id),
+      });
+
+      if (recentToken) {
+        const tokenAge = Date.now() - new Date(recentToken.createdAt).getTime();
+        const minAge = 5 * 60 * 1000; // 5 minutes
+
+        if (tokenAge < minAge) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message:
+              "Please wait 5 minutes before requesting another password reset",
+          });
+        }
+
+        await ctx.db.delete(reset).where(eq(reset.userId, existingUser.id));
+      }
+
+      const resetToken = randomBytes(32).toString("hex");
+      await ctx.db.insert(reset).values({
+        token: resetToken,
+        userId: existingUser.id,
+      });
+
+      try {
+        await sendPasswordResetEmail(
+          existingUser.email,
+          existingUser.name,
+          resetToken,
+        );
+      } catch (error) {
+        console.error("Failed to send password reset email:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send password reset email",
+        });
+      }
+
+      return { success: true };
+    }),
+
+  resetPassword: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+        password: z
+          .string()
+          .min(8, "Password must be at least 8 characters")
+          .max(64, "Password must be less than 64 characters"),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const resetRecord = await ctx.db.query.reset.findFirst({
+        where: eq(reset.token, input.token),
+        with: {
+          user: true,
+        },
+      });
+
+      if (!resetRecord) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Invalid reset token",
+        });
+      }
+
+      const tokenAge = Date.now() - new Date(resetRecord.createdAt).getTime();
+      const maxAge = 60 * 60 * 1000; // 1 hour in milliseconds
+
+      if (tokenAge > maxAge) {
+        await ctx.db.delete(reset).where(eq(reset.token, input.token));
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Reset token has expired",
+        });
+      }
+
+      if (!resetRecord.userId) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Invalid reset record",
+        });
+      }
+
+      const salt = generateSalt();
+      const hashedPassword = await hashPassword(input.password, salt);
+
+      await ctx.db
+        .update(user)
+        .set({
+          password: hashedPassword,
+          salt: salt,
+        })
+        .where(eq(user.id, resetRecord.userId));
+
+      await ctx.db.delete(reset).where(eq(reset.token, input.token));
 
       return { success: true };
     }),
