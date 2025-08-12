@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { env } from "~/env";
 
 export default function TermsPage() {
   return (
@@ -23,7 +24,7 @@ export default function TermsPage() {
           George-Stephenson-Straße 7<br />
           10557 Berlin
           <br />
-          E-Mail: admin@nfl-tippspiel.de
+          E-Mail: {env.SMTP2GO_SENDER_EMAIL}
         </p>
 
         <h3 className="mt-4 font-semibold text-lg">
@@ -124,7 +125,8 @@ export default function TermsPage() {
           </li>
         </ul>
         <p>
-          Zur Ausübung Ihrer Rechte wenden Sie sich an: admin@nfl-tippspiel.de
+          Zur Ausübung Ihrer Rechte wenden Sie sich an:{" "}
+          {env.SMTP2GO_SENDER_EMAIL}
         </p>
 
         <h3 className="mt-4 font-semibold text-lg">Cookies</h3>
@@ -183,7 +185,7 @@ export default function TermsPage() {
         <h3 className="mt-4 font-semibold text-lg">Kontakt</h3>
         <p>
           Bei Fragen zu diesen Bestimmungen oder urheberrechtlichen Anliegen
-          wenden Sie sich an: admin@nfl-tippspiel.de
+          wenden Sie sich an: {env.SMTP2GO_SENDER_EMAIL}
         </p>
       </div>
     </main>

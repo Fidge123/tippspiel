@@ -52,7 +52,11 @@ export async function resendVerificationEmail(
               message: "Dein Konto ist bereits bestätigt.",
             };
           }
-          break;
+          return {
+            ...state,
+            email: [state.email[0], true],
+            message: "Eingabe ist ungültig.",
+          };
         case "TOO_MANY_REQUESTS":
           return {
             ...state,

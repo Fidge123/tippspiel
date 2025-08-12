@@ -1,3 +1,5 @@
+import { env } from "~/env";
+
 export default function TermsPage() {
   return (
     <main className="m-auto flex max-w-prose flex-col">
@@ -10,7 +12,7 @@ export default function TermsPage() {
         <br />
         10557 Berlin
       </p>
-      <p className="py-1">E-Mail: admin@nfl-tippspiel.de</p>
+      <p className="py-1">E-Mail: {env.SMTP2GO_SENDER_EMAIL}</p>
       <p className="py-1">
         Diese Seite ist wird privat betrieben und nicht gewerblich genutzt.
       </p>

@@ -6,7 +6,7 @@ This document contains specific instructions for AI agents working on the Tippsp
 
 Tippspiel is a Next.js application for American Football game prediction among friends.
 Key characteristics:
-- **Tech Stack**: Next.js 15, TypeScript, tRPC, Drizzle ORM, PostgreSQL, NextAuth.js, Tailwind CSS v4, Zod v4
+- **Tech Stack**: Next.js 15, TypeScript, tRPC, Drizzle ORM, PostgreSQL, Auth.js v5, Tailwind CSS v4, Zod v4
 - **Architecture**: T3 Stack with App Router, server-side rendering, and type-safe APIs
 - **Language**: Mixed German/English (UI in German, code in English)
 - **Deployment**: Designed for production with environment validation

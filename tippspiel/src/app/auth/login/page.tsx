@@ -35,15 +35,6 @@ export default async function LoginPage({ searchParams }: Props) {
               Registrieren
             </Link>
           </p>
-          <p className="text-gray-600 text-sm">
-            E-Mail nicht erhalten?{" "}
-            <Link
-              href={`/auth/resend-verification${email ? `?email=${encodeURIComponent(email)}` : ""}`}
-              className="font-medium text-blue-600 underline hover:text-blue-500"
-            >
-              Bestätigung erneut senden
-            </Link>
-          </p>
         </footer>
       </div>
     </main>

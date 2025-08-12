@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Description, Field, Input, Label } from "@headlessui/react";
+import { Button, Field, Input, Label } from "@headlessui/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react";
 import Spinner from "~/app/_components/spinner";
@@ -62,14 +62,9 @@ function ResendVerificationContent() {
                 invalid={state.email[1]}
                 className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
               />
-              {state.email[1] && state.message && (
-                <Description className="mt-2 text-red-800 text-sm">
-                  {state.message}
-                </Description>
-              )}
             </Field>
 
-            {state.message && !state.email[1] && (
+            {state.message && (
               <div className="rounded bg-red-50 p-4">
                 <p className="font-medium text-red-800 text-sm">
                   {state.message}

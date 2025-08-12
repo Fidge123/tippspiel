@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { env } from "~/env";
 
 export default function TermsPage() {
   return (
@@ -21,9 +22,9 @@ export default function TermsPage() {
           Florian Richter
           <br />
           George-Stephenson-Straße 7<br />
-          10557 Berlin, Germany
+          10557 Berlin
           <br />
-          Email: admin@nfl-tippspiel.de
+          Email: {env.SMTP2GO_SENDER_EMAIL}
         </p>
 
         <h3 className="mt-4 font-semibold text-lg">
@@ -119,7 +120,7 @@ export default function TermsPage() {
             protection authority
           </li>
         </ul>
-        <p>To exercise your rights, contact: admin@nfl-tippspiel.de</p>
+        <p>To exercise your rights, contact: {env.SMTP2GO_SENDER_EMAIL}</p>
 
         <h3 className="mt-4 font-semibold text-lg">Cookies</h3>
         <p>
@@ -172,7 +173,7 @@ export default function TermsPage() {
         <h3 className="mt-4 font-semibold text-lg">Contact</h3>
         <p>
           If you have questions about these terms or copyright concerns, please
-          contact: admin@nfl-tippspiel.de
+          contact: {env.SMTP2GO_SENDER_EMAIL}
         </p>
       </div>
     </main>
