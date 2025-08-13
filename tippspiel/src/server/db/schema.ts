@@ -6,7 +6,6 @@ import {
   jsonb,
   pgTable,
   primaryKey,
-  text,
   timestamp,
   unique,
   uuid,
@@ -25,7 +24,10 @@ export const user = pgTable(
     verified: boolean().default(false).notNull(),
     consentedAt: timestamp({ mode: "string" }).notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
   },
   (table) => [unique("UQ_e12875dfb3b1d92d7d7c5377e22").on(table.email)],
 );
@@ -35,7 +37,10 @@ export const bet = pgTable(
   {
     id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     winner: varchar().notNull(),
     pointDiff: integer().notNull(),
     gameId: varchar(),
@@ -77,7 +82,10 @@ export const superbowlBet = pgTable(
     id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
     year: integer().notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     teamId: varchar(),
     userId: uuid(),
     leagueId: uuid(),
@@ -135,6 +143,18 @@ export const verify = pgTable(
   ],
 );
 
+export const failedLoginAttempt = pgTable("failedLoginAttempt", {
+  id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+  email: varchar().notNull(),
+  ipAddress: varchar(),
+  userAgent: varchar(),
+  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp({ mode: "string" })
+    .defaultNow()
+    .$onUpdateFn(() => sql`now()`)
+    .notNull(),
+});
+
 export const team = pgTable(
   "team",
   {
@@ -149,7 +169,10 @@ export const team = pgTable(
     color1: varchar(),
     color2: varchar(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     divisionName: varchar(),
     playoffSeed: integer(),
     pointsFor: integer(),
@@ -168,14 +191,20 @@ export const team = pgTable(
 export const division = pgTable("division", {
   name: varchar().primaryKey().notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp({ mode: "string" })
+    .defaultNow()
+    .$onUpdateFn(() => sql`now()`)
+    .notNull(),
 });
 
 export const bye = pgTable(
   "bye",
   {
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     teamId: varchar().notNull(),
     weekId: varchar().notNull(),
     id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
@@ -194,22 +223,16 @@ export const bye = pgTable(
   ],
 );
 
-export const typeormMetadata = pgTable("typeorm_metadata", {
-  type: varchar().notNull(),
-  database: varchar(),
-  schema: varchar(),
-  table: varchar(),
-  name: varchar(),
-  value: text(),
-});
-
 export const divisionBet = pgTable(
   "divisionBet",
   {
     id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
     year: integer().notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     divisionName: varchar(),
     firstId: varchar(),
     userId: uuid(),
@@ -267,7 +290,10 @@ export const divisionBet = pgTable(
 export const league = pgTable("league", {
   id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp({ mode: "string" })
+    .defaultNow()
+    .$onUpdateFn(() => sql`now()`)
+    .notNull(),
   name: varchar().notNull(),
   season: integer().notNull(),
 });
@@ -282,7 +308,10 @@ export const week = pgTable(
     end: timestamp({ mode: "string" }).notNull(),
     label: varchar().notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     id: varchar().primaryKey().notNull(),
   },
   // (table) => [
@@ -305,7 +334,10 @@ export const game = pgTable(
     winner: varchar().notNull(),
     status: varchar().notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     awayTeamId: varchar(),
     homeTeamId: varchar(),
     weekId: varchar(),
@@ -342,7 +374,10 @@ export const betDoubler = pgTable(
   {
     id: uuid().default(sql`uuid_generate_v4()`).primaryKey().notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
     gameId: varchar(),
     userId: uuid(),
     leagueId: uuid(),

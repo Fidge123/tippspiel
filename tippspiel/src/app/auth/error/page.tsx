@@ -1,7 +1,9 @@
 "use client";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import Spinner from "~/app/_components/spinner";
 
-export default function AuthErrorPage() {
+function ErrorPage() {
   const search = useSearchParams();
   const error = search.get("error");
 
@@ -18,5 +20,13 @@ export default function AuthErrorPage() {
               : "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut."}
       </p>
     </div>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <ErrorPage />
+    </Suspense>
   );
 }

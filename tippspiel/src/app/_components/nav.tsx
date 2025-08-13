@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth, signIn, signOut } from "~/server/auth";
 
-export async function Nav() {
+export default async function Nav() {
   const session = await auth();
 
   return (

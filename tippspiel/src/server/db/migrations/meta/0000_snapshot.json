@@ -143,54 +143,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "IDX_23a1f21c2ca2a0b6797564d2b4": {
-          "name": "IDX_23a1f21c2ca2a0b6797564d2b4",
-          "columns": [
-            {
-              "expression": "userId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "IDX_fe022bce1d0feba556dc3c6721": {
-          "name": "IDX_fe022bce1d0feba556dc3c6721",
-          "columns": [
-            {
-              "expression": "gameId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "userId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "leagueId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "FK_23a1f21c2ca2a0b6797564d2b41": {
           "name": "FK_23a1f21c2ca2a0b6797564d2b41",
@@ -646,55 +599,6 @@
       "policies": {},
       "isRLSEnabled": false
     },
-    "public.typeorm_metadata": {
-      "name": "typeorm_metadata",
-      "schema": "",
-      "columns": {
-        "type": {
-          "name": "type",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "database": {
-          "name": "database",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "schema": {
-          "name": "schema",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "table": {
-          "name": "table",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "value": {
-          "name": "value",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
-    },
     "public.divisionBet": {
       "name": "divisionBet",
       "schema": "",
@@ -769,45 +673,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "IDX_321447fccd6338ee2776aa9936": {
-          "name": "IDX_321447fccd6338ee2776aa9936",
-          "columns": [
-            {
-              "expression": "divisionName",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "userId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "int4_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "leagueId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "int4_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "year",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "FK_75bd2d496547e979b0752ce408d": {
           "name": "FK_75bd2d496547e979b0752ce408d",
@@ -993,68 +859,6 @@
           "notNull": true
         }
       },
-      "indexes": {
-        "IDX_960a28d375395804d5ce7a7a0f": {
-          "name": "IDX_960a28d375395804d5ce7a7a0f",
-          "columns": [
-            {
-              "expression": "year",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "int4_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "seasontype",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "int4_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "week",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "int4_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.migrations": {
-      "name": "migrations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "timestamp": {
-          "name": "timestamp",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
@@ -1136,40 +940,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "IDX_1f2f5fed6227e9266b8e6f4040": {
-          "name": "IDX_1f2f5fed6227e9266b8e6f4040",
-          "columns": [
-            {
-              "expression": "status",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "text_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "IDX_585dc8593e1c01b0f5e78477cf": {
-          "name": "IDX_585dc8593e1c01b0f5e78477cf",
-          "columns": [
-            {
-              "expression": "date",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "timestamp_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "FK_1a206693bb12335a59cb181b355": {
           "name": "FK_1a206693bb12335a59cb181b355",
@@ -1258,38 +1029,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "IDX_e3018c27fdac8174ca49115411": {
-          "name": "IDX_e3018c27fdac8174ca49115411",
-          "columns": [
-            {
-              "expression": "weekId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "userId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "text_ops",
-              "isExpression": false
-            },
-            {
-              "expression": "leagueId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "text_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "FK_77b48151105414a855067c67e78": {
           "name": "FK_77b48151105414a855067c67e78",
@@ -1355,40 +1095,7 @@
           "notNull": true
         }
       },
-      "indexes": {
-        "IDX_08897b166dee565859b7fb2fcc": {
-          "name": "IDX_08897b166dee565859b7fb2fcc",
-          "columns": [
-            {
-              "expression": "userId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "IDX_439998ed986bab5ccce25fb69d": {
-          "name": "IDX_439998ed986bab5ccce25fb69d",
-          "columns": [
-            {
-              "expression": "leagueId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "FK_08897b166dee565859b7fb2fcc8": {
           "name": "FK_08897b166dee565859b7fb2fcc8",
@@ -1439,40 +1146,7 @@
           "notNull": true
         }
       },
-      "indexes": {
-        "IDX_05c82c10f7c651b94c36370112": {
-          "name": "IDX_05c82c10f7c651b94c36370112",
-          "columns": [
-            {
-              "expression": "leagueId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "IDX_f8a889c4362d78f056960ca6da": {
-          "name": "IDX_f8a889c4362d78f056960ca6da",
-          "columns": [
-            {
-              "expression": "userId",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "FK_05c82c10f7c651b94c36370112d": {
           "name": "FK_05c82c10f7c651b94c36370112d",

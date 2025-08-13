@@ -3,7 +3,7 @@ import { Button, Field, Input, Label } from "@headlessui/react";
 import { useActionState } from "react";
 import { forgotPassword } from "../action";
 
-export function ForgotPasswordForm() {
+export default function ForgotPasswordForm() {
   const [state, action, pending] = useActionState(forgotPassword, {
     email: ["", false],
     message: undefined,

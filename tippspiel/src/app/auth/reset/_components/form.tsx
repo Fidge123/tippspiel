@@ -1,10 +1,11 @@
 "use client";
 import { Button, Field, Input, Label } from "@headlessui/react";
 import { useSearchParams } from "next/navigation";
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
+import Spinner from "~/app/_components/spinner";
 import { resetPassword } from "../action";
 
-export function ResetPasswordForm() {
+function Form() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
 
@@ -63,5 +64,13 @@ export function ResetPasswordForm() {
 
       <p className="text-red-500 empty:hidden">{state.message}</p>
     </form>
+  );
+}
+
+export default function ResetPasswordForm() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Form />
+    </Suspense>
   );
 }

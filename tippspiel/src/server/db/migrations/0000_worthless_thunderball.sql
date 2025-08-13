@@ -84,15 +84,6 @@ CREATE TABLE "bye" (
 	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "typeorm_metadata" (
-	"type" varchar NOT NULL,
-	"database" varchar,
-	"schema" varchar,
-	"table" varchar,
-	"name" varchar,
-	"value" text
-);
---> statement-breakpoint
 CREATE TABLE "divisionBet" (
 	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
 	"year" integer NOT NULL,
