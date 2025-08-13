@@ -61,17 +61,17 @@ export const authConfig = {
 
         if (user) {
           if (!user.verified) {
-            await recordFailedLogin({ email });
+            await recordFailedLogin(email);
             throw new UnverifiedError("User is not verified!");
           }
           if (await verifyPassword(password, user.salt, user.password)) {
             return { id: user.id, email: user.email };
           } else {
-            await recordFailedLogin({ email });
+            await recordFailedLogin(email);
             throw new InvalidPasswordError("Invalid password!");
           }
         }
-        await recordFailedLogin({ email });
+        await recordFailedLogin(email);
         throw new UnknownUserError("User is not found!");
       },
     }),

@@ -6,24 +6,10 @@ import { notifyExcessiveFailedLogins } from "~/server/email/admin";
 const FAILED_LOGIN_THRESHOLD = 10;
 const TIME_WINDOW_MINUTES = 60;
 
-export interface FailedLoginData {
-  email: string;
-  ipAddress?: string;
-  userAgent?: string;
-}
-
-export async function recordFailedLogin({
-  email,
-  ipAddress,
-  userAgent,
-}: FailedLoginData): Promise<void> {
+export async function recordFailedLogin(email: string) {
   try {
     await cleanupOldFailedLogins();
-    await db.insert(failedLoginAttempt).values({
-      email,
-      ipAddress,
-      userAgent,
-    });
+    await db.insert(failedLoginAttempt).values({ email });
 
     await checkForExcessiveFailedLogins(email);
   } catch (error) {
