@@ -38,5 +38,12 @@ export async function sendPasswordResetEmail(
   await sendEmail({ to, ...emailContent });
 }
 
+export {
+  notifyExcessiveFailedLogins,
+  notifyNewUserRegistration,
+  notifyPasswordResetRequested,
+  notifyUserEmailVerified,
+  sendAdminNotification,
+} from "./admin";
 export { sendEmail } from "./smtp2go";
 export { renderEmailTemplate } from "./templates";

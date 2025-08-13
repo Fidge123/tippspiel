@@ -35,8 +35,12 @@ export async function sendEmail({
     text_body: text,
   };
 
-  if (to.endsWith("example.com")) {
-    return; // Skip sending emails to example.com addresses
+  if (
+    to.endsWith("example.com") ||
+    (text.includes("App URL: http://localhost:3000") &&
+      to === env.SMTP2GO_SENDER_EMAIL)
+  ) {
+    return; // Skip sending test emails
   }
 
   const response = await fetch(`${env.SMTP2GO_API_URL}/email/send`, {

@@ -2,6 +2,7 @@ import { CredentialsSignin, type NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import zod from "zod";
 import { db } from "~/server/db";
+import { recordFailedLogin } from "./failed-login-tracker";
 import { verifyPassword } from "./password";
 
 /**
@@ -60,14 +61,17 @@ export const authConfig = {
 
         if (user) {
           if (!user.verified) {
+            await recordFailedLogin({ email });
             throw new UnverifiedError("User is not verified!");
           }
           if (await verifyPassword(password, user.salt, user.password)) {
             return { id: user.id, email: user.email };
           } else {
+            await recordFailedLogin({ email });
             throw new InvalidPasswordError("Invalid password!");
           }
         }
+        await recordFailedLogin({ email });
         throw new UnknownUserError("User is not found!");
       },
     }),

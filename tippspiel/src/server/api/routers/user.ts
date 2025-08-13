@@ -6,6 +6,11 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { generateSalt, hashPassword } from "~/server/auth/password";
 import { reset, user, verify } from "~/server/db/schema";
 import { sendPasswordResetEmail, sendVerificationEmail } from "~/server/email";
+import {
+  notifyNewUserRegistration,
+  notifyPasswordResetRequested,
+  notifyUserEmailVerified,
+} from "~/server/email/admin";
 
 export const userRouter = createTRPCRouter({
   register: publicProcedure
@@ -71,8 +76,15 @@ export const userRouter = createTRPCRouter({
         );
       } catch (error) {
         console.error("Failed to send verification email:", error);
-        // Note: We don't throw here to avoid breaking registration
-        // The user can still verify later or request a new verification email
+      }
+
+      try {
+        await notifyNewUserRegistration(newUser.email, newUser.name);
+      } catch (error) {
+        console.error(
+          "Failed to send admin notification for new registration:",
+          error,
+        );
       }
 
       return newUser;
@@ -120,6 +132,18 @@ export const userRouter = createTRPCRouter({
         .where(eq(user.id, verificationRecord.userId));
 
       await ctx.db.delete(verify).where(eq(verify.token, input.token));
+
+      try {
+        const verifiedUser = verificationRecord.user;
+        if (verifiedUser) {
+          await notifyUserEmailVerified(verifiedUser.email, verifiedUser.name);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to send admin notification for email verification:",
+          error,
+        );
+      }
 
       return { success: true };
     }),
@@ -245,6 +269,18 @@ export const userRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to send password reset email",
         });
+      }
+
+      try {
+        await notifyPasswordResetRequested(
+          existingUser.email,
+          existingUser.name,
+        );
+      } catch (error) {
+        console.error(
+          "Failed to send admin notification for password reset:",
+          error,
+        );
       }
 
       return { success: true };
