@@ -1,1 +1,0 @@
-ALTER TABLE "team" ADD COLUMN "season" integer NOT NULL;

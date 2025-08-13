@@ -15,23 +15,7 @@ export async function cleanupUser(email: string): Promise<void> {
     });
 
     if (user) {
-      // Delete related records first due to foreign key constraints
-      await db.delete(schema.verify).where(eq(schema.verify.userId, user.id));
-      await db.delete(schema.reset).where(eq(schema.reset.userId, user.id));
-      await db.delete(schema.bet).where(eq(schema.bet.userId, user.id));
-      await db
-        .delete(schema.superbowlBet)
-        .where(eq(schema.superbowlBet.userId, user.id));
-      await db
-        .delete(schema.divisionBet)
-        .where(eq(schema.divisionBet.userId, user.id));
-      await db
-        .delete(schema.betDoubler)
-        .where(eq(schema.betDoubler.userId, user.id));
-      await db.delete(schema.member).where(eq(schema.member.userId, user.id));
-      await db.delete(schema.admin).where(eq(schema.admin.userId, user.id));
-
-      // Finally delete the user
+      // await db.delete(schema.admin).where(eq(schema.admin.user, user.id));
       await db.delete(schema.user).where(eq(schema.user.email, email));
     }
   } catch (error) {

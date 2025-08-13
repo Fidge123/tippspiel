@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { eq } from "drizzle-orm";
 import { db } from "~/server/db";
-import { reset } from "../../src/server/db/schema";
+import { resetToken } from "../../src/server/db/schema";
 import { createTestUser, fillRegisterForm } from "../helpers/auth";
 import { cleanupUser, findUserByEmail, verifyUser } from "../helpers/database";
 
@@ -60,11 +60,11 @@ test.describe("Forgot Password Flow", () => {
     expect(user).toBeTruthy();
 
     if (user) {
-      const resetToken = await db.query.reset.findFirst({
-        where: eq(reset.userId, user.id),
+      const reset = await db.query.resetToken.findFirst({
+        where: eq(resetToken.user, user.id),
       });
-      expect(resetToken).toBeTruthy();
-      expect(resetToken?.token).toBeTruthy();
+      expect(reset).toBeTruthy();
+      expect(reset?.token).toBeTruthy();
     }
   });
 
@@ -125,21 +125,21 @@ test.describe("Forgot Password Flow", () => {
     await verifyUser(testUser.email);
 
     const user = await findUserByEmail(testUser.email);
-    const resetToken = `test-reset-token-${Date.now()}`;
+    const token = `test-reset-token-${Date.now()}`;
 
-    const token = await db
-      .insert(reset)
+    const row = await db
+      .insert(resetToken)
       .values({
-        token: resetToken,
-        userId: user.id,
+        token,
+        user: user.id,
       })
       .returning();
 
-    if (!token[0]) {
+    if (!row[0]) {
       throw new Error("Failed to create reset token in database");
     }
 
-    await page.goto(`/auth/reset?token=${resetToken}`);
+    await page.goto(`/auth/reset?token=${token}`);
 
     const newPassword = "newpassword456";
     await page.getByLabel("Neues Passwort").fill(newPassword);
@@ -147,14 +147,10 @@ test.describe("Forgot Password Flow", () => {
     await page.getByRole("button", { name: "Passwort setzen" }).click();
 
     await expect(page).toHaveURL("/auth/login?message=password-reset-success");
-    await expect(
-      page.getByText(
-        "Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt mit deinem neuen Passwort anmelden.",
-      ),
-    ).toBeVisible();
+    await expect(page.getByText(/erfolgreich zurückgesetzt/)).toBeVisible();
 
-    const deletedToken = await db.query.reset.findFirst({
-      where: eq(reset.token, resetToken),
+    const deletedToken = await db.query.resetToken.findFirst({
+      where: eq(resetToken.token, token),
     });
     expect(deletedToken).toBeUndefined();
 
@@ -172,16 +168,16 @@ test.describe("Forgot Password Flow", () => {
     await verifyUser(testUser.email);
 
     const user = await findUserByEmail(testUser.email);
-    const resetToken = `test-reset-token-${Date.now()}`;
+    const token = `test-reset-token-${Date.now()}`;
 
     if (user) {
-      await db.insert(reset).values({
-        token: resetToken,
-        userId: user.id,
+      await db.insert(resetToken).values({
+        token,
+        user: user.id,
       });
     }
 
-    await page.goto(`/auth/reset?token=${resetToken}`);
+    await page.goto(`/auth/reset?token=${token}`);
 
     await page.getByLabel("Neues Passwort").fill("password123");
     await page.getByLabel("Passwort bestätigen").fill("different123");

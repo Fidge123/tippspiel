@@ -3,7 +3,7 @@ import type { inferProcedureInput, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { userRouter } from "~/server/api/routers/user";
 import { db } from "~/server/db";
-import { user, verify } from "~/server/db/schema";
+import { user, verifyToken } from "~/server/db/schema";
 
 test("register user and clean up", async () => {
   const headers = new Headers();
@@ -22,10 +22,12 @@ test("register user and clean up", async () => {
   };
   const newUser = await caller.register(input);
   expect(newUser.name).toEqual("Test User");
-  await db.delete(verify).where(eq(verify.userId, newUser.id));
+  await db.delete(verifyToken).where(eq(verifyToken.user, newUser.id));
   await db.delete(user).where(eq(user.id, newUser.id));
   expect(await db.$count(user, eq(user.id, newUser.id))).toBe(0);
-  expect(await db.$count(verify, eq(verify.userId, newUser.id))).toBe(0);
+  expect(await db.$count(verifyToken, eq(verifyToken.user, newUser.id))).toBe(
+    0,
+  );
 });
 
 test("fail if user exists and clean up", async () => {
@@ -54,16 +56,16 @@ test("fail if user exists and clean up", async () => {
     expect(users.length).toBe(1);
     const id = users[0]?.id ?? "";
     expect(await db.$count(user, eq(user.id, id))).toBe(1);
-    expect(await db.$count(verify, eq(verify.userId, id))).toBe(1);
+    expect(await db.$count(verifyToken, eq(verifyToken.user, id))).toBe(1);
   }
 
   for (const u of users) {
-    await db.delete(verify).where(eq(verify.userId, u.id));
+    await db.delete(verifyToken).where(eq(verifyToken.user, u.id));
     await db.delete(user).where(eq(user.id, u.id));
   }
   for (const u of users) {
     expect(await db.$count(user, eq(user.id, u.id))).toBe(0);
-    expect(await db.$count(verify, eq(verify.userId, u.id))).toBe(0);
+    expect(await db.$count(verifyToken, eq(verifyToken.user, u.id))).toBe(0);
   }
 });
 

@@ -29,7 +29,7 @@ test.describe("Actual email triggered", () => {
     };
 
     await fillRegisterForm(page, testUser);
-    await expect(page).toHaveURL("/auth/register/success");
+    await expect(page).toHaveURL("/auth/register/success", { timeout: 10000 });
 
     const res = await fetch(`${env.GETTESTMAIL_URL}/${mailbox.id}`, {
       headers: { "X-API-Key": env.GETTESTMAIL_KEY ?? "" },

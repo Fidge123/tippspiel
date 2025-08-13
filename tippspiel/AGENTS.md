@@ -98,8 +98,8 @@ src/
 
 ### 1. Schema Conventions
 - Table names: singular, lowercase (e.g., `user`, `bet`, `game`)
-- Primary keys: `id` (UUID with `uuid_generate_v4()` default)
-- Foreign keys: `[table]Id` (e.g., `userId`, `gameId`)
+- Primary keys: prefer `id` and `defaultRandom()` unless provided by external sources
+- Foreign keys: use `references()` with `onDelete: "cascade"` where appropriate
 - Timestamps: `createdAt`, `updatedAt` with `timestamp({ mode: "string" })`
 - Use `varchar()` for strings, specify length for constrained fields
 - Use `unique()` constraints in table definition callbacks

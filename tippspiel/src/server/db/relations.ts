@@ -1,226 +1,214 @@
 import { relations } from "drizzle-orm/relations";
-import {
-  admin,
-  bet,
-  betDoubler,
-  bye,
-  division,
-  divisionBet,
-  game,
-  league,
-  member,
-  reset,
-  superbowlBet,
-  team,
-  user,
-  verify,
-  week,
-} from "./schema";
+import * as schema from "./schema";
 
-export const betRelations = relations(bet, ({ one }) => ({
-  user: one(user, {
-    fields: [bet.userId],
-    references: [user.id],
+export const betRelations = relations(schema.bet, ({ one }) => ({
+  user: one(schema.user, {
+    fields: [schema.bet.user],
+    references: [schema.user.id],
   }),
-  league: one(league, {
-    fields: [bet.leagueId],
-    references: [league.id],
+  league: one(schema.league, {
+    fields: [schema.bet.league],
+    references: [schema.league.id],
   }),
-  game: one(game, {
-    fields: [bet.gameId],
-    references: [game.id],
+  game: one(schema.game, {
+    fields: [schema.bet.game],
+    references: [schema.game.id],
   }),
 }));
 
-export const userRelations = relations(user, ({ many }) => ({
-  bets: many(bet),
-  superbowlBets: many(superbowlBet),
-  resets: many(reset),
-  verifies: many(verify),
-  divisionBets: many(divisionBet),
-  betDoublers: many(betDoubler),
-  members: many(member),
-  admins: many(admin),
+export const userRelations = relations(schema.user, ({ many }) => ({
+  bets: many(schema.bet),
+  superbowlBets: many(schema.superbowlBet),
+  resetTokens: many(schema.resetToken),
+  verifyTokens: many(schema.verifyToken),
+  divisionBets: many(schema.divisionBet),
+  betDoublers: many(schema.betDoubler),
+  members: many(schema.member),
+  admins: many(schema.admin),
 }));
 
-export const leagueRelations = relations(league, ({ many }) => ({
-  bets: many(bet),
-  superbowlBets: many(superbowlBet),
-  divisionBets: many(divisionBet),
-  betDoublers: many(betDoubler),
-  members: many(member),
-  admins: many(admin),
+export const leagueRelations = relations(schema.league, ({ many }) => ({
+  bets: many(schema.bet),
+  superbowlBets: many(schema.superbowlBet),
+  divisionBets: many(schema.divisionBet),
+  betDoublers: many(schema.betDoubler),
+  members: many(schema.member),
+  admins: many(schema.admin),
 }));
 
-export const gameRelations = relations(game, ({ one, many }) => ({
-  bets: many(bet),
-  team_awayTeamId: one(team, {
-    fields: [game.awayTeamId],
-    references: [team.id],
-    relationName: "game_awayTeamId_team_id",
+export const gameRelations = relations(schema.game, ({ one, many }) => ({
+  bets: many(schema.bet),
+  awayTeam: one(schema.team, {
+    fields: [schema.game.awayTeam],
+    references: [schema.team.id],
   }),
-  team_homeTeamId: one(team, {
-    fields: [game.homeTeamId],
-    references: [team.id],
-    relationName: "game_homeTeamId_team_id",
+  homeTeam: one(schema.team, {
+    fields: [schema.game.homeTeam],
+    references: [schema.team.id],
   }),
-  week: one(week, {
-    fields: [game.weekId],
-    references: [week.id],
+  week: one(schema.week, {
+    fields: [schema.game.week],
+    references: [schema.week.id],
   }),
-  betDoublers: many(betDoubler),
+  betDoublers: many(schema.betDoubler),
 }));
 
-export const superbowlBetRelations = relations(superbowlBet, ({ one }) => ({
-  team: one(team, {
-    fields: [superbowlBet.teamId],
-    references: [team.id],
+export const superbowlBetRelations = relations(
+  schema.superbowlBet,
+  ({ one }) => ({
+    team: one(schema.team, {
+      fields: [schema.superbowlBet.team],
+      references: [schema.team.id],
+    }),
+    league: one(schema.league, {
+      fields: [schema.superbowlBet.league],
+      references: [schema.league.id],
+    }),
+    user: one(schema.user, {
+      fields: [schema.superbowlBet.user],
+      references: [schema.user.id],
+    }),
   }),
-  league: one(league, {
-    fields: [superbowlBet.leagueId],
-    references: [league.id],
-  }),
-  user: one(user, {
-    fields: [superbowlBet.userId],
-    references: [user.id],
-  }),
-}));
+);
 
-export const teamRelations = relations(team, ({ one, many }) => ({
-  superbowlBets: many(superbowlBet),
-  division: one(division, {
-    fields: [team.divisionName],
-    references: [division.name],
+export const teamRelations = relations(schema.team, ({ one, many }) => ({
+  superbowlBets: many(schema.superbowlBet),
+  division: one(schema.division, {
+    fields: [schema.team.division],
+    references: [schema.division.id],
   }),
-  byes: many(bye),
-  divisionBets_secondId: many(divisionBet, {
-    relationName: "divisionBet_secondId_team_id",
+  byes: many(schema.bye),
+  divisionBets_second: many(schema.divisionBet, {
+    relationName: "divisionBet_second_team_id",
   }),
-  divisionBets_thirdId: many(divisionBet, {
-    relationName: "divisionBet_thirdId_team_id",
+  divisionBets_third: many(schema.divisionBet, {
+    relationName: "divisionBet_third_team_id",
   }),
-  divisionBets_fourthId: many(divisionBet, {
-    relationName: "divisionBet_fourthId_team_id",
+  divisionBets_fourth: many(schema.divisionBet, {
+    relationName: "divisionBet_fourth_team_id",
   }),
-  divisionBets_firstId: many(divisionBet, {
-    relationName: "divisionBet_firstId_team_id",
+  divisionBets_first: many(schema.divisionBet, {
+    relationName: "divisionBet_first_team_id",
   }),
-  games_awayTeamId: many(game, {
-    relationName: "game_awayTeamId_team_id",
+  games_awayTeam: many(schema.game, {
+    relationName: "game_awayTeam_team_id",
   }),
-  games_homeTeamId: many(game, {
-    relationName: "game_homeTeamId_team_id",
-  }),
-}));
-
-export const resetRelations = relations(reset, ({ one }) => ({
-  user: one(user, {
-    fields: [reset.userId],
-    references: [user.id],
+  games_homeTeam: many(schema.game, {
+    relationName: "game_homeTeam_team_id",
   }),
 }));
 
-export const verifyRelations = relations(verify, ({ one }) => ({
-  user: one(user, {
-    fields: [verify.userId],
-    references: [user.id],
+export const resetRelations = relations(schema.resetToken, ({ one }) => ({
+  user: one(schema.user, {
+    fields: [schema.resetToken.user],
+    references: [schema.user.id],
   }),
 }));
 
-export const divisionRelations = relations(division, ({ many }) => ({
-  teams: many(team),
-  divisionBets: many(divisionBet),
-}));
-
-export const byeRelations = relations(bye, ({ one }) => ({
-  team: one(team, {
-    fields: [bye.teamId],
-    references: [team.id],
-  }),
-  week: one(week, {
-    fields: [bye.weekId],
-    references: [week.id],
+export const verifyRelations = relations(schema.verifyToken, ({ one }) => ({
+  user: one(schema.user, {
+    fields: [schema.verifyToken.user],
+    references: [schema.user.id],
   }),
 }));
 
-export const weekRelations = relations(week, ({ many }) => ({
-  byes: many(bye),
-  games: many(game),
-  betDoublers: many(betDoubler),
+export const divisionRelations = relations(schema.division, ({ many }) => ({
+  teams: many(schema.team),
+  divisionBets: many(schema.divisionBet),
 }));
 
-export const divisionBetRelations = relations(divisionBet, ({ one }) => ({
-  division: one(division, {
-    fields: [divisionBet.divisionName],
-    references: [division.name],
+export const byeRelations = relations(schema.bye, ({ one }) => ({
+  team: one(schema.team, {
+    fields: [schema.bye.team],
+    references: [schema.team.id],
   }),
-  user: one(user, {
-    fields: [divisionBet.userId],
-    references: [user.id],
-  }),
-  league: one(league, {
-    fields: [divisionBet.leagueId],
-    references: [league.id],
-  }),
-  team_secondId: one(team, {
-    fields: [divisionBet.secondId],
-    references: [team.id],
-    relationName: "divisionBet_secondId_team_id",
-  }),
-  team_thirdId: one(team, {
-    fields: [divisionBet.thirdId],
-    references: [team.id],
-    relationName: "divisionBet_thirdId_team_id",
-  }),
-  team_fourthId: one(team, {
-    fields: [divisionBet.fourthId],
-    references: [team.id],
-    relationName: "divisionBet_fourthId_team_id",
-  }),
-  team_firstId: one(team, {
-    fields: [divisionBet.firstId],
-    references: [team.id],
-    relationName: "divisionBet_firstId_team_id",
+  week: one(schema.week, {
+    fields: [schema.bye.week],
+    references: [schema.week.id],
   }),
 }));
 
-export const betDoublerRelations = relations(betDoubler, ({ one }) => ({
-  user: one(user, {
-    fields: [betDoubler.userId],
-    references: [user.id],
+export const weekRelations = relations(schema.week, ({ many }) => ({
+  byes: many(schema.bye),
+  games: many(schema.game),
+  betDoublers: many(schema.betDoubler),
+}));
+
+export const divisionBetRelations = relations(
+  schema.divisionBet,
+  ({ one }) => ({
+    division: one(schema.division, {
+      fields: [schema.divisionBet.division],
+      references: [schema.division.id],
+    }),
+    user: one(schema.user, {
+      fields: [schema.divisionBet.user],
+      references: [schema.user.id],
+    }),
+    league: one(schema.league, {
+      fields: [schema.divisionBet.league],
+      references: [schema.league.id],
+    }),
+    team_second: one(schema.team, {
+      fields: [schema.divisionBet.second],
+      references: [schema.team.id],
+      relationName: "divisionBet_second_team_id",
+    }),
+    team_third: one(schema.team, {
+      fields: [schema.divisionBet.third],
+      references: [schema.team.id],
+      relationName: "divisionBet_third_team_id",
+    }),
+    team_fourth: one(schema.team, {
+      fields: [schema.divisionBet.fourth],
+      references: [schema.team.id],
+      relationName: "divisionBet_fourth_team_id",
+    }),
+    team_first: one(schema.team, {
+      fields: [schema.divisionBet.first],
+      references: [schema.team.id],
+      relationName: "divisionBet_first_team_id",
+    }),
   }),
-  game: one(game, {
-    fields: [betDoubler.gameId],
-    references: [game.id],
+);
+
+export const betDoublerRelations = relations(schema.betDoubler, ({ one }) => ({
+  user: one(schema.user, {
+    fields: [schema.betDoubler.user],
+    references: [schema.user.id],
   }),
-  league: one(league, {
-    fields: [betDoubler.leagueId],
-    references: [league.id],
+  game: one(schema.game, {
+    fields: [schema.betDoubler.game],
+    references: [schema.game.id],
   }),
-  week: one(week, {
-    fields: [betDoubler.weekId],
-    references: [week.id],
+  league: one(schema.league, {
+    fields: [schema.betDoubler.league],
+    references: [schema.league.id],
+  }),
+  week: one(schema.week, {
+    fields: [schema.betDoubler.week],
+    references: [schema.week.id],
   }),
 }));
 
-export const memberRelations = relations(member, ({ one }) => ({
-  user: one(user, {
-    fields: [member.userId],
-    references: [user.id],
+export const memberRelations = relations(schema.member, ({ one }) => ({
+  user: one(schema.user, {
+    fields: [schema.member.user],
+    references: [schema.user.id],
   }),
-  league: one(league, {
-    fields: [member.leagueId],
-    references: [league.id],
+  league: one(schema.league, {
+    fields: [schema.member.league],
+    references: [schema.league.id],
   }),
 }));
 
-export const adminRelations = relations(admin, ({ one }) => ({
-  league: one(league, {
-    fields: [admin.leagueId],
-    references: [league.id],
+export const adminRelations = relations(schema.admin, ({ one }) => ({
+  league: one(schema.league, {
+    fields: [schema.admin.league],
+    references: [schema.league.id],
   }),
-  user: one(user, {
-    fields: [admin.userId],
-    references: [user.id],
+  user: one(schema.user, {
+    fields: [schema.admin.user],
+    references: [schema.user.id],
   }),
 }));

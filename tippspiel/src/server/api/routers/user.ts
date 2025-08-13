@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { generateSalt, hashPassword } from "~/server/auth/password";
-import { reset, user, verify } from "~/server/db/schema";
+import { resetToken, user, verifyToken } from "~/server/db/schema";
 import { sendPasswordResetEmail, sendVerificationEmail } from "~/server/email";
 import {
   notifyNewUserRegistration,
@@ -62,9 +62,9 @@ export const userRouter = createTRPCRouter({
       }
 
       const verificationToken = randomBytes(32).toString("hex");
-      await ctx.db.insert(verify).values({
+      await ctx.db.insert(verifyToken).values({
         token: verificationToken,
-        userId: newUser.id,
+        user: newUser.id,
       });
 
       // Send verification email
@@ -93,33 +93,34 @@ export const userRouter = createTRPCRouter({
   verify: publicProcedure
     .input(z.object({ token: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const verificationRecord = await ctx.db.query.verify.findFirst({
-        where: eq(verify.token, input.token),
+      const token = await ctx.db.query.verifyToken.findFirst({
+        where: eq(verifyToken.token, input.token),
         with: {
           user: true,
         },
       });
 
-      if (!verificationRecord) {
+      if (!token) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Invalid verification token",
         });
       }
 
-      const tokenAge =
-        Date.now() - new Date(verificationRecord.createdAt).getTime();
+      const tokenAge = Date.now() - new Date(token.createdAt).getTime();
       const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
       if (tokenAge > maxAge) {
-        await ctx.db.delete(verify).where(eq(verify.token, input.token));
+        await ctx.db
+          .delete(verifyToken)
+          .where(eq(verifyToken.token, input.token));
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Verification token has expired",
         });
       }
 
-      if (!verificationRecord.userId) {
+      if (!token.user) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Invalid verification record",
@@ -129,14 +130,15 @@ export const userRouter = createTRPCRouter({
       await ctx.db
         .update(user)
         .set({ verified: true })
-        .where(eq(user.id, verificationRecord.userId));
+        .where(eq(user.id, token.user.id));
 
-      await ctx.db.delete(verify).where(eq(verify.token, input.token));
+      await ctx.db
+        .delete(verifyToken)
+        .where(eq(verifyToken.token, input.token));
 
       try {
-        const verifiedUser = verificationRecord.user;
-        if (verifiedUser) {
-          await notifyUserEmailVerified(verifiedUser.email, verifiedUser.name);
+        if (token.user) {
+          await notifyUserEmailVerified(token.user.email, token.user.name);
         }
       } catch (error) {
         console.error(
@@ -169,8 +171,8 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      const recentToken = await ctx.db.query.verify.findFirst({
-        where: eq(verify.userId, existingUser.id),
+      const recentToken = await ctx.db.query.verifyToken.findFirst({
+        where: eq(verifyToken.user, existingUser.id),
       });
 
       if (recentToken) {
@@ -185,13 +187,15 @@ export const userRouter = createTRPCRouter({
           });
         }
 
-        await ctx.db.delete(verify).where(eq(verify.userId, existingUser.id));
+        await ctx.db
+          .delete(verifyToken)
+          .where(eq(verifyToken.user, existingUser.id));
       }
 
       const verificationToken = randomBytes(32).toString("hex");
-      await ctx.db.insert(verify).values({
+      await ctx.db.insert(verifyToken).values({
         token: verificationToken,
-        userId: existingUser.id,
+        user: existingUser.id,
       });
 
       try {
@@ -232,8 +236,8 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      const recentToken = await ctx.db.query.reset.findFirst({
-        where: eq(reset.userId, existingUser.id),
+      const recentToken = await ctx.db.query.resetToken.findFirst({
+        where: eq(resetToken.user, existingUser.id),
       });
 
       if (recentToken) {
@@ -248,20 +252,22 @@ export const userRouter = createTRPCRouter({
           });
         }
 
-        await ctx.db.delete(reset).where(eq(reset.userId, existingUser.id));
+        await ctx.db
+          .delete(resetToken)
+          .where(eq(resetToken.user, existingUser.id));
       }
 
-      const resetToken = randomBytes(32).toString("hex");
-      await ctx.db.insert(reset).values({
-        token: resetToken,
-        userId: existingUser.id,
+      const token = randomBytes(32).toString("hex");
+      await ctx.db.insert(resetToken).values({
+        token,
+        user: existingUser.id,
       });
 
       try {
         await sendPasswordResetEmail(
           existingUser.email,
           existingUser.name,
-          resetToken,
+          token,
         );
       } catch (error) {
         console.error("Failed to send password reset email:", error);
@@ -297,32 +303,34 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const resetRecord = await ctx.db.query.reset.findFirst({
-        where: eq(reset.token, input.token),
+      const token = await ctx.db.query.resetToken.findFirst({
+        where: eq(resetToken.token, input.token),
         with: {
           user: true,
         },
       });
 
-      if (!resetRecord) {
+      if (!token) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Invalid reset token",
         });
       }
 
-      const tokenAge = Date.now() - new Date(resetRecord.createdAt).getTime();
+      const tokenAge = Date.now() - new Date(token.createdAt).getTime();
       const maxAge = 60 * 60 * 1000; // 1 hour in milliseconds
 
       if (tokenAge > maxAge) {
-        await ctx.db.delete(reset).where(eq(reset.token, input.token));
+        await ctx.db
+          .delete(resetToken)
+          .where(eq(resetToken.token, input.token));
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Reset token has expired",
         });
       }
 
-      if (!resetRecord.userId) {
+      if (!token.user) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Invalid reset record",
@@ -338,9 +346,9 @@ export const userRouter = createTRPCRouter({
           password: hashedPassword,
           salt: salt,
         })
-        .where(eq(user.id, resetRecord.userId));
+        .where(eq(user.id, token.user.id));
 
-      await ctx.db.delete(reset).where(eq(reset.token, input.token));
+      await ctx.db.delete(resetToken).where(eq(resetToken.token, input.token));
 
       return { success: true };
     }),
