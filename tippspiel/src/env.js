@@ -22,6 +22,7 @@ export const env = createEnv({
     SMTP2GO_SENDER_EMAIL: z.email(),
     SMTP2GO_SENDER_NAME: z.string(),
     APP_URL: z.url(),
+    RAPIDAPI_KEY: z.string(),
   },
 
   /**
@@ -49,6 +50,7 @@ export const env = createEnv({
     SMTP2GO_SENDER_NAME: process.env.SMTP2GO_SENDER_NAME,
     APP_URL: process.env.APP_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    RAPIDAPI_KEY: process.env.RAPIDAPI_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

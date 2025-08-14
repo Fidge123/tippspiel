@@ -76,6 +76,8 @@ export const authConfig = {
       },
     }),
   ],
+  // TODO how to invalidate deleted users?
+
   // callbacks: {
   //   session: ({ session }) => ({
   //     ...session,

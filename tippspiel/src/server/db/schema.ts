@@ -5,6 +5,7 @@ import {
   jsonb,
   pgTable,
   timestamp,
+  unique,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -37,20 +38,118 @@ export const season = pgTable("season", {
     .notNull(),
 });
 
-export const bet = pgTable("bet", {
+export const bet = pgTable(
+  "bet",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    team: integer()
+      .references(() => team.id)
+      .notNull(),
+    value: integer().notNull(),
+    game: integer()
+      .references(() => game.id)
+      .notNull(),
+    user: uuid()
+      .references(() => user.id)
+      .notNull(),
+    league: uuid()
+      .references(() => league.id)
+      .notNull(),
+    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
+  },
+  (t) => [unique().on(t.game, t.user, t.league)],
+);
+
+export const divisionBet = pgTable(
+  "divisionBet",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    division: varchar()
+      .references(() => division.id)
+      .notNull(),
+    user: uuid()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    league: uuid()
+      .references(() => league.id, { onDelete: "cascade" })
+      .notNull(),
+    first: integer()
+      .references(() => team.id)
+      .notNull(),
+    second: integer()
+      .references(() => team.id)
+      .notNull(),
+    third: integer()
+      .references(() => team.id)
+      .notNull(),
+    fourth: integer()
+      .references(() => team.id)
+      .notNull(),
+    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
+  },
+  (t) => [unique().on(t.division, t.user, t.league)],
+);
+
+export const superbowlBet = pgTable(
+  "superbowlBet",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    team: integer()
+      .references(() => team.id)
+      .notNull(),
+    user: uuid()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    league: uuid()
+      .references(() => league.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
+  },
+  (t) => [unique().on(t.user, t.league)],
+);
+
+export const betDoubler = pgTable(
+  "betDoubler",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    bet: uuid()
+      .references(() => bet.id, { onDelete: "cascade" })
+      .notNull(),
+    user: uuid()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+    league: uuid()
+      .references(() => league.id, { onDelete: "cascade" })
+      .notNull(),
+    week: varchar()
+      .references(() => week.id)
+      .notNull(),
+    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updatedAt: timestamp({ mode: "string" })
+      .defaultNow()
+      .$onUpdateFn(() => sql`now()`)
+      .notNull(),
+  },
+  (t) => [unique().on(t.user, t.league, t.week)],
+);
+
+export const league = pgTable("league", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  team: integer()
-    .references(() => team.id)
-    .notNull(),
-  value: integer().notNull(),
-  game: integer()
-    .references(() => game.id)
-    .notNull(),
-  user: uuid()
-    .references(() => user.id)
-    .notNull(),
-  league: uuid()
-    .references(() => league.id)
+  name: varchar().notNull(),
+  season: integer()
+    .references(() => season.id)
     .notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: "string" })
@@ -59,21 +158,23 @@ export const bet = pgTable("bet", {
     .notNull(),
 });
 
-export const superbowlBet = pgTable("superbowlBet", {
+export const member = pgTable("member", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  team: integer()
-    .references(() => team.id)
+  league: uuid()
+    .references(() => league.id, { onDelete: "cascade" })
+    .notNull(),
+  user: uuid()
+    .references(() => user.id, { onDelete: "cascade" })
+    .notNull(),
+});
+
+export const admin = pgTable("admin", {
+  id: uuid().defaultRandom().primaryKey().notNull(),
+  league: uuid()
+    .references(() => league.id, { onDelete: "cascade" })
     .notNull(),
   user: uuid()
     .references(() => user.id)
-    .notNull(),
-  league: uuid()
-    .references(() => league.id)
-    .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
-    .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
     .notNull(),
 });
 
@@ -108,7 +209,7 @@ export const failedLoginAttempt = pgTable("failedLoginAttempt", {
 export const team = pgTable("team", {
   id: integer().primaryKey().notNull(),
   code: varchar().notNull(),
-  shortName: varchar(),
+  shortName: varchar().notNull(),
   name: varchar().notNull(),
   wins: integer(),
   losses: integer(),
@@ -125,7 +226,7 @@ export const team = pgTable("team", {
   position: integer(),
   pointsFor: integer(),
   pointsAgainst: integer(),
-  streak: integer(),
+  streak: varchar(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: "string" })
     .defaultNow()
@@ -137,10 +238,6 @@ export const division = pgTable("division", {
   id: varchar().primaryKey().notNull(),
   conference: varchar().notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
-    .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
-    .notNull(),
 });
 
 export const bye = pgTable("bye", {
@@ -152,53 +249,6 @@ export const bye = pgTable("bye", {
     .references(() => week.id)
     .notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
-    .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
-    .notNull(),
-});
-
-export const divisionBet = pgTable("divisionBet", {
-  id: uuid().defaultRandom().primaryKey().notNull(),
-  division: varchar()
-    .references(() => division.id)
-    .notNull(),
-  user: uuid()
-    .references(() => user.id, { onDelete: "cascade" })
-    .notNull(),
-  league: uuid()
-    .references(() => league.id, { onDelete: "cascade" })
-    .notNull(),
-  first: integer()
-    .references(() => team.id)
-    .notNull(),
-  second: integer()
-    .references(() => team.id)
-    .notNull(),
-  third: integer()
-    .references(() => team.id)
-    .notNull(),
-  fourth: integer()
-    .references(() => team.id)
-    .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
-    .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
-    .notNull(),
-});
-
-export const league = pgTable("league", {
-  id: uuid().defaultRandom().primaryKey().notNull(),
-  name: varchar().notNull(),
-  season: integer()
-    .references(() => season.id)
-    .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
-    .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
-    .notNull(),
 });
 
 export const week = pgTable("week", {
@@ -210,7 +260,6 @@ export const week = pgTable("week", {
   week: varchar().notNull(),
   start: timestamp({ mode: "string" }),
   end: timestamp({ mode: "string" }),
-  label: varchar().notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: "string" })
     .defaultNow()
@@ -227,60 +276,21 @@ export const game = pgTable("game", {
     .references(() => week.id)
     .notNull(),
   status: varchar().notNull(),
-  awayScore: integer().notNull(),
-  awayScoreQ1: integer().notNull(),
-  awayScoreQ2: integer().notNull(),
-  awayScoreQ3: integer().notNull(),
-  awayScoreQ4: integer().notNull(),
-  awayScoreOT: integer().notNull(),
-  homeScore: integer().notNull(),
-  homeScoreQ1: integer().notNull(),
-  homeScoreQ2: integer().notNull(),
-  homeScoreQ3: integer().notNull(),
-  homeScoreQ4: integer().notNull(),
-  homeScoreOT: integer().notNull(),
+  awayScore: integer(),
+  awayScoreQ1: integer(),
+  awayScoreQ2: integer(),
+  awayScoreQ3: integer(),
+  awayScoreQ4: integer(),
+  awayScoreOT: integer(),
+  homeScore: integer(),
+  homeScoreQ1: integer(),
+  homeScoreQ2: integer(),
+  homeScoreQ3: integer(),
+  homeScoreQ4: integer(),
+  homeScoreOT: integer(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: "string" })
     .defaultNow()
     .$onUpdateFn(() => sql`now()`)
-    .notNull(),
-});
-
-export const betDoubler = pgTable("betDoubler", {
-  id: uuid().defaultRandom().primaryKey().notNull(),
-  game: integer()
-    .references(() => game.id)
-    .notNull(),
-  user: uuid()
-    .references(() => user.id, { onDelete: "cascade" })
-    .notNull(),
-  league: uuid()
-    .references(() => league.id, { onDelete: "cascade" })
-    .notNull(),
-  week: varchar()
-    .references(() => week.id)
-    .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
-    .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
-    .notNull(),
-});
-
-export const member = pgTable("member", {
-  league: uuid()
-    .references(() => league.id, { onDelete: "cascade" })
-    .notNull(),
-  user: uuid()
-    .references(() => user.id, { onDelete: "cascade" })
-    .notNull(),
-});
-
-export const admin = pgTable("admin", {
-  league: uuid()
-    .references(() => league.id, { onDelete: "cascade" })
-    .notNull(),
-  user: uuid()
-    .references(() => user.id)
     .notNull(),
 });

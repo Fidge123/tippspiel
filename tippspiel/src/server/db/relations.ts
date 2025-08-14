@@ -27,15 +27,6 @@ export const userRelations = relations(schema.user, ({ many }) => ({
   admins: many(schema.admin),
 }));
 
-export const leagueRelations = relations(schema.league, ({ many }) => ({
-  bets: many(schema.bet),
-  superbowlBets: many(schema.superbowlBet),
-  divisionBets: many(schema.divisionBet),
-  betDoublers: many(schema.betDoubler),
-  members: many(schema.member),
-  admins: many(schema.admin),
-}));
-
 export const gameRelations = relations(schema.game, ({ one, many }) => ({
   bets: many(schema.bet),
   awayTeam: one(schema.team, {
@@ -73,6 +64,10 @@ export const superbowlBetRelations = relations(
 
 export const teamRelations = relations(schema.team, ({ one, many }) => ({
   superbowlBets: many(schema.superbowlBet),
+  season: one(schema.season, {
+    fields: [schema.team.season],
+    references: [schema.season.id],
+  }),
   division: one(schema.division, {
     fields: [schema.team.division],
     references: [schema.division.id],
@@ -128,7 +123,11 @@ export const byeRelations = relations(schema.bye, ({ one }) => ({
   }),
 }));
 
-export const weekRelations = relations(schema.week, ({ many }) => ({
+export const weekRelations = relations(schema.week, ({ one, many }) => ({
+  season: one(schema.season, {
+    fields: [schema.week.season],
+    references: [schema.season.id],
+  }),
   byes: many(schema.bye),
   games: many(schema.game),
   betDoublers: many(schema.betDoubler),
@@ -177,9 +176,9 @@ export const betDoublerRelations = relations(schema.betDoubler, ({ one }) => ({
     fields: [schema.betDoubler.user],
     references: [schema.user.id],
   }),
-  game: one(schema.game, {
-    fields: [schema.betDoubler.game],
-    references: [schema.game.id],
+  bet: one(schema.bet, {
+    fields: [schema.betDoubler.bet],
+    references: [schema.bet.id],
   }),
   league: one(schema.league, {
     fields: [schema.betDoubler.league],
@@ -201,6 +200,28 @@ export const memberRelations = relations(schema.member, ({ one }) => ({
     references: [schema.league.id],
   }),
 }));
+
+export const seasonRelations = relations(schema.season, ({ many }) => ({
+  teams: many(schema.team),
+  weeks: many(schema.week),
+  leagues: many(schema.league),
+}));
+
+export const leagueSeasonRelations = relations(
+  schema.league,
+  ({ one, many }) => ({
+    season: one(schema.season, {
+      fields: [schema.league.season],
+      references: [schema.season.id],
+    }),
+    bets: many(schema.bet),
+    superbowlBets: many(schema.superbowlBet),
+    divisionBets: many(schema.divisionBet),
+    betDoublers: many(schema.betDoubler),
+    members: many(schema.member),
+    admins: many(schema.admin),
+  }),
+);
 
 export const adminRelations = relations(schema.admin, ({ one }) => ({
   league: one(schema.league, {

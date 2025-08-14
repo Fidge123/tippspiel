@@ -1,5 +1,5 @@
 {
-  "id": "6c4a2c22-98e9-47f7-b9e4-30c426bb0988",
+  "id": "8bae1bbd-4fc5-4c66-828e-c2f98b6db48f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,6 +8,13 @@
       "name": "admin",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
         "league": {
           "name": "league",
           "type": "uuid",
@@ -144,7 +151,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "bet_game_user_league_unique": {
+          "name": "bet_game_user_league_unique",
+          "nullsNotDistinct": false,
+          "columns": ["game", "user", "league"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -160,9 +173,9 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "game": {
-          "name": "game",
-          "type": "integer",
+        "bet": {
+          "name": "bet",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -201,13 +214,13 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "betDoubler_game_game_id_fk": {
-          "name": "betDoubler_game_game_id_fk",
+        "betDoubler_bet_bet_id_fk": {
+          "name": "betDoubler_bet_bet_id_fk",
           "tableFrom": "betDoubler",
-          "tableTo": "game",
-          "columnsFrom": ["game"],
+          "tableTo": "bet",
+          "columnsFrom": ["bet"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "betDoubler_user_user_id_fk": {
@@ -239,7 +252,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "betDoubler_user_league_week_unique": {
+          "name": "betDoubler_user_league_week_unique",
+          "nullsNotDistinct": false,
+          "columns": ["user", "league", "week"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -269,13 +288,6 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -327,13 +339,6 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -483,7 +488,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "divisionBet_division_user_league_unique": {
+          "name": "divisionBet_division_user_league_unique",
+          "nullsNotDistinct": false,
+          "columns": ["division", "user", "league"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -572,73 +583,73 @@
           "name": "awayScore",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "awayScoreQ1": {
           "name": "awayScoreQ1",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "awayScoreQ2": {
           "name": "awayScoreQ2",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "awayScoreQ3": {
           "name": "awayScoreQ3",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "awayScoreQ4": {
           "name": "awayScoreQ4",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "awayScoreOT": {
           "name": "awayScoreOT",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "homeScore": {
           "name": "homeScore",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "homeScoreQ1": {
           "name": "homeScoreQ1",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "homeScoreQ2": {
           "name": "homeScoreQ2",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "homeScoreQ3": {
           "name": "homeScoreQ3",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "homeScoreQ4": {
           "name": "homeScoreQ4",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "homeScoreOT": {
           "name": "homeScoreOT",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -751,6 +762,13 @@
       "name": "member",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
         "league": {
           "name": "league",
           "type": "uuid",
@@ -953,7 +971,7 @@
           "tableTo": "user",
           "columnsFrom": ["user"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "superbowlBet_league_league_id_fk": {
@@ -962,12 +980,18 @@
           "tableTo": "league",
           "columnsFrom": ["league"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "superbowlBet_user_league_unique": {
+          "name": "superbowlBet_user_league_unique",
+          "nullsNotDistinct": false,
+          "columns": ["user", "league"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -992,7 +1016,7 @@
           "name": "shortName",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -1068,7 +1092,7 @@
         },
         "streak": {
           "name": "streak",
-          "type": "integer",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -1285,12 +1309,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
         },
         "createdAt": {
           "name": "createdAt",
