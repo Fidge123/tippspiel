@@ -4,3 +4,7 @@
   --font-sans:
     Helvetica, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
+
+body > main {
+  padding-top: 4rem;
+}
