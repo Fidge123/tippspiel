@@ -12,10 +12,10 @@ import {
 
 export const user = pgTable("user", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  email: varchar().unique().notNull(),
-  password: varchar().notNull(),
-  salt: varchar().notNull(),
-  name: varchar().notNull(),
+  email: varchar({ length: 256 }).unique().notNull(),
+  password: varchar({ length: 256 }).notNull(),
+  salt: varchar({ length: 256 }).notNull(),
+  name: varchar({ length: 64 }).notNull(),
   settings: jsonb().notNull(),
   verified: boolean().default(false).notNull(),
   consentedAt: timestamp({ mode: "string" }).notNull(),
@@ -47,13 +47,13 @@ export const bet = pgTable(
       .notNull(),
     value: integer().notNull(),
     game: integer()
-      .references(() => game.id)
+      .references(() => game.id, { onDelete: "cascade" })
       .notNull(),
     user: uuid()
-      .references(() => user.id)
+      .references(() => user.id, { onDelete: "cascade" })
       .notNull(),
     league: uuid()
-      .references(() => league.id)
+      .references(() => league.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
     updatedAt: timestamp({ mode: "string" })
@@ -68,7 +68,7 @@ export const divisionBet = pgTable(
   "divisionBet",
   {
     id: uuid().defaultRandom().primaryKey().notNull(),
-    division: varchar()
+    division: varchar({ length: 16 })
       .references(() => division.id)
       .notNull(),
     user: uuid()
@@ -133,7 +133,7 @@ export const betDoubler = pgTable(
     league: uuid()
       .references(() => league.id, { onDelete: "cascade" })
       .notNull(),
-    week: varchar()
+    week: varchar({ length: 64 })
       .references(() => week.id)
       .notNull(),
     createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
@@ -147,7 +147,7 @@ export const betDoubler = pgTable(
 
 export const league = pgTable("league", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  name: varchar().notNull(),
+  name: varchar({ length: 64 }).notNull(),
   season: integer()
     .references(() => season.id)
     .notNull(),
@@ -158,29 +158,37 @@ export const league = pgTable("league", {
     .notNull(),
 });
 
-export const member = pgTable("member", {
-  id: uuid().defaultRandom().primaryKey().notNull(),
-  league: uuid()
-    .references(() => league.id, { onDelete: "cascade" })
-    .notNull(),
-  user: uuid()
-    .references(() => user.id, { onDelete: "cascade" })
-    .notNull(),
-});
+export const member = pgTable(
+  "member",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    league: uuid()
+      .references(() => league.id, { onDelete: "cascade" })
+      .notNull(),
+    user: uuid()
+      .references(() => user.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (t) => [unique().on(t.user, t.league)],
+);
 
-export const admin = pgTable("admin", {
-  id: uuid().defaultRandom().primaryKey().notNull(),
-  league: uuid()
-    .references(() => league.id, { onDelete: "cascade" })
-    .notNull(),
-  user: uuid()
-    .references(() => user.id)
-    .notNull(),
-});
+export const admin = pgTable(
+  "admin",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    league: uuid()
+      .references(() => league.id, { onDelete: "cascade" })
+      .notNull(),
+    user: uuid()
+      .references(() => user.id)
+      .notNull(),
+  },
+  (t) => [unique().on(t.user, t.league)],
+);
 
 export const resetToken = pgTable("resetToken", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  token: varchar().notNull(),
+  token: varchar({ length: 64 }).notNull(),
   user: uuid()
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
@@ -189,7 +197,7 @@ export const resetToken = pgTable("resetToken", {
 
 export const verifyToken = pgTable("verifyToken", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  token: varchar().notNull(),
+  token: varchar({ length: 64 }).notNull(),
   user: uuid()
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
@@ -198,7 +206,7 @@ export const verifyToken = pgTable("verifyToken", {
 
 export const failedLoginAttempt = pgTable("failedLoginAttempt", {
   id: uuid().defaultRandom().primaryKey().notNull(),
-  email: varchar().notNull(),
+  email: varchar({ length: 256 }).notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: "string" })
     .defaultNow()
@@ -208,25 +216,25 @@ export const failedLoginAttempt = pgTable("failedLoginAttempt", {
 
 export const team = pgTable("team", {
   id: integer().primaryKey().notNull(),
-  code: varchar().notNull(),
-  shortName: varchar().notNull(),
-  name: varchar().notNull(),
+  code: varchar({ length: 4 }).notNull(),
+  shortName: varchar({ length: 16 }).notNull(),
+  name: varchar({ length: 32 }).notNull(),
   wins: integer(),
   losses: integer(),
   ties: integer(),
   season: integer()
     .references(() => season.id)
     .notNull(),
-  logo: varchar().notNull(),
-  color1: varchar(),
-  color2: varchar(),
-  division: varchar()
+  logo: varchar({ length: 64 }).notNull(),
+  color1: varchar({ length: 16 }),
+  color2: varchar({ length: 16 }),
+  division: varchar({ length: 16 })
     .references(() => division.id)
     .notNull(),
   position: integer(),
   pointsFor: integer(),
   pointsAgainst: integer(),
-  streak: varchar(),
+  streak: varchar({ length: 8 }),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
   updatedAt: timestamp({ mode: "string" })
     .defaultNow()
@@ -235,29 +243,33 @@ export const team = pgTable("team", {
 });
 
 export const division = pgTable("division", {
-  id: varchar().primaryKey().notNull(),
-  conference: varchar().notNull(),
+  id: varchar({ length: 16 }).primaryKey().notNull(),
+  conference: varchar({ length: 32 }).notNull(),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
 });
 
-export const bye = pgTable("bye", {
-  id: uuid().defaultRandom().primaryKey().notNull(),
-  team: integer()
-    .references(() => team.id)
-    .notNull(),
-  week: varchar()
-    .references(() => week.id)
-    .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-});
+export const bye = pgTable(
+  "bye",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    team: integer()
+      .references(() => team.id)
+      .notNull(),
+    week: varchar({ length: 64 })
+      .references(() => week.id)
+      .notNull(),
+    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  },
+  (t) => [unique().on(t.team, t.week)],
+);
 
 export const week = pgTable("week", {
-  id: varchar().primaryKey().notNull(),
+  id: varchar({ length: 64 }).primaryKey().notNull(),
   season: integer()
     .references(() => season.id)
     .notNull(),
-  stage: varchar().notNull(),
-  week: varchar().notNull(),
+  stage: varchar({ length: 32 }).notNull(),
+  week: varchar({ length: 32 }).notNull(),
   start: timestamp({ mode: "string" }),
   end: timestamp({ mode: "string" }),
   createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
@@ -272,10 +284,10 @@ export const game = pgTable("game", {
   date: timestamp({ mode: "string" }).notNull(),
   awayTeam: integer().references(() => team.id),
   homeTeam: integer().references(() => team.id),
-  week: varchar()
+  week: varchar({ length: 64 })
     .references(() => week.id)
     .notNull(),
-  status: varchar().notNull(),
+  status: varchar({ length: 4 }).notNull(),
   awayScore: integer(),
   awayScoreQ1: integer(),
   awayScoreQ2: integer(),

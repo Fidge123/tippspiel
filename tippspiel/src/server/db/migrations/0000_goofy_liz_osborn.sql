@@ -1,7 +1,8 @@
 CREATE TABLE "admin" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"league" uuid NOT NULL,
-	"user" uuid NOT NULL
+	"user" uuid NOT NULL,
+	CONSTRAINT "admin_user_league_unique" UNIQUE("user","league")
 );
 --> statement-breakpoint
 CREATE TABLE "bet" (
@@ -21,7 +22,7 @@ CREATE TABLE "betDoubler" (
 	"bet" uuid NOT NULL,
 	"user" uuid NOT NULL,
 	"league" uuid NOT NULL,
-	"week" varchar NOT NULL,
+	"week" varchar(64) NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "betDoubler_user_league_week_unique" UNIQUE("user","league","week")
@@ -30,19 +31,20 @@ CREATE TABLE "betDoubler" (
 CREATE TABLE "bye" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"team" integer NOT NULL,
-	"week" varchar NOT NULL,
-	"createdAt" timestamp DEFAULT now() NOT NULL
+	"week" varchar(64) NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "bye_team_week_unique" UNIQUE("team","week")
 );
 --> statement-breakpoint
 CREATE TABLE "division" (
-	"id" varchar PRIMARY KEY NOT NULL,
-	"conference" varchar NOT NULL,
+	"id" varchar(16) PRIMARY KEY NOT NULL,
+	"conference" varchar(32) NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "divisionBet" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"division" varchar NOT NULL,
+	"division" varchar(16) NOT NULL,
 	"user" uuid NOT NULL,
 	"league" uuid NOT NULL,
 	"first" integer NOT NULL,
@@ -56,7 +58,7 @@ CREATE TABLE "divisionBet" (
 --> statement-breakpoint
 CREATE TABLE "failedLoginAttempt" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"email" varchar NOT NULL,
+	"email" varchar(256) NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
@@ -66,8 +68,8 @@ CREATE TABLE "game" (
 	"date" timestamp NOT NULL,
 	"awayTeam" integer,
 	"homeTeam" integer,
-	"week" varchar NOT NULL,
-	"status" varchar NOT NULL,
+	"week" varchar(64) NOT NULL,
+	"status" varchar(4) NOT NULL,
 	"awayScore" integer,
 	"awayScoreQ1" integer,
 	"awayScoreQ2" integer,
@@ -86,7 +88,7 @@ CREATE TABLE "game" (
 --> statement-breakpoint
 CREATE TABLE "league" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar NOT NULL,
+	"name" varchar(64) NOT NULL,
 	"season" integer NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
@@ -95,12 +97,13 @@ CREATE TABLE "league" (
 CREATE TABLE "member" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"league" uuid NOT NULL,
-	"user" uuid NOT NULL
+	"user" uuid NOT NULL,
+	CONSTRAINT "member_user_league_unique" UNIQUE("user","league")
 );
 --> statement-breakpoint
 CREATE TABLE "resetToken" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"token" varchar NOT NULL,
+	"token" varchar(64) NOT NULL,
 	"user" uuid NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
@@ -126,31 +129,31 @@ CREATE TABLE "superbowlBet" (
 --> statement-breakpoint
 CREATE TABLE "team" (
 	"id" integer PRIMARY KEY NOT NULL,
-	"code" varchar NOT NULL,
-	"shortName" varchar NOT NULL,
-	"name" varchar NOT NULL,
+	"code" varchar(4) NOT NULL,
+	"shortName" varchar(16) NOT NULL,
+	"name" varchar(32) NOT NULL,
 	"wins" integer,
 	"losses" integer,
 	"ties" integer,
 	"season" integer NOT NULL,
-	"logo" varchar NOT NULL,
-	"color1" varchar,
-	"color2" varchar,
-	"division" varchar NOT NULL,
+	"logo" varchar(64) NOT NULL,
+	"color1" varchar(16),
+	"color2" varchar(16),
+	"division" varchar(16) NOT NULL,
 	"position" integer,
 	"pointsFor" integer,
 	"pointsAgainst" integer,
-	"streak" varchar,
+	"streak" varchar(8),
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "user" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"email" varchar NOT NULL,
-	"password" varchar NOT NULL,
-	"salt" varchar NOT NULL,
-	"name" varchar NOT NULL,
+	"email" varchar(256) NOT NULL,
+	"password" varchar(256) NOT NULL,
+	"salt" varchar(256) NOT NULL,
+	"name" varchar(64) NOT NULL,
 	"settings" jsonb NOT NULL,
 	"verified" boolean DEFAULT false NOT NULL,
 	"consentedAt" timestamp NOT NULL,
@@ -161,16 +164,16 @@ CREATE TABLE "user" (
 --> statement-breakpoint
 CREATE TABLE "verifyToken" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"token" varchar NOT NULL,
+	"token" varchar(64) NOT NULL,
 	"user" uuid NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "week" (
-	"id" varchar PRIMARY KEY NOT NULL,
+	"id" varchar(64) PRIMARY KEY NOT NULL,
 	"season" integer NOT NULL,
-	"stage" varchar NOT NULL,
-	"week" varchar NOT NULL,
+	"stage" varchar(32) NOT NULL,
+	"week" varchar(32) NOT NULL,
 	"start" timestamp,
 	"end" timestamp,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
@@ -180,9 +183,9 @@ CREATE TABLE "week" (
 ALTER TABLE "admin" ADD CONSTRAINT "admin_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "admin" ADD CONSTRAINT "admin_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "bet" ADD CONSTRAINT "bet_team_team_id_fk" FOREIGN KEY ("team") REFERENCES "public"."team"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "bet" ADD CONSTRAINT "bet_game_game_id_fk" FOREIGN KEY ("game") REFERENCES "public"."game"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "bet" ADD CONSTRAINT "bet_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "bet" ADD CONSTRAINT "bet_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "bet" ADD CONSTRAINT "bet_game_game_id_fk" FOREIGN KEY ("game") REFERENCES "public"."game"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "bet" ADD CONSTRAINT "bet_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "bet" ADD CONSTRAINT "bet_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "betDoubler" ADD CONSTRAINT "betDoubler_bet_bet_id_fk" FOREIGN KEY ("bet") REFERENCES "public"."bet"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "betDoubler" ADD CONSTRAINT "betDoubler_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "betDoubler" ADD CONSTRAINT "betDoubler_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ForgotPasswordForm from "./_components/form";
 
-export default function ForgotPage() {
+export default async function ForgotPage() {
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">

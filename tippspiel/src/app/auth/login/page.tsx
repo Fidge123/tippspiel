@@ -1,15 +1,7 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "~/server/auth";
 import LoginForm from "./_components/form";
 
 export default async function LoginPage({ searchParams }: Props) {
-  const session = await auth();
-
-  if (session) {
-    redirect("/");
-  }
-
   const params = await searchParams;
   const email = params.email ?? "";
   const message = params.message;

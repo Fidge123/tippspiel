@@ -1,14 +1,7 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "~/server/auth";
 import RegisterForm from "./_components/form";
 
 export default async function RegisterPage() {
-  const session = await auth();
-
-  if (session) {
-    redirect("/");
-  }
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">

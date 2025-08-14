@@ -1,5 +1,5 @@
 {
-  "id": "8bae1bbd-4fc5-4c66-828e-c2f98b6db48f",
+  "id": "80f3f0a1-1e75-4595-905a-6f7fb38a56bd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -50,7 +50,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "admin_user_league_unique": {
+          "name": "admin_user_league_unique",
+          "nullsNotDistinct": false,
+          "columns": ["user", "league"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -128,7 +134,7 @@
           "tableTo": "game",
           "columnsFrom": ["game"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "bet_user_user_id_fk": {
@@ -137,7 +143,7 @@
           "tableTo": "user",
           "columnsFrom": ["user"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "bet_league_league_id_fk": {
@@ -146,7 +152,7 @@
           "tableTo": "league",
           "columnsFrom": ["league"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -193,7 +199,7 @@
         },
         "week": {
           "name": "week",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -282,7 +288,7 @@
         },
         "week": {
           "name": "week",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -316,7 +322,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "bye_team_week_unique": {
+          "name": "bye_team_week_unique",
+          "nullsNotDistinct": false,
+          "columns": ["team", "week"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -327,13 +339,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": true,
           "notNull": true
         },
         "conference": {
           "name": "conference",
-          "type": "varchar",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
@@ -366,7 +378,7 @@
         },
         "division": {
           "name": "division",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },
@@ -512,7 +524,7 @@
         },
         "email": {
           "name": "email",
-          "type": "varchar",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
@@ -569,13 +581,13 @@
         },
         "week": {
           "name": "week",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "varchar",
+          "type": "varchar(4)",
           "primaryKey": false,
           "notNull": true
         },
@@ -715,7 +727,7 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -804,7 +816,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "member_user_league_unique": {
+          "name": "member_user_league_unique",
+          "nullsNotDistinct": false,
+          "columns": ["user", "league"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -822,7 +840,7 @@
         },
         "token": {
           "name": "token",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -1008,19 +1026,19 @@
         },
         "code": {
           "name": "code",
-          "type": "varchar",
+          "type": "varchar(4)",
           "primaryKey": false,
           "notNull": true
         },
         "shortName": {
           "name": "shortName",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },
         "name": {
           "name": "name",
-          "type": "varchar",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
@@ -1050,25 +1068,25 @@
         },
         "logo": {
           "name": "logo",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
         "color1": {
           "name": "color1",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": false
         },
         "color2": {
           "name": "color2",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": false
         },
         "division": {
           "name": "division",
-          "type": "varchar",
+          "type": "varchar(16)",
           "primaryKey": false,
           "notNull": true
         },
@@ -1092,7 +1110,7 @@
         },
         "streak": {
           "name": "streak",
-          "type": "varchar",
+          "type": "varchar(8)",
           "primaryKey": false,
           "notNull": false
         },
@@ -1151,25 +1169,25 @@
         },
         "email": {
           "name": "email",
-          "type": "varchar",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "password": {
           "name": "password",
-          "type": "varchar",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "salt": {
           "name": "salt",
-          "type": "varchar",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
         "name": {
           "name": "name",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -1234,7 +1252,7 @@
         },
         "token": {
           "name": "token",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
@@ -1276,7 +1294,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "varchar(64)",
           "primaryKey": true,
           "notNull": true
         },
@@ -1288,13 +1306,13 @@
         },
         "stage": {
           "name": "stage",
-          "type": "varchar",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
         "week": {
           "name": "week",
-          "type": "varchar",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
         },
