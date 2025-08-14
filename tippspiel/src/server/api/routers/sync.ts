@@ -104,11 +104,11 @@ async function syncTeams(db: typeof Database, input: number) {
 
       const data = {
         name: teamData.name,
-        code: teamData.code,
+        code: teamData.code ?? teamData.name.slice(0, 3),
         shortName: teamData.name.split(" ").slice(-1)[0] ?? "",
         logo: teamData.logo,
         season: input,
-        division: standing?.division ?? "TBD",
+        division: standing?.division,
         position: standing?.position,
         wins: standing?.won,
         losses: standing?.lost,
@@ -223,7 +223,7 @@ async function syncGames(db: typeof Database, input: number) {
         homeTeam: generateTeamId(gameData.teams.home.id, input) || null,
         awayTeam: generateTeamId(gameData.teams.away.id, input) || null,
         week: weekId,
-        status: gameData.game.status.short,
+        status: gameData.game.status.long,
         homeScore: gameData.scores.home.total,
         homeScoreQ1: gameData.scores.home.quarter_1,
         homeScoreQ2: gameData.scores.home.quarter_2,

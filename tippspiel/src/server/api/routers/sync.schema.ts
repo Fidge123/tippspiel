@@ -30,10 +30,10 @@ export const teamResponseSchema = z.object({
     z.object({
       id: z.number(),
       name: z.string(),
-      code: z.string(),
-      city: z.string(),
+      code: z.string().nullable(),
+      city: z.string().nullable(),
       logo: z.string(),
-      established: z.number(),
+      established: z.number().nullable(),
     }),
   ),
 });
@@ -80,8 +80,9 @@ export const gameResponseSchema = z.object({
           timestamp: z.number(),
         }),
         status: z.object({
-          short: z.string(),
+          short: z.string().nullable(),
           long: z.string(),
+          // timer: z.string().nullable(),
         }),
       }),
       teams: z.object({

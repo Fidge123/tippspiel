@@ -228,9 +228,7 @@ export const team = pgTable("team", {
   logo: varchar({ length: 64 }).notNull(),
   color1: varchar({ length: 16 }),
   color2: varchar({ length: 16 }),
-  division: varchar({ length: 16 })
-    .references(() => division.id)
-    .notNull(),
+  division: varchar({ length: 16 }).references(() => division.id),
   position: integer(),
   pointsFor: integer(),
   pointsAgainst: integer(),
@@ -287,7 +285,7 @@ export const game = pgTable("game", {
   week: varchar({ length: 64 })
     .references(() => week.id)
     .notNull(),
-  status: varchar({ length: 4 }).notNull(),
+  status: varchar({ length: 32 }).notNull(),
   awayScore: integer(),
   awayScoreQ1: integer(),
   awayScoreQ2: integer(),
