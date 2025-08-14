@@ -1,14 +1,9 @@
 import Link from "next/link";
-import { auth, signIn, signOut } from "~/server/auth";
+import { auth, signIn } from "~/server/auth";
 import HamburgerMenu from "./menu";
 
 export default async function Nav() {
   const session = await auth();
-
-  async function loginOrLogout() {
-    "use server";
-    session ? await signOut() : await signIn();
-  }
 
   return (
     <header className="pointer-events-auto fixed h-12 w-screen bg-gray-900 px-4 text-white">
@@ -31,13 +26,12 @@ export default async function Nav() {
         {session ? (
           <HamburgerMenu />
         ) : (
-          <button
-            type="button"
-            onClick={loginOrLogout}
+          <Link
+            href="/auth/login"
             className="rounded-full bg-white px-4 py-1 font-semibold text-black transition hover:bg-gray-200"
           >
             Anmelden
-          </button>
+          </Link>
         )}
       </nav>
     </header>
