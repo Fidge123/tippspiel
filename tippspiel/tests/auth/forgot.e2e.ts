@@ -146,9 +146,9 @@ test.describe("Forgot Password Flow", () => {
     await page.getByLabel("Passwort bestätigen").fill(newPassword);
     await page.getByRole("button", { name: "Passwort setzen" }).click();
 
-    await expect(page).toHaveURL("/auth/login?message=password-reset-success");
     await expect(page.getByText(/erfolgreich zurückgesetzt/)).toBeVisible();
-
+    await page.getByRole("link", { name: "Zurück zur Anmeldung" }).click();
+    await expect(page).toHaveURL("/auth/login");
     const deletedToken = await db.query.resetToken.findFirst({
       where: eq(resetToken.token, token),
     });

@@ -1,11 +1,9 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import LoginForm from "./form";
+import Loading from "./form-loading";
 
-export default async function LoginPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const email = params.email ?? "";
-  const message = params.message;
-
+export default async function LoginPage() {
   return (
     <main className="flex flex-1 items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
@@ -16,14 +14,9 @@ export default async function LoginPage({ searchParams }: Props) {
           </p>
         </header>
 
-        {message === "password-reset-success" && (
-          <div className="mb-6 rounded bg-green-50 p-4 text-green-800 text-sm">
-            Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt
-            mit deinem neuen Passwort anmelden.
-          </div>
-        )}
-
-        <LoginForm callbackUrl={params.callbackUrl ?? "/"} email={email} />
+        <Suspense fallback={<Loading />}>
+          <LoginForm />
+        </Suspense>
 
         <footer className="mt-6 space-y-3 text-center">
           <p className="text-gray-600 text-sm">
@@ -39,12 +32,4 @@ export default async function LoginPage({ searchParams }: Props) {
       </div>
     </main>
   );
-}
-
-interface Props {
-  searchParams: Promise<{
-    callbackUrl: string | undefined;
-    email: string | undefined;
-    message: string | undefined;
-  }>;
 }

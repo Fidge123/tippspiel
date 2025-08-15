@@ -1,15 +1,20 @@
 "use client";
 import { Button, Description, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useActionState } from "react";
 import { login } from "./action";
 
-export default function LoginForm({ callbackUrl, email }: Props) {
+export default function LoginForm() {
+  const params = useSearchParams();
+  const email = params.get("email") ?? "";
+
   const [state, action, pending] = useActionState(login, {
     email: [email, false],
     password: ["", false],
-    callbackUrl: callbackUrl,
+    callbackUrl: params.get("callbackUrl") ?? "/",
     message: undefined,
+    unverified: false,
   });
 
   return (
@@ -57,21 +62,14 @@ export default function LoginForm({ callbackUrl, email }: Props) {
         Anmelden
       </Button>
       <p className="text-red-500 empty:hidden">{state.message}</p>
-      <p
-        className={`${state.message?.includes("UnverifiedError") ? "" : "hidden"} text-gray-600 text-sm`}
-      >
+      <p className="text-gray-600 empty:hidden">
         <Link
           href={`/auth/resend-verification${state.email[0] ? `?email=${encodeURIComponent(state.email[0])}` : ""}`}
           className="font-medium text-blue-600 underline hover:text-blue-500"
         >
-          Neue Bestätigungsmail anfordern
+          {state.unverified && "Neue Bestätigungsmail anfordern"}
         </Link>
       </p>
     </form>
   );
-}
-
-interface Props {
-  callbackUrl: string;
-  email: string;
 }

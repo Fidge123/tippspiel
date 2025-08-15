@@ -1,7 +1,6 @@
 "use server";
 
 import { TRPCError } from "@trpc/server";
-import { redirect } from "next/navigation";
 import { api } from "~/trpc/server";
 
 interface FormState {
@@ -74,5 +73,10 @@ export async function resetPassword(
     };
   }
 
-  redirect("/auth/login?message=password-reset-success");
+  return {
+    ...state,
+    success: true,
+    message:
+      "Dein Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt mit deinem neuen Passwort anmelden.",
+  };
 }

@@ -35,6 +35,7 @@ function Form() {
           defaultValue={state.password[0]}
           invalid={state.password[1]}
           required
+          disabled={!token || state.success}
           className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
       </Field>
@@ -50,19 +51,26 @@ function Form() {
           defaultValue={state.confirmPassword[0]}
           invalid={state.confirmPassword[1]}
           required
+          disabled={!token || state.success}
           className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
       </Field>
 
       <Button
         type="submit"
-        disabled={pending}
+        disabled={!token || pending || state.success}
         className="w-full rounded bg-blue-600 px-4 py-2 text-white shadow-sm hover:bg-blue-700 focus:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {pending ? "Wird gesetzt..." : "Passwort setzen"}
       </Button>
 
-      <p className="text-red-500 empty:hidden">{state.message}</p>
+      {state.success ? (
+        <p className="rounded bg-green-50 p-4 text-green-800 empty:hidden">
+          {state.message}
+        </p>
+      ) : (
+        <p className="text-red-500 empty:hidden">{state.message}</p>
+      )}
     </form>
   );
 }

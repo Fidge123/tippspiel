@@ -8,6 +8,7 @@ interface FormState {
   email: [string, boolean];
   password: [string, boolean];
   callbackUrl: string;
+  unverified: boolean;
   message?: string;
 }
 
@@ -21,13 +22,29 @@ export async function login(
       password: formData.get("password") as string,
       redirect: false,
     });
-  } catch (e: unknown) {
-    return {
-      email: [formData.get("email") as string, false],
-      password: [formData.get("password") as string, true],
-      callbackUrl,
-      message: `Ungültige Anmeldedaten. Bitte versuchen Sie es erneut. ${e instanceof CredentialsSignin ? `Error: ${e.name} (${e.code})` : ""}`,
-    };
+  } catch (error: unknown) {
+    if (error instanceof CredentialsSignin) {
+      switch (error.code) {
+        case "unverified":
+          return {
+            email: [formData.get("email") as string, false],
+            password: [formData.get("password") as string, false],
+            callbackUrl,
+            unverified: true,
+            message: "Noch nicht verifiziert. Bitte überprüfe deine E-Mails.",
+          };
+        // case "invalid_password":
+        // case "unknown_user":
+        default:
+          return {
+            email: [formData.get("email") as string, false],
+            password: [formData.get("password") as string, true],
+            callbackUrl,
+            unverified: false,
+            message: "Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.",
+          };
+      }
+    }
   }
   redirect(callbackUrl || "/");
 }

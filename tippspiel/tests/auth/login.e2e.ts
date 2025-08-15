@@ -47,9 +47,9 @@ test.describe("Login Flow", () => {
     await fillRegisterForm(page, testUser);
     await expect(page).toHaveURL("/auth/register/success");
     await fillLoginForm(page, testUser);
-    await expect(page.getByText(/UnverifiedError/)).toBeVisible();
+    await expect(page.getByText("nicht verifiziert")).toBeVisible();
     await expect(
-      page.getByText(/Neue Bestätigungsmail anfordern/),
+      page.getByText("Neue Bestätigungsmail anfordern"),
     ).toBeVisible();
     await expect(page).toHaveURL("/auth/login");
   });
@@ -61,7 +61,7 @@ test.describe("Login Flow", () => {
     await page.getByLabel("Passwort").fill("wrongpassword");
     await page.locator('form button[type="submit"]').click();
 
-    await expect(page.getByText(/UnknownUserError/)).toBeVisible();
+    await expect(page.getByText("Ungültige Anmeldedaten")).toBeVisible();
     await expect(page).toHaveURL("/auth/login");
   });
 
@@ -77,7 +77,7 @@ test.describe("Login Flow", () => {
 
     await page.locator('form button[type="submit"]').click();
 
-    await expect(page.getByText(/InvalidPasswordError/)).toBeVisible();
+    await expect(page.getByText("Ungültige Anmeldedaten")).toBeVisible();
     await expect(page).toHaveURL("/auth/login");
   });
 });

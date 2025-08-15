@@ -39,11 +39,9 @@ export default function Form() {
         />
       </Field>
 
-      {state.message && (
-        <div className="rounded bg-red-50 p-4">
-          <p className="font-medium text-red-800 text-sm">{state.message}</p>
-        </div>
-      )}
+      <div className="rounded bg-red-50 p-4 empty:hidden">
+        <p className="font-medium text-red-800 text-sm">{state.message}</p>
+      </div>
 
       <Button
         type="submit"
