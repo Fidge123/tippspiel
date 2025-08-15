@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ResetPasswordForm from "./_components/form";
+import ResetPasswordForm from "./form";
 
 export default async function ResetPasswordPage() {
   return (
