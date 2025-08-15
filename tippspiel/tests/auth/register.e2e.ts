@@ -47,7 +47,7 @@ test.describe("Registration Flow", () => {
       page.getByRole("heading", { name: "Erstelle ein Konto" }),
     ).toBeVisible();
 
-    await page.getByRole("link", { name: "Anmelden" }).click();
+    await page.locator("main a", { hasText: "Anmelden" }).click();
 
     await expect(page).toHaveURL("/auth/login");
     await expect(page.getByRole("heading", { name: "Anmelden" })).toBeVisible();
