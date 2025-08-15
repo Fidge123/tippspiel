@@ -3,9 +3,9 @@
 import { Button, Field, Input, Label } from "@headlessui/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react";
-import Spinner from "~/app/_components/spinner";
-import BackToLogin from "./_components/back-to-login";
+import Spinner from "~/components/ui/spinner";
 import { resendVerificationEmail } from "./action";
+import BackToLogin from "./back-to-login";
 
 function ResendVerificationContent() {
   const searchParams = useSearchParams();
@@ -60,7 +60,7 @@ function ResendVerificationContent() {
                 autoComplete="email"
                 defaultValue={state.email[0]}
                 invalid={state.email[1]}
-                className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+                className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
               />
             </Field>
 

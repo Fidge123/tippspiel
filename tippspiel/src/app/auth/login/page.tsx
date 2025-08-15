@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LoginForm from "./_components/form";
+import LoginForm from "./form";
 
 export default async function LoginPage({ searchParams }: Props) {
   const params = await searchParams;

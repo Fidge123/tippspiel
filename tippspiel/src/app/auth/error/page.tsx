@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import Spinner from "~/app/_components/spinner";
+import Spinner from "~/components/ui/spinner";
 
 function ErrorPage() {
   const search = useSearchParams();

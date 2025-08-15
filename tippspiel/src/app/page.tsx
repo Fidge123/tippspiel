@@ -1,6 +1,6 @@
 import Link from "next/link";
+import SyncButton from "~/app/sync";
 import { auth } from "~/server/auth";
-import SyncButton from "./_components/sync";
 
 export default async function Home() {
   const session = await auth();

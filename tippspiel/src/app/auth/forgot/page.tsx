@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ForgotPasswordForm from "./_components/form";
+import ForgotPasswordForm from "./form";
 
 export default async function ForgotPage() {
   return (

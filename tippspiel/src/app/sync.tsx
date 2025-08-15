@@ -10,6 +10,7 @@ export default function SyncButton() {
       <input
         value={season}
         onChange={(ev) => setSeason(parseInt(ev.target.value))}
+        className="mb-2 w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500"
       />
       <button
         type="button"

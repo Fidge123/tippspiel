@@ -1,7 +1,7 @@
 "use client";
 import { Button, Field, Input, Label } from "@headlessui/react";
 import { useActionState } from "react";
-import { forgotPassword } from "../action";
+import { forgotPassword } from "./action";
 
 export default function ForgotPasswordForm() {
   const [state, action, pending] = useActionState(forgotPassword, {
@@ -21,7 +21,7 @@ export default function ForgotPasswordForm() {
           defaultValue={state.email[0]}
           invalid={state.email[1]}
           required
-          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
       </Field>
 

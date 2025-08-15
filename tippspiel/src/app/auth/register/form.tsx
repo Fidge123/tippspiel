@@ -3,7 +3,7 @@
 import { Button, Description, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
 import { useActionState } from "react";
-import { registerUser } from "../action";
+import { registerUser } from "./action";
 
 export default function RegisterForm() {
   const [state, formAction, pending] = useActionState(registerUser, {
@@ -25,7 +25,7 @@ export default function RegisterForm() {
           defaultValue={state.email[0]}
           invalid={state.email[1]}
           required
-          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
       </Field>
 
@@ -39,7 +39,7 @@ export default function RegisterForm() {
           invalid={state.name[1]}
           maxLength={42}
           required
-          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
         <Description className="text-gray-600">
           Der Nutzername wird anderen Spielern angezeigt.
@@ -57,7 +57,7 @@ export default function RegisterForm() {
           minLength={8}
           maxLength={64}
           required
-          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
         <Description className="text-gray-600">
           Mindestlänge 8 Zeichen
@@ -74,7 +74,7 @@ export default function RegisterForm() {
           invalid={state.confirmPassword[1]}
           minLength={8}
           required
-          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 data-invalid:outline-none data-invalid:ring-2 data-invalid:ring-red-500"
+          className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
       </Field>
 

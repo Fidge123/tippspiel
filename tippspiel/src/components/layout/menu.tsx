@@ -5,7 +5,9 @@ import { signOut } from "~/server/auth";
 export default async function HamburgerMenu() {
   return (
     <Menu>
-      <MenuButton className="p-2">🍔</MenuButton>
+      <MenuButton className="rounded bg-gray-100 px-2 py-1 outline-offset-2 hover:bg-gray-200 focus:outline-2 focus:outline-blue-500">
+        🍔
+      </MenuButton>
       <MenuItems
         transition
         anchor="bottom end"

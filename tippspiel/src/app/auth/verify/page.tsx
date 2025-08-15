@@ -3,7 +3,7 @@
 import { Button } from "@headlessui/react";
 import { redirect, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
-import Spinner from "~/app/_components/spinner";
+import Spinner from "~/components/ui/spinner";
 import { api } from "~/trpc/react";
 
 function VerifyContent() {
