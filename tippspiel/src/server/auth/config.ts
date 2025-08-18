@@ -1,4 +1,8 @@
-import { CredentialsSignin, type NextAuthConfig } from "next-auth";
+import {
+  CredentialsSignin,
+  type DefaultSession,
+  type NextAuthConfig,
+} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import zod from "zod";
 import { db } from "~/server/db";
@@ -11,13 +15,13 @@ import { verifyPassword } from "./password";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-// declare module "next-auth" {
-//   interface Session extends DefaultSession {
-//     user: {
-//       id: string;
-//     } & DefaultSession["user"];
-//   }
-// }
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+    } & DefaultSession["user"];
+  }
+}
 
 const schema = zod.object({
   email: zod.email(),
@@ -77,13 +81,18 @@ export const authConfig = {
     }),
   ],
   // TODO how to invalidate deleted users?
-
-  // callbacks: {
-  //   session: ({ session }) => ({
-  //     ...session,
-  //     user: {
-  //       ...session.user,
-  //     },
-  //   }),
-  // },
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      if (token.id && typeof token.id === "string") {
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
 } satisfies NextAuthConfig;
