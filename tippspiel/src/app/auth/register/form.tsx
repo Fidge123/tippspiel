@@ -37,7 +37,7 @@ export default function RegisterForm() {
           autoComplete="username"
           defaultValue={state.name[0]}
           invalid={state.name[1]}
-          maxLength={42}
+          maxLength={64}
           required
           className="w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
         />
