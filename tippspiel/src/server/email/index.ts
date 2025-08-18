@@ -38,6 +38,25 @@ export async function sendPasswordResetEmail(
   await sendEmail({ to, ...emailContent });
 }
 
+export async function sendNotification(
+  to: string,
+  name: string,
+  content: string,
+): Promise<void> {
+  const emailContent = await renderEmailTemplate(
+    "notify",
+    {
+      name,
+      content,
+      timestamp: new Date().toISOString(),
+      appUrl: env.APP_URL,
+    },
+    "Tippspiel - Wichtige Mitteilung",
+  );
+
+  await sendEmail({ to, ...emailContent });
+}
+
 export {
   notifyExcessiveFailedLogins,
   notifyNewUserRegistration,

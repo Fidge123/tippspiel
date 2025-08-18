@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import z from "zod";
 import { generateSalt, hashPassword } from "~/server/auth/password";
 import { user, verifyToken } from "~/server/db/schema";
-import { sendVerificationEmail } from "~/server/email";
+import { sendNotification, sendVerificationEmail } from "~/server/email";
 import { protectedProcedure } from "../../trpc";
 import { nameSchema, passwordSchema } from "./schema";
 
@@ -58,7 +58,14 @@ export const updateEmail = protectedProcedure
 
     // Send verification email
     try {
-      // TODO: Send notification message to old email
+      if (ctx.session.user.email) {
+        await sendNotification(
+          ctx.session.user.email,
+          updatedUser.name,
+          "E-Mail-Adresse geändert",
+        );
+      }
+
       await sendVerificationEmail(
         updatedUser.email,
         updatedUser.name,
@@ -118,12 +125,17 @@ export const updatePassword = protectedProcedure
       });
     }
 
-    // try {
-    //   // TODO: Send notification message to old email
-
-    // } catch (error) {
-    //   console.error("Failed to send verification email:", error);
-    // }
+    try {
+      if (ctx.session.user.email) {
+        await sendNotification(
+          ctx.session.user.email,
+          updatedUser.name,
+          "Passwort geändert",
+        );
+      }
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+    }
 
     return updatedUser;
   });
