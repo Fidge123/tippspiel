@@ -3,6 +3,7 @@ import {
   Button,
   Description,
   Dialog,
+  DialogBackdrop,
   DialogPanel,
   DialogTitle,
   Field,
@@ -36,9 +37,10 @@ export function PasswordForm() {
         open={open}
         onClose={() => setOpen(false)}
         transition
-        className="relative z-10"
+        className="relative z-10 transition data-closed:opacity-0"
       >
-        <div className="fixed inset-0 flex w-screen items-center justify-center bg-gray-500/20 p-4">
+        <DialogBackdrop className="fixed inset-0 bg-black/10" />
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 rounded-lg bg-white p-8">
             <DialogTitle className="font-bold">Passwort ändern</DialogTitle>
             <Description>
@@ -50,8 +52,11 @@ export function PasswordForm() {
               <Field>
                 <Label>Altes Passwort</Label>
                 <Input
+                  autoFocus
                   name="old"
                   type="password"
+                  minLength={8}
+                  maxLength={64}
                   autoComplete="password"
                   invalid={state.includes("altes Passwort")}
                   required
@@ -63,6 +68,8 @@ export function PasswordForm() {
                 <Input
                   name="new"
                   type="password"
+                  minLength={8}
+                  maxLength={64}
                   autoComplete="password"
                   required
                   className="mb-6 w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
@@ -73,6 +80,8 @@ export function PasswordForm() {
                 <Input
                   name="check"
                   type="password"
+                  minLength={8}
+                  maxLength={64}
                   autoComplete="password"
                   invalid={state.includes("übereinstimmen")}
                   required

@@ -34,12 +34,8 @@
           "name": "admin_league_league_id_fk",
           "tableFrom": "admin",
           "tableTo": "league",
-          "columnsFrom": [
-            "league"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -47,12 +43,8 @@
           "name": "admin_user_user_id_fk",
           "tableFrom": "admin",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -62,10 +54,7 @@
         "admin_user_league_unique": {
           "name": "admin_user_league_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user",
-            "league"
-          ]
+          "columns": ["user", "league"]
         }
       },
       "policies": {},
@@ -134,12 +123,8 @@
           "name": "bet_team_team_id_fk",
           "tableFrom": "bet",
           "tableTo": "team",
-          "columnsFrom": [
-            "team"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -147,12 +132,8 @@
           "name": "bet_game_game_id_fk",
           "tableFrom": "bet",
           "tableTo": "game",
-          "columnsFrom": [
-            "game"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["game"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -160,12 +141,8 @@
           "name": "bet_user_user_id_fk",
           "tableFrom": "bet",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -173,12 +150,8 @@
           "name": "bet_league_league_id_fk",
           "tableFrom": "bet",
           "tableTo": "league",
-          "columnsFrom": [
-            "league"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -188,11 +161,7 @@
         "bet_game_user_league_unique": {
           "name": "bet_game_user_league_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "game",
-            "user",
-            "league"
-          ]
+          "columns": ["game", "user", "league"]
         }
       },
       "policies": {},
@@ -255,12 +224,8 @@
           "name": "betDoubler_bet_bet_id_fk",
           "tableFrom": "betDoubler",
           "tableTo": "bet",
-          "columnsFrom": [
-            "bet"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bet"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -268,12 +233,8 @@
           "name": "betDoubler_user_user_id_fk",
           "tableFrom": "betDoubler",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -281,12 +242,8 @@
           "name": "betDoubler_league_league_id_fk",
           "tableFrom": "betDoubler",
           "tableTo": "league",
-          "columnsFrom": [
-            "league"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -294,12 +251,8 @@
           "name": "betDoubler_week_week_id_fk",
           "tableFrom": "betDoubler",
           "tableTo": "week",
-          "columnsFrom": [
-            "week"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["week"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -309,11 +262,7 @@
         "betDoubler_user_league_week_unique": {
           "name": "betDoubler_user_league_week_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user",
-            "league",
-            "week"
-          ]
+          "columns": ["user", "league", "week"]
         }
       },
       "policies": {},
@@ -357,12 +306,8 @@
           "name": "bye_team_team_id_fk",
           "tableFrom": "bye",
           "tableTo": "team",
-          "columnsFrom": [
-            "team"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -370,12 +315,8 @@
           "name": "bye_week_week_id_fk",
           "tableFrom": "bye",
           "tableTo": "week",
-          "columnsFrom": [
-            "week"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["week"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -385,10 +326,7 @@
         "bye_team_week_unique": {
           "name": "bye_team_week_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "team",
-            "week"
-          ]
+          "columns": ["team", "week"]
         }
       },
       "policies": {},
@@ -501,12 +439,8 @@
           "name": "divisionBet_division_division_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "division",
-          "columnsFrom": [
-            "division"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["division"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -514,12 +448,8 @@
           "name": "divisionBet_user_user_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -527,12 +457,8 @@
           "name": "divisionBet_league_league_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "league",
-          "columnsFrom": [
-            "league"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -540,12 +466,8 @@
           "name": "divisionBet_first_team_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "team",
-          "columnsFrom": [
-            "first"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["first"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -553,12 +475,8 @@
           "name": "divisionBet_second_team_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "team",
-          "columnsFrom": [
-            "second"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["second"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -566,12 +484,8 @@
           "name": "divisionBet_third_team_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "team",
-          "columnsFrom": [
-            "third"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["third"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -579,12 +493,8 @@
           "name": "divisionBet_fourth_team_id_fk",
           "tableFrom": "divisionBet",
           "tableTo": "team",
-          "columnsFrom": [
-            "fourth"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["fourth"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -594,11 +504,7 @@
         "divisionBet_division_user_league_unique": {
           "name": "divisionBet_division_user_league_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "division",
-            "user",
-            "league"
-          ]
+          "columns": ["division", "user", "league"]
         }
       },
       "policies": {},
@@ -778,12 +684,8 @@
           "name": "game_awayTeam_team_id_fk",
           "tableFrom": "game",
           "tableTo": "team",
-          "columnsFrom": [
-            "awayTeam"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["awayTeam"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -791,12 +693,8 @@
           "name": "game_homeTeam_team_id_fk",
           "tableFrom": "game",
           "tableTo": "team",
-          "columnsFrom": [
-            "homeTeam"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["homeTeam"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -804,12 +702,8 @@
           "name": "game_week_week_id_fk",
           "tableFrom": "game",
           "tableTo": "week",
-          "columnsFrom": [
-            "week"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["week"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -864,12 +758,8 @@
           "name": "league_season_season_id_fk",
           "tableFrom": "league",
           "tableTo": "season",
-          "columnsFrom": [
-            "season"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["season"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -910,12 +800,8 @@
           "name": "member_league_league_id_fk",
           "tableFrom": "member",
           "tableTo": "league",
-          "columnsFrom": [
-            "league"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -923,12 +809,8 @@
           "name": "member_user_user_id_fk",
           "tableFrom": "member",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -938,10 +820,7 @@
         "member_user_league_unique": {
           "name": "member_user_league_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user",
-            "league"
-          ]
+          "columns": ["user", "league"]
         }
       },
       "policies": {},
@@ -985,12 +864,8 @@
           "name": "resetToken_user_user_id_fk",
           "tableFrom": "resetToken",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1103,12 +978,8 @@
           "name": "superbowlBet_team_team_id_fk",
           "tableFrom": "superbowlBet",
           "tableTo": "team",
-          "columnsFrom": [
-            "team"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1116,12 +987,8 @@
           "name": "superbowlBet_user_user_id_fk",
           "tableFrom": "superbowlBet",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1129,12 +996,8 @@
           "name": "superbowlBet_league_league_id_fk",
           "tableFrom": "superbowlBet",
           "tableTo": "league",
-          "columnsFrom": [
-            "league"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["league"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1144,10 +1007,7 @@
         "superbowlBet_user_league_unique": {
           "name": "superbowlBet_user_league_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user",
-            "league"
-          ]
+          "columns": ["user", "league"]
         }
       },
       "policies": {},
@@ -1275,12 +1135,8 @@
           "name": "team_season_season_id_fk",
           "tableFrom": "team",
           "tableTo": "season",
-          "columnsFrom": [
-            "season"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["season"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1288,12 +1144,8 @@
           "name": "team_division_division_id_fk",
           "tableFrom": "team",
           "tableTo": "division",
-          "columnsFrom": [
-            "division"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["division"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1380,9 +1232,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1426,12 +1276,8 @@
           "name": "verifyToken_user_user_id_fk",
           "tableFrom": "verifyToken",
           "tableTo": "user",
-          "columnsFrom": [
-            "user"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1503,12 +1349,8 @@
           "name": "week_season_season_id_fk",
           "tableFrom": "week",
           "tableTo": "season",
-          "columnsFrom": [
-            "season"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["season"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

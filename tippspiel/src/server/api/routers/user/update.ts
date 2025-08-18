@@ -1,5 +1,5 @@
+import { randomBytes } from "node:crypto";
 import { TRPCError } from "@trpc/server";
-import { randomBytes } from "crypto";
 import { eq } from "drizzle-orm";
 import z from "zod";
 import { generateSalt, hashPassword } from "~/server/auth/password";

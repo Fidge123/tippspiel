@@ -22,6 +22,7 @@ export default function RegisterForm() {
           name="email"
           type="email"
           autoComplete="email"
+          maxLength={256}
           defaultValue={state.email[0]}
           invalid={state.email[1]}
           required

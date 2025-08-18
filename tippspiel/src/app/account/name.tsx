@@ -3,6 +3,7 @@ import {
   Button,
   Description,
   Dialog,
+  DialogBackdrop,
   DialogPanel,
   DialogTitle,
   Field,
@@ -38,9 +39,10 @@ export function NameForm({ name }: { name: string }) {
         open={open}
         onClose={() => setOpen(false)}
         transition
-        className="relative z-10"
+        className="relative z-10 transition data-closed:opacity-0"
       >
-        <div className="fixed inset-0 flex w-screen items-center justify-center bg-gray-500/20 p-4">
+        <DialogBackdrop className="fixed inset-0 bg-black/10" />
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 rounded-lg bg-white p-8">
             <DialogTitle className="font-bold">Nutzername ändern</DialogTitle>
             <Description>
@@ -52,9 +54,11 @@ export function NameForm({ name }: { name: string }) {
               <Field>
                 <Label className="hidden">Nutzername</Label>
                 <Input
+                  autoFocus
                   name="name"
                   type="text"
                   autoComplete="name"
+                  maxLength={64}
                   defaultValue={state.name}
                   invalid={state.message?.includes("Fehler")}
                   required

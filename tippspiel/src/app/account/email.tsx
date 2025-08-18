@@ -3,6 +3,7 @@ import {
   Button,
   Description,
   Dialog,
+  DialogBackdrop,
   DialogPanel,
   DialogTitle,
   Field,
@@ -32,9 +33,10 @@ export function EmailForm({ email }: { email: string }) {
         open={open}
         onClose={() => setOpen(false)}
         transition
-        className="relative z-10"
+        className="relative z-10 transition data-closed:opacity-0"
       >
-        <div className="fixed inset-0 flex w-screen items-center justify-center bg-gray-500/20 p-4">
+        <DialogBackdrop className="fixed inset-0 bg-black/10" />
+        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
           <DialogPanel className="max-w-lg space-y-4 rounded-lg bg-white p-8">
             <DialogTitle className="font-bold">
               E-Mail-Adresse ändern
@@ -47,10 +49,12 @@ export function EmailForm({ email }: { email: string }) {
               <Field>
                 <Label className="hidden">E-Mail-Adresse</Label>
                 <Input
+                  autoFocus
                   name="email"
                   type="email"
                   autoComplete="email"
                   defaultValue={state.email}
+                  maxLength={256}
                   invalid={state.message?.includes("Fehler")}
                   required
                   className="my-4 w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
