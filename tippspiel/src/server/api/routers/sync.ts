@@ -3,6 +3,8 @@ import { and, eq, notExists, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "~/env";
 import {
+  espnTeamSchema,
+  espnTeamsSchema,
   gameResponseSchema,
   leagueResponseSchema,
   standingsResponseSchema,
@@ -93,14 +95,18 @@ async function syncTeams(db: typeof Database, input: number) {
 
     for (const teamData of parsedTeams) {
       const standing = parsedStandings.find((s) => s.team.id === teamData.id);
-      await db
-        .insert(division)
-        .values({
-          id: standing?.division ?? "TBD",
-          conference: standing?.conference ?? "TBD",
-        })
-        .onConflictDoNothing()
-        .execute();
+      const div = getDivision(standing?.division?.trim(), standing?.conference);
+
+      if (div !== null) {
+        await db
+          .insert(division)
+          .values({
+            id: div,
+            conference: standing?.conference ?? "TBD",
+          })
+          .onConflictDoNothing()
+          .execute();
+      }
 
       const data = {
         name: teamData.name,
@@ -108,7 +114,7 @@ async function syncTeams(db: typeof Database, input: number) {
         shortName: teamData.name.split(" ").slice(-1)[0] ?? "",
         logo: teamData.logo,
         season: input,
-        division: standing?.division,
+        division: div,
         position: standing?.position,
         wins: standing?.won,
         losses: standing?.lost,
@@ -138,32 +144,54 @@ async function syncTeams(db: typeof Database, input: number) {
   }
 }
 
+function getDivision(division?: string, conference?: string) {
+  if (!division || !conference) {
+    return null;
+  }
+
+  if (division.includes(" ")) {
+    return division;
+  }
+
+  const prefix = conference
+    .split(" ")
+    .reduce((initials, word) => initials + word[0]?.toUpperCase(), "");
+  return `${prefix} ${division}`;
+}
+
 async function syncStandings(db: typeof Database, input: number) {
   try {
     const data = await fetchFromRapidAPI(`/standings?league=1&season=${input}`);
     const parsed = standingsResponseSchema.parse(data);
 
     for (const standingData of parsed.response) {
-      await db
-        .insert(division)
-        .values({
-          id: standingData.division,
-          conference: standingData.conference,
-        })
-        .onConflictDoNothing()
-        .execute();
+      const div = getDivision(
+        standingData.division.trim(),
+        standingData.conference,
+      );
+
+      if (div !== null) {
+        await db
+          .insert(division)
+          .values({
+            id: div,
+            conference: standingData.conference,
+          })
+          .onConflictDoNothing()
+          .execute();
+      }
 
       await db
         .update(team)
         .set({
-          division: standingData.division,
+          division: div,
           position: standingData.position,
           wins: standingData.won,
           losses: standingData.lost,
           ties: standingData.ties,
           pointsFor: standingData.points.for,
           pointsAgainst: standingData.points.against,
-          streak: standingData.streak,
+          streak: standingData.streak ?? "-",
         })
         .where(
           and(
@@ -193,7 +221,7 @@ async function syncGames(db: typeof Database, input: number) {
       const weekId = generateWeekId(
         input,
         gameData.game.stage,
-        gameData.game.week,
+        gameData.game.week ? gameData.game.week : "Unknown",
       );
       const startTime = gameData.game.date.timestamp * 1000;
       const fourHours = 4 * 60 * 60 * 1000;
@@ -202,7 +230,7 @@ async function syncGames(db: typeof Database, input: number) {
       const d = {
         season: input,
         stage: gameData.game.stage,
-        week: gameData.game.week,
+        week: gameData.game.week ? gameData.game.week : "Unknown",
       };
       const start = gameDateTime.toISOString();
       const end = new Date(startTime + fourHours).toISOString();
@@ -291,7 +319,43 @@ async function syncByes(db: typeof Database, input: number) {
   }
 }
 
+async function syncWithESPN(db: typeof Database, input: number) {
+  try {
+    const teamsRes = await fetch(
+      `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/${input}/teams?limit=50`,
+    );
+    const teams = espnTeamsSchema.parse(await teamsRes.json()).items;
+
+    for (const t of teams) {
+      const teamRes = await fetch(t.$ref);
+      const teamData = espnTeamSchema.parse(await teamRes.json());
+
+      await db
+        .update(team)
+        .set({
+          color1: `#${teamData.color}`,
+          color2: `#${teamData.alternateColor}`,
+          code: teamData.abbreviation,
+          shortName: teamData.shortDisplayName,
+          logo: teamData.logos[0]?.href ?? team.logo,
+        })
+        .where(and(eq(team.name, teamData.displayName), eq(team.season, input)))
+        .execute();
+    }
+  } catch (error) {
+    console.error("Error syncing teams:", error);
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to sync ESPN teams data",
+    });
+  }
+}
+
 export const syncRouter = createTRPCRouter({
+  syncWithESPN: protectedProcedure
+    .input(z.object({ season: z.number().optional().default(2025) }))
+    .mutation(async ({ ctx, input }) => syncWithESPN(ctx.db, input.season)),
+
   syncLeagues: protectedProcedure
     .input(z.object({ season: z.number().optional().default(2025) }))
     .mutation(({ ctx, input }) => syncLeagues(ctx.db, input.season)),
@@ -315,6 +379,7 @@ export const syncRouter = createTRPCRouter({
         await syncLeagues(ctx.db, input.season);
         await syncTeams(ctx.db, input.season);
         await syncGames(ctx.db, input.season);
+        await syncWithESPN(ctx.db, input.season);
       } catch (error) {
         console.error("Error syncing all data:", error);
         throw new TRPCError({

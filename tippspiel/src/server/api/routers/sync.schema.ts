@@ -62,7 +62,7 @@ export const standingsResponseSchema = z.object({
         against: z.number(),
         difference: z.number(),
       }),
-      streak: z.string(),
+      streak: z.string().nullable(),
     }),
   ),
 });
@@ -73,7 +73,7 @@ export const gameResponseSchema = z.object({
       game: z.object({
         id: z.number(),
         stage: z.string(),
-        week: z.string(),
+        week: z.string().nullable(),
         date: z.object({
           date: z.string(),
           time: z.string(),
@@ -115,6 +115,35 @@ export const gameResponseSchema = z.object({
           total: z.number().nullable(),
         }),
       }),
+    }),
+  ),
+});
+
+export const espnTeamsSchema = z.object({
+  items: z.array(
+    z.object({
+      $ref: z.string(),
+    }),
+  ),
+});
+
+export const espnTeamSchema = z.object({
+  id: z.string(),
+  location: z.string(),
+  name: z.string().optional(),
+  nickname: z.string(),
+  abbreviation: z.string(),
+  displayName: z.string(),
+  shortDisplayName: z.string(),
+  color: z.string(),
+  alternateColor: z.string(),
+  logos: z.array(
+    z.object({
+      href: z.string(),
+      alt: z.string(),
+      width: z.number(),
+      height: z.number(),
+      rel: z.array(z.string()),
     }),
   ),
 });

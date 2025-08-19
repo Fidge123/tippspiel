@@ -5,7 +5,7 @@ import { api } from "~/trpc/react";
 
 export default function SyncButton() {
   const [season, setSeason] = useState(2025);
-  const { mutate } = api.sync.syncAll.useMutation();
+  const sync = api.sync.syncWithESPN.useMutation();
   return (
     <form className="mt-12 flex w-fit items-center justify-evenly gap-2 rounded-lg bg-gray-100 p-4">
       <Field className="contents">
@@ -18,8 +18,9 @@ export default function SyncButton() {
       </Field>
       <button
         type="button"
-        onClick={() => mutate({ season })}
-        className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+        disabled={sync.isPending}
+        onClick={() => sync.mutate({ season })}
+        className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-gray-400"
       >
         Aktualisieren
       </button>
