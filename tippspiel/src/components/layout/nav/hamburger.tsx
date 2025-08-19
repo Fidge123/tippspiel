@@ -12,7 +12,7 @@ export default async function HamburgerMenu() {
   ];
   return (
     <Menu>
-      <MenuButton className="outline-offset-2 focus:outline-2 focus:outline-blue-500">
+      <MenuButton className="rounded-full outline-offset-2 focus:outline-2 focus:outline-blue-500">
         <UserCircleIcon className="size-8 rounded-full hover:bg-gray-600" />
       </MenuButton>
       <MenuItems

@@ -29,7 +29,7 @@ export function PasswordForm() {
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="cursor-pointer p-1 text-blue-500 hover:text-blue-800 focus:text-blue-800"
+        className="w-fit cursor-pointer p-1 text-blue-500 hover:text-blue-800 focus:text-blue-800"
       >
         <PencilIcon className="size-4" />
       </Button>

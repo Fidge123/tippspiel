@@ -14,7 +14,7 @@ export default async function Account() {
       label: "Spoilermodus",
       prop: "hideScore",
       description:
-        "Wenn der Spoilermodus aktiviert ist, werden die Spielergebnisse erst angezeigt wenn du den Spoilermodus für die Woche deaktivierst.",
+        "Wenn der Spoilermodus aktiviert ist, werden die Ergebnisse erst angezeigt wenn du den Spoilermodus für die Woche deaktivierst.",
       enabled: user.settings.hideScore ?? false,
     },
     {

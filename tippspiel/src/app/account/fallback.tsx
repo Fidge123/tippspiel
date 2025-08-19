@@ -3,7 +3,7 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 
 export function Loading() {
   return (
-    <Button disabled className="cursor-not-allowed p-1 text-gray-600">
+    <Button disabled className="w-fit cursor-not-allowed p-1 text-gray-600">
       <PencilIcon className="size-4" />
     </Button>
   );
