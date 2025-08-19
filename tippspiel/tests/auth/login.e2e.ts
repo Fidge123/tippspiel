@@ -40,6 +40,7 @@ test.describe("Login Flow", () => {
 
     await page.locator('form button[type="submit"]').click();
     await expect(page).toHaveURL("/");
+    await page.goto("/account");
     await expect(page.getByText(testUser.email)).toBeVisible();
   });
 

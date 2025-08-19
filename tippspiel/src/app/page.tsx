@@ -1,5 +1,4 @@
 import Link from "next/link";
-import SyncButton from "~/app/sync";
 import { auth } from "~/server/auth";
 
 export default async function Home() {
@@ -7,8 +6,7 @@ export default async function Home() {
 
   return session ? (
     <main className="grid flex-grow place-content-center gap-4 p-8">
-      <h1 className="text-xl">Current User: {session.user?.email}</h1>
-      <SyncButton />
+      {/*<h1 className="text-xl">Current User: {session.user?.email}</h1>*/}
     </main>
   ) : (
     <main className="grid flex-grow place-content-center gap-4 p-8">

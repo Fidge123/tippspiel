@@ -6,6 +6,7 @@ import { NameForm } from "./name";
 import { PasswordForm } from "./password";
 import { Settings } from "./settings";
 import { SettingsLoading } from "./settings-loading";
+import SyncButton from "./sync";
 
 export default async function Account() {
   const user = await api.user.getCurrentUser();
@@ -90,6 +91,12 @@ export default async function Account() {
             />
           </Suspense>
         ))}
+
+        {user.email.includes("@example.com") && (
+          <Suspense>
+            <SyncButton />
+          </Suspense>
+        )}
       </div>
     </main>
   );

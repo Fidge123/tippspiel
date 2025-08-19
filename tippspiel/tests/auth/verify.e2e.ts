@@ -62,6 +62,7 @@ test.describe("Actual email triggered", () => {
 
     await fillLoginForm(page, testUser);
     await expect(page).toHaveURL("/");
+    await page.goto("/account");
     await expect(page.getByText(testUser.email)).toBeVisible();
 
     await cleanupUser(testUser.email);
