@@ -56,7 +56,6 @@ export const updateEmail = protectedProcedure
       user: ctx.session.user.id,
     });
 
-    // Send verification email
     try {
       if (ctx.session.user.email) {
         await sendNotification(

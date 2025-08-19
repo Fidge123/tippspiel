@@ -82,6 +82,9 @@ export default function TermsPage() {
           <li>
             <strong>Hosting:</strong> Hetzner Online GmbH
           </li>
+          <li>
+            <strong>E-Mail:</strong> Sand Dune Mail Ltd (SMTP2GO.com)
+          </li>
         </ul>
 
         <h3 className="mt-4 font-semibold text-lg">Data Retention</h3>

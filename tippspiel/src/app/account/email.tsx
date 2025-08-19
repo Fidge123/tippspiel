@@ -11,7 +11,7 @@ import {
   Label,
 } from "@headlessui/react";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { updateEmail } from "./email-action";
 
 export function EmailForm({ email }: { email: string }) {
@@ -20,6 +20,12 @@ export function EmailForm({ email }: { email: string }) {
     email,
     message: undefined,
   });
+
+  useEffect(() => {
+    if (!open && state.message?.includes("erfolgreich")) {
+      location.reload();
+    }
+  }, [open, state]);
 
   return (
     <>

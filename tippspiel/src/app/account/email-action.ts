@@ -30,7 +30,8 @@ export async function updateEmail(
 
     return {
       ...state,
-      message: "Link zum Zurücksetzen deines Passworts wurde gesendet.",
+      message:
+        "E-Mail-Adresse erfolgreich geändert. Bitte verifiziere deine neue E-Mail-Adresse.",
     };
   } catch (error: unknown) {
     if (error instanceof TRPCError && error.code === "INTERNAL_SERVER_ERROR") {

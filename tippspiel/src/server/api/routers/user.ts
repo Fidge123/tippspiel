@@ -46,6 +46,18 @@ export const userRouter = createTRPCRouter({
       });
     }
 
-    return currentUser;
+    return currentUser as User;
   }),
 });
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  settings: {
+    hideScore?: boolean;
+    reminders?: boolean;
+  };
+  verified: boolean;
+  createdAt: string;
+}
