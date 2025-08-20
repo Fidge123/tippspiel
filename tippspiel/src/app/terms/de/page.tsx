@@ -18,14 +18,12 @@ export default function TermsPage() {
         <h2 className="mt-6 font-bold text-xl">1. Datenschutzerklärung</h2>
 
         <h3 className="mt-4 font-semibold text-lg">Verantwortlicher</h3>
-        <p>
-          Florian Richter
-          <br />
-          George-Stephenson-Straße 7<br />
-          10557 Berlin
-          <br />
-          E-Mail: {env.SMTP2GO_SENDER_EMAIL}
-        </p>
+        <ul>
+          <li>Florian Richter</li>
+          <li>George-Stephenson-Straße 7</li>
+          <li>10557 Berlin</li>
+          <li className="pt-2">E-Mail: {env.SMTP2GO_SENDER_EMAIL}</li>
+        </ul>
 
         <h3 className="mt-4 font-semibold text-lg">
           Erhebung und Verarbeitung personenbezogener Daten
