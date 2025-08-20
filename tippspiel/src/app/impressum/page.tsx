@@ -2,20 +2,18 @@ import { env } from "~/env";
 
 export default function TermsPage() {
   return (
-    <main className="m-auto flex max-w-prose flex-col">
+    <main className="m-auto flex max-w-prose flex-col space-y-2">
       <h1 className="font-bold text-xl">Impressum</h1>
-      <p className="py-1">Seitenbetreiber:</p>
-      <p className="py-1">
-        Florian Richter
-        <br />
-        George-Stephenson-Straße 7
-        <br />
-        10557 Berlin
-      </p>
-      <p className="py-1">E-Mail: {env.SMTP2GO_SENDER_EMAIL}</p>
-      <p className="py-1">
-        Diese Seite ist wird privat betrieben und nicht gewerblich genutzt.
-      </p>
+
+      <p>Seitenbetreiber:</p>
+      <ul>
+        <li>Florian Richter</li>
+        <li>George-Stephenson-Straße 7</li>
+        <li>10557 Berlin</li>
+        <li className="pt-2">E-Mail: {env.SMTP2GO_SENDER_EMAIL}</li>
+      </ul>
+
+      <p>Diese Seite wird privat betrieben und nicht gewerblich genutzt.</p>
     </main>
   );
 }
