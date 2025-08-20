@@ -21,6 +21,7 @@ Key characteristics:
 - Use Drizzle ORM exclusively - NO raw SQL except in migrations
 - Define all schemas in `src/server/db/schema.ts` and relations in `src/server/db/relations.ts`
 - Keep components and functions small and focused
+- Files should be short and contain a single logical unit
 - Use clear, descriptive names for variables and functions
 - Avoid unnecessary complexity - prefer simple solutions
 - Use Bun for package management - NEVER npm or yarn
