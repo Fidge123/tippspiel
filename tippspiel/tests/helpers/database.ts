@@ -1,11 +1,36 @@
 import { eq } from "drizzle-orm";
+import { hashPassword } from "~/server/auth/password";
 import { db } from "~/server/db";
 import { env } from "../../src/env";
 import * as schema from "../../src/server/db/schema";
+import type { TestUser } from "./auth";
 
 const databaseUrl = env.DATABASE_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL environment variable is required for tests");
+}
+
+export async function createUser({
+  email,
+  name,
+  password,
+}: TestUser): Promise<void> {
+  try {
+    await db
+      .insert(schema.user)
+      .values({
+        email,
+        name,
+        password: await hashPassword(password, "randomSalt123"),
+        salt: "randomSalt123",
+        settings: {},
+        consentedAt: new Date().toISOString(),
+      })
+      .onConflictDoNothing()
+      .execute();
+  } catch (error) {
+    console.warn("Failed to create test user:", error);
+  }
 }
 
 export async function cleanupUser(email: string): Promise<void> {

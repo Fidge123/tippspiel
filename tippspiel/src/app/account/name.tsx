@@ -30,6 +30,7 @@ export function NameForm({ name }: { name: string }) {
   return (
     <>
       <Button
+        title="Nutzername ändern"
         onClick={() => setOpen(true)}
         className="w-fit cursor-pointer p-1 text-blue-500 hover:text-blue-800 focus:text-blue-800"
       >
@@ -57,7 +58,7 @@ export function NameForm({ name }: { name: string }) {
                   autoFocus
                   name="name"
                   type="text"
-                  autoComplete="name"
+                  autoComplete="username"
                   maxLength={64}
                   defaultValue={state.name}
                   invalid={state.message?.includes("Fehler")}

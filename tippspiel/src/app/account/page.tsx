@@ -47,30 +47,67 @@ export default async function Account() {
         Du kannst deine Daten über das Stift-Symbol bearbeiten.
       </p>
 
-      <div className="max-w-96">
-        <div className="grid max-w-full grid-cols-[1fr_1fr_16px] gap-2">
-          <span className="col-start-1 hidden">User ID:</span>
-          <span className="col-span-2 hidden">{user.id}</span>
+      <section>
+        <h2 className="sr-only">Nutzerdaten</h2>
 
-          <span className="col-start-1 font-semibold">E-Mail-Adresse:</span>
-          <span>{user.email}</span>
-          <Suspense fallback={<Loading />}>
-            <EmailForm email={user.email} />
-          </Suspense>
+        <table>
+          <thead className="sr-only">
+            <tr>
+              <th scope="col">Eigenschaft</th>
+              <th scope="col">Wert</th>
+              <th scope="col">Bearbeiten</th>
+            </tr>
+          </thead>
+          <tbody className="grid grid-cols-[1fr_1fr_16px] gap-x-8 gap-y-2">
+            <tr className="contents">
+              <th scope="row" className="text-left font-semibold">
+                E-Mail-Adresse:
+              </th>
+              <td>{user.email}</td>
+              <td>
+                <Suspense fallback={<Loading />}>
+                  <EmailForm email={user.email} />
+                </Suspense>
+              </td>
+            </tr>
 
-          <span className="col-start-1 font-semibold">Nutzername:</span>
-          <span>{user.name}</span>
-          <Suspense fallback={<Loading />}>
-            <NameForm name={user.name} />
-          </Suspense>
+            <tr className="contents">
+              <th scope="row" className="text-left font-semibold">
+                Nutzername:
+              </th>
+              <td>{user.name}</td>
+              <td>
+                <Suspense fallback={<Loading />}>
+                  <NameForm name={user.name} />
+                </Suspense>
+              </td>
+            </tr>
 
-          <span className="col-start-1 font-semibold">Passwort:</span>
-          <span>******</span>
-          <Suspense fallback={<Loading />}>{<PasswordForm />}</Suspense>
+            <tr className="contents">
+              <th scope="row" className="text-left font-semibold">
+                Passwort:
+              </th>
+              <td aria-label="Passwort verborgen">******</td>
+              <td>
+                <Suspense fallback={<Loading />}>
+                  <PasswordForm />
+                </Suspense>
+              </td>
+            </tr>
 
-          <span className="col-start-1 font-semibold">Verifiziert:</span>
-          <p>{user.verified ? "Ja" : "Nein"}</p>
-        </div>
+            <tr className="contents">
+              <th scope="row" className="text-left font-semibold">
+                Verifiziert:
+              </th>
+              <td>{user.verified ? "Ja" : "Nein"}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section className="mt-6 max-w-96">
+        <h2 className="sr-only">Einstellungen</h2>
 
         {settings.map(({ label, prop, description, enabled }) => (
           <Suspense
@@ -93,11 +130,13 @@ export default async function Account() {
         ))}
 
         {user.email.includes("@example.com") && (
-          <Suspense>
-            <SyncButton />
-          </Suspense>
+          <div className="mt-6">
+            <Suspense>
+              <SyncButton />
+            </Suspense>
+          </div>
         )}
-      </div>
+      </section>
     </main>
   );
 }

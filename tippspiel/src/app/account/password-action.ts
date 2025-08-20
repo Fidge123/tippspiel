@@ -8,7 +8,7 @@ export async function updatePassword(
 ): Promise<string> {
   const old = formData.get("old") as string;
   const password = formData.get("new") as string;
-  const check = formData.get("new") as string;
+  const check = formData.get("check") as string;
 
   if (check !== password) {
     return "Fehler: Deine Passwörter müssen übereinstimmen.";

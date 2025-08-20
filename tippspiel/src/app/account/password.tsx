@@ -28,6 +28,7 @@ export function PasswordForm() {
   return (
     <>
       <Button
+        title="Passwort ändern"
         onClick={() => setOpen(true)}
         className="w-fit cursor-pointer p-1 text-blue-500 hover:text-blue-800 focus:text-blue-800"
       >
@@ -57,7 +58,7 @@ export function PasswordForm() {
                   type="password"
                   minLength={8}
                   maxLength={64}
-                  autoComplete="password"
+                  autoComplete="current-password"
                   invalid={state.includes("altes Passwort")}
                   required
                   className="mb-6 w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
@@ -70,7 +71,7 @@ export function PasswordForm() {
                   type="password"
                   minLength={8}
                   maxLength={64}
-                  autoComplete="password"
+                  autoComplete="new-password"
                   required
                   className="mb-6 w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"
                 />
@@ -82,7 +83,7 @@ export function PasswordForm() {
                   type="password"
                   minLength={8}
                   maxLength={64}
-                  autoComplete="password"
+                  autoComplete="new-password"
                   invalid={state.includes("übereinstimmen")}
                   required
                   className="mb-6 w-full rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500 data-invalid:outline-2 data-invalid:outline-red-500"

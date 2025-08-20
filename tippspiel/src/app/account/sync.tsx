@@ -20,7 +20,7 @@ export default function SyncButton() {
         type="button"
         disabled={sync.isPending}
         onClick={() => sync.mutate({ season })}
-        className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-gray-400"
+        className="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-gray-400"
       >
         Aktualisieren
       </button>

@@ -38,7 +38,7 @@ export default function LoginForm() {
         <Input
           name="password"
           type="password"
-          autoComplete="new-password"
+          autoComplete="current-password"
           minLength={8}
           maxLength={64}
           defaultValue={state.password[0]}

@@ -30,6 +30,7 @@ export function EmailForm({ email }: { email: string }) {
   return (
     <>
       <Button
+        title="E-Mail-Adresse ändern"
         onClick={() => setOpen(true)}
         className="w-fit cursor-pointer p-1 text-blue-500 hover:text-blue-800 focus:text-blue-800"
       >
