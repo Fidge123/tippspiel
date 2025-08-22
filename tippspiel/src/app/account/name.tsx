@@ -11,7 +11,7 @@ import {
   Label,
 } from "@headlessui/react";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { updateName } from "./name-action";
 
 export function NameForm({ name }: { name: string }) {
@@ -20,12 +20,6 @@ export function NameForm({ name }: { name: string }) {
     name,
     message: undefined,
   });
-
-  useEffect(() => {
-    if (!open && state.message?.includes("erfolgreich")) {
-      location.reload();
-    }
-  }, [open, state]);
 
   return (
     <>

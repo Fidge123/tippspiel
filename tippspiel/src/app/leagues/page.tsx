@@ -1,4 +1,13 @@
+import { revalidatePath } from "next/cache";
 import { api } from "~/trpc/server";
+
+async function leaveLeagueAction(formData: FormData) {
+  "use server";
+  const leagueId = formData.get("leagueId");
+  if (typeof leagueId !== "string" || leagueId.length === 0) return;
+  await api.league.leaveLeague({ leagueId });
+  revalidatePath("/leagues");
+}
 
 export default async function Leagues() {
   const league = await api.league.getLeagues();
@@ -12,6 +21,7 @@ export default async function Leagues() {
             <th>Liga</th>
             <th>Saison</th>
             <th>Mitglieder</th>
+            <th>Aktionen</th>
           </tr>
         </thead>
         <tbody className="divide-y border-t">
@@ -21,14 +31,30 @@ export default async function Leagues() {
               <td>{l.season}</td>
               <td className="flex flex-col">
                 {l.members.map((m) =>
-                  l.admins.includes(m) ? (
-                    <span key={`${l.id}-${m}`} className="font-semibold">
-                      {`${m} (Admin)`}
+                  m.isAdmin ? (
+                    <span key={m.id} className="font-semibold">
+                      {`${m.name} (Admin)`}
                     </span>
                   ) : (
-                    <span key={`${l.id}-${m}`}>{m}</span>
+                    <span key={m.id}>{m.name}</span>
                   ),
                 )}
+              </td>
+              <td className="p-2">
+                <form action={leaveLeagueAction}>
+                  <input type="hidden" name="leagueId" value={l.id} />
+                  <button
+                    type="submit"
+                    disabled={
+                      l.members.length > 1 &&
+                      l.members.filter((m) => m.isAdmin).length === 1 &&
+                      l.members.some((m) => m.isYou && m.isAdmin)
+                    }
+                    className="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-gray-500"
+                  >
+                    {l.members.length > 1 ? "Verlassen" : "Löschen"}
+                  </button>
+                </form>
               </td>
             </tr>
           ))}

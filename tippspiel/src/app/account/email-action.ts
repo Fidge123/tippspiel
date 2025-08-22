@@ -1,5 +1,6 @@
 "use server";
 import { TRPCError } from "@trpc/server";
+import { revalidatePath } from "next/cache";
 import { api } from "~/trpc/server";
 
 interface FormState {
@@ -27,6 +28,8 @@ export async function updateEmail(
     await api.user.updateEmail({
       email: state.email,
     });
+
+    revalidatePath("/account");
 
     return {
       ...state,

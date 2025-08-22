@@ -1,5 +1,6 @@
 "use server";
 import { TRPCError } from "@trpc/server";
+import { revalidatePath } from "next/cache";
 import { api } from "~/trpc/server";
 
 interface FormState {
@@ -27,7 +28,7 @@ export async function updateName(
     await api.user.updateName({
       name: state.name,
     });
-
+    revalidatePath("/account");
     return {
       ...state,
       message: "Nutzername erfolgreich geändert.",
