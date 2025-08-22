@@ -30,7 +30,7 @@ export default async function WeekPage({ params }: Props) {
       <h1>
         {week.stage} - {week.week}
       </h1>
-      <ul className="grid grid-cols-[1fr_64px_1fr] gap-2 w-fit items-center">
+      <ul className="grid w-fit grid-cols-[1fr_64px_1fr] items-center gap-2">
         {games.map((game) => (
           <li key={game.id} className="contents">
             <MatchupLoading id={game.id}></MatchupLoading>
