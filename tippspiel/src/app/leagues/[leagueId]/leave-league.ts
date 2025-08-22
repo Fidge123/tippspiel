@@ -7,4 +7,5 @@ export async function leaveLeagueAction(formData: FormData) {
   if (typeof leagueId !== "string" || leagueId.length === 0) return;
   await api.league.leaveLeague({ leagueId });
   revalidatePath("/leagues");
+  revalidatePath(`/leagues/${leagueId}`);
 }

@@ -41,9 +41,10 @@ export function MembersList({ leagueId, members }: Props) {
                     title={members.length > 1 ? "Verlassen" : "Löschen"}
                     type="submit"
                     disabled={!canLeave}
-                    className="rounded px-2 py-0.5 text-red-600 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-32 inline-flex items-center gap-2 rounded px-2 py-0.5 text-white bg-red-600 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <LeaveIcon className="size-5" />
+                    <span>{members.length > 1 ? "Verlassen" : "Löschen"}</span>
                   </Button>
                 </form>
               ) : isLeagueAdmin ? (
@@ -56,9 +57,9 @@ export function MembersList({ leagueId, members }: Props) {
                         title="Admin entziehen"
                         type="submit"
                         disabled={!canDemoteOnlyAdmin}
-                        className="rounded px-2 py-0.5 text-amber-600 hover:text-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-amber-600 hover:text-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        <ShieldExclamationIcon className="size-5" />
+                        Admin-Rechte entziehen
                       </Button>
                     </form>
                   ) : (
@@ -68,9 +69,9 @@ export function MembersList({ leagueId, members }: Props) {
                       <Button
                         title="Zum Admin machen"
                         type="submit"
-                        className="rounded px-2 py-0.5 text-blue-600 hover:text-blue-700"
+                        className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-amber-600 hover:text-amber-700"
                       >
-                        <ShieldCheckIcon className="size-5" />
+                        Zum Admin machen
                       </Button>
                     </form>
                   )}
@@ -81,9 +82,10 @@ export function MembersList({ leagueId, members }: Props) {
                     <Button
                       title="Entfernen"
                       type="submit"
-                      className="rounded px-2 py-0.5 text-gray-500 hover:text-gray-700"
+                      className="w-32 inline-flex items-center gap-2 rounded px-2 py-0.5 text-white bg-red-600 hover:bg-red-700"
                     >
                       <UserMinusIcon className="size-5" />
+                      <span>Entfernen</span>
                     </Button>
                   </form>
                 </>
@@ -94,21 +96,22 @@ export function MembersList({ leagueId, members }: Props) {
       })}
 
       {isLeagueAdmin && (
-        <form action={addMemberAction} className="mt-1 flex gap-2">
+        <form action={addMemberAction} className="flex gap-2 justify-between">
           <Input type="hidden" name="leagueId" value={leagueId} />
           <Input
             name="email"
             type="email"
             required
             placeholder="E-Mail hinzufügen"
-            className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm shadow-sm focus:outline-2 focus:outline-blue-500"
+            className="w-md rounded border border-gray-300 px-2 py-1 text-sm shadow-sm focus:outline-2 focus:outline-blue-500"
           />
           <Button
             title="Hinzufügen"
             type="submit"
-            className="px-2 py-1 text-green-600 text-sm hover:text-green-700"
+            className="w-32 inline-flex items-center rounded gap-2 px-2 py-1 text-white bg-green-600 hover:bg-green-700"
           >
             <UserPlusIcon className="size-5" />
+            <span>Hinzufügen</span>
           </Button>
         </form>
       )}

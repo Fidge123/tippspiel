@@ -8,6 +8,7 @@ export async function addAdminAction(formData: FormData) {
   if (typeof leagueId !== "string" || typeof userId !== "string") return;
   await api.league.addAdmin({ leagueId, userId });
   revalidatePath("/leagues");
+  revalidatePath(`/leagues/${leagueId}`);
 }
 
 export async function removeAdminAction(formData: FormData) {
@@ -17,4 +18,5 @@ export async function removeAdminAction(formData: FormData) {
   if (typeof leagueId !== "string" || typeof userId !== "string") return;
   await api.league.removeAdmin({ leagueId, userId });
   revalidatePath("/leagues");
+  revalidatePath(`/leagues/${leagueId}`);
 }

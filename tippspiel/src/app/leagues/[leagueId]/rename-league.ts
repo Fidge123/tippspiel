@@ -11,4 +11,5 @@ export async function renameLeagueAction(formData: FormData) {
 
   await api.league.renameLeague({ leagueId, name: name.trim() });
   revalidatePath("/leagues");
+  revalidatePath(`/leagues/${leagueId}`);
 }

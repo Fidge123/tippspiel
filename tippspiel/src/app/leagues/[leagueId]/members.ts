@@ -11,6 +11,7 @@ export async function addMemberAction(formData: FormData) {
 
   await api.league.addMember({ leagueId, email: email.trim() });
   revalidatePath("/leagues");
+  revalidatePath(`/leagues/${leagueId}`);
 }
 
 export async function removeMemberAction(formData: FormData) {
@@ -26,4 +27,5 @@ export async function removeMemberAction(formData: FormData) {
 
   await api.league.removeMember({ leagueId, userId });
   revalidatePath("/leagues");
+  revalidatePath(`/leagues/${leagueId}`);
 }
