@@ -1,7 +1,6 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import Nav from "~/components/layout/nav";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
@@ -16,10 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col">
-        <TRPCReactProvider>
-          <Nav />
-          {children}
-        </TRPCReactProvider>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
   );

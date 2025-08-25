@@ -42,6 +42,39 @@ export const getLeagues = protectedProcedure.query(async ({ ctx }) => {
     });
   }
 });
+
+export const getLeaguesForDropdown = protectedProcedure.query(
+  async ({ ctx }) => {
+    try {
+      const memberIn = await ctx.db.query.member.findMany({
+        where: eq(member.user, ctx.session.user.id),
+      });
+
+      const leagues = await ctx.db.query.league.findMany({
+        where: inArray(
+          league.id,
+          memberIn.map((m) => m.league),
+        ),
+        with: {
+          season: true,
+        },
+      });
+
+      return leagues.map((league) => ({
+        id: league.id,
+        name: league.name,
+        season: league.season.id,
+      }));
+    } catch (error: unknown) {
+      console.error("Error fetching leagues for dropdown:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch leagues for dropdown.",
+      });
+    }
+  },
+);
+
 export const createLeague = protectedProcedure
   .input(
     z.object({

@@ -19,9 +19,4 @@ Alternativ kannst du auch folgenden Link in deinen Browser kopieren:
 - Falls du dich nicht registriert hast, ignoriere diese E-Mail einfach
 - Bei Problemen wende dich an unser Support-Team
 
----
-
-Viel Spaß beim Tippen!  
-Dein Tippspiel-Team
-
-[{{appUrl}}]({{appUrl}})
+[Link zur Anwendung]({{appUrl}})

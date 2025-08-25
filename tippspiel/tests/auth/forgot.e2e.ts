@@ -158,7 +158,7 @@ test.describe("Forgot Password Flow", () => {
     await page.getByLabel("Passwort").fill(newPassword);
     await page.locator('form button[type="submit"]').click();
 
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
     await page.goto(`/account`);
     await expect(page.getByText(testUser.email)).toBeVisible();
   });

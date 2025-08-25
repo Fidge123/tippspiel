@@ -22,7 +22,7 @@ test.describe("Account Page", () => {
 
   test("Show account info", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
     await expect(page.getByText(testUser.email)).toBeVisible();
@@ -32,7 +32,7 @@ test.describe("Account Page", () => {
 
   test("Change email", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 
@@ -52,6 +52,9 @@ test.describe("Account Page", () => {
     ).toBeVisible();
 
     await page.getByTitle("E-Mail-Adresse ändern").click();
+    await expect(
+      page.getByLabel("E-Mail-Adresse", { exact: true }),
+    ).toBeVisible();
     await page
       .getByLabel("E-Mail-Adresse", { exact: true })
       .fill(testUser.email);
@@ -69,7 +72,7 @@ test.describe("Account Page", () => {
 
   test("Change name", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 
@@ -88,7 +91,7 @@ test.describe("Account Page", () => {
 
   test("Change password", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 
@@ -108,14 +111,14 @@ test.describe("Account Page", () => {
     await expect(page).toHaveURL("/auth/login");
 
     await fillLoginForm(page, { ...testUser, password: pw });
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
     await page.goto("/account");
     await expect(page).toHaveURL("/account");
   });
 
   test("Change password with wrong old pw", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 
@@ -137,7 +140,7 @@ test.describe("Account Page", () => {
 
   test("Change password without matching pws", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 
@@ -157,7 +160,7 @@ test.describe("Account Page", () => {
 
   test("Set spoiler mode", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 
@@ -180,7 +183,7 @@ test.describe("Account Page", () => {
 
   test("Set reminders", async ({ page }) => {
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
 

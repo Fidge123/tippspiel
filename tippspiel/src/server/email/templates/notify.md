@@ -14,4 +14,4 @@ Falls du diese Änderungen nicht vorgenommen hast, antworte bitte sofort auf die
 Viel Spaß beim Tippen!
 Dein Tippspiel-Team
 
-[{{appUrl}}]({{appUrl}})
+[Link zur Anwendung]({{appUrl}})

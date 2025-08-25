@@ -57,19 +57,25 @@ export const updateEmail = protectedProcedure
     });
 
     try {
+      const mails = [];
       if (ctx.session.user.email) {
-        await sendNotification(
-          ctx.session.user.email,
-          updatedUser.name,
-          "E-Mail-Adresse geändert",
+        mails.push(
+          sendNotification(
+            ctx.session.user.email,
+            updatedUser.name,
+            "E-Mail-Adresse geändert",
+          ),
         );
       }
 
-      await sendVerificationEmail(
-        updatedUser.email,
-        updatedUser.name,
-        verificationToken,
+      mails.push(
+        sendVerificationEmail(
+          updatedUser.email,
+          updatedUser.name,
+          verificationToken,
+        ),
       );
+      await Promise.all(mails);
     } catch (error) {
       console.error("Failed to send verification email:", error);
     }

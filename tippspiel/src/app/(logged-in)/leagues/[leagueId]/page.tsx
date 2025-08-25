@@ -1,17 +1,14 @@
+import { Button, Input } from "@headlessui/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Button, Input } from "@headlessui/react";
 import { api } from "~/trpc/server";
 import MembersList from "./members-list";
 import { renameLeagueAction } from "./rename-league";
 
-export default async function LeagueDetailPage({
-  params,
-}: {
-  params: { leagueId: string };
-}) {
+export default async function LeagueDetailPage({ params }: Props) {
+  const id = (await params).leagueId;
   const leagues = await api.league.getLeagues();
-  const league = leagues.find((l) => l.id === params.leagueId);
+  const league = leagues.find((l) => l.id === id);
 
   if (!league) {
     notFound();
@@ -67,4 +64,7 @@ export default async function LeagueDetailPage({
       </section>
     </main>
   );
+}
+interface Props {
+  params: Promise<{ leagueId: string }>;
 }

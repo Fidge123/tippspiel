@@ -10,10 +10,7 @@ Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren. D
 
 Dieser Link ist 1 Stunde gültig.
 
-Viele Grüße,  
+Viele Grüße,
 Das Tippspiel-Team
 
----
-
-Falls der Link nicht funktioniert, kopiere diese URL in deinen Browser:  
-{{resetUrl}}
+[Link zur Anwendung]({{appUrl}})

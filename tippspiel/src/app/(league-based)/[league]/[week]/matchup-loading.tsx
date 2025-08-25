@@ -1,20 +1,13 @@
 import { Button } from "@headlessui/react";
 import Image from "next/image";
-
-import { db } from "~/server/db";
+import { api } from "~/trpc/server";
 
 export default async function MatchupLoading({ id }: Props) {
   if (!id) {
     return <h1>Error</h1>;
   }
 
-  const game = await db.query.game.findFirst({
-    where: (game, { eq }) => eq(game.id, id),
-    with: {
-      homeTeam: true,
-      awayTeam: true,
-    },
-  });
+  const game = await api.week.getGameWithTeams({ gameId: id });
   const awayTeam = game?.awayTeam ?? {
     name: "TBD",
     logo: null,

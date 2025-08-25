@@ -52,7 +52,7 @@ test.describe("Registration Flow", () => {
     await expect(page).toHaveURL("/auth/login");
     await expect(page.getByRole("heading", { name: "Anmelden" })).toBeVisible();
 
-    await page.getByRole("link", { name: "Registrieren" }).click();
+    await page.locator("main a", { hasText: "Registrieren" }).click();
 
     await expect(page).toHaveURL("/auth/register");
     await expect(

@@ -3,6 +3,7 @@ import { addAdmin, removeAdmin } from "./league/admin";
 import {
   createLeague,
   getLeagues,
+  getLeaguesForDropdown,
   leaveLeague,
   renameLeague,
 } from "./league/league";
@@ -10,6 +11,7 @@ import { addMember, removeMember } from "./league/member";
 
 export const leagueRouter = createTRPCRouter({
   getLeagues: getLeagues,
+  getLeaguesForDropdown: getLeaguesForDropdown,
   createLeague: createLeague,
   leaveLeague: leaveLeague,
   renameLeague: renameLeague,

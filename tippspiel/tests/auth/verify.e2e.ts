@@ -61,7 +61,7 @@ test.describe("Actual email triggered", () => {
     await expect(page.getByText(/ungültig/)).toBeVisible();
 
     await fillLoginForm(page, testUser);
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/leagues");
     await page.goto("/account");
     await expect(page.getByText(testUser.email)).toBeVisible();
 

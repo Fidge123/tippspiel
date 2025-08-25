@@ -1,14 +1,21 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { auth } from "~/server/auth";
+import { api } from "~/trpc/server";
 
 export default async function Home() {
   const session = await auth();
 
-  return session ? (
-    <main className="grid flex-grow place-content-center gap-4 p-8">
-      {/*<h1 className="text-xl">Current User: {session.user?.email}</h1>*/}
-    </main>
-  ) : (
+  if (session) {
+    const leagues = await api.league.getLeaguesForDropdown();
+    if (leagues[0]?.id) {
+      redirect(`/${leagues[0]?.id}`);
+    } else {
+      redirect(`/leagues`);
+    }
+  }
+
+  return (
     <main className="grid flex-grow place-content-center gap-4 p-8">
       <h1 className="text-xl">Willkommen zu nfl-tippspiel.de</h1>
       <p>

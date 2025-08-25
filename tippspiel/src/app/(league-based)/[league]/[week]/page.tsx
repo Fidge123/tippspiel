@@ -1,25 +1,26 @@
 import { db } from "~/server/db";
+import { api } from "~/trpc/server";
 import MatchupLoading from "./matchup-loading";
 
 export const revalidate = 3_600; // 1 hour
 
 export async function generateStaticParams() {
   const weeks = await db.query.week.findMany({
-    where: (week, { eq, ne, and }) =>
-      and(ne(week.stage, "Pre Season"), eq(week.season, 2025)),
+    where: (w, { and, eq, ne }) =>
+      and(
+        ne(w.stage, "Pre Season"),
+        ne(w.week, "Pro Bowl"),
+        eq(w.season, 2025),
+      ),
+    orderBy: (w, { asc }) => [asc(w.start)],
   });
-
-  return weeks.map((week) => ({ week: week.id }));
+  return weeks.map((w) => ({ week: w.id }));
 }
 
 export default async function WeekPage({ params }: Props) {
   const weekId = (await params).week;
-  const week = await db.query.week.findFirst({
-    where: (week, { eq }) => eq(week.id, weekId),
-  });
-  const games = await db.query.game.findMany({
-    where: (game, { eq }) => eq(game.week, weekId),
-  });
+  const week = await api.week.getWeek({ id: weekId });
+  const games = await api.week.getGamesByWeek({ weekId });
 
   if (!week) {
     throw new Error(`Week with id ${weekId} not found`);
@@ -42,5 +43,5 @@ export default async function WeekPage({ params }: Props) {
 }
 
 interface Props {
-  params: Promise<{ week: string }>;
+  params: Promise<{ week: string; league: string }>;
 }

@@ -1,6 +1,7 @@
 import { leagueRouter } from "~/server/api/routers/league";
 import { syncRouter } from "~/server/api/routers/sync";
 import { userRouter } from "~/server/api/routers/user";
+import { weekRouter } from "~/server/api/routers/week";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   sync: syncRouter,
   league: leagueRouter,
+  week: weekRouter,
 });
 
 // export type definition of API

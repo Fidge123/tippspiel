@@ -37,7 +37,7 @@ export async function sendEmail({
 
   if (
     to.endsWith("example.com") ||
-    (text.includes("App URL: http://localhost:3000") &&
+    (text.includes("[Link zur Anwendung](http://localhost:3000)") &&
       to === env.SMTP2GO_SENDER_EMAIL)
   ) {
     return; // Skip sending test emails
@@ -45,9 +45,7 @@ export async function sendEmail({
 
   const response = await fetch(`${env.SMTP2GO_API_URL}/email/send`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
