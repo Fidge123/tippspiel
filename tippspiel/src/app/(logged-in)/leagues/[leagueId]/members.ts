@@ -29,5 +29,5 @@ export async function removeMemberAction(formData: FormData) {
   await api.league.removeMember({ leagueId, userId });
   revalidatePath("/leagues");
   revalidatePath(`/leagues/${leagueId}`);
-  redirect('/leagues');
+  redirect("/leagues");
 }
