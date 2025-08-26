@@ -51,6 +51,7 @@ test.describe("Default League Functionality", () => {
     await expect(
       page.getByText(`${leagueName} ist deine Standard-Liga`),
     ).toBeVisible();
+    await expect(page).toHaveURL("/leagues");
 
     await page.goto("/account");
     await expect(page.getByText(leagueName)).toBeVisible();
