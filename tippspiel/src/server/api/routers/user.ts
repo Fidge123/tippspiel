@@ -57,6 +57,7 @@ interface User {
   settings: {
     hideScore?: boolean;
     reminders?: boolean;
+    defaultLeague?: string;
   };
   verified: boolean;
   createdAt: string;

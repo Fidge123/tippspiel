@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { createTestUser, fillLoginForm, type TestUser } from "../helpers/auth";
 import {
+  cleanupLeague,
   cleanupUser,
   createUser,
   findUserByEmail,
@@ -17,6 +18,7 @@ test.describe("Account Page", () => {
   });
 
   test.afterEach(async () => {
+    await cleanupLeague(testUser.email);
     await cleanupUser(testUser.email);
   });
 

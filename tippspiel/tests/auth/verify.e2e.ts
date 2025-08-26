@@ -68,6 +68,3 @@ test.describe("Actual email triggered", () => {
     await cleanupUser(testUser.email);
   });
 });
-
-// TODO add tests for:
-// - Password reset flow

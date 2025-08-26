@@ -19,7 +19,7 @@ export default async function Home({ params }: Props) {
     }
   } else {
     return (
-      <main>
+      <main className="p-4">
         Willkommen zu {league.name} ({league.season})
       </main>
     );

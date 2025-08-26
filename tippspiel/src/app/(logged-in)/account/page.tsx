@@ -1,3 +1,5 @@
+import { ChevronDoubleRightIcon as LinkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { Suspense } from "react";
 import { api } from "~/trpc/server";
 import { EmailForm } from "./email";
@@ -10,6 +12,8 @@ import SyncButton from "./sync";
 
 export default async function Account() {
   const user = await api.user.getCurrentUser();
+  const defaultLeague = await api.league.getDefaultLeague();
+
   const settings = [
     {
       label: "Spoilermodus",
@@ -102,13 +106,28 @@ export default async function Account() {
               <td>{user.verified ? "Ja" : "Nein"}</td>
               <td></td>
             </tr>
+
+            <tr className="contents">
+              <th scope="row" className="text-left font-semibold">
+                Standard-Liga:
+              </th>
+              <td>{defaultLeague?.name || "Keine Standard-Liga ausgewählt"}</td>
+              <td>
+                <Link
+                  title="Standard-Liga ändern"
+                  href="/leagues"
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  <LinkIcon className="size-5" />
+                </Link>
+              </td>
+            </tr>
           </tbody>
         </table>
       </section>
 
       <section className="mt-6 max-w-96">
         <h2 className="sr-only">Einstellungen</h2>
-
         {settings.map(({ label, prop, description, enabled }) => (
           <Suspense
             key={label}
@@ -128,7 +147,6 @@ export default async function Account() {
             />
           </Suspense>
         ))}
-
         {user.email.includes("@example.com") && (
           <div className="mt-6">
             <Suspense>

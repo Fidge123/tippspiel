@@ -2,6 +2,8 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { addAdmin, removeAdmin } from "./league/admin";
 import {
   createLeague,
+  getDefaultLeague,
+  getLeague,
   getLeagues,
   getLeaguesForDropdown,
   leaveLeague,
@@ -10,7 +12,9 @@ import {
 import { addMember, removeMember } from "./league/member";
 
 export const leagueRouter = createTRPCRouter({
+  getLeague: getLeague,
   getLeagues: getLeagues,
+  getDefaultLeague: getDefaultLeague,
   getLeaguesForDropdown: getLeaguesForDropdown,
   createLeague: createLeague,
   leaveLeague: leaveLeague,

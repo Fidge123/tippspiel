@@ -2,7 +2,60 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "~/server/api/trpc";
-import { admin, league, member, season } from "~/server/db/schema";
+import { admin, league, member, season, user } from "~/server/db/schema";
+
+export const getLeague = protectedProcedure
+  .input(z.object({ id: z.string() }))
+  .query(async ({ ctx, input }) => {
+    try {
+      const memberIn = await ctx.db.query.member.findMany({
+        where: eq(member.user, ctx.session.user.id),
+      });
+
+      const response = await ctx.db.query.league.findFirst({
+        where: and(
+          eq(league.id, input.id),
+          inArray(
+            league.id,
+            memberIn.map((m) => m.league),
+          ),
+        ),
+        with: {
+          admins: { with: { user: true } },
+          members: { with: { user: true } },
+        },
+      });
+
+      if (!response) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "League ID does not exist.",
+        });
+      }
+
+      return {
+        id: response.id,
+        name: response.name,
+        members: response.members.map(({ user }) => ({
+          id: user.id,
+          name: user.name,
+          isYou: user.id === ctx.session.user.id,
+          isAdmin: response.admins.some((a) => a.user.id === user.id),
+        })),
+        season: response.season,
+      };
+    } catch (error: unknown) {
+      if (error instanceof TRPCError) {
+        throw error;
+      } else {
+        console.error("Error fetching leagues:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch leagues.",
+        });
+      }
+    }
+  });
 
 export const getLeagues = protectedProcedure.query(async ({ ctx }) => {
   try {
@@ -34,6 +87,44 @@ export const getLeagues = protectedProcedure.query(async ({ ctx }) => {
         season: league.season,
       };
     });
+  } catch (error: unknown) {
+    console.error("Error fetching leagues:", error);
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to fetch leagues.",
+    });
+  }
+});
+
+export const getDefaultLeague = protectedProcedure.query(async ({ ctx }) => {
+  try {
+    const u = await ctx.db.query.user.findFirst({
+      where: eq(user.id, ctx.session.user.id),
+      columns: { settings: true },
+    });
+    if (!u) {
+      throw new Error("User not found");
+    }
+
+    const { defaultLeague: defaultLeagueId } = u.settings as {
+      defaultLeague?: string;
+    };
+    if (!defaultLeagueId) {
+      return;
+    }
+
+    const defaultLeague = await ctx.db.query.league.findFirst({
+      where: eq(league.id, defaultLeagueId),
+    });
+    if (!defaultLeague) {
+      return;
+    }
+
+    return {
+      id: defaultLeague.id,
+      name: defaultLeague.name,
+      season: defaultLeague.season,
+    };
   } catch (error: unknown) {
     console.error("Error fetching leagues:", error);
     throw new TRPCError({

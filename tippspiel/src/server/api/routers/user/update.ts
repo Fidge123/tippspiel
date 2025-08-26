@@ -150,6 +150,7 @@ export const updateSettings = protectedProcedure
     z.object({
       reminders: z.boolean().optional(),
       hideScore: z.boolean().optional(),
+      defaultLeague: z.uuid().optional(),
     }),
   )
   .mutation(async ({ ctx, input }) => {

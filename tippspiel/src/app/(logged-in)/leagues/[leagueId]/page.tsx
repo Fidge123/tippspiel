@@ -2,19 +2,17 @@ import { Button, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { api } from "~/trpc/server";
+import { DefaultLeagueButton } from "./default-league-button";
 import MembersList from "./members-list";
 import { renameLeagueAction } from "./rename-league";
 
 export default async function LeagueDetailPage({ params }: Props) {
   const id = (await params).leagueId;
-  const leagues = await api.league.getLeagues();
-  const league = leagues.find((l) => l.id === id);
-
-  if (!league) {
-    redirect("/leagues");
-  }
+  const league = await api.league.getLeague({ id });
+  const defaultLeague = await api.league.getDefaultLeague();
 
   const isLeagueAdmin = league.members.some((m) => m.isYou && m.isAdmin);
+  const isDefaultLeague = defaultLeague?.id === league.id;
 
   return (
     <main className="max-w-3xl space-y-8 p-4">
@@ -60,6 +58,15 @@ export default async function LeagueDetailPage({ params }: Props) {
       <section className="space-y-1">
         <h2 className="text-lg">Saison</h2>
         <p className="text-gray-900">{league.season}</p>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg">Standard-Liga</h2>
+        <DefaultLeagueButton
+          leagueId={league.id}
+          isDefault={isDefaultLeague}
+          leagueName={league.name}
+        />
       </section>
 
       <section className="space-y-3">

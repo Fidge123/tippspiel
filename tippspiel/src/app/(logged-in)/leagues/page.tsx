@@ -6,6 +6,7 @@ import { createLeagueAction } from "./create-new-league";
 
 export default async function Leagues() {
   const leagues = await api.league.getLeagues();
+  const defaultLeague = await api.league.getDefaultLeague();
 
   return (
     <main className="max-w-3xl space-y-8 p-4">
@@ -14,7 +15,7 @@ export default async function Leagues() {
         <section>
           <h2 className="py-2">Du bist Mitglied in den folgenden Ligen:</h2>
           <ul className="divide-y divide-gray-300">
-            <li className="grid grid-cols-[1fr_64px_2fr_24px] gap-4 p-3">
+            <li className="grid grid-cols-[1fr_64px_2fr_24px] gap-4 p-3 font-semibold">
               <p>Name</p>
               <p>Saison</p>
               <p>Mitglieder</p>
@@ -41,10 +42,19 @@ export default async function Leagues() {
         <p>Du bist aktuell in keiner Liga.</p>
       )}
 
+      {leagues.length > 0 && (
+        <section className="flex items-center gap-2 rounded-lg bg-gray-200 p-4">
+          <h3>Standard-Liga:</h3>
+          <span className="font-semibold">
+            {defaultLeague?.name ?? "Keine Standard-Liga ausgewählt"}
+          </span>
+        </section>
+      )}
+
       <section>
         <h2 className="py-2">Neue Liga erstellen</h2>
         <form action={createLeagueAction} className="mt-2 flex gap-2">
-          <Field>
+          <Field className="contents">
             <Label className="hidden">Neue Liga erstellen</Label>
             <Input
               name="name"
