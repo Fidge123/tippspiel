@@ -1,6 +1,6 @@
-import { Button, Input } from "@headlessui/react";
+import { Button, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { api } from "~/trpc/server";
 import MembersList from "./members-list";
 import { renameLeagueAction } from "./rename-league";
@@ -11,7 +11,7 @@ export default async function LeagueDetailPage({ params }: Props) {
   const league = leagues.find((l) => l.id === id);
 
   if (!league) {
-    notFound();
+    redirect("/leagues");
   }
 
   const isLeagueAdmin = league.members.some((m) => m.isYou && m.isAdmin);
@@ -33,14 +33,18 @@ export default async function LeagueDetailPage({ params }: Props) {
         {isLeagueAdmin ? (
           <form action={renameLeagueAction} className="flex items-center gap-2">
             <Input type="hidden" name="leagueId" value={league.id} />
-            <Input
-              name="name"
-              type="text"
-              required
-              maxLength={64}
-              defaultValue={league.name}
-              className="w-full max-w-md rounded border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-2 focus:outline-blue-500"
-            />
+            <Field>
+              <Label className="hidden">Liga-Name</Label>
+              <Input
+                name="name"
+                type="text"
+                required
+                maxLength={64}
+                defaultValue={league.name}
+                className="w-full max-w-md rounded border border-gray-300 px-3 py-2 text-sm shadow-sm focus:outline-2 focus:outline-blue-500"
+              />
+            </Field>
+
             <Button
               type="submit"
               className="rounded bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-700 focus:bg-blue-700"

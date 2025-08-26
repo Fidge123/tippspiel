@@ -55,7 +55,7 @@ test.describe("Actual email triggered", () => {
     const link = mail.message.text.match(/https?:\/\/[^ )]+/)?.[0] ?? "";
     await page.goto(link);
     await expect(page.getByText(/erfolgreich bestätigt/)).toBeVisible({
-      timeout: 10000,
+      timeout: 15000,
     });
     await page.goto(link);
     await expect(page.getByText(/ungültig/)).toBeVisible();

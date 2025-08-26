@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, like } from "drizzle-orm";
 import { hashPassword } from "~/server/auth/password";
 import { db } from "~/server/db";
 import { env } from "../../src/env";
@@ -40,7 +40,7 @@ export async function cleanupUser(email: string): Promise<void> {
     });
 
     if (user) {
-      // await db.delete(schema.admin).where(eq(schema.admin.user, user.id));
+      await db.delete(schema.admin).where(eq(schema.admin.user, user.id));
       await db.delete(schema.user).where(eq(schema.user.email, email));
     }
   } catch (error) {
@@ -67,5 +67,19 @@ export async function verifyUser(email: string): Promise<void> {
 
   if (!user[0]) {
     throw new Error(`User with email ${email} not found`);
+  }
+}
+
+export async function cleanupLeague(email: string): Promise<void> {
+  try {
+    const league = await db.query.league.findFirst({
+      where: like(schema.league.name, `%${email}%`),
+    });
+
+    if (league) {
+      await db.delete(schema.league).where(eq(schema.league.id, league.id));
+    }
+  } catch (error) {
+    console.warn("Failed to clean up test league:", error);
   }
 }

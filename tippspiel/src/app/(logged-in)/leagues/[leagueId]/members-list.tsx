@@ -1,4 +1,4 @@
-import { Button, Input } from "@headlessui/react";
+import { Button, Field, Input, Label } from "@headlessui/react";
 import {
   ChevronDoubleDownIcon as DemoteIcon,
   ArrowRightStartOnRectangleIcon as LeaveIcon,
@@ -101,13 +101,17 @@ export function MembersList({ leagueId, members }: Props) {
       {isLeagueAdmin && (
         <form action={addMemberAction} className="flex justify-between gap-2">
           <Input type="hidden" name="leagueId" value={leagueId} />
-          <Input
-            name="email"
-            type="email"
-            required
-            placeholder="E-Mail hinzufügen"
-            className="w-md rounded border border-gray-300 px-2 py-1 text-sm shadow-sm focus:outline-2 focus:outline-blue-500"
-          />
+          <Field>
+            <Label className="hidden">Mitglied hinzufügen</Label>
+            <Input
+              name="email"
+              type="email"
+              required
+              placeholder="E-Mail hinzufügen"
+              className="w-md rounded border border-gray-300 px-2 py-1 text-sm shadow-sm focus:outline-2 focus:outline-blue-500"
+            />
+          </Field>
+
           <Button
             title="Hinzufügen"
             type="submit"

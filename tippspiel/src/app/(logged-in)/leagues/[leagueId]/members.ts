@@ -1,6 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { api } from "~/trpc/server";
 
 export async function addMemberAction(formData: FormData) {
@@ -29,5 +28,4 @@ export async function removeMemberAction(formData: FormData) {
   await api.league.removeMember({ leagueId, userId });
   revalidatePath("/leagues");
   revalidatePath(`/leagues/${leagueId}`);
-  redirect("/leagues");
 }

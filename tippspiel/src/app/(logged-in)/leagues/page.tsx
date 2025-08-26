@@ -1,4 +1,4 @@
-import { Button, Input } from "@headlessui/react";
+import { Button, Field, Input, Label } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { api } from "~/trpc/server";
@@ -44,14 +44,17 @@ export default async function Leagues() {
       <section>
         <h2 className="py-2">Neue Liga erstellen</h2>
         <form action={createLeagueAction} className="mt-2 flex gap-2">
-          <Input
-            name="name"
-            type="text"
-            required
-            maxLength={64}
-            placeholder="Name der Liga"
-            className="flex-1 rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500"
-          />
+          <Field>
+            <Label className="hidden">Neue Liga erstellen</Label>
+            <Input
+              name="name"
+              type="text"
+              required
+              maxLength={64}
+              placeholder="Name der Liga"
+              className="flex-1 rounded border border-gray-300 px-3 py-2 shadow-sm focus:outline-2 focus:outline-blue-500"
+            />
+          </Field>
           <Button
             type="submit"
             className="rounded bg-blue-600 px-4 py-2 text-white shadow-sm hover:bg-blue-700 focus:bg-blue-700"
