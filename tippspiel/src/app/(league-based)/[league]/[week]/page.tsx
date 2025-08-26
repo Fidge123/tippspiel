@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { db } from "~/server/db";
 import { api } from "~/trpc/server";
 import MatchupLoading from "./matchup-loading";
@@ -18,12 +19,12 @@ export async function generateStaticParams() {
 }
 
 export default async function WeekPage({ params }: Props) {
-  const weekId = (await params).week;
-  const week = await api.week.getWeek({ id: weekId });
-  const games = await api.week.getGamesByWeek({ weekId });
+  const { week: weekId, league } = await params;
+  const week = await api.week.getWeek(weekId);
+  const games = await api.week.getGamesByWeek(weekId);
 
   if (!week) {
-    throw new Error(`Week with id ${weekId} not found`);
+    redirect(`/${league}`);
   }
 
   return (

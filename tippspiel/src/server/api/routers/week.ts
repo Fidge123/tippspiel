@@ -3,42 +3,38 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const weekRouter = createTRPCRouter({
   getWeeks: protectedProcedure
-    .input(
-      z.object({
-        season: z.number().int().optional().default(2025),
-      }),
-    )
+    .input(z.number().int().optional().default(2025))
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.week.findMany({
         where: (w, { and, eq, ne }) =>
           and(
             ne(w.stage, "Pre Season"),
             ne(w.week, "Pro Bowl"),
-            eq(w.season, input.season),
+            eq(w.season, input),
           ),
         orderBy: (w, { asc }) => [asc(w.start)],
       });
     }),
   getWeek: protectedProcedure
-    .input(z.object({ id: z.string().min(1) }))
+    .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.week.findFirst({
-        where: (wk, { eq }) => eq(wk.id, input.id),
+        where: (wk, { eq }) => eq(wk.id, input),
       });
     }),
   getGamesByWeek: protectedProcedure
-    .input(z.object({ weekId: z.string().min(1) }))
+    .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.game.findMany({
-        where: (g, { eq }) => eq(g.week, input.weekId),
+        where: (g, { eq }) => eq(g.week, input),
         orderBy: (g, { asc }) => [asc(g.date)],
       });
     }),
   getGameWithTeams: protectedProcedure
-    .input(z.object({ gameId: z.number().int() }))
+    .input(z.number().int())
     .query(async ({ ctx, input }) => {
       const g = await ctx.db.query.game.findFirst({
-        where: (gm, { eq }) => eq(gm.id, input.gameId),
+        where: (gm, { eq }) => eq(gm.id, input),
         with: {
           homeTeam: true,
           awayTeam: true,
@@ -99,5 +95,20 @@ export const weekRouter = createTRPCRouter({
         createdAt: g.createdAt,
         updatedAt: g.updatedAt,
       };
+    }),
+  getCurrentWeek: protectedProcedure
+    .input(z.number().int().optional().default(2025))
+    .query(async ({ ctx, input }) => {
+      const now = new Date().toISOString();
+      return await ctx.db.query.week.findFirst({
+        where: (w, { and, eq, ne, gte }) =>
+          and(
+            ne(w.stage, "Pre Season"),
+            ne(w.week, "Pro Bowl"),
+            eq(w.season, input),
+            gte(w.start, now),
+          ),
+        orderBy: (w, { asc }) => [asc(w.start)],
+      });
     }),
 });

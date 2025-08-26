@@ -2,14 +2,16 @@ import "~/styles/globals.css";
 import Nav from "~/components/layout/nav";
 import HamburgerMenu from "~/components/layout/nav/hamburger";
 import LeagueSelector from "~/components/layout/nav/league-selector";
+import { api } from "~/trpc/server";
 
 export default async function RootLayout({
   children,
   params,
 }: Readonly<Props>) {
   const { league } = await params;
+  const currentWeek = await api.week.getCurrentWeek();
   const links = [
-    { name: "Tippspiel", href: `/${league}` },
+    { name: "Tippspiel", href: `/${league}/${currentWeek?.id ?? ""}` },
     { name: "Tabelle", href: `/${league}/leaderboard` },
     { name: "Divisions", href: `/${league}/divisions`, active: true },
   ];
@@ -31,5 +33,5 @@ export default async function RootLayout({
 
 interface Props {
   children: React.ReactNode;
-  params: Promise<{ league: string; week: string }>;
+  params: Promise<{ league: string }>;
 }

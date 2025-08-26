@@ -7,7 +7,7 @@ export default async function MatchupLoading({ id }: Props) {
     return <h1>Error</h1>;
   }
 
-  const game = await api.week.getGameWithTeams({ gameId: id });
+  const game = await api.week.getGameWithTeams(id);
   const awayTeam = game?.awayTeam ?? {
     name: "TBD",
     logo: null,
@@ -33,7 +33,7 @@ export default async function MatchupLoading({ id }: Props) {
             width={24}
             height={24}
             alt={awayTeam.name}
-            className="pr-1"
+            className="mr-1 h-6 w-6"
           />
         )}
         <span className="mx-auto">{awayTeam.name}</span>
@@ -49,7 +49,7 @@ export default async function MatchupLoading({ id }: Props) {
             width={24}
             height={24}
             alt={homeTeam.name}
-            className="pr-1"
+            className="mr-1 h-6 w-6"
           />
         )}
         <span className="mx-auto">{homeTeam.name}</span>

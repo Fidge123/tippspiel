@@ -4,12 +4,12 @@ export default async function Nav({ links, menu }: Props) {
   return (
     <header className="pointer-events-auto fixed h-12 w-screen bg-gray-900 px-4 text-white">
       <nav className="flex h-full items-center justify-between">
-        <div className="space-x-2 decoration-dashed underline-offset-6">
+        <div className="space-x-2 font-bold decoration-2 decoration-gray-300 underline-offset-6">
           {links.map(({ href, name, active }) => (
             <Link
               key={href}
               href={href}
-              className={`p-1 underline-offset-6 hover:underline focus:underline focus:outline-none ${active ? "before:content-['-'] after:content-['-']" : ""}`}
+              className={`p-1 underline-offset-6 hover:underline focus:underline focus:outline-none ${active ? "underline not-focus:not-hover:decoration-1" : ""}`}
             >
               {name}
             </Link>
