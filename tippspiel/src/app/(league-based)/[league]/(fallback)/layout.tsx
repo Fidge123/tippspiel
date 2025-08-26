@@ -7,11 +7,11 @@ export default async function RootLayout({
   children,
   params,
 }: Readonly<Props>) {
-  const leagueId = (await params).league;
+  const { league } = await params;
   const links = [
-    { name: "Tippspiel", href: "/" },
-    { name: "Tabelle", href: "/leaderboard" },
-    { name: "Divisions", href: "/divisions" },
+    { name: "Tippspiel", href: `/${league}`, active: true },
+    { name: "Tabelle", href: `/${league}/leaderboard` },
+    { name: "Divisions", href: `/${league}/divisions` },
   ];
   return (
     <>
@@ -19,7 +19,7 @@ export default async function RootLayout({
         links={links}
         menu={
           <div className="flex items-center gap-3">
-            <LeagueSelector selected={leagueId} />
+            <LeagueSelector selected={league} suffix={""} />
             <HamburgerMenu />
           </div>
         }

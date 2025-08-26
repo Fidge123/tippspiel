@@ -1,6 +1,5 @@
 import { Button, Field, Input, Label } from "@headlessui/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { api } from "~/trpc/server";
 import { DefaultLeagueButton } from "./default-league-button";
 import MembersList from "./members-list";

@@ -111,11 +111,9 @@ test.describe("Default League Functionality", () => {
       .getByRole("button", { name: "Als Standard-Liga festlegen" })
       .click();
 
-    // Go back to leagues overview
     await page.getByRole("link", { name: "Zurück zur Übersicht" }).click();
     await expect(page.locator(`span:text("${testLeagueName1}")`)).toBeVisible();
 
-    // Set second league as default (should replace first)
     await page
       .getByRole("link", { name: `Zur Liga ${testLeagueName2}` })
       .click();
@@ -123,11 +121,9 @@ test.describe("Default League Functionality", () => {
       .getByRole("button", { name: "Als Standard-Liga festlegen" })
       .click();
 
-    // Go back and verify second league is now default
     await page.getByRole("link", { name: "Zurück zur Übersicht" }).click();
     await expect(page.locator(`span:text("${testLeagueName2}")`)).toBeVisible();
 
-    // Verify first league is no longer default
     await page
       .getByRole("link", { name: `Zur Liga ${testLeagueName1}` })
       .click();

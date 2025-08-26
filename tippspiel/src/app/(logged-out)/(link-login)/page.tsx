@@ -7,10 +7,15 @@ export default async function Home() {
   const session = await auth();
 
   if (session) {
-    const leagues = await api.league.getLeaguesForDropdown();
-    if (leagues[0]?.id) {
-      redirect(`/${leagues[0]?.id}`);
+    const defaultLeague = await api.league.getDefaultLeague();
+    const allLeaguesReq = api.league.getLeagues();
+    if (defaultLeague) {
+      redirect(defaultLeague.id);
     } else {
+      const firstLeague = (await allLeaguesReq)[0];
+      if (firstLeague) {
+        redirect(firstLeague.id);
+      }
       redirect(`/leagues`);
     }
   }

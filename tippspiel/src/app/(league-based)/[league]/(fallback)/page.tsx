@@ -4,6 +4,7 @@ import { api } from "~/trpc/server";
 export default async function Home({ params }: Props) {
   const leagueId = (await params).league;
   const leagues = await api.league.getLeaguesForDropdown();
+  const defaultLeague = await api.league.getDefaultLeague();
   const league = leagues.find((l) => l.id === leagueId);
 
   if (!league) {
@@ -15,7 +16,7 @@ export default async function Home({ params }: Props) {
         </main>
       );
     } else {
-      redirect(`/${leagues[0]?.id}`);
+      redirect(`/${defaultLeague?.id ?? leagues[0]?.id}`);
     }
   } else {
     return (
