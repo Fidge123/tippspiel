@@ -21,6 +21,10 @@ export default async function MatchupLoading({ id }: Props) {
     color2: null,
   };
 
+  const hasScores = game?.scores?.away?.total != null && game?.scores?.home?.total != null;
+  const gameStatus = game?.status;
+  const isGameFinal = gameStatus === "Final" || gameStatus === "Final/OT";
+
   return (
     <div className="contents">
       <Button
@@ -38,7 +42,23 @@ export default async function MatchupLoading({ id }: Props) {
         )}
         <span className="mx-auto">{awayTeam.name}</span>
       </Button>
-      <span className="mx-auto">@</span>
+      <div className="mx-auto flex flex-col items-center">
+        {hasScores ? (
+            <div className="flex items-center gap-1 text-sm font-bold tabular-nums">
+              <span>{game.scores.away.total}</span>
+              <span>@</span>
+              <span>{game.scores.home.total}</span>
+            </div>
+        ) : (
+          <span className="text-sm font-bold">@</span>
+        )}
+
+        {gameStatus && (
+          <span className={`text-xs ${isGameFinal ? "text-gray-600" : "text-orange-600 font-medium"}`}>
+            {gameStatus}
+          </span>
+        )}
+      </div>
       <Button
         className="flex rounded border-2 px-2 py-1 font-semibold"
         style={getTeamStyle(homeTeam.color1, homeTeam.color2)}
