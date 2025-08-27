@@ -119,7 +119,7 @@ export const weekRouter = createTRPCRouter({
       });
 
       if (!currentWeek) {
-        return { previous: null, next: null };
+        return { previous: null, next: null, allWeeks: [] };
       }
 
       const allWeeks = await ctx.db.query.week.findMany({
@@ -140,6 +140,7 @@ export const weekRouter = createTRPCRouter({
           currentIndex < allWeeks.length - 1
             ? allWeeks[currentIndex + 1]
             : null,
+        allWeeks,
       };
     }),
   getByesByWeek: protectedProcedure

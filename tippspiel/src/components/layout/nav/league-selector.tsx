@@ -13,7 +13,7 @@ export default async function LeagueSelector({ selected, suffix }: Props) {
 
   return (
     <Menu>
-      <MenuButton className="flex h-8 items-center gap-1 rounded bg-gray-700 px-3 font-medium text-sm text-white hover:bg-gray-600 focus:bg-gray-600 focus:outline-2 focus:outline-blue-500 focus:outline-offset-2">
+      <MenuButton className="flex h-8 items-center gap-1 rounded bg-gray-700 px-3 text-sm text-white hover:bg-gray-600 focus:bg-gray-600 focus:outline-2 focus:outline-blue-500 focus:outline-offset-2">
         <span className="truncate">
           {selectedLeague
             ? `${selectedLeague.name} (${selectedLeague.season})`
