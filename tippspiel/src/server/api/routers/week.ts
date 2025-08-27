@@ -111,4 +111,45 @@ export const weekRouter = createTRPCRouter({
         orderBy: (w, { asc }) => [asc(w.start)],
       });
     }),
+  getWeekNavigation: protectedProcedure
+    .input(z.string().min(1))
+    .query(async ({ ctx, input }) => {
+      const currentWeek = await ctx.db.query.week.findFirst({
+        where: (w, { eq }) => eq(w.id, input),
+      });
+
+      if (!currentWeek) {
+        return { previous: null, next: null };
+      }
+
+      const allWeeks = await ctx.db.query.week.findMany({
+        where: (w, { and, eq, ne }) =>
+          and(
+            ne(w.stage, "Pre Season"),
+            ne(w.week, "Pro Bowl"),
+            eq(w.season, currentWeek.season),
+          ),
+        orderBy: (w, { asc }) => [asc(w.start)],
+      });
+
+      const currentIndex = allWeeks.findIndex((w) => w.id === input);
+
+      return {
+        previous: currentIndex > 0 ? allWeeks[currentIndex - 1] : null,
+        next:
+          currentIndex < allWeeks.length - 1
+            ? allWeeks[currentIndex + 1]
+            : null,
+      };
+    }),
+  getByesByWeek: protectedProcedure
+    .input(z.string().min(1))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.bye.findMany({
+        where: (b, { eq }) => eq(b.week, input),
+        with: {
+          team: true,
+        },
+      });
+    }),
 });

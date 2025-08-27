@@ -214,6 +214,7 @@ async function syncStandings(db: typeof Database, input: number) {
 
 async function syncGames(db: typeof Database, input: number) {
   try {
+    // TODO investigate why team 123 is missing for season 2023
     const data = await fetchFromRapidAPI(`/games?league=1&season=${input}`);
     const parsed = gameResponseSchema.parse(data);
 
