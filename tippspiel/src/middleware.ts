@@ -12,7 +12,7 @@ export const config = {
     },
     {
       source:
-        "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|impressum|auth/|terms).+)",
+        "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|impressum|auth/|terms|logos).+)",
       missing: [{ type: "cookie", key: "authjs.session-token" }],
     },
   ],

@@ -1,3 +1,5 @@
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { extname, join } from "node:path";
 import { TRPCError } from "@trpc/server";
 import { and, eq, notExists, or, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -214,7 +216,6 @@ async function syncStandings(db: typeof Database, input: number) {
 
 async function syncGames(db: typeof Database, input: number) {
   try {
-    // TODO investigate why team 123 is missing for season 2023
     const data = await fetchFromRapidAPI(`/games?league=1&season=${input}`);
     const parsed = gameResponseSchema.parse(data);
 
@@ -327,9 +328,47 @@ async function syncWithESPN(db: typeof Database, input: number) {
     );
     const teams = espnTeamsSchema.parse(await teamsRes.json()).items;
 
+    const logoDir = join(process.cwd(), "public", "logos", input.toString());
+    if (!existsSync(logoDir)) {
+      mkdirSync(logoDir, { recursive: true });
+    }
+
     for (const t of teams) {
       const teamRes = await fetch(t.$ref);
       const teamData = espnTeamSchema.parse(await teamRes.json());
+
+      let logoPath = teamData.logos[0]?.href;
+
+      if (teamData.logos[0]?.href) {
+        const logoUrl = teamData.logos[0].href;
+        const cleanUrl = logoUrl.split("?")[0] ?? logoUrl;
+        const fileExtension = extname(cleanUrl) || ".png";
+        const fileName = `${teamData.abbreviation.toLowerCase()}${fileExtension}`;
+        const localPath = join(logoDir, fileName);
+        const publicPath = `/logos/${input}/${fileName}`;
+
+        if (!existsSync(localPath)) {
+          try {
+            const logoRes = await fetch(logoUrl);
+            if (logoRes.ok) {
+              const logoBuffer = await logoRes.arrayBuffer();
+              writeFileSync(localPath, new Uint8Array(logoBuffer));
+              console.log(
+                `Downloaded logo for ${teamData.abbreviation}: ${publicPath}`,
+              );
+            }
+          } catch (logoError) {
+            console.warn(
+              `Failed to download logo for ${teamData.abbreviation}:`,
+              logoError,
+            );
+          }
+        }
+
+        if (existsSync(localPath)) {
+          logoPath = publicPath;
+        }
+      }
 
       await db
         .update(team)
@@ -338,7 +377,7 @@ async function syncWithESPN(db: typeof Database, input: number) {
           color2: `#${teamData.alternateColor}`,
           code: teamData.abbreviation,
           shortName: teamData.shortDisplayName,
-          logo: teamData.logos[0]?.href ?? team.logo,
+          logo: logoPath ?? team.logo,
         })
         .where(and(eq(team.name, teamData.displayName), eq(team.season, input)))
         .execute();

@@ -30,10 +30,10 @@ export default async function MatchupLoading({ id }: Props) {
         {awayTeam.logo && (
           <Image
             src={awayTeam.logo}
+            alt={awayTeam.name}
             width={24}
             height={24}
-            alt={awayTeam.name}
-            className="mr-1 h-6 w-6"
+            className="mr-1 size-6"
           />
         )}
         <span className="mx-auto">{awayTeam.name}</span>
@@ -46,10 +46,10 @@ export default async function MatchupLoading({ id }: Props) {
         {homeTeam.logo && (
           <Image
             src={homeTeam.logo}
+            alt={homeTeam.name}
             width={24}
             height={24}
-            alt={homeTeam.name}
-            className="mr-1 h-6 w-6"
+            className="mr-1 size-6"
           />
         )}
         <span className="mx-auto">{homeTeam.name}</span>

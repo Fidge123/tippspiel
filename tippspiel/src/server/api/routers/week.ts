@@ -146,7 +146,7 @@ export const weekRouter = createTRPCRouter({
     .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.bye.findMany({
-        where: (b, { eq }) => eq(b.week, input),
+        where: (b, { eq, lt, and }) => and(eq(b.week, input), lt(b.team, 3300)), // Ignore NFC AFC
         with: {
           team: true,
         },
