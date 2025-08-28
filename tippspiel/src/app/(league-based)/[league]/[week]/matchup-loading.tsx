@@ -14,7 +14,7 @@ export default async function MatchupLoading({ id }: Props) {
     logo: null,
     color1: null,
     color2: null,
-  }
+  };
   const awayTeam = game?.awayTeam ?? dummy;
   const homeTeam = game?.homeTeam ?? dummy;
 
@@ -26,8 +26,8 @@ export default async function MatchupLoading({ id }: Props) {
   return (
     <div className="contents">
       <Button
-        className="flex rounded border-2 px-2 py-1 font-semibold"
-        style={getTeamStyle(awayTeam.color1, awayTeam.color2)}
+        className="flex rounded border-2 bg-gray-100 px-2 py-1 font-semibold"
+        style={{ borderColor: awayTeam.color1 ?? "#000" }}
       >
         {awayTeam.logo && (
           <Image
@@ -61,8 +61,8 @@ export default async function MatchupLoading({ id }: Props) {
         )}
       </div>
       <Button
-        className="flex rounded border-2 px-2 py-1 font-semibold"
-        style={getTeamStyle(homeTeam.color1, homeTeam.color2)}
+        className="flex rounded border-2 bg-gray-100 px-2 py-1 font-semibold"
+        style={{ borderColor: homeTeam.color1 ?? "#000" }}
       >
         {homeTeam.logo && (
           <Image
@@ -78,14 +78,6 @@ export default async function MatchupLoading({ id }: Props) {
       </Button>
     </div>
   );
-}
-
-function getTeamStyle(color1?: string | null, color2?: string | null) {
-  return {
-    backgroundColor: color1 ?? "#fff",
-    borderColor: color2 ?? "#000",
-    color: color1 ? "#fff" : "#000",
-  };
 }
 
 interface Props {

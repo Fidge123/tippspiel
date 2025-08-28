@@ -60,7 +60,7 @@ export default async function DivisionRanker({
   return (
     <section className="space-y-4">
       <header className="flex items-center justify-between">
-        <h3 className="font-semibold text-lg min-w-fit">{division.name}</h3>
+        <h3 className="min-w-fit font-semibold text-lg">{division.name}</h3>
         {existingBet && !isDeadlinePassed && (
           <div className="text-right">
             <p className="text-gray-500 text-xs">
@@ -100,9 +100,10 @@ export default async function DivisionRanker({
               />
             )}
 
-
-            <span className="text-sm flex-1 hidden sm:block">{team.name}</span>
-            <span className="text-sm flex-1 block sm:hidden">{team.shortName}</span>
+            <span className="hidden flex-1 text-sm sm:block">{team.name}</span>
+            <span className="block flex-1 text-sm sm:hidden">
+              {team.shortName}
+            </span>
 
             {!isDeadlinePassed && (
               <div className="flex gap-1">

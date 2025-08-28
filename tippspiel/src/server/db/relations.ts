@@ -14,6 +14,10 @@ export const betRelations = relations(schema.bet, ({ one }) => ({
     fields: [schema.bet.game],
     references: [schema.game.id],
   }),
+  team: one(schema.team, {
+    fields: [schema.bet.team],
+    references: [schema.team.id],
+  }),
 }));
 
 export const userRelations = relations(schema.user, ({ many }) => ({
@@ -63,6 +67,7 @@ export const seasonWinnerBetRelations = relations(
 );
 
 export const teamRelations = relations(schema.team, ({ one, many }) => ({
+  bets: many(schema.bet),
   seasonWinnerBets: many(schema.seasonWinnerBet),
   season: one(schema.season, {
     fields: [schema.team.season],

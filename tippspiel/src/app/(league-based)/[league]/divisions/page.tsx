@@ -82,8 +82,10 @@ export default async function DivisionsPage({ params }: Props) {
                           className="mr-2 size-6"
                         />
                       ) : null}
-                      <span className="text-sm hidden sm:block">{t.name}</span>
-                      <span className="text-sm block sm:hidden">{t.shortName}</span>
+                      <span className="hidden text-sm sm:block">{t.name}</span>
+                      <span className="block text-sm sm:hidden">
+                        {t.shortName}
+                      </span>
                     </Button>
                   );
                 })}
