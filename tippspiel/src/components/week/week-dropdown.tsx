@@ -32,14 +32,14 @@ export default async function WeekDropdown({
       <MenuItems
         anchor="bottom"
         transition
-        className="mt-2 rounded-lg border border-gray-200 bg-white/90 shadow-lg backdrop-blur-sm transition focus:outline-none data-closed:scale-95 data-closed:opacity-0"
+        className="mt-2 rounded-lg border border-gray-200 bg-white/70 shadow-lg backdrop-blur transition focus:outline-none data-closed:scale-95 data-closed:opacity-0"
       >
         <ul className="max-h-64 min-w-48 overflow-auto">
           {weeks.map((week) => (
             <MenuItem key={week.id} as="li">
               <Link
                 href={`/${league}/${week.id}`}
-                className={`block px-4 py-2 text-sm transition-colors hover:bg-gray-100/80 ${week.id === currentWeek?.id ? "bg-blue-50/50 font-bold text-blue-600" : "text-gray-900"}`}
+                className={`block px-4 py-2 text-sm transition-colors hover:font-bold ${week.id === currentWeek?.id ? "bg-blue-50/50 text-blue-600" : "text-gray-900"}`}
               >
                 {week.week}
               </Link>
