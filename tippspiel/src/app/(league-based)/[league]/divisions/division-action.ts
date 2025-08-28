@@ -18,13 +18,13 @@ export async function getAction(leagueId: string, division: string) {
 
     if (direction === "up" && currentIndex > 0) {
       [newOrder[currentIndex], newOrder[currentIndex - 1]] = [
-        newOrder[currentIndex - 1]!,
-        newOrder[currentIndex]!,
+        newOrder[currentIndex - 1] as number,
+        newOrder[currentIndex] as number,
       ];
     } else if (direction === "down" && currentIndex < newOrder.length - 1) {
       [newOrder[currentIndex], newOrder[currentIndex + 1]] = [
-        newOrder[currentIndex + 1]!,
-        newOrder[currentIndex]!,
+        newOrder[currentIndex + 1] as number,
+        newOrder[currentIndex] as number,
       ];
     } else {
       return;
@@ -34,10 +34,10 @@ export async function getAction(leagueId: string, division: string) {
       await api.divisionBet.upsertDivisionBet({
         leagueId,
         division,
-        first: newOrder[0]!,
-        second: newOrder[1]!,
-        third: newOrder[2]!,
-        fourth: newOrder[3]!,
+        first: newOrder[0] as number,
+        second: newOrder[1] as number,
+        third: newOrder[2] as number,
+        fourth: newOrder[3] as number,
       });
 
       revalidatePath(`/${leagueId}/divisions`);
