@@ -8,18 +8,15 @@ export default async function MatchupLoading({ id }: Props) {
   }
 
   const game = await api.week.getGameWithTeams(id);
-  const awayTeam = game?.awayTeam ?? {
+  const dummy = {
     name: "TBD",
+    shortName: "TBD",
     logo: null,
     color1: null,
     color2: null,
-  };
-  const homeTeam = game?.homeTeam ?? {
-    name: "TBD",
-    logo: null,
-    color1: null,
-    color2: null,
-  };
+  }
+  const awayTeam = game?.awayTeam ?? dummy;
+  const homeTeam = game?.homeTeam ?? dummy;
 
   const hasScores =
     game?.scores?.away?.total != null && game?.scores?.home?.total != null;
@@ -41,7 +38,8 @@ export default async function MatchupLoading({ id }: Props) {
             className="mr-1 size-6"
           />
         )}
-        <span className="mx-auto">{awayTeam.name}</span>
+        <span className="mx-auto hidden sm:block">{awayTeam.name}</span>
+        <span className="mx-auto block sm:hidden">{awayTeam.shortName}</span>
       </Button>
       <div className="mx-auto flex flex-col items-center">
         {hasScores ? (
@@ -75,7 +73,8 @@ export default async function MatchupLoading({ id }: Props) {
             className="mr-1 size-6"
           />
         )}
-        <span className="mx-auto">{homeTeam.name}</span>
+        <span className="mx-auto hidden sm:block">{homeTeam.name}</span>
+        <span className="mx-auto block sm:hidden">{homeTeam.shortName}</span>
       </Button>
     </div>
   );

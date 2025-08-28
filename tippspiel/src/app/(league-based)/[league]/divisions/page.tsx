@@ -21,7 +21,6 @@ export default async function DivisionsPage({ params }: Props) {
     ? new Date() >= new Date(deadline.deadline)
     : false;
 
-  // Flatten teams for easier lookup
   const allTeams = Object.values(teamsByDivision).flat();
 
   async function saveSeasonWinnerBet(formData: FormData) {
@@ -37,8 +36,8 @@ export default async function DivisionsPage({ params }: Props) {
 
   return (
     <main className="p-6">
-      <header className="mb-6 flex justify-between">
-        <div>
+      <header className="mb-6 flex justify-between gap-8">
+        <div className="text-balance">
           <h1 className="font-bold text-2xl">Divisions & Superbowl</h1>
           <p className="mt-1 mb-6 text-gray-700">
             Wähle deinen Superbowl-Sieger und sortiere die Teams in jeder
@@ -83,7 +82,8 @@ export default async function DivisionsPage({ params }: Props) {
                           className="mr-2 size-6"
                         />
                       ) : null}
-                      <span className="text-sm">{t.name}</span>
+                      <span className="text-sm hidden sm:block">{t.name}</span>
+                      <span className="text-sm block sm:hidden">{t.shortName}</span>
                     </Button>
                   );
                 })}
