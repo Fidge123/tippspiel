@@ -52,7 +52,7 @@ export default function DeadlineTimer({ deadline }: DeadlineTimerProps) {
           {[...Array(4)]
             .map((_, i) => i)
             .map((i) => (
-              <div key={i} className="rounded p-2">
+              <div key={i} className="rounded px-2">
                 <div className="font-bold">--</div>
                 <div className="text-xs">
                   {["Tage", "Std", "Min", "Sek"][i]}
@@ -87,7 +87,7 @@ export default function DeadlineTimer({ deadline }: DeadlineTimerProps) {
       <p className="text-sm">
         Deadline: <span className="text-yellow-700">{formatDeadline()}</span>
       </p>
-      <div className="grid grid-cols-4 gap-2 text-center *:rounded *:p-2">
+      <div className="grid grid-cols-4 gap-2 text-center *:rounded *:px-2">
         <div>
           <div className="font-bold">{timeLeft.days}</div>
           <div className="text-xs">Tage</div>
