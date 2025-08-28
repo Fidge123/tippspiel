@@ -51,6 +51,41 @@ export const seasonWinnerRouter = createTRPCRouter({
       } as SesaonWinnerSelection | null;
     }),
 
+  getDeadline: protectedProcedure
+    .input(z.object({ season: z.number().int() }))
+    .query(async ({ ctx, input }) => {
+      const firstGame = await ctx.db.query.game.findFirst({
+        where: (g, { eq }) => eq(g.week, `${input.season}-regular-1`),
+        orderBy: (g, { asc }) => [asc(g.date)],
+      });
+
+      if (!firstGame) {
+        // Fallback: find first regular season week and get first game
+        const firstWeek = await ctx.db.query.week.findFirst({
+          where: (w, { and, eq, ne }) =>
+            and(
+              eq(w.season, input.season),
+              ne(w.stage, "Pre Season"),
+              ne(w.week, "Pro Bowl"),
+            ),
+          orderBy: (w, { asc }) => [asc(w.start)],
+        });
+
+        if (!firstWeek) {
+          return null;
+        }
+
+        const firstGameOfWeek = await ctx.db.query.game.findFirst({
+          where: (g, { eq }) => eq(g.week, firstWeek.id),
+          orderBy: (g, { asc }) => [asc(g.date)],
+        });
+
+        return firstGameOfWeek ? { deadline: firstGameOfWeek.date } : null;
+      }
+
+      return { deadline: firstGame.date };
+    }),
+
   upsertSelection: protectedProcedure
     .input(
       z.object({
@@ -61,7 +96,6 @@ export const seasonWinnerRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      // Ensure the requester is a member of the league
       const membership = await ctx.db.query.member.findFirst({
         where: and(eq(member.user, userId), eq(member.league, input.leagueId)),
         columns: { id: true },
@@ -73,7 +107,6 @@ export const seasonWinnerRouter = createTRPCRouter({
         });
       }
 
-      // Resolve league to obtain season
       const lg = await ctx.db.query.league.findFirst({
         where: eq(league.id, input.leagueId),
         columns: { season: true },
@@ -85,7 +118,6 @@ export const seasonWinnerRouter = createTRPCRouter({
         });
       }
 
-      // Validate team belongs to the same season and is a real NFL team (exclude AFC/NFC summary rows)
       const t = await ctx.db.query.team.findFirst({
         where: and(
           eq(team.id, input.teamId),
@@ -98,6 +130,45 @@ export const seasonWinnerRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid team for this league season.",
+        });
+      }
+
+      const firstGame = await ctx.db.query.game.findFirst({
+        where: (g, { eq }) => eq(g.week, `${lg.season}-regular-1`),
+        orderBy: (g, { asc }) => [asc(g.date)],
+      });
+
+      if (!firstGame) {
+        // Fallback: find first regular season week and get first game
+        const firstWeek = await ctx.db.query.week.findFirst({
+          where: (w, { and, eq, ne }) =>
+            and(
+              eq(w.season, lg.season),
+              ne(w.stage, "Pre Season"),
+              ne(w.week, "Pro Bowl"),
+            ),
+          orderBy: (w, { asc }) => [asc(w.start)],
+        });
+
+        if (firstWeek) {
+          const firstGameOfWeek = await ctx.db.query.game.findFirst({
+            where: (g, { eq }) => eq(g.week, firstWeek.id),
+            orderBy: (g, { asc }) => [asc(g.date)],
+          });
+
+          if (firstGameOfWeek && new Date() >= new Date(firstGameOfWeek.date)) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message:
+                "Season winner selection deadline has passed. You can only select before the first game of the season.",
+            });
+          }
+        }
+      } else if (new Date() >= new Date(firstGame.date)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "Season winner selection deadline has passed. You can only select before the first game of the season.",
         });
       }
 
