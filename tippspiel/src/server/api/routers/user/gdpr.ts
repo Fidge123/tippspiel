@@ -6,7 +6,7 @@ import {
   betDoubler,
   divisionBet,
   member,
-  superbowlBet,
+  seasonWinnerBet,
   user,
 } from "~/server/db/schema";
 import { protectedProcedure } from "../../trpc";
@@ -60,8 +60,8 @@ export const exportUserData = protectedProcedure.query(async ({ ctx }) => {
     },
   });
 
-  const superbowlBets = await ctx.db.query.superbowlBet.findMany({
-    where: eq(superbowlBet.user, userId),
+  const seasonWinnerBets = await ctx.db.query.seasonWinnerBet.findMany({
+    where: eq(seasonWinnerBet.user, userId),
     with: {
       team: true,
       league: true,
@@ -101,7 +101,7 @@ export const exportUserData = protectedProcedure.query(async ({ ctx }) => {
     user: userData,
     bets,
     divisionBets,
-    superbowlBets,
+    seasonWinnerBets,
     betDoublers,
     memberships,
     exportedAt: Date.now(),

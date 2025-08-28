@@ -18,7 +18,7 @@ export const betRelations = relations(schema.bet, ({ one }) => ({
 
 export const userRelations = relations(schema.user, ({ many }) => ({
   bets: many(schema.bet),
-  superbowlBets: many(schema.superbowlBet),
+  seasonWinnerBets: many(schema.seasonWinnerBet),
   resetTokens: many(schema.resetToken),
   verifyTokens: many(schema.verifyToken),
   divisionBets: many(schema.divisionBet),
@@ -44,26 +44,26 @@ export const gameRelations = relations(schema.game, ({ one, many }) => ({
   betDoublers: many(schema.betDoubler),
 }));
 
-export const superbowlBetRelations = relations(
-  schema.superbowlBet,
+export const seasonWinnerBetRelations = relations(
+  schema.seasonWinnerBet,
   ({ one }) => ({
     team: one(schema.team, {
-      fields: [schema.superbowlBet.team],
+      fields: [schema.seasonWinnerBet.team],
       references: [schema.team.id],
     }),
     league: one(schema.league, {
-      fields: [schema.superbowlBet.league],
+      fields: [schema.seasonWinnerBet.league],
       references: [schema.league.id],
     }),
     user: one(schema.user, {
-      fields: [schema.superbowlBet.user],
+      fields: [schema.seasonWinnerBet.user],
       references: [schema.user.id],
     }),
   }),
 );
 
 export const teamRelations = relations(schema.team, ({ one, many }) => ({
-  superbowlBets: many(schema.superbowlBet),
+  seasonWinnerBets: many(schema.seasonWinnerBet),
   season: one(schema.season, {
     fields: [schema.team.season],
     references: [schema.season.id],
@@ -215,7 +215,7 @@ export const leagueSeasonRelations = relations(
       references: [schema.season.id],
     }),
     bets: many(schema.bet),
-    superbowlBets: many(schema.superbowlBet),
+    seasonWinnerBets: many(schema.seasonWinnerBet),
     divisionBets: many(schema.divisionBet),
     betDoublers: many(schema.betDoubler),
     members: many(schema.member),

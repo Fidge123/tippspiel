@@ -117,14 +117,14 @@ CREATE TABLE "season" (
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "superbowlBet" (
+CREATE TABLE "seasonWinnerBet" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"team" integer NOT NULL,
 	"user" uuid NOT NULL,
 	"league" uuid NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "superbowlBet_user_league_unique" UNIQUE("user","league")
+	CONSTRAINT "seasonWinnerBet_user_league_unique" UNIQUE("user","league")
 );
 --> statement-breakpoint
 CREATE TABLE "team" (
@@ -206,9 +206,9 @@ ALTER TABLE "league" ADD CONSTRAINT "league_season_season_id_fk" FOREIGN KEY ("s
 ALTER TABLE "member" ADD CONSTRAINT "member_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "member" ADD CONSTRAINT "member_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "resetToken" ADD CONSTRAINT "resetToken_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "superbowlBet" ADD CONSTRAINT "superbowlBet_team_team_id_fk" FOREIGN KEY ("team") REFERENCES "public"."team"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "superbowlBet" ADD CONSTRAINT "superbowlBet_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "superbowlBet" ADD CONSTRAINT "superbowlBet_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "seasonWinnerBet" ADD CONSTRAINT "seasonWinnerBet_team_team_id_fk" FOREIGN KEY ("team") REFERENCES "public"."team"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "seasonWinnerBet" ADD CONSTRAINT "seasonWinnerBet_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "seasonWinnerBet" ADD CONSTRAINT "seasonWinnerBet_league_league_id_fk" FOREIGN KEY ("league") REFERENCES "public"."league"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "team" ADD CONSTRAINT "team_season_season_id_fk" FOREIGN KEY ("season") REFERENCES "public"."season"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "team" ADD CONSTRAINT "team_division_division_id_fk" FOREIGN KEY ("division") REFERENCES "public"."division"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "verifyToken" ADD CONSTRAINT "verifyToken_user_user_id_fk" FOREIGN KEY ("user") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

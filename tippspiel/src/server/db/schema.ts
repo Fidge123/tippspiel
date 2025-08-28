@@ -98,8 +98,8 @@ export const divisionBet = pgTable(
   (t) => [unique().on(t.division, t.user, t.league)],
 );
 
-export const superbowlBet = pgTable(
-  "superbowlBet",
+export const seasonWinnerBet = pgTable(
+  "seasonWinnerBet",
   {
     id: uuid().defaultRandom().primaryKey().notNull(),
     team: integer()

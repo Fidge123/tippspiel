@@ -1,5 +1,5 @@
 {
-  "id": "4b0e2e8a-6534-4f86-bbd3-5f02c34831ab",
+  "id": "2594f4b8-01f2-4e57-9c47-d9473eb33699",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -928,8 +928,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.superbowlBet": {
-      "name": "superbowlBet",
+    "public.seasonWinnerBet": {
+      "name": "seasonWinnerBet",
       "schema": "",
       "columns": {
         "id": {
@@ -974,27 +974,27 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "superbowlBet_team_team_id_fk": {
-          "name": "superbowlBet_team_team_id_fk",
-          "tableFrom": "superbowlBet",
+        "seasonWinnerBet_team_team_id_fk": {
+          "name": "seasonWinnerBet_team_team_id_fk",
+          "tableFrom": "seasonWinnerBet",
           "tableTo": "team",
           "columnsFrom": ["team"],
           "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "superbowlBet_user_user_id_fk": {
-          "name": "superbowlBet_user_user_id_fk",
-          "tableFrom": "superbowlBet",
+        "seasonWinnerBet_user_user_id_fk": {
+          "name": "seasonWinnerBet_user_user_id_fk",
+          "tableFrom": "seasonWinnerBet",
           "tableTo": "user",
           "columnsFrom": ["user"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "superbowlBet_league_league_id_fk": {
-          "name": "superbowlBet_league_league_id_fk",
-          "tableFrom": "superbowlBet",
+        "seasonWinnerBet_league_league_id_fk": {
+          "name": "seasonWinnerBet_league_league_id_fk",
+          "tableFrom": "seasonWinnerBet",
           "tableTo": "league",
           "columnsFrom": ["league"],
           "columnsTo": ["id"],
@@ -1004,8 +1004,8 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "superbowlBet_user_league_unique": {
-          "name": "superbowlBet_user_league_unique",
+        "seasonWinnerBet_user_league_unique": {
+          "name": "seasonWinnerBet_user_league_unique",
           "nullsNotDistinct": false,
           "columns": ["user", "league"]
         }
