@@ -8,10 +8,10 @@ import { ListBucketsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { Injectable } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import type { Scoreboard, Team } from "../database/api.type";
-import type { ScheduleDataService } from "../database/schedule.service";
 import { getTransporter } from "../email";
 import { s3Client } from "../s3";
 import { loadHTML, loadTXT } from "../templates/loadTemplate";
+import { ScheduleDataService } from '../database/schedule.service';
 
 const gzip = promisify(gzipCompress);
 
