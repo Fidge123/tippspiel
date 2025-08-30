@@ -72,14 +72,13 @@ export default function DeadlineTimer({ deadline }: DeadlineTimerProps) {
 
   const formatDeadline = () => {
     const deadlineDate = new Date(deadline);
-    return deadlineDate.toLocaleString("de-DE", {
-      weekday: "long",
-      year: "numeric",
+    return `${deadlineDate.toLocaleString("de-DE", {
       month: "2-digit",
       day: "2-digit",
+    })} um ${deadlineDate.toLocaleString("de-DE", {
       hour: "2-digit",
       minute: "2-digit",
-    });
+    })}`;
   };
 
   return (

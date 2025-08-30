@@ -6,7 +6,7 @@ import {
   leagueResponseSchema,
   standingsResponseSchema,
   teamResponseSchema,
-} from "./sync.schema";
+} from "./sync/schema";
 
 function loadExampleJson(filename: string) {
   const filePath = join(process.cwd(), "examples", filename);

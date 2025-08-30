@@ -22,14 +22,16 @@ export default async function Home() {
 
   return (
     <main className="grid flex-grow place-content-center gap-4 p-8">
-      <h1 className="text-xl">Willkommen zu nfl-tippspiel.de</h1>
+      <h1 className="text-xl">Willkommen auf nfl-tippspiel.de</h1>
       <p>
         Diese Website ist ein private Website und nicht für die öffentliche
         Nutzung gedacht.
       </p>
       <p>
-        Es gibt keine Verbindung zwischen nfl-tippspiel.de und der National
-        Football League.
+        Diese Website wird von der National Football League weder gesponsert
+        noch unterstützt. Diese Website besitzt keine Namen oder Logos, die
+        eingetragene Marken der National Football League sind, noch erhebt sie
+        Anspruch darauf.
       </p>
       <Link href="/impressum" className="text-blue-500 underline">
         Impressum

@@ -134,7 +134,6 @@ export const divisionBetRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      // Validate membership
       const membership = await ctx.db.query.member.findFirst({
         where: and(eq(member.user, userId), eq(member.league, input.leagueId)),
         columns: { id: true },
@@ -146,7 +145,6 @@ export const divisionBetRouter = createTRPCRouter({
         });
       }
 
-      // Get league season
       const lg = await ctx.db.query.league.findFirst({
         where: eq(league.id, input.leagueId),
         columns: { season: true },
@@ -158,7 +156,6 @@ export const divisionBetRouter = createTRPCRouter({
         });
       }
 
-      // Validate all teams are in the correct division and season
       const teamIds = [input.first, input.second, input.third, input.fourth];
       const teams = await ctx.db.query.team.findMany({
         where: and(eq(team.season, lg.season), lt(team.id, 3300)),
@@ -167,7 +164,6 @@ export const divisionBetRouter = createTRPCRouter({
       const divisionTeams = teams.filter((t) => t.division === input.division);
       const divisionTeamIds = divisionTeams.map((t) => t.id);
 
-      // Check if all provided team IDs are valid for this division
       for (const teamId of teamIds) {
         if (!divisionTeamIds.includes(teamId)) {
           throw new TRPCError({
@@ -177,7 +173,6 @@ export const divisionBetRouter = createTRPCRouter({
         }
       }
 
-      // Check if all team IDs are unique
       const uniqueTeamIds = new Set(teamIds);
       if (uniqueTeamIds.size !== teamIds.length) {
         throw new TRPCError({
@@ -186,7 +181,6 @@ export const divisionBetRouter = createTRPCRouter({
         });
       }
 
-      // Check if all teams in the division are included
       if (divisionTeamIds.length !== 4 || teamIds.length !== 4) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -194,7 +188,6 @@ export const divisionBetRouter = createTRPCRouter({
         });
       }
 
-      // Check deadline
       const firstGame = await ctx.db.query.game.findFirst({
         where: (g, { eq }) => eq(g.week, `${lg.season}-regular-1`),
         orderBy: (g, { asc }) => [asc(g.date)],
@@ -259,44 +252,22 @@ export const divisionBetRouter = createTRPCRouter({
     }),
 });
 
+type Team = {
+  id: number;
+  code: string;
+  shortName: string;
+  name: string;
+  logo: string;
+  color1: string | null;
+  color2: string | null;
+};
+
 export type DivisionBetSelection = {
   division: string;
-  first: {
-    id: number;
-    code: string;
-    shortName: string;
-    name: string;
-    logo: string;
-    color1: string | null;
-    color2: string | null;
-  } | null;
-  second: {
-    id: number;
-    code: string;
-    shortName: string;
-    name: string;
-    logo: string;
-    color1: string | null;
-    color2: string | null;
-  } | null;
-  third: {
-    id: number;
-    code: string;
-    shortName: string;
-    name: string;
-    logo: string;
-    color1: string | null;
-    color2: string | null;
-  } | null;
-  fourth: {
-    id: number;
-    code: string;
-    shortName: string;
-    name: string;
-    logo: string;
-    color1: string | null;
-    color2: string | null;
-  } | null;
+  first: Team | null;
+  second: Team | null;
+  third: Team | null;
+  fourth: Team | null;
   createdAt: string;
   updatedAt: string;
 };

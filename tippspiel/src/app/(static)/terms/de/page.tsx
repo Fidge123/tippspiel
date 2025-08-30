@@ -170,8 +170,8 @@ export default function TermsPage() {
         <p>
           Diese Website enthält Material der National Football League, das
           urheberrechtlich geschützt ist. Dieses Material wird nur nominativ
-          verwendet. Diese Website wird weder gesponsert noch von der National
-          Football League unterstützt. Diese Website besitzt keine Namen oder
+          verwendet. Diese Website wird von der National Football League weder
+          gesponsert noch unterstützt. Diese Website besitzt keine Namen oder
           Logos, die eingetragene Marken der National Football League sind, noch
           erhebt sie Anspruch darauf.
         </p>

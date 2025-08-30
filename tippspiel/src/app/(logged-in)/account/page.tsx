@@ -19,14 +19,14 @@ export default async function Account() {
       label: "Spoilermodus",
       prop: "hideScore",
       description:
-        "Wenn der Spoilermodus aktiviert ist, werden die Ergebnisse erst angezeigt wenn du den Spoilermodus für die Woche deaktivierst.",
+        "Wenn der Spoilermodus aktiviert ist, werden die Ergebnisse erst angezeigt wenn du den Spoilerschutz für diese Woche deaktivierst.",
       enabled: user.settings.hideScore ?? false,
     },
     {
       label: "Erinnerung per E-Mail",
       prop: "reminders",
       description:
-        "Erinnerungs-E-Mails werden am Donnerstag und Sonntag um 18 Uhr verschickt.",
+        "Solltest du Tipps offen haben, bekommst eine Erinnerungs-E-Mail. Diese wird am Donnerstag und Sonntag um 18 Uhr verschickt.",
       enabled: user.settings?.reminders ?? false,
     },
   ];
