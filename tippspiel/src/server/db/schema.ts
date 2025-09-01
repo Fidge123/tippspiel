@@ -18,23 +18,25 @@ export const user = pgTable("user", {
   name: varchar({ length: 64 }).notNull(),
   settings: jsonb().notNull(),
   verified: boolean().default(false).notNull(),
-  consentedAt: timestamp({ mode: "string" }).notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  consentedAt: timestamp().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });
 
 export const season = pgTable("season", {
   id: integer().primaryKey().notNull(),
-  start: timestamp({ mode: "string" }).notNull(),
-  end: timestamp({ mode: "string" }).notNull(),
+  start: timestamp().notNull(),
+  end: timestamp().notNull(),
   current: boolean().default(false).notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });
 
@@ -55,10 +57,11 @@ export const bet = pgTable(
     league: uuid()
       .references(() => league.id, { onDelete: "cascade" })
       .notNull(),
-    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" })
+    createdAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp()
       .defaultNow()
-      .$onUpdateFn(() => sql`now()`)
+      // @ts-expect-error
+      .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
       .notNull(),
   },
   (t) => [unique().on(t.game, t.user, t.league)],
@@ -89,10 +92,11 @@ export const divisionBet = pgTable(
     fourth: integer()
       .references(() => team.id)
       .notNull(),
-    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" })
+    createdAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp()
       .defaultNow()
-      .$onUpdateFn(() => sql`now()`)
+      // @ts-expect-error
+      .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
       .notNull(),
   },
   (t) => [unique().on(t.division, t.user, t.league)],
@@ -111,10 +115,11 @@ export const seasonWinnerBet = pgTable(
     league: uuid()
       .references(() => league.id, { onDelete: "cascade" })
       .notNull(),
-    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" })
+    createdAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp()
       .defaultNow()
-      .$onUpdateFn(() => sql`now()`)
+      // @ts-expect-error
+      .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
       .notNull(),
   },
   (t) => [unique().on(t.user, t.league)],
@@ -136,10 +141,11 @@ export const betDoubler = pgTable(
     week: varchar({ length: 64 })
       .references(() => week.id)
       .notNull(),
-    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-    updatedAt: timestamp({ mode: "string" })
+    createdAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp()
       .defaultNow()
-      .$onUpdateFn(() => sql`now()`)
+      // @ts-expect-error
+      .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
       .notNull(),
   },
   (t) => [unique().on(t.user, t.league, t.week)],
@@ -151,10 +157,11 @@ export const league = pgTable("league", {
   season: integer()
     .references(() => season.id)
     .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });
 
@@ -192,7 +199,7 @@ export const resetToken = pgTable("resetToken", {
   user: uuid()
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
 });
 
 export const verifyToken = pgTable("verifyToken", {
@@ -201,16 +208,17 @@ export const verifyToken = pgTable("verifyToken", {
   user: uuid()
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
 });
 
 export const failedLoginAttempt = pgTable("failedLoginAttempt", {
   id: uuid().defaultRandom().primaryKey().notNull(),
   email: varchar({ length: 256 }).notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });
 
@@ -233,17 +241,18 @@ export const team = pgTable("team", {
   pointsFor: integer(),
   pointsAgainst: integer(),
   streak: varchar({ length: 8 }),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });
 
 export const division = pgTable("division", {
   id: varchar({ length: 16 }).primaryKey().notNull(),
   conference: varchar({ length: 32 }).notNull(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
 });
 
 export const bye = pgTable(
@@ -256,7 +265,7 @@ export const bye = pgTable(
     week: varchar({ length: 64 })
       .references(() => week.id)
       .notNull(),
-    createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
   },
   (t) => [unique().on(t.team, t.week)],
 );
@@ -268,18 +277,19 @@ export const week = pgTable("week", {
     .notNull(),
   stage: varchar({ length: 32 }).notNull(),
   week: varchar({ length: 32 }).notNull(),
-  start: timestamp({ mode: "string" }),
-  end: timestamp({ mode: "string" }),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  start: timestamp(),
+  end: timestamp(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });
 
 export const game = pgTable("game", {
   id: integer().primaryKey().notNull(),
-  date: timestamp({ mode: "string" }).notNull(),
+  date: timestamp().notNull(),
   awayTeam: integer().references(() => team.id),
   homeTeam: integer().references(() => team.id),
   week: varchar({ length: 64 })
@@ -298,9 +308,10 @@ export const game = pgTable("game", {
   homeScoreQ3: integer(),
   homeScoreQ4: integer(),
   homeScoreOT: integer(),
-  createdAt: timestamp({ mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp({ mode: "string" })
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp()
     .defaultNow()
-    .$onUpdateFn(() => sql`now()`)
+    // @ts-expect-error
+    .$onUpdateFn(() => ({ toISOString: () => sql`now()` }))
     .notNull(),
 });

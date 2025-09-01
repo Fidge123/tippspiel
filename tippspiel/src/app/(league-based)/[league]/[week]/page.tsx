@@ -8,17 +8,16 @@ import MatchupLoading from "./matchup-loading";
 
 export const revalidate = 3_600; // 1 hour
 
-function groupGamesByStartTime(games: Array<{ id: number; date: string }>) {
-  const grouped = new Map<string, Array<{ id: number; date: string }>>();
+function groupGamesByStartTime(games: Array<{ id: number; date: Date }>) {
+  const grouped = new Map<string, Array<{ id: number; date: Date }>>();
 
   for (const game of games) {
-    const gameDate = new Date(game.date);
-    const dateKey = gameDate.toLocaleDateString("de-DE", {
+    const dateKey = game.date.toLocaleDateString("de-DE", {
       weekday: "short",
       month: "2-digit",
       day: "2-digit",
     });
-    const timeKey = gameDate.toLocaleTimeString("de-DE", {
+    const timeKey = game.date.toLocaleTimeString("de-DE", {
       hour: "2-digit",
       minute: "2-digit",
     });

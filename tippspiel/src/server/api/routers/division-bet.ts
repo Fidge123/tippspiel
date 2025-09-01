@@ -36,50 +36,10 @@ export const divisionBetRouter = createTRPCRouter({
 
       return bets.map((bet) => ({
         division: bet.division,
-        first: bet.team_first
-          ? {
-              id: bet.team_first.id,
-              code: bet.team_first.code,
-              shortName: bet.team_first.shortName,
-              name: bet.team_first.name,
-              logo: bet.team_first.logo,
-              color1: bet.team_first.color1,
-              color2: bet.team_first.color2,
-            }
-          : null,
-        second: bet.team_second
-          ? {
-              id: bet.team_second.id,
-              code: bet.team_second.code,
-              shortName: bet.team_second.shortName,
-              name: bet.team_second.name,
-              logo: bet.team_second.logo,
-              color1: bet.team_second.color1,
-              color2: bet.team_second.color2,
-            }
-          : null,
-        third: bet.team_third
-          ? {
-              id: bet.team_third.id,
-              code: bet.team_third.code,
-              shortName: bet.team_third.shortName,
-              name: bet.team_third.name,
-              logo: bet.team_third.logo,
-              color1: bet.team_third.color1,
-              color2: bet.team_third.color2,
-            }
-          : null,
-        fourth: bet.team_fourth
-          ? {
-              id: bet.team_fourth.id,
-              code: bet.team_fourth.code,
-              shortName: bet.team_fourth.shortName,
-              name: bet.team_fourth.name,
-              logo: bet.team_fourth.logo,
-              color1: bet.team_fourth.color1,
-              color2: bet.team_fourth.color2,
-            }
-          : null,
+        first: bet.team_first ?? null,
+        second: bet.team_second ?? null,
+        third: bet.team_third ?? null,
+        fourth: bet.team_fourth ?? null,
         createdAt: bet.createdAt,
         updatedAt: bet.updatedAt,
       }));
@@ -268,6 +228,6 @@ export type DivisionBetSelection = {
   second: Team | null;
   third: Team | null;
   fourth: Team | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 };

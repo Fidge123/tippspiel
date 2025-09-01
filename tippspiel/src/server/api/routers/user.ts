@@ -60,5 +60,5 @@ interface User {
     defaultLeague?: string;
   };
   verified: boolean;
-  createdAt: string;
+  createdAt: Date;
 }

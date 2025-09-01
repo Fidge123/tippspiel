@@ -1,7 +1,18 @@
+import { redirect } from "next/navigation";
+import { api } from "~/trpc/server";
+
 export default async function Divisions() {
-  return (
-    <main className="grid flex-grow place-content-center gap-4 p-8">
-      <h1 className="text-xl">Divisions</h1>
-    </main>
-  );
+  const leagues = await api.league.getLeaguesForDropdown();
+  const defaultLeague = await api.league.getDefaultLeague();
+
+  if (!leagues || leagues.length === 0) {
+    return (
+      <main>
+        Du bist aktuell in keiner Liga. Erstelle eine Liga oder lasse dich zu
+        einer bestehenden Liga einladen.
+      </main>
+    );
+  }
+
+  redirect(`/${defaultLeague?.id ?? leagues[0]?.id}/divisions`);
 }

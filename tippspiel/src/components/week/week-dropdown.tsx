@@ -5,11 +5,9 @@ import { api } from "~/trpc/server";
 
 interface Week {
   id: string;
-  createdAt: string;
-  updatedAt: string;
   season: number;
-  start: string | null;
-  end: string | null;
+  start: Date | null;
+  end: Date | null;
   week: string;
   stage: string;
 }

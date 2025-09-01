@@ -19,7 +19,7 @@ export default function DeadlineTimer({ deadline }: DeadlineTimerProps) {
     if (!isClient) return;
 
     const calculateTimeLeft = () => {
-      const deadlineTime = new Date(deadline).getTime();
+      const deadlineTime = deadline.getTime();
       const difference = deadlineTime - Date.now();
 
       if (difference > 0) {
@@ -109,5 +109,5 @@ export default function DeadlineTimer({ deadline }: DeadlineTimerProps) {
 }
 
 interface DeadlineTimerProps {
-  deadline: string;
+  deadline: Date;
 }

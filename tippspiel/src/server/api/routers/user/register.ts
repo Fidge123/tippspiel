@@ -38,7 +38,7 @@ export const register = publicProcedure
         name: input.name,
         settings: {},
         verified: false,
-        consentedAt: input.consent.toISOString(),
+        consentedAt: input.consent,
       })
       .returning({
         id: user.id,

@@ -27,7 +27,7 @@ async function checkForExcessiveFailedLogins(email: string): Promise<void> {
       .where(
         and(
           eq(failedLoginAttempt.email, email),
-          gte(failedLoginAttempt.createdAt, oneHourAgo.toISOString()),
+          gte(failedLoginAttempt.createdAt, oneHourAgo),
         ),
       );
 
@@ -45,9 +45,7 @@ export async function cleanupOldFailedLogins(): Promise<void> {
 
     await db
       .delete(failedLoginAttempt)
-      .where(
-        lt(failedLoginAttempt.createdAt, twentyFourHoursAgo.toISOString()),
-      );
+      .where(lt(failedLoginAttempt.createdAt, twentyFourHoursAgo));
 
     console.log("Cleaned up old failed login attempts");
   } catch (error) {

@@ -23,15 +23,14 @@ export async function syncGames(db: typeof Database, input: number) {
       );
       const startTime = gameData.game.date.timestamp * 1000;
       const fourHours = 4 * 60 * 60 * 1000;
-      const gameDateTime = new Date(startTime);
 
       const d = {
         season: input,
         stage: gameData.game.stage,
         week: gameData.game.week ? gameData.game.week : "Unknown",
       };
-      const start = gameDateTime.toISOString();
-      const end = new Date(startTime + fourHours).toISOString();
+      const start = new Date(startTime);
+      const end = new Date(startTime + fourHours);
       await db
         .insert(week)
         .values({ id: weekId, start, end, ...d })

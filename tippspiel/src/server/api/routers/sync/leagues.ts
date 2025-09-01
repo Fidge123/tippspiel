@@ -12,22 +12,15 @@ export async function syncLeagues(db: typeof Database, input: number) {
     for (const leagueData of parsed.response) {
       for (const seasonData of leagueData.seasons) {
         if (seasonData.year === input) {
+          const data = {
+            start: new Date(seasonData.start),
+            end: new Date(seasonData.end),
+            current: seasonData.current,
+          };
           await db
             .insert(season)
-            .values({
-              id: seasonData.year,
-              start: seasonData.start,
-              end: seasonData.end,
-              current: seasonData.current,
-            })
-            .onConflictDoUpdate({
-              target: season.id,
-              set: {
-                start: seasonData.start,
-                end: seasonData.end,
-                current: seasonData.current,
-              },
-            })
+            .values({ id: seasonData.year, ...data })
+            .onConflictDoUpdate({ target: season.id, set: data })
             .execute();
         }
       }

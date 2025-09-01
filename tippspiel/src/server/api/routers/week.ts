@@ -99,7 +99,7 @@ export const weekRouter = createTRPCRouter({
   getCurrentWeek: protectedProcedure
     .input(z.number().int().optional().default(2025))
     .query(async ({ ctx, input }) => {
-      const now = new Date().toISOString();
+      const now = new Date();
       return await ctx.db.query.week.findFirst({
         where: (w, { and, eq, ne, gte }) =>
           and(

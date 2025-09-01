@@ -18,8 +18,8 @@ test("getByesByWeek returns teams with bye week", async () => {
     .insert(season)
     .values({
       id: 9999,
-      start: "2025-01-01T00:00:00.000Z",
-      end: "2025-12-31T23:59:59.999Z",
+      start: new Date("2025-01-01T00:00:00.000Z"),
+      end: new Date("2025-12-31T23:59:59.999Z"),
       current: false,
     })
     .returning();
@@ -31,8 +31,8 @@ test("getByesByWeek returns teams with bye week", async () => {
       season: 9999,
       stage: "Regular Season",
       week: "Week 1",
-      start: "2025-01-01T00:00:00.000Z",
-      end: "2025-01-07T23:59:59.999Z",
+      start: new Date("2025-01-01T00:00:00.000Z"),
+      end: new Date("2025-01-07T23:59:59.999Z"),
     })
     .returning();
 
@@ -96,8 +96,8 @@ test("getByesByWeek returns empty array for week with no byes", async () => {
     .insert(season)
     .values({
       id: 9998,
-      start: "2025-01-01T00:00:00.000Z",
-      end: "2025-12-31T23:59:59.999Z",
+      start: new Date("2025-01-01T00:00:00.000Z"),
+      end: new Date("2025-12-31T23:59:59.999Z"),
       current: false,
     })
     .returning();
@@ -109,8 +109,8 @@ test("getByesByWeek returns empty array for week with no byes", async () => {
       season: 9998,
       stage: "Regular Season",
       week: "Week 2",
-      start: "2025-01-08T00:00:00.000Z",
-      end: "2025-01-14T23:59:59.999Z",
+      start: new Date("2025-01-08T00:00:00.000Z"),
+      end: new Date("2025-01-14T23:59:59.999Z"),
     })
     .returning();
 

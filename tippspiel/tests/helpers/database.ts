@@ -24,7 +24,7 @@ export async function createUser({
         password: await hashPassword(password, "randomSalt123"),
         salt: "randomSalt123",
         settings: {},
-        consentedAt: new Date().toISOString(),
+        consentedAt: new Date(),
       })
       .onConflictDoNothing()
       .execute();

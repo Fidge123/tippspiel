@@ -29,26 +29,7 @@ export const seasonWinnerRouter = createTRPCRouter({
         with: { team: true },
       });
 
-      if (!bet) {
-        return null;
-      }
-
-      return {
-        team: bet.team
-          ? {
-              id: bet.team.id,
-              code: bet.team.code,
-              shortName: bet.team.shortName,
-              name: bet.team.name,
-              logo: bet.team.logo,
-              color1: bet.team.color1,
-              color2: bet.team.color2,
-              season: bet.team.season,
-            }
-          : null,
-        createdAt: bet.createdAt,
-        updatedAt: bet.updatedAt,
-      } as SesaonWinnerSelection | null;
+      return bet ?? null;
     }),
 
   getDeadline: protectedProcedure
