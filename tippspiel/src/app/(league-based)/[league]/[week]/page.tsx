@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import WeekNavigation from "~/components/week/week-navigation";
 import { db } from "~/server/db";
 import { api } from "~/trpc/server";
+import Matchup from "./matchup";
 import MatchupLoading from "./matchup-loading";
 
 export const revalidate = 3_600; // 1 hour
@@ -68,6 +70,8 @@ export default async function WeekPage({ params }: Props) {
 
   const groupedGames = groupGamesByStartTime(games);
 
+  // TODO check zeiten der spiele => 2 Stunden zu früh
+  // TODO check ob slider sinnvoll wäre oder mehrere buttons
   return (
     <main className="w-fit p-4">
       <header className="mb-4">
@@ -76,23 +80,26 @@ export default async function WeekPage({ params }: Props) {
         </WeekNavigation>
       </header>
 
-      <div className="grid w-fit grid-cols-[1fr_64px_1fr] items-center gap-2">
-        {groupedGames.map(([timeSlot, gameGroup]) => (
-          <section key={timeSlot} className="contents">
-            <h2
-              key={`${timeSlot}-header`}
-              className="col-span-3 font-bold text-gray-700"
-            >
-              {timeSlot}
-            </h2>
+      {groupedGames.map(([timeSlot, gameGroup]) => (
+        <section key={timeSlot} className="w-sm sm:w-full">
+          <h2
+            key={`${timeSlot}-header`}
+            className="col-span-3 py-1 text-gray-700 text-sm"
+          >
+            {timeSlot}
+          </h2>
+          <div className="space-y-2">
             {gameGroup.map((game) => (
-              <div key={game.id} className="contents">
-                <MatchupLoading id={game.id} />
-              </div>
+              <Suspense
+                key={game.id}
+                fallback={<MatchupLoading id={game.id} />}
+              >
+                <Matchup game={game.id} key={game.id} league={league} />
+              </Suspense>
             ))}
-          </section>
-        ))}
-      </div>
+          </div>
+        </section>
+      ))}
 
       {byes.length > 0 && (
         <section className="mt-8">
