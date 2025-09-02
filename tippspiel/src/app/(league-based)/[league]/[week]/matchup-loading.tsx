@@ -1,4 +1,4 @@
-import { Button } from "@headlessui/react";
+import { BetButtonLoading } from "~/components/week/bet-button";
 import { Teams } from "~/components/week/teams";
 import { api } from "~/trpc/server";
 
@@ -18,32 +18,28 @@ export default async function MatchupLoading({ id }: Props) {
   const awayTeam = game?.awayTeam ?? dummy;
   const homeTeam = game?.homeTeam ?? dummy;
 
-  const gameStatus = game?.status;
   // const isGameFinal = gameStatus === "Final" || gameStatus === "Final/OT";
 
   return (
-    <div className="grid grid-cols-[28px_1fr_64px_1fr_28px] items-center gap-x-2 rounded-lg bg-gray-100 p-1">
+    <div className="grid grid-cols-[28px_1fr_64px_1fr_28px] items-center gap-x-2 rounded-lg bg-gray-100 p-1 sm:grid-cols-[40px_1fr_64px_1fr_40px]">
       <Teams away={awayTeam} home={homeTeam} scores={game?.scores} />
       <div className="col-span-2 flex justify-between sm:col-span-1">
         {[5, 4, 3, 2, 1].map((num) => (
-          <form key={num}>
-            <Button className="rounded px-2">{num}</Button>
-          </form>
+          <BetButtonLoading key={num} amount={num} team={awayTeam} />
         ))}
       </div>
 
-      <form className="mx-auto">
-        {gameStatus && (
-          <span className="text-gray-600 text-xs">{gameStatus}</span>
-        )}
-        {/*<Button>Double</Button>*/}
-      </form>
+      <span className="mx-auto text-gray-600 text-xs">
+        {game?.date.toLocaleString("de-De", {
+          weekday: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </span>
 
       <div className="col-span-2 flex justify-between sm:col-span-1">
         {[1, 2, 3, 4, 5].map((num) => (
-          <form key={num}>
-            <Button className="rounded px-2">{num}</Button>
-          </form>
+          <BetButtonLoading key={num} amount={num} team={homeTeam}/>
         ))}
       </div>
     </div>

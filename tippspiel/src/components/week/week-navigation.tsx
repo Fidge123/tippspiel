@@ -20,6 +20,7 @@ export default async function WeekNavigation({
     <div className="flex items-center gap-4">
       {navigation.previous ? (
         <Link
+          title="Previous Week"
           href={`/${league}/${navigation.previous.id}`}
           className="inline-flex items-center gap-2 rounded-md bg-gray-100 px-3 py-2 text-gray-900 text-sm hover:bg-gray-200 focus:outline-2 focus:outline-blue-500"
         >
@@ -35,6 +36,7 @@ export default async function WeekNavigation({
       <WeekDropdown weeks={navigation.allWeeks} league={league} />
       {navigation.next ? (
         <Link
+          title="Next Week"
           href={`/${league}/${navigation.next.id}`}
           className="inline-flex items-center gap-2 rounded-md bg-gray-100 px-3 py-2 text-gray-900 text-sm hover:bg-gray-200 focus:outline-2 focus:outline-blue-500"
         >

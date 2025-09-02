@@ -73,20 +73,23 @@ export default async function WeekPage({ params }: Props) {
   // TODO check ob slider sinnvoll wäre oder mehrere buttons
   return (
     <main className="w-fit p-4">
-      <header className="mb-4">
+      <header className="mb-2">
         <WeekNavigation weekId={weekId} league={league}>
           <h1 className="font-bold text-2xl">{week.week}</h1>
         </WeekNavigation>
       </header>
 
       {groupedGames.map(([timeSlot, gameGroup]) => (
-        <section key={timeSlot} className="w-sm sm:w-full">
-          <h2
+        <section
+          key={timeSlot}
+          className="w-sm border-gray-300 not-last:border-b-2 py-2 sm:w-full"
+        >
+          {/*<h2
             key={`${timeSlot}-header`}
-            className="col-span-3 py-1 text-gray-700 text-sm"
+            className="col-span-3 py-1 text-gray-700 text-xs"
           >
             {timeSlot}
-          </h2>
+          </h2>*/}
           <div className="space-y-2">
             {gameGroup.map((game) => (
               <Suspense
@@ -101,25 +104,21 @@ export default async function WeekPage({ params }: Props) {
       ))}
 
       {byes.length > 0 && (
-        <section className="mt-8">
-          <h2 className="mb-4 font-bold text-gray-700 text-xl">Bye Week</h2>
-          <div className="flex flex-wrap gap-2">
-            {byes.map((bye) => (
-              <div
-                key={bye.team.id}
-                className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2"
-              >
-                <img
-                  src={bye.team.logo}
-                  alt={`${bye.team.name} logo`}
-                  className="h-6 w-6"
-                />
-                <span className="font-medium text-sm">
-                  {bye.team.shortName}
-                </span>
-              </div>
-            ))}
-          </div>
+        <section className="flex flex-wrap items-center gap-2 px-1 py-2">
+          <h2 className="font-bold text-gray-700">Byes</h2>
+          {byes.map((bye) => (
+            <div
+              key={bye.team.id}
+              className="flex items-center gap-2 rounded-lg bg-gray-100 p-2"
+            >
+              <img
+                src={bye.team.logo}
+                alt={`${bye.team.name} logo`}
+                className="size-4"
+              />
+              <span className="font-medium text-sm">{bye.team.shortName}</span>
+            </div>
+          ))}
         </section>
       )}
     </main>

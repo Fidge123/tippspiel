@@ -11,18 +11,18 @@ export function Teams({ away, home, scores }: Props) {
           alt={away.name}
           width={28}
           height={28}
-          className="size-7 sm:row-span-2"
+          className="mx-auto mb-1 size-6 sm:row-span-2 sm:my-0 sm:mr-1 sm:ml-2 sm:size-7"
         />
       ) : (
-        <QuestionMarkCircleIcon className="size-7 sm:row-span-2" />
+        <QuestionMarkCircleIcon className="mx-auto mb-1 size-6 sm:row-span-2 sm:my-0 sm:mr-1 sm:ml-2 sm:size-7" />
       )}
 
-      <div className="flex px-2 text-sm">
+      <div className="flex text-sm">
         <span className="hidden sm:block">{away.name}</span>
         <span className="block sm:hidden">{away.shortName}</span>
       </div>
       <Score score={scores} />
-      <div className="flex justify-end px-2 text-sm">
+      <div className="flex justify-end text-sm">
         <span className="hidden sm:block">{home.name}</span>
         <span className="block sm:hidden">{home.shortName}</span>
       </div>
@@ -32,10 +32,10 @@ export function Teams({ away, home, scores }: Props) {
           alt={home.name}
           width={28}
           height={28}
-          className="size-7 sm:row-span-2"
+          className="mx-auto mb-1 size-6 sm:row-span-2 sm:my-0 sm:mr-2 sm:ml-1 sm:size-7"
         />
       ) : (
-        <QuestionMarkCircleIcon className="size-7 sm:row-span-2" />
+        <QuestionMarkCircleIcon className="mx-auto mb-1 size-6 sm:row-span-2 sm:my-0 sm:mr-2 sm:ml-1 sm:size-7" />
       )}
     </>
   );

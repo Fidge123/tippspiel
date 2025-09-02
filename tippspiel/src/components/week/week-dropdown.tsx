@@ -24,7 +24,10 @@ export default async function WeekDropdown({
   const currentWeek = await api.week.getCurrentWeek();
   return (
     <Menu>
-      <MenuButton className="rounded-md p-1 text-gray-600 transition-colors hover:bg-gray-100/50 hover:text-gray-900 focus:outline-2 focus:outline-blue-500 active:bg-gray-200/50">
+      <MenuButton
+        title="Select Week from Dropdown"
+        className="rounded-md p-1 text-gray-600 transition-colors hover:bg-gray-100/50 hover:text-gray-900 focus:outline-2 focus:outline-blue-500 active:bg-gray-200/50"
+      >
         <ChevronDownIcon className="size-5" />
       </MenuButton>
       <MenuItems
