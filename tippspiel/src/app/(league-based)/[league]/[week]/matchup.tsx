@@ -26,7 +26,12 @@ export default async function Matchup({ game: gameId, league }: Props) {
       <Teams away={awayTeam} home={homeTeam} scores={game?.scores} />
       <div className="col-span-2 flex justify-between sm:col-span-1">
         {[5, 4, 3, 2, 1].map((num) => (
-          <BetButton key={num} amount={num} team={awayTeam} selected={selected === num} />
+          <BetButton
+            key={num}
+            amount={num}
+            team={awayTeam}
+            selected={selected === num}
+          />
         ))}
       </div>
 
@@ -40,7 +45,12 @@ export default async function Matchup({ game: gameId, league }: Props) {
 
       <div className="col-span-2 flex justify-between sm:col-span-1">
         {[1, 2, 3, 4, 5].map((num) => (
-          <BetButton key={num} amount={num} team={homeTeam} selected={selected === -num} />
+          <BetButton
+            key={num}
+            amount={num}
+            team={homeTeam}
+            selected={selected === -num}
+          />
         ))}
       </div>
     </div>

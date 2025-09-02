@@ -25,10 +25,21 @@ export const weekRouter = createTRPCRouter({
   getGamesByWeek: protectedProcedure
     .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.game.findMany({
+      const games = await ctx.db.query.game.findMany({
         where: (g, { eq }) => eq(g.week, input),
         orderBy: (g, { asc }) => [asc(g.date)],
       });
+      type Games = typeof games;
+      return games.reduce((groups, game) => {
+        const last = groups.at(-1);
+        if (last?.[0]?.date.getTime() === game.date.getTime()) {
+          last.push(game);
+          return groups;
+        } else {
+          groups.push([game]);
+          return groups;
+        }
+      }, [] as Games[]);
     }),
   getGameWithTeams: protectedProcedure
     .input(z.number().int())
@@ -46,10 +57,7 @@ export const weekRouter = createTRPCRouter({
       }
 
       return {
-        id: g.id,
-        date: g.date,
-        status: g.status,
-        week: g.week,
+        ...g,
         scores: {
           home: {
             total: g.homeScore,
@@ -68,32 +76,6 @@ export const weekRouter = createTRPCRouter({
             ot: g.awayScoreOT,
           },
         },
-        homeTeam: g.homeTeam
-          ? {
-              id: g.homeTeam.id,
-              code: g.homeTeam.code,
-              shortName: g.homeTeam.shortName,
-              name: g.homeTeam.name,
-              logo: g.homeTeam.logo,
-              color1: g.homeTeam.color1,
-              color2: g.homeTeam.color2,
-              season: g.homeTeam.season,
-            }
-          : null,
-        awayTeam: g.awayTeam
-          ? {
-              id: g.awayTeam.id,
-              code: g.awayTeam.code,
-              shortName: g.awayTeam.shortName,
-              name: g.awayTeam.name,
-              logo: g.awayTeam.logo,
-              color1: g.awayTeam.color1,
-              color2: g.awayTeam.color2,
-              season: g.awayTeam.season,
-            }
-          : null,
-        createdAt: g.createdAt,
-        updatedAt: g.updatedAt,
       };
     }),
   getCurrentWeek: protectedProcedure

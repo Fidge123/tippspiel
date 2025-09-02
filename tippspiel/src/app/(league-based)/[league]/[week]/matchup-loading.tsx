@@ -39,7 +39,7 @@ export default async function MatchupLoading({ id }: Props) {
 
       <div className="col-span-2 flex justify-between sm:col-span-1">
         {[1, 2, 3, 4, 5].map((num) => (
-          <BetButtonLoading key={num} amount={num} team={homeTeam}/>
+          <BetButtonLoading key={num} amount={num} team={homeTeam} />
         ))}
       </div>
     </div>

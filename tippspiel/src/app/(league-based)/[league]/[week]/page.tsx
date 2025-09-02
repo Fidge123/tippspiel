@@ -1,87 +1,36 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import WeekNavigation from "~/components/week/week-navigation";
-import { db } from "~/server/db";
 import { api } from "~/trpc/server";
 import Matchup from "./matchup";
 import MatchupLoading from "./matchup-loading";
 
-export const revalidate = 3_600; // 1 hour
-
-function groupGamesByStartTime(games: Array<{ id: number; date: Date }>) {
-  const grouped = new Map<string, Array<{ id: number; date: Date }>>();
-
-  for (const game of games) {
-    const dateKey = game.date.toLocaleDateString("de-DE", {
-      weekday: "short",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    const timeKey = game.date.toLocaleTimeString("de-DE", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const fullKey = `${dateKey} ${timeKey}`;
-
-    const existingGames = grouped.get(fullKey);
-    if (existingGames) {
-      existingGames.push(game);
-    } else {
-      grouped.set(fullKey, [game]);
-    }
-  }
-
-  return Array.from(grouped.entries()).sort(([keyA], [keyB]) => {
-    const gamesA = grouped.get(keyA);
-    const gamesB = grouped.get(keyB);
-    if (!gamesA?.[0] || !gamesB?.[0]) {
-      return 0;
-    }
-
-    const dateA = new Date(gamesA[0].date);
-    const dateB = new Date(gamesB[0].date);
-    return dateA.getTime() - dateB.getTime();
-  });
-}
-
-export async function generateStaticParams() {
-  const weeks = await db.query.week.findMany({
-    where: (w, { and, eq, ne }) =>
-      and(
-        ne(w.stage, "Pre Season"),
-        ne(w.week, "Pro Bowl"),
-        eq(w.season, 2025),
-      ),
-    orderBy: (w, { asc }) => [asc(w.start)],
-  });
-  return weeks.map((w) => ({ week: w.id }));
-}
-
 export default async function WeekPage({ params }: Props) {
   const { week: weekId, league } = await params;
   const week = await api.week.getWeek(weekId);
-  const games = await api.week.getGamesByWeek(weekId);
+  const groupedGames = await api.week.getGamesByWeek(weekId);
   const byes = await api.week.getByesByWeek(weekId);
 
   if (!week) {
     redirect(`/${league}`);
   }
 
-  const groupedGames = groupGamesByStartTime(games);
-
-  // TODO check zeiten der spiele => 2 Stunden zu früh
-  // TODO check ob slider sinnvoll wäre oder mehrere buttons
   return (
     <main className="w-fit p-4">
-      <header className="mb-2">
+      <header>
         <WeekNavigation weekId={weekId} league={league}>
-          <h1 className="font-bold text-2xl">{week.week}</h1>
+          <div>
+            <h1 className="font-bold text-2xl">{week.week}</h1>
+            <p className="text-gray-600 text-sm">
+              {`${week.start?.toLocaleDateString("de-DE", { day: "numeric", month: "numeric" })} - ${week.end?.toLocaleDateString("de-DE")}`}
+            </p>
+          </div>
         </WeekNavigation>
       </header>
 
-      {groupedGames.map(([timeSlot, gameGroup]) => (
+      {groupedGames.map((gameGroup) => (
         <section
-          key={timeSlot}
+          key={gameGroup[0]?.date.toISOString()}
           className="w-sm border-gray-300 not-last:border-b-2 py-2 sm:w-full"
         >
           {/*<h2
