@@ -21,7 +21,7 @@ export function BetButton({
       <Button
         type="submit"
         disabled={disabled}
-        className="cursor-pointer rounded px-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="size-9 cursor-pointer rounded disabled:cursor-not-allowed disabled:opacity-50"
         style={style(team, amount, selected)}
       >
         {amount}
@@ -35,7 +35,7 @@ export function BetButtonLoading({ amount, team }: LoadingProps) {
     <form className="rounded bg-white">
       <Button
         disabled
-        className="cursor-pointer rounded px-2"
+        className="size-9 cursor-pointer rounded"
         style={style(team, amount, false)}
       >
         {amount}

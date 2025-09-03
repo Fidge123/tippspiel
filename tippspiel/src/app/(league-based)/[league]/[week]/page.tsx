@@ -16,7 +16,7 @@ export default async function WeekPage({ params }: Props) {
   }
 
   return (
-    <main className="w-fit p-4">
+    <main className="mx-auto w-fit sm:mx-0 sm:p-4">
       <header>
         <WeekNavigation weekId={weekId} league={league}>
           <div>
@@ -31,7 +31,7 @@ export default async function WeekPage({ params }: Props) {
       {groupedGames.map((gameGroup) => (
         <section
           key={gameGroup[0]?.date.toISOString()}
-          className="w-sm border-gray-300 not-last:border-b-2 py-2 sm:w-full"
+          className="w-full border-gray-300 not-last:border-b-2 py-2"
         >
           <h2 className="hidden">{gameGroup[0]?.date.toISOString()}</h2>
           <div className="space-y-2">

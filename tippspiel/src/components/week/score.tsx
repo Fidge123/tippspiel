@@ -1,6 +1,6 @@
 export function Score({ score }: Props) {
   return score ? (
-    <div className="mx-auto flex gap-1 font-bold text-sm">
+    <div className="col-span-2 mx-auto flex gap-1 font-bold text-sm">
       <span>{score.away.total}</span>
       <span>@</span>
       <span>{score.home.total}</span>
