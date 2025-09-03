@@ -1,7 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { api } from "~/trpc/server";
 
 interface Week {
   id: string;
@@ -15,13 +14,14 @@ interface Week {
 interface WeekDropdownProps {
   weeks: Week[];
   league: string;
+  currentWeek?: string;
 }
 
-export default async function WeekDropdown({
+export default function WeekDropdown({
   weeks,
   league,
+  currentWeek,
 }: WeekDropdownProps) {
-  const currentWeek = await api.week.getCurrentWeek();
   return (
     <Menu>
       <MenuButton
@@ -40,7 +40,7 @@ export default async function WeekDropdown({
             <MenuItem key={week.id} as="li">
               <Link
                 href={`/${league}/${week.id}`}
-                className={`block px-4 py-2 text-sm transition-colors hover:font-bold ${week.id === currentWeek?.id ? "bg-blue-50/50 text-blue-600" : "text-gray-900"}`}
+                className={`block px-4 py-2 text-sm transition-colors hover:font-bold ${week.id === currentWeek ? "bg-blue-50/50 text-blue-600" : "text-gray-900"}`}
               >
                 {week.week}
               </Link>

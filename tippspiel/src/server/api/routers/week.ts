@@ -117,11 +117,8 @@ export const weekRouter = createTRPCRouter({
       const currentIndex = allWeeks.findIndex((w) => w.id === input);
 
       return {
-        previous: currentIndex > 0 ? allWeeks[currentIndex - 1] : null,
-        next:
-          currentIndex < allWeeks.length - 1
-            ? allWeeks[currentIndex + 1]
-            : null,
+        previous: allWeeks[currentIndex - 1],
+        next: allWeeks[currentIndex + 1],
         allWeeks,
       };
     }),
