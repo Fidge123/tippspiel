@@ -1,11 +1,27 @@
 import { Button } from "@headlessui/react";
 import type { CSSProperties } from "react";
+import { placeBetAction } from "~/components/week/bet-action";
 
-export function BetButton({ amount, team, selected }: Props) {
+export function BetButton({
+  amount,
+  team,
+  selected,
+  gameId,
+  leagueId,
+  week,
+  disabled,
+}: Props) {
   return (
-    <form className="rounded bg-white">
+    <form action={placeBetAction} className="rounded bg-white">
+      <input type="hidden" name="gameId" value={gameId} />
+      <input type="hidden" name="teamId" value={team.id} />
+      <input type="hidden" name="value" value={amount} />
+      <input type="hidden" name="leagueId" value={leagueId} />
+      <input type="hidden" name="week" value={week} />
       <Button
-        className="cursor-pointer rounded px-2"
+        type="submit"
+        disabled={disabled}
+        className="cursor-pointer rounded px-2 disabled:cursor-not-allowed disabled:opacity-50"
         style={style(team, amount, selected)}
       >
         {amount}
@@ -18,6 +34,7 @@ export function BetButtonLoading({ amount, team }: LoadingProps) {
   return (
     <form className="rounded bg-white">
       <Button
+        disabled
         className="cursor-pointer rounded px-2"
         style={style(team, amount, false)}
       >
@@ -43,6 +60,7 @@ function style(
 }
 
 interface Team {
+  id?: number;
   color1: string | null;
   color2: string | null;
 }
@@ -54,4 +72,8 @@ interface LoadingProps {
 
 interface Props extends LoadingProps {
   selected: boolean;
+  gameId: number;
+  leagueId: string;
+  week: string;
+  disabled: boolean;
 }

@@ -33,19 +33,19 @@ export default async function WeekPage({ params }: Props) {
           key={gameGroup[0]?.date.toISOString()}
           className="w-sm border-gray-300 not-last:border-b-2 py-2 sm:w-full"
         >
-          {/*<h2
-            key={`${timeSlot}-header`}
-            className="col-span-3 py-1 text-gray-700 text-xs"
-          >
-            {timeSlot}
-          </h2>*/}
+          <h2 className="hidden">{gameGroup[0]?.date.toISOString()}</h2>
           <div className="space-y-2">
             {gameGroup.map((game) => (
               <Suspense
                 key={game.id}
                 fallback={<MatchupLoading id={game.id} />}
               >
-                <Matchup game={game.id} key={game.id} league={league} />
+                <Matchup
+                  game={game.id}
+                  key={game.id}
+                  league={league}
+                  week={weekId}
+                />
               </Suspense>
             ))}
           </div>

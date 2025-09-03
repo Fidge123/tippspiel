@@ -1,4 +1,5 @@
 import { divisionBetRouter } from "~/server/api/routers/division-bet";
+import { gameBetRouter } from "~/server/api/routers/game-bet";
 import { leagueRouter } from "~/server/api/routers/league";
 import { seasonWinnerRouter } from "~/server/api/routers/season-winner";
 import { syncRouter } from "~/server/api/routers/sync";
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   teams: teamsRouter,
   seasonWinner: seasonWinnerRouter,
   divisionBet: divisionBetRouter,
+  gameBet: gameBetRouter,
 });
 
 // export type definition of API
