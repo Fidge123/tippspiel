@@ -40,6 +40,33 @@ jobs:
       - name: Build backend
         run: yarn run build
 
+  season-replay:
+    name: Season replay (2023)
+    needs: backend
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Restore fixture cache
+        uses: actions/cache@v6
+        with:
+          path: backend/test/.corpus-cache
+          key: corpus-2023-${{ hashFiles('backend/test/replay/season.ts') }}
+      - name: Replay the season
+        run: yarn run test
+        env:
+          # Object Read on the nfl-tippspiel bucket only.
+          R2_API: ${{ secrets.R2_API }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
   frontend:
     defaults:
       run:

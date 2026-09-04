@@ -34,3 +34,6 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .envrc
+
+# Season replay fixture cache
+/test/.corpus-cache

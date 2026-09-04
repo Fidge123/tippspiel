@@ -16,7 +16,10 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typeorm": "typeorm-ts-node-commonjs -d src/datasource.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:update": "vitest run -u"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1123.0",
@@ -45,6 +48,9 @@
     "@biomejs/biome": "^2.5.12",
     "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^10.1.1",
+    "@nestjs/testing": "^10.3.3",
+    "@swc/core": "^1.16.1",
+    "@testcontainers/postgresql": "^12.1.0",
     "@types/compression": "^1.7.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^4.17.3",
@@ -52,7 +58,14 @@
     "@types/passport": "^1.0.4",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.34",
+    "@types/pg-copy-streams": "^1.2.5",
+    "@types/supertest": "^7.2.1",
+    "pg-copy-streams": "^7.0.0",
+    "supertest": "^7.2.2",
     "ts-node": "10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "unplugin-swc": "^1.5.11",
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
   }
 }

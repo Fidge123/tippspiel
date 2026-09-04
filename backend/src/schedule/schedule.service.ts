@@ -5,7 +5,7 @@ import { stringify } from 'node:querystring';
 import { promisify } from 'node:util';
 import { gzip as gzipCompress } from 'node:zlib';
 import { ListBucketsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Scoreboard, Team } from '../database/api.type';
 import { getTransporter } from '../email';
@@ -43,12 +43,14 @@ async function notify(url: string) {
 }
 
 @Injectable()
-export class ScheduleService {
-  constructor(private readonly databaseService: ScheduleDataService) {
-    this.init();
-  }
+export class ScheduleService implements OnModuleInit {
+  constructor(private readonly databaseService: ScheduleDataService) {}
 
-  private async init(): Promise<void> {
+  // Importing on boot hits ESPN 20+ times before the app serves a request.
+  async onModuleInit(): Promise<void> {
+    if (env.IMPORT_ON_BOOT !== 'true') {
+      return;
+    }
     await this.importMasterData();
     await this.importSchedule();
   }
@@ -108,7 +110,13 @@ export class ScheduleService {
         key.seasontype === 2 ? 'regular season' : 'postseason'
       } week ${key.week} ...`,
     );
-    const response = await load(key);
+    let response: Scoreboard;
+    try {
+      response = await load(key);
+    } catch (error: unknown) {
+      console.error((error as Error)?.message ?? error);
+      return;
+    }
 
     await recordToFile(
       `scoreboard-${key.year}-${key.seasontype}-${key.week}`,
@@ -138,14 +146,14 @@ export class ScheduleService {
   @Cron('48 7 * Aug-Dec,Jan,Feb *')
   async importSchedule(): Promise<void> {
     for (let weekNumber = 1; weekNumber <= regularSeason.weeks; weekNumber++) {
-      this.importWeek({
+      await this.importWeek({
         year: regularSeason.year,
         seasontype: regularSeason.seasonType,
         week: weekNumber,
       });
     }
     for (const weekNumber of postSeason.weeks) {
-      this.importWeek({
+      await this.importWeek({
         year: postSeason.year,
         seasontype: postSeason.seasonType,
         week: weekNumber,
@@ -189,7 +197,9 @@ async function load({ year, seasontype, week }): Promise<Scoreboard> {
   if (!response.ok) {
     console.error('Failed to load scoreboard!');
     await notify(`${BASE_URL}scoreboard?${q}`);
-    return;
+    throw new Error(
+      `Failed to load scoreboard for ${year}-${seasontype}-${week}: ${response.status}`,
+    );
   }
   return await response.json();
 }
