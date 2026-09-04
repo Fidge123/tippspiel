@@ -1,10 +1,10 @@
-import { Fragment } from "react";
-import { useRecoilValue, selector } from "recoil";
-import { Game, IStats } from "../Schedule/types";
-import { widthState } from "../State/states";
+import { Fragment } from 'react';
+import { useRecoilValue, selector } from 'recoil';
+import type { Game, IStats } from '../Schedule/types';
+import { widthState } from '../State/states';
 
 const isCompactState = selector<boolean>({
-  key: "isCompact",
+  key: 'isCompact',
   get: ({ get }) => get(widthState) < 720,
 });
 
@@ -17,47 +17,47 @@ function Stats({ game, stats }: Props) {
   const homeWon = homeScore > awayScore;
   const awayWon = awayScore > homeScore;
 
-  const awayVotes = stats.filter((value) => value?.winner === "away");
-  const homeVotes = stats.filter((value) => value?.winner === "home");
+  const awayVotes = stats.filter((value) => value?.winner === 'away');
+  const homeVotes = stats.filter((value) => value?.winner === 'home');
 
   return (
     <div className="flex flex-row leading-tight text-gray-800 dark:text-gray-300 font-xs">
       <div className="w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 stat-grid-4">
         {awayVotes.length > 0 && (
           <span className="col-start-3 text-center">
-            {isCompact ? "E" : "Einsatz"}
+            {isCompact ? 'E' : 'Einsatz'}
           </span>
         )}
         {awayVotes.length > 0 && (
-          <span className="text-center">{isCompact ? "P" : "Punkte"}</span>
+          <span className="text-center">{isCompact ? 'P' : 'Punkte'}</span>
         )}
         {awayVotes.map((value, i) => (
           <Fragment key={`away${i}`}>
             <span>{value?.name}</span>
-            <span>{value?.doubler ? "🌟" : ""}</span>
+            <span>{value?.doubler ? '🌟' : ''}</span>
             <span className="text-center">{value?.bet}</span>
             <span className="text-center">{value?.points}</span>
           </Fragment>
         ))}
       </div>
       <div className="flex items-center justify-center w-16 mx-1 sm:w-20">
-        {awayWon && "< "}
+        {awayWon && '< '}
         {wonBy}
-        {homeWon && " >"}
+        {homeWon && ' >'}
       </div>
       <div className="w-28 sm:w-36 md:w-60 font-xs truncate grid auto-rows-min gap-x-0.5 stat-grid-4">
         {homeVotes.length > 0 && (
           <span className="col-start-3 text-center">
-            {isCompact ? "E" : "Einsatz"}
+            {isCompact ? 'E' : 'Einsatz'}
           </span>
         )}
         {homeVotes.length > 0 && (
-          <span className="text-center">{isCompact ? "P" : "Punkte"}</span>
+          <span className="text-center">{isCompact ? 'P' : 'Punkte'}</span>
         )}
         {homeVotes.map((value, i) => (
           <Fragment key={`home${i}`}>
             <span>{value?.name}</span>
-            <span>{value?.doubler ? "🌟" : ""}</span>
+            <span>{value?.doubler ? '🌟' : ''}</span>
             <span className="text-center">{value?.bet}</span>
             <span className="text-center">{value?.points}</span>
           </Fragment>

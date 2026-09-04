@@ -1,5 +1,5 @@
-import { randomBytes, scrypt as s } from 'crypto';
-import { promisify } from 'util';
+import { randomBytes, scrypt as s } from 'node:crypto';
+import { promisify } from 'node:util';
 
 import {
   Injectable,
@@ -50,7 +50,7 @@ export class UserDataService {
       where: { email, verified: true },
     });
     if (
-      !!user &&
+      user &&
       user.password === (await hash(password, Buffer.from(user.salt, 'hex')))
     ) {
       return { id: user.id, name: user.name, email: user.email };
@@ -90,7 +90,7 @@ export class UserDataService {
       const userEntity = await this.userRepo.save(user);
       await this.verifyRepo.save(token);
       return [userEntity.id, token.token];
-    } catch (error) {
+    } catch {
       throw new HttpException(
         'A user with that email already exists!',
         HttpStatus.CONFLICT,
@@ -279,10 +279,6 @@ export class UserDataService {
     if (users.length) {
       await this.userRepo.remove(users);
     }
-  }
-
-  async deleteUser(id: string): Promise<void> {
-    await this.userRepo.delete(id);
   }
 }
 

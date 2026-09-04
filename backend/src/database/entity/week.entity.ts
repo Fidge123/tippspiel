@@ -35,13 +35,22 @@ export class WeekEntity {
   @Column()
   label: string;
 
-  @OneToMany(() => GameEntity, (game) => game.week)
+  @OneToMany(
+    () => GameEntity,
+    (game) => game.week,
+  )
   games: GameEntity[];
 
-  @OneToMany(() => ByeEntity, (bye) => bye.week)
+  @OneToMany(
+    () => ByeEntity,
+    (bye) => bye.week,
+  )
   byes: ByeEntity[];
 
-  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.week)
+  @OneToMany(
+    () => BetDoublerEntity,
+    (doubler) => doubler.week,
+  )
   doubler: BetDoublerEntity[];
 
   @CreateDateColumn({ select: false })

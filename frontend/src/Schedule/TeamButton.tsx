@@ -1,7 +1,7 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilValue } from 'recoil';
 
-import { widthState } from "../State/states";
-import { Team } from "./types";
+import { widthState } from '../State/states';
+import type { Team } from './types';
 
 function TeamButton({ team, disabled, selected, setSelected }: Props) {
   const innerWidth = useRecoilValue(widthState);
@@ -21,10 +21,10 @@ function TeamButton({ team, disabled, selected, setSelected }: Props) {
           width="24"
           height="24"
           loading="lazy"
-          onError={(event: any) => (event.target.style.display = "none")}
+          onError={(event: any) => (event.target.style.display = 'none')}
         ></img>
       )}
-      <span className={selected ? "font-semibold text-gray-50" : ""}>
+      <span className={selected ? 'font-semibold text-gray-50' : ''}>
         {innerWidth > 720 && team?.name}
         {innerWidth < 720 && innerWidth > 448 && team?.shortName}
         {innerWidth < 448 && team?.abbreviation}
@@ -40,7 +40,7 @@ function styleByTeam(team: Team | undefined, selected: boolean) {
         backgroundColor: `#${team?.color1}aa`,
       }
     : {
-        borderColor: `#${team?.color1 || "000000"}ff`,
+        borderColor: `#${team?.color1 || '000000'}ff`,
       };
 }
 
@@ -48,7 +48,7 @@ interface Props {
   team?: Team;
   disabled: boolean;
   selected: boolean;
-  setSelected: Function;
+  setSelected: () => void;
 }
 
 export default TeamButton;

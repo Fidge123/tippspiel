@@ -57,31 +57,58 @@ export class TeamEntity {
   @Column({ nullable: true })
   color2?: string;
 
-  @ManyToOne(() => DivisionEntity, (division) => division.teams)
+  @ManyToOne(
+    () => DivisionEntity,
+    (division) => division.teams,
+  )
   division: DivisionEntity;
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.first)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.first,
+  )
   divisionBets: DivisionBetEntity[];
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.second)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.second,
+  )
   divisionBets2: DivisionBetEntity[];
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.third)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.third,
+  )
   divisionBets3: DivisionBetEntity[];
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.fourth)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.fourth,
+  )
   divisionBets4: DivisionBetEntity[];
 
-  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.team)
+  @OneToMany(
+    () => SuperbowlBetEntity,
+    (bet) => bet.team,
+  )
   superbowlBets: SuperbowlBetEntity[];
 
-  @OneToMany(() => GameEntity, (game) => game.homeTeam)
+  @OneToMany(
+    () => GameEntity,
+    (game) => game.homeTeam,
+  )
   homeGames: GameEntity[];
 
-  @OneToMany(() => GameEntity, (game) => game.awayTeam)
+  @OneToMany(
+    () => GameEntity,
+    (game) => game.awayTeam,
+  )
   awayGames: GameEntity[];
 
-  @OneToMany(() => ByeEntity, (bye) => bye.team)
+  @OneToMany(
+    () => ByeEntity,
+    (bye) => bye.team,
+  )
   byes: ByeEntity[];
 
   @CreateDateColumn({ select: false })

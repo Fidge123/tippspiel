@@ -1,12 +1,12 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilValue } from 'recoil';
 
-import { teamState } from "../State/states";
-import { IStats, Game } from "../Schedule/types";
+import { teamState } from '../State/states';
+import type { IStats, Game } from '../Schedule/types';
 
-import Scores from "./ScoresExample";
-import Stats from "./StatsExample";
-import MatchupInput from "./MatchInputExample";
-import TeamButton from "../Schedule/TeamButton";
+import Scores from './ScoresExample';
+import Stats from './StatsExample';
+import MatchupInput from './MatchInputExample';
+import TeamButton from '../Schedule/TeamButton';
 
 function MatchUpExample({
   game,
@@ -15,17 +15,17 @@ function MatchUpExample({
   setSelected,
   setPoints,
 }: Props) {
-  const home = useRecoilValue(teamState(`s:20~l:28~t:${game.homeTeam!.id}`));
-  const away = useRecoilValue(teamState(`s:20~l:28~t:${game.awayTeam!.id}`));
+  const home = useRecoilValue(teamState(`s:20~l:28~t:${game.homeTeam?.id}`));
+  const away = useRecoilValue(teamState(`s:20~l:28~t:${game.awayTeam?.id}`));
 
   return (
     <div className="py-1 w-fit">
       <div className="flex">
         <TeamButton
           team={away}
-          selected={bets[0].winner === "away"}
+          selected={bets[0].winner === 'away'}
           setSelected={() => {
-            setSelected("away");
+            setSelected('away');
           }}
           disabled={false}
         ></TeamButton>
@@ -37,9 +37,9 @@ function MatchUpExample({
         ></Scores>
         <TeamButton
           team={home}
-          selected={bets[0].winner === "home"}
+          selected={bets[0].winner === 'home'}
           setSelected={() => {
-            setSelected("home");
+            setSelected('home');
           }}
           disabled={false}
         ></TeamButton>
@@ -54,7 +54,7 @@ interface Props {
   game: Game;
   bets: IStats[];
   setDoubler: (d: boolean) => void;
-  setSelected: (d: "home" | "away") => void;
+  setSelected: (d: 'home' | 'away') => void;
   setPoints: (d: number) => void;
 }
 

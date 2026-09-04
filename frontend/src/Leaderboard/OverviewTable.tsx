@@ -1,5 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { leaderboardState } from "../State/states";
+import { useRecoilValue } from 'recoil';
+import { leaderboardState } from '../State/states';
 
 function OverviewTable() {
   const leaderboard = useRecoilValue(leaderboardState);
@@ -31,7 +31,7 @@ function OverviewTable() {
           <tr key={l.user.id}>
             <td>
               {i && lb[i - 1].points.all === lb[i].points.all
-                ? ""
+                ? ''
                 : `${i + 1}.`}
             </td>
             <td className="text-left">{l.user.name}</td>

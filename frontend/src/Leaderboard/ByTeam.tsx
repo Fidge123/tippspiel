@@ -1,10 +1,10 @@
-import { useRecoilValue } from "recoil";
-import { leaderboardState, teamsState, weeksState } from "../State/states";
+import { useRecoilValue } from 'recoil';
+import { leaderboardState, teamsState, weeksState } from '../State/states';
 
 function ByTeam() {
   const leaderboard = useRecoilValue(leaderboardState);
   const teams = [...useRecoilValue(teamsState)].sort((a, b) =>
-    a.shortName.localeCompare(b.shortName)
+    a.shortName.localeCompare(b.shortName),
   );
   const schedule = useRecoilValue(weeksState);
   const games = schedule.flatMap((w) => w.games);
@@ -18,10 +18,10 @@ function ByTeam() {
     doublerCount: number,
     symbol: string,
     skipOne: boolean = false,
-    prefix = ", "
+    prefix = ', ',
   ): string {
     if (doublerCount < 1) {
-      return "";
+      return '';
     }
     if (skipOne && doublerCount === 1) {
       return prefix + symbol;
@@ -30,15 +30,15 @@ function ByTeam() {
   }
 
   function createLine<
-    T extends { points: number; bet: any; doubler: boolean; bonus: boolean }
-  >(list: T[], className: string = "text-inherit") {
+    T extends { points: number; bet: any; doubler: boolean; bonus: boolean },
+  >(list: T[], className: string = 'text-inherit') {
     const doublerCount = list.reduce(
       (sum, bet) => (bet.doubler ? sum + 1 : sum),
-      0
+      0,
     );
     const bonusCount = list.reduce(
       (sum, bet) => (bet.bonus ? sum + 1 : sum),
-      0
+      0,
     );
     return (
       <div className={className}>
@@ -48,18 +48,18 @@ function ByTeam() {
           ` (${
             Math.round(
               (10 * list.reduce((sum, bet) => sum + bet.bet?.pointDiff, 0)) /
-                list.length
+                list.length,
             ) / 10
           } → ${list.reduce((sum, bet) => sum + bet.points, 0)}${displayStat(
             bonusCount,
-            "B"
-          )}${displayStat(doublerCount, "🌟", true)})`}
+            'B',
+          )}${displayStat(doublerCount, '🌟', true)})`}
       </div>
     );
   }
 
   function createCell<
-    T extends { points: number; bet: any; doubler: boolean; bonus: boolean }
+    T extends { points: number; bet: any; doubler: boolean; bonus: boolean },
   >(listFor: T[], listAgainst?: T[], key?: string) {
     if (!listAgainst) {
       return (
@@ -73,7 +73,7 @@ function ByTeam() {
               Math.round(
                 (10 *
                   listFor.reduce((sum, bet) => sum + bet.bet?.pointDiff, 0)) /
-                  listFor.length
+                  listFor.length,
               ) / 10
             } → ${listFor.reduce((sum, bet) => sum + bet.points, 0)}`}
         </td>
@@ -82,9 +82,9 @@ function ByTeam() {
 
     return (
       <td key={key}>
-        {createLine(listFor, "text-green-600")}
-        {createLine(listAgainst, "text-red-600")}
-        {createLine([...listFor, ...listAgainst], "border-t")}
+        {createLine(listFor, 'text-green-600')}
+        {createLine(listAgainst, 'text-red-600')}
+        {createLine([...listFor, ...listAgainst], 'border-t')}
       </td>
     );
   }
@@ -114,7 +114,7 @@ function ByTeam() {
                   height="32"
                   alt={team.name}
                   onError={(event: any) =>
-                    (event.target.style.display = "none")
+                    (event.target.style.display = 'none')
                   }
                 ></img>
                 {team.shortName}
@@ -126,32 +126,32 @@ function ByTeam() {
           {leaderboard.map((l) => (
             <tr key={l.user.id}>
               <td>{l.user.name}</td>
-              {createCell(l.bets.filter((bet) => bet.bet?.winner === "home"))}
-              {createCell(l.bets.filter((bet) => bet.bet?.winner === "away"))}
+              {createCell(l.bets.filter((bet) => bet.bet?.winner === 'home'))}
+              {createCell(l.bets.filter((bet) => bet.bet?.winner === 'away'))}
               {teams.map((team) =>
                 createCell(
                   l.bets.filter((bet) => {
                     const el = games.find((g) => g?.id === bet.game);
-                    if (bet.bet?.winner === "away") {
+                    if (bet.bet?.winner === 'away') {
                       return el?.awayTeam?.id === team.id;
                     }
-                    if (bet.bet?.winner === "home") {
+                    if (bet.bet?.winner === 'home') {
                       return el?.homeTeam?.id === team.id;
                     }
                     return false;
                   }),
                   l.bets.filter((bet) => {
                     const el = games.find((g) => g?.id === bet.game);
-                    if (bet.bet?.winner === "home") {
+                    if (bet.bet?.winner === 'home') {
                       return el?.awayTeam?.id === team.id;
                     }
-                    if (bet.bet?.winner === "away") {
+                    if (bet.bet?.winner === 'away') {
                       return el?.homeTeam?.id === team.id;
                     }
                     return false;
                   }),
-                  l.user.id + team.id
-                )
+                  l.user.id + team.id,
+                ),
               )}
             </tr>
           ))}

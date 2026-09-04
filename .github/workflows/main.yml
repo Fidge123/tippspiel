@@ -1,4 +1,4 @@
-name: Build and test
+name: CI
 
 on:
   push:
@@ -9,28 +9,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  frontend:
-    defaults:
-      run:
-        working-directory: frontend
+  biome:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version-file: .nvmrc
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Test frontend
-        run: yarn run test
-      - name: Build frontend
-        run: yarn run build
-      - name: Archive build
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: frontend/build
-          retention-days: 2
+      - name: Check formatting and lint across the repo
+        run: yarn run lint
 
   backend:
     defaults:
@@ -41,10 +30,41 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version-file: .nvmrc
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Lint backend
+        run: yarn run lint
+      - name: Typecheck backend
+        run: yarn run typecheck
       - name: Test backend
         run: yarn run test
       - name: Build backend
         run: yarn run build
+
+  frontend:
+    defaults:
+      run:
+        working-directory: frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Lint frontend
+        run: yarn run lint
+      - name: Typecheck frontend
+        run: yarn run typecheck
+      - name: Test frontend
+        run: yarn run test
+      - name: Build frontend
+        run: yarn run build
+      - name: Archive build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: frontend/build
+          retention-days: 2

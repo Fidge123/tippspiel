@@ -25,24 +25,44 @@ export class LeagueEntity {
   @Column({ type: 'int4' })
   season: number;
 
-  @ManyToMany(() => UserEntity, (user) => user.memberIn, { cascade: true })
+  @ManyToMany(
+    () => UserEntity,
+    (user) => user.memberIn,
+    { cascade: true },
+  )
   @JoinTable({ name: 'member' })
   members: UserEntity[];
 
-  @ManyToMany(() => UserEntity, (user) => user.adminIn, { cascade: true })
+  @ManyToMany(
+    () => UserEntity,
+    (user) => user.adminIn,
+    { cascade: true },
+  )
   @JoinTable({ name: 'admin' })
   admins: UserEntity[];
 
-  @OneToMany(() => BetEntity, (bet) => bet.league)
+  @OneToMany(
+    () => BetEntity,
+    (bet) => bet.league,
+  )
   bets: BetEntity[];
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.league)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.league,
+  )
   divisionBets: DivisionBetEntity[];
 
-  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.league)
+  @OneToMany(
+    () => SuperbowlBetEntity,
+    (bet) => bet.league,
+  )
   superbowlBets: SuperbowlBetEntity[];
 
-  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.league)
+  @OneToMany(
+    () => BetDoublerEntity,
+    (doubler) => doubler.league,
+  )
   doubler: BetDoublerEntity[];
 
   @CreateDateColumn({ select: false })

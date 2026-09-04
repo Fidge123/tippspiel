@@ -17,16 +17,28 @@ export class BetDoublerEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => GameEntity, (game) => game.doubler)
+  @ManyToOne(
+    () => GameEntity,
+    (game) => game.doubler,
+  )
   game: GameEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.doubler)
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.doubler,
+  )
   user: UserEntity;
 
-  @ManyToOne(() => WeekEntity, (week) => week.doubler)
+  @ManyToOne(
+    () => WeekEntity,
+    (week) => week.doubler,
+  )
   week: WeekEntity;
 
-  @ManyToOne(() => LeagueEntity, (league) => league.doubler)
+  @ManyToOne(
+    () => LeagueEntity,
+    (league) => league.doubler,
+  )
   league: LeagueEntity;
 
   @CreateDateColumn({ select: false })

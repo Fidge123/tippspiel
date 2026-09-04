@@ -1,19 +1,19 @@
-import { FormEvent, useState } from "react";
-import { useRecoilState } from "recoil";
-import { fetchFromAPI, getDecodedToken } from "../api";
-import { League } from "../State/response-types";
-import { activeLeagueState } from "../State/states";
-import Member from "./Member";
+import { type FormEvent, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { fetchFromAPI, getDecodedToken } from '../api';
+import type { League } from '../State/response-types';
+import { activeLeagueState } from '../State/states';
+import Member from './Member';
 
 function LeagueRow({ league, setLeague }: Props) {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [editMode, setEditMode] = useState(false);
   const me = getDecodedToken().id;
   const [activeLeague, setActiveLeague] = useRecoilState(activeLeagueState);
 
   async function handleAdd(e: FormEvent) {
     e.preventDefault();
-    const res = await fetchFromAPI("leagues/add", "POST", {
+    const res = await fetchFromAPI('leagues/add', 'POST', {
       leagueId: league.id,
       email,
     });
@@ -24,10 +24,10 @@ function LeagueRow({ league, setLeague }: Props) {
   async function handleDelete(e: FormEvent) {
     e.preventDefault();
     const name = prompt(
-      "Möchtest du wirklich diese Liga löschen? Gebe den Namen der Liga ein um sie zu löschen:"
+      'Möchtest du wirklich diese Liga löschen? Gebe den Namen der Liga ein um sie zu löschen:',
     );
     if (league.name === name) {
-      const res = await fetchFromAPI("leagues", "DELETE", {
+      const res = await fetchFromAPI('leagues', 'DELETE', {
         leagueId: league.id,
       });
       setLeague(undefined);
@@ -41,7 +41,7 @@ function LeagueRow({ league, setLeague }: Props) {
         <div>{league.name}</div>
         {league.admins.some((a) => a.id === me) && (
           <button onClick={() => setEditMode(!editMode)}>
-            {editMode ? "Anpassen beenden" : "Anpassen"}
+            {editMode ? 'Anpassen beenden' : 'Anpassen'}
           </button>
         )}
         {league.admins.some((a) => a.id === me) && editMode && (

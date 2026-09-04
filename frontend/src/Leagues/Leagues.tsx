@@ -1,16 +1,16 @@
-import { FormEvent, useState } from "react";
-import { useRecoilState } from "recoil";
-import { fetchFromAPI } from "../api";
-import { leaguesState } from "../State/states";
-import LeagueRow from "./League";
+import { type FormEvent, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { fetchFromAPI } from '../api';
+import { leaguesState } from '../State/states';
+import LeagueRow from './League';
 
 function Leagues() {
-  const [leagueName, setLeagueName] = useState("");
+  const [leagueName, setLeagueName] = useState('');
   const [leagues, setLeagues] = useRecoilState(leaguesState);
 
   async function handleCreate(e: FormEvent) {
     e.preventDefault();
-    const res = await fetchFromAPI("leagues", "POST", {
+    const res = await fetchFromAPI('leagues', 'POST', {
       name: leagueName,
     });
     setLeagues([...leagues, res]);
@@ -45,7 +45,7 @@ function Leagues() {
                             ...leagues.filter((el) => el.id !== league.id),
                             changed,
                           ]
-                        : leagues.filter((el) => el.id !== league.id)
+                        : leagues.filter((el) => el.id !== league.id),
                     )
                   }
                 ></LeagueRow>

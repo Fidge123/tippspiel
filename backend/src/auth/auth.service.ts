@@ -1,4 +1,4 @@
-import { env } from 'process';
+import { env } from 'node:process';
 
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';

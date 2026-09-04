@@ -5,13 +5,13 @@ export interface Bets {
 export interface Bet {
   id: string;
   bets: Votes;
-  selected?: "home" | "away";
+  selected?: 'home' | 'away';
   points?: number;
 }
 
 export interface ApiBet {
   gameId: string;
-  winner?: "home" | "away";
+  winner?: 'home' | 'away';
   pointDiff?: number;
   leagueId: string;
 }
@@ -63,7 +63,7 @@ export interface AllStats {
 
 export interface IStats {
   name: string;
-  winner: "home" | "away";
+  winner: 'home' | 'away';
   doubler: boolean;
   bet: number;
   points: number;

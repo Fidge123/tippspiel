@@ -1,7 +1,7 @@
-import { FormEvent, useState } from "react";
-import { useRecoilState } from "recoil";
-import { fetchFromAPI, getDecodedToken, refresh } from "../api";
-import { hideByDefaultState, sendReminderState } from "../State/states";
+import { type FormEvent, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { fetchFromAPI, getDecodedToken, refresh } from '../api';
+import { hideByDefaultState, sendReminderState } from '../State/states';
 
 function Account() {
   const name = getDecodedToken().name;
@@ -24,16 +24,16 @@ function Account() {
             e.preventDefault();
             try {
               await fetchFromAPI(
-                "user/change/name",
-                "POST",
+                'user/change/name',
+                'POST',
                 {
                   name: localName,
                 },
-                true
+                true,
               );
               await refresh(true);
             } catch {
-              setError("Name konnte nicht geändert werden");
+              setError('Name konnte nicht geändert werden');
               setLocalName(name);
             }
           }}

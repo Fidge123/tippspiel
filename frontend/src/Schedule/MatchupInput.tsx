@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 
-import { gameBetsState } from "../State/states";
-import { Game } from "./types";
+import { gameBetsState } from '../State/states';
+import type { Game } from './types';
 
 function MatchupInput({ game }: Props) {
   const [bet, setBet] = useRecoilState(gameBetsState(game.id));
@@ -14,17 +14,17 @@ function MatchupInput({ game }: Props) {
   return (
     <input
       className={`h-10 w-11 ml-1 p-px text-center dark:disabled:bg-gray-600 border-gray-700 rounded dark:disabled:text-gray-100 ${
-        points !== bet.points ? "text-yellow-600" : "text-black"
+        points !== bet.points ? 'text-yellow-600' : 'text-black'
       }`}
       type="text"
       pattern="[0-9]+"
       inputMode="numeric"
       disabled={!bet.selected || new Date(game.date) < new Date()}
-      value={points ?? ""}
+      value={points ?? ''}
       min={1}
       max={5}
       onChange={(ev) => {
-        const points = isNaN(parseInt(ev.target.value, 10))
+        const points = Number.isNaN(parseInt(ev.target.value, 10))
           ? setPoints(undefined)
           : parseInt(ev.target.value, 10);
 
@@ -38,7 +38,7 @@ function MatchupInput({ game }: Props) {
               if (bet.points !== points) {
                 setBet({ ...bet, points });
               }
-            }, 1500)
+            }, 1500),
           );
         }
       }}

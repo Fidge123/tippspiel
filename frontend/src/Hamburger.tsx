@@ -1,8 +1,8 @@
-import { useState, Suspense, lazy } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { Link, useNavigate } from "react-router-dom";
-import { fetchFromAPI, resetToken } from "./api";
-const LeagueDisplay = lazy(() => import("./LeagueDisplay"));
+import { useState, Suspense, lazy } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchFromAPI, resetToken } from './api';
+const LeagueDisplay = lazy(() => import('./LeagueDisplay'));
 
 function Placeholder() {
   return <span className="text-xs text-center text-white">ERROR</span>;
@@ -36,7 +36,7 @@ function Hamburger() {
         </button>
         <ul
           className={`fixed z-10 top-12 right-0 bg-slate-100 px-4 py-2 space-y-2 ${
-            open ? "" : "hidden"
+            open ? '' : 'hidden'
           }`}
         >
           <li>
@@ -82,9 +82,9 @@ function Hamburger() {
           <li>
             <button
               onClick={async () => {
-                await fetchFromAPI("user/logout", "POST", undefined, true);
+                await fetchFromAPI('user/logout', 'POST', undefined, true);
                 resetToken();
-                navigate("/login", { replace: true });
+                navigate('/login', { replace: true });
               }}
             >
               Ausloggen

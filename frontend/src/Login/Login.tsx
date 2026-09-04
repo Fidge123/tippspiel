@@ -1,32 +1,32 @@
-import { useState, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { BASE_URL, setToken } from "../api";
+import { BASE_URL, setToken } from '../api';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(BASE_URL + "user/login", {
-        method: "POST",
-        credentials: "include",
+      const res = await fetch(`${BASE_URL}user/login`, {
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
       if (res.ok) {
         const token = await res.json();
         setToken(token);
-        navigate("/", { replace: true });
+        navigate('/', { replace: true });
       } else {
         const error = await res.json();
-        setPassword("");
+        setPassword('');
         setError(error.message);
       }
     } catch (err: any) {
@@ -37,18 +37,18 @@ export default function Login() {
   async function forgot() {
     try {
       if (!email) {
-        setError("Need to set email");
+        setError('Need to set email');
         return;
       }
-      const res = await fetch(BASE_URL + "user/request-reset", {
-        method: "POST",
+      const res = await fetch(`${BASE_URL}user/request-reset`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
-        navigate("/", { replace: true });
+        navigate('/', { replace: true });
       } else {
         const error = await res.json();
         setError(error.message);
