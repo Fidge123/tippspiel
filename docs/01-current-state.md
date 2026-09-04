@@ -186,5 +186,12 @@ Removable today with no behaviour change:
   The current Active LTS is **Node 24 "Krypton"**. This is the one item in this list that
   is a security matter rather than a tidiness matter.
 - **The backend is neither built nor linted in CI** — only the frontend is.
+- **Dependabot reports 39 open vulnerability alerts on `master`** (2 critical, 13 high,
+  13 moderate, 11 low), surfaced by the remote on push. I could not enumerate them from
+  this environment — check
+  <https://github.com/Fidge123/tippspiel/security/dependabot>. For a Create React App
+  project most such alerts sit in the webpack/`react-scripts` build tree and never reach a
+  browser or the server; some will be real. **Triage them before deciding how much of the
+  frontend upgrade path to skip** — the answer changes the CRA→Vite call in §3.2.
 - **Formatting is inconsistent**: `schedule/schedule.service.ts` uses tabs and double
   quotes (Biome's defaults); everything else uses Prettier's two-space single-quote style.

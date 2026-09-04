@@ -40,6 +40,9 @@ Do **not** bundle anything else into this commit.
 - Replace ESLint + Prettier with Biome, one config for both packages (§3.1).
 - Delete the unused dependencies: `vega`, `vega-lite`, `react-vega`, `jwks-rsa` (§1.6).
 - Apply the drop-in version bumps (§3.1).
+- **Triage the 39 open Dependabot alerts** (2 critical, 13 high). Most are likely in the
+  CRA build tree and unreachable at runtime, but that has to be established rather than
+  assumed — the answer decides whether the CRA→Vite migration in §3.2 is optional.
 - Fix or delete the fictional root `workspaces` entry.
 
 Nothing here changes behaviour. Everything here carries over to the new stack.

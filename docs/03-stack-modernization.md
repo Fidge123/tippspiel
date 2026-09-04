@@ -88,7 +88,7 @@ intend to delete.
 | `@nestjs/*` 10→11→12 | 3–5 h | **no** | **Defer.** Two majors, and v11 moves to Express 5 (new route-matching, new query parser). Nest is the framework you are leaving. Only do it if a security advisory lands. |
 | `typeorm` 0.3→1.x | 6–10 h | **no** | **Defer.** First stable major in the project's history; requires Node ≥20.19. It is the layer most likely to be replaced outright. |
 | `typescript` 5.x→7 | unknown | yes, eventually | **Wait.** TS 7 (the Go-based compiler) is out but this is not the project to shake it out on. Go to 5.9 now. |
-| `react-scripts` → Vite | 2–3 h | **yes** | **Conditional.** CRA still builds fine here (verified). Do it only if a Node upgrade breaks it, or if you decide against the rewrite. Vite carries over to nearly any target stack. |
+| `react-scripts` → Vite | 2–3 h | **yes** | **Conditional — decide after triaging Dependabot.** CRA still builds fine here (verified). If the open alerts (§1.7) turn out to be build-tree-only, defer. If any is reachable at runtime, do the Vite migration: it is the only way out, since `react-scripts` 5 pins its transitive tree and has not shipped a fix release. Vite carries over to nearly any target stack. |
 | React 18→19 | 4–8 h | no | **Defer.** Blocked by Recoil (below). |
 | Tailwind 3→4 | 2–3 h | **yes** | **Do it as part of the rewrite,** not before. The styles port over; `tailwind.config.js` still contains a `variants` block that has been dead since v2. |
 | react-router 6→7 | 1–2 h | maybe | **Defer.** |
