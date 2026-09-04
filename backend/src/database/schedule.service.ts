@@ -185,7 +185,7 @@ export class ScheduleDataService {
 function findStat(team: Team, name: string): number {
   try {
     return team.record.items[0].stats.find((s) => s.name === name).value;
-  } catch (e) {
+  } catch {
     return 0;
   }
 }
