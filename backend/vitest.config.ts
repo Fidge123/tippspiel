@@ -2,8 +2,7 @@ import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // Nest's dependency injection and TypeORM's column types both come from
-  // `emitDecoratorMetadata`, which esbuild does not implement.
+  // Nest DI and TypeORM column types need emitDecoratorMetadata, which esbuild lacks.
   plugins: [
     swc.vite({
       module: { type: 'es6' },
@@ -23,8 +22,7 @@ export default defineConfig({
     environment: 'node',
     root: __dirname,
     include: ['test/**/*.test.ts'],
-    // Decorator metadata is only recorded if reflect-metadata is loaded before
-    // the first entity module is evaluated.
+    // reflect-metadata must load before the first entity module is evaluated.
     setupFiles: ['test/setup.ts'],
     fileParallelism: false,
     pool: 'forks',

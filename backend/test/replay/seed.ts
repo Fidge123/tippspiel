@@ -50,7 +50,6 @@ export function parseCopyBlocks(dump: string): CopyBlock[] {
   return blocks;
 }
 
-/** The newest `database_backup/<date>.gz` recorded at or before `asOf`. */
 export async function findBackup(asOf: Date): Promise<string> {
   const keys = (await listKeys('database_backup'))
     .filter((key) =>
@@ -69,10 +68,7 @@ export async function findBackup(asOf: Date): Promise<string> {
   return chosen;
 }
 
-/**
- * Loads the backup into an already-migrated database and anonymises it in the
- * same connection, so the real names and hashes never leave that database.
- */
+// Anonymising shares the connection so no other reader can observe the raw rows.
 export async function seedFromBackup(
   url: string,
   backupKey: string,
@@ -89,8 +85,7 @@ export async function seedFromBackup(
   const client = new Client({ connectionString: url });
   await client.connect();
   try {
-    // pg_dump orders its tables alphabetically, which does not respect the
-    // foreign keys, so the load runs with triggers off.
+    // pg_dump orders tables alphabetically, which does not respect foreign keys.
     await client.query('SET session_replication_role = replica');
     for (const block of blocks) {
       if (!block.body) {

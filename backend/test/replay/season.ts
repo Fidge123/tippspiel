@@ -4,39 +4,31 @@ export interface Season {
   postWeeks: number[];
   /** Must be a backup taken after the season finished. */
   backupKey: string;
-  /**
-   * Weeks the snapshot spells out game by game. Every other week is covered by
-   * its per-week subtotal, so a regression still fails the test and still names
-   * the week; only the per-game breakdown is left out.
-   */
+  /** Weeks the snapshot spells out game by game; the rest keep only a subtotal. */
   detailWeeks: string[];
   asOfDates: { label: string; at: string }[];
 }
 
-// `recordToFile()` wrote no 2023 scoreboard between 2023-10-27 and 2024-03, so
-// the end of the regular season and the playoff weeks cannot be replayed: an
-// as-of date in that window is served the October recording, in which those
-// games are still STATUS_SCHEDULED. 2024 and 2025 have no such gap and take
-// all seven as-of dates from issue #49 once backups exist again (#39).
+// No 2023 scoreboard was recorded between 2023-10-27 and 2024-03.
+// An as-of date in that window is served the October recording, in which the
+// later games are still STATUS_SCHEDULED.
 export const season2023: Season = {
   year: 2023,
   regularWeeks: 18,
   postWeeks: [1, 2, 3, 5],
   backupKey: 'database_backup/2024-03-03.gz',
-  // The 18 regular weeks are structurally identical — no ties anywhere in the
-  // season, the same five pointDiff values, doublers and un-placed bets in
-  // every one — so week 1 stands in for all of them. The playoff weeks differ
-  // (division bets reveal, and the Super Bowl scores separately), so the first
-  // and the last are spelled out too.
+  // The regular weeks are structurally alike, with no ties all season, the same
+  // five pointDiff values and doublers and un-placed bets throughout.
+  // The playoff weeks differ, so the first and the last are kept in full.
   detailWeeks: ['2023-2-1', '2023-3-1', '2023-3-5'],
   asOfDates: [
     { label: 'before week 1 kickoff', at: '2023-09-07T12:00:00.000Z' },
     { label: 'week 1 mid-game', at: '2023-09-10T18:15:00.000Z' },
     // The last in-season recording of 2023.
     { label: 'week 7 complete', at: '2023-10-27T06:00:00.000Z' },
-    // #38. The zeroes here are right by accident: `findSbWinner` never asks
-    // whether the game was played, and the away team it falls back to is
-    // ESPN's TBD placeholder, which nobody bet on. A fix must keep them zero.
+    // The zeroes here are right by accident, because findSbWinner returns the
+    // away team without checking that the game was played and that team is
+    // ESPN's TBD placeholder. Issue #38 must keep them zero.
     { label: 'super bowl week before kickoff', at: '2024-02-11T12:00:00.000Z' },
     { label: 'after the super bowl', at: '2024-03-04T12:00:00.000Z' },
   ],

@@ -6,7 +6,6 @@ export interface TestDatabase {
   stop(): Promise<void>;
 }
 
-/** A throwaway Postgres, from Docker unless TEST_DATABASE_URL points at one. */
 export async function startDatabase(): Promise<TestDatabase> {
   if (env.TEST_DATABASE_URL) {
     return createScratchDatabase(env.TEST_DATABASE_URL);

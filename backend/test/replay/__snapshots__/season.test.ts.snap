@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`2023 season > after the super bowl > matches the committed leaderboards > 4-after the super bowl — Every Damn Sunday! — as seen by Player 1 1`] = `
+exports[`2023 season > after the super bowl > matches the committed leaderboards > 4-after the super bowl / Every Damn Sunday! / as seen by Player 1 1`] = `
 [
   {
     "bets": {
@@ -629,7 +629,7 @@ exports[`2023 season > after the super bowl > matches the committed leaderboards
 ]
 `;
 
-exports[`2023 season > after the super bowl > matches the committed leaderboards > 4-after the super bowl — Richter Family — as seen by Player 8 1`] = `
+exports[`2023 season > after the super bowl > matches the committed leaderboards > 4-after the super bowl / Richter Family / as seen by Player 8 1`] = `
 [
   {
     "bets": {
@@ -946,7 +946,7 @@ exports[`2023 season > after the super bowl > matches the committed leaderboards
 ]
 `;
 
-exports[`2023 season > after the super bowl > matches the committed leaderboards > 4-after the super bowl — Test Liga — as seen by Player 17 1`] = `
+exports[`2023 season > after the super bowl > matches the committed leaderboards > 4-after the super bowl / Test Liga / as seen by Player 17 1`] = `
 [
   {
     "bets": {},
@@ -979,7 +979,7 @@ exports[`2023 season > applies the migration chain to an empty database > migrat
 ]
 `;
 
-exports[`2023 season > before week 1 kickoff > matches the committed leaderboards > 0-before week 1 kickoff — Every Damn Sunday! — as seen by Player 1 1`] = `
+exports[`2023 season > before week 1 kickoff > matches the committed leaderboards > 0-before week 1 kickoff / Every Damn Sunday! / as seen by Player 1 1`] = `
 [
   {
     "bets": {},
@@ -1121,7 +1121,7 @@ exports[`2023 season > before week 1 kickoff > matches the committed leaderboard
 ]
 `;
 
-exports[`2023 season > before week 1 kickoff > matches the committed leaderboards > 0-before week 1 kickoff — Richter Family — as seen by Player 8 1`] = `
+exports[`2023 season > before week 1 kickoff > matches the committed leaderboards > 0-before week 1 kickoff / Richter Family / as seen by Player 8 1`] = `
 [
   {
     "bets": {},
@@ -1199,7 +1199,7 @@ exports[`2023 season > before week 1 kickoff > matches the committed leaderboard
 ]
 `;
 
-exports[`2023 season > before week 1 kickoff > matches the committed leaderboards > 0-before week 1 kickoff — Test Liga — as seen by Player 17 1`] = `
+exports[`2023 season > before week 1 kickoff > matches the committed leaderboards > 0-before week 1 kickoff / Test Liga / as seen by Player 17 1`] = `
 [
   {
     "bets": {},
@@ -1220,7 +1220,7 @@ exports[`2023 season > before week 1 kickoff > matches the committed leaderboard
 ]
 `;
 
-exports[`2023 season > super bowl week before kickoff > matches the committed leaderboards > 3-super bowl week before kickoff — Every Damn Sunday! — as seen by Player 1 1`] = `
+exports[`2023 season > super bowl week before kickoff > matches the committed leaderboards > 3-super bowl week before kickoff / Every Damn Sunday! / as seen by Player 1 1`] = `
 [
   {
     "bets": {
@@ -1649,7 +1649,7 @@ exports[`2023 season > super bowl week before kickoff > matches the committed le
 ]
 `;
 
-exports[`2023 season > super bowl week before kickoff > matches the committed leaderboards > 3-super bowl week before kickoff — Richter Family — as seen by Player 8 1`] = `
+exports[`2023 season > super bowl week before kickoff > matches the committed leaderboards > 3-super bowl week before kickoff / Richter Family / as seen by Player 8 1`] = `
 [
   {
     "bets": {
@@ -1866,7 +1866,7 @@ exports[`2023 season > super bowl week before kickoff > matches the committed le
 ]
 `;
 
-exports[`2023 season > super bowl week before kickoff > matches the committed leaderboards > 3-super bowl week before kickoff — Test Liga — as seen by Player 17 1`] = `
+exports[`2023 season > super bowl week before kickoff > matches the committed leaderboards > 3-super bowl week before kickoff / Test Liga / as seen by Player 17 1`] = `
 [
   {
     "bets": {},
@@ -1887,7 +1887,7 @@ exports[`2023 season > super bowl week before kickoff > matches the committed le
 ]
 `;
 
-exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-week 1 mid-game — Every Damn Sunday! — as seen by Player 1 1`] = `
+exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-week 1 mid-game / Every Damn Sunday! / as seen by Player 1 1`] = `
 [
   {
     "bets": {
@@ -2077,7 +2077,7 @@ exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-
 ]
 `;
 
-exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-week 1 mid-game — Richter Family — as seen by Player 8 1`] = `
+exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-week 1 mid-game / Richter Family / as seen by Player 8 1`] = `
 [
   {
     "bets": {
@@ -2179,7 +2179,7 @@ exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-
 ]
 `;
 
-exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-week 1 mid-game — Test Liga — as seen by Player 17 1`] = `
+exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-week 1 mid-game / Test Liga / as seen by Player 17 1`] = `
 [
   {
     "bets": {},
@@ -2200,7 +2200,7 @@ exports[`2023 season > week 1 mid-game > matches the committed leaderboards > 1-
 ]
 `;
 
-exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-week 7 complete — Every Damn Sunday! — as seen by Player 1 1`] = `
+exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-week 7 complete / Every Damn Sunday! / as seen by Player 1 1`] = `
 [
   {
     "bets": {
@@ -2566,7 +2566,7 @@ exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-
 ]
 `;
 
-exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-week 7 complete — Richter Family — as seen by Player 8 1`] = `
+exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-week 7 complete / Richter Family / as seen by Player 8 1`] = `
 [
   {
     "bets": {
@@ -2756,7 +2756,7 @@ exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-
 ]
 `;
 
-exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-week 7 complete — Test Liga — as seen by Player 17 1`] = `
+exports[`2023 season > week 7 complete > matches the committed leaderboards > 2-week 7 complete / Test Liga / as seen by Player 17 1`] = `
 [
   {
     "bets": {},

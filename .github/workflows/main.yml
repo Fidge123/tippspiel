@@ -62,7 +62,7 @@ jobs:
       - name: Replay the season
         run: yarn run test
         env:
-          # An R2 token with Object Read on the nfl-tippspiel bucket, nothing else.
+          # Object Read on the nfl-tippspiel bucket only.
           R2_API: ${{ secrets.R2_API }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

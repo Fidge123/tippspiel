@@ -1,10 +1,5 @@
--- Turns a production backup into a test fixture. This is the privacy boundary:
--- it runs before anything else reads the database, and test/replay/seed.ts
--- fails the suite if it did not do its job.
---
--- Bets, doublers, division and Super Bowl picks, leagues, games, weeks, teams
--- and byes are left untouched on purpose; they identify nobody once the names
--- and addresses are gone, and they are what the replay asserts on.
+-- Runs before any other reader touches the seeded database.
+-- test/replay/seed.ts fails the suite if this left anything identifying behind.
 
 BEGIN;
 
@@ -18,8 +13,8 @@ SET
   name = 'Player ' || numbered.n,
   email = 'player-' || numbered.n || '@example.invalid',
   salt = '00000000000000000000000000000000',
-  -- scrypt(TEST_PASSWORD, salt) with UserDataService's parameters, so login
-  -- can be exercised. Must stay in step with TEST_PASSWORD in replay/seed.ts.
+  -- scrypt(TEST_PASSWORD, salt) with UserDataService's parameters.
+  -- Must stay in step with TEST_PASSWORD in test/replay/seed.ts.
   password = 'c9bccd8cac9db122f8ff459047e84bb84752effff5d088f59179d1ee22856fd1'
              '23a7b24e2c8144ddc094efcb6a7638f4157738f05c6cafd92de2f5927b5fbf5b'
              'fc287c5c4fef9fc0250fda49e10984fd82da9f70a24c467a90662873a615e672'

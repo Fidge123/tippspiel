@@ -24,8 +24,7 @@ export async function bootReplayApp(databaseUrl: string): Promise<ReplayApp> {
   delete env.IMPORT_ON_BOOT;
   delete env.POSTMARK;
 
-  // Imported only now: src/datasource.ts reads DATABASE_URL when app.module.ts
-  // first loads it.
+  // datasource.ts reads DATABASE_URL when app.module.ts first loads it.
   const { AppModule } = await import('../../src/app.module');
 
   const moduleRef = await Test.createTestingModule({

@@ -6,8 +6,7 @@ import { WeekId1662404323063 } from './1662404323063-WeekId';
 import { Indices1673624598450 } from './1673624598450-Indices';
 import { Indices21673625077228 } from './1673625077228-Indices2';
 
-// Listed, not globbed: the old `migration/*.ts` glob matched nothing in dist/,
-// so migrationsRun silently created no tables at all in production.
+// Listed rather than globbed: dist/ holds no .ts files, so a glob silently matches none.
 export const migrations = [
   StartSeason20221662130125888,
   Leagues1662130125999,

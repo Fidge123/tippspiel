@@ -45,9 +45,8 @@ beforeAll(async () => {
   leagues = await leaguesOf(database.url, season.year);
   expect(leagues.length).toBeGreaterThan(0);
 
-  // Faking Date must come after the schema, the fixture and the app are up:
-  // TypeORM compares column types against the intrinsic Date, which a fake one
-  // is not. Only Date is faked, so the Postgres driver keeps its real timers.
+  // TypeORM compares column types against the intrinsic Date, so faking it
+  // before the schema and the app are up breaks metadata building.
   vi.useFakeTimers({ toFake: ['Date'], shouldAdvanceTime: true });
   vi.setSystemTime(now);
 }, 600_000);
@@ -70,8 +69,7 @@ describe(`${season.year} season`, () => {
     expect(rows.map((row) => row.name)).toMatchSnapshot('migrations');
   });
 
-  // The as-of dates run in ascending order against one database, the way the
-  // real importer sees the season.
+  // Each as-of date imports into the database the previous one left behind.
   for (const [index, asOf] of season.asOfDates.entries()) {
     describe(asOf.label, () => {
       beforeAll(async () => {
@@ -82,8 +80,7 @@ describe(`${season.year} season`, () => {
       }, 600_000);
 
       it('replays without a failed ESPN request', () => {
-        // importWeek swallows a failed load, so an empty outbox is what says
-        // every week was actually imported.
+        // importWeek swallows a failed load; notify() is the only trace it leaves.
         expect(sentEmails).toEqual([]);
       });
 
@@ -99,7 +96,7 @@ describe(`${season.year} season`, () => {
 
           expect(response.status).toBe(200);
           expect(normalise(response.body, season)).toMatchSnapshot(
-            `${index}-${asOf.label} — ${league.name} — as seen by ${league.viewer.name}`,
+            `${index}-${asOf.label} / ${league.name} / as seen by ${league.viewer.name}`,
           );
         }
       });
@@ -134,9 +131,8 @@ function weekLabel(weekId: string): string {
   return `${year}-${seasontype}-${week.padStart(2, '0')}`;
 }
 
-// The viewer is pinned to the lowest user id so the reveal rules — a player
-// sees their own division and Super Bowl bets and nobody else's before the
-// playoffs — land in the snapshot the same way on every run.
+// A fixed viewer keeps the reveal rules, which depend on who is asking,
+// deterministic across runs.
 async function leaguesOf(url: string, year: number) {
   const client = new Client({ connectionString: url });
   await client.connect();
@@ -160,7 +156,6 @@ function formatBet(b: any): string {
   return `${bet}${b.doubler ? ' x2' : ''}${b.bonus ? ' bonus' : ''} = ${b.points}`;
 }
 
-/** Keys are sorted by the snapshot serialiser, so a diff means a real change. */
 function normalise(body: any[], s: Season) {
   return [...body]
     .sort(
@@ -189,7 +184,7 @@ function normalise(body: any[], s: Season) {
         divBets: Object.fromEntries(
           entry.divBets.map((d) => [
             d.name,
-            `${[d.first, d.second, d.third, d.fourth].map((t) => t?.abbreviation ?? '-').join(' ')} = ${d.points}`,
+            `${[d.first, d.second, d.third, d.fourth].map((t) => t?.abbreviation ?? '?').join(' ')} = ${d.points}`,
           ]),
         ),
         sbBet: {

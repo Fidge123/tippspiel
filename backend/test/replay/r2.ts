@@ -13,8 +13,7 @@ const gunzip = promisify(gunzipCb);
 
 export const BUCKET = env.R2_BUCKET ?? 'nfl-tippspiel';
 
-// Every key carries the timestamp it was written at, so nothing is ever
-// rewritten and the cache never needs invalidating.
+// Keys carry the timestamp they were written at, so cached objects never go stale.
 export const CACHE_DIR = resolve(
   env.REPLAY_CACHE_DIR ?? join(__dirname, '..', '.corpus-cache'),
 );

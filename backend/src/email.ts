@@ -10,7 +10,6 @@ export interface RecordedEmail {
   [key: string]: unknown;
 }
 
-/** What the stub transporter "sent"; only filled when POSTMARK is unset. */
 export const sentEmails: RecordedEmail[] = [];
 
 const transporter = createTransport();

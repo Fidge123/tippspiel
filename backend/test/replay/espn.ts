@@ -1,7 +1,6 @@
 import { BASE_URL } from '../../src/schedule/schedule.service';
 import type { Corpus } from './corpus';
 
-/** Serves the ESPN endpoints the importer calls from the recorded corpus. */
 export function installEspnStub(corpus: Corpus, clock: () => Date) {
   const real = globalThis.fetch;
 
