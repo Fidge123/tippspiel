@@ -12,8 +12,8 @@ jobs:
   biome:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
@@ -27,8 +27,8 @@ jobs:
         working-directory: backend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
@@ -38,9 +38,36 @@ jobs:
       - name: Typecheck backend
         run: yarn run typecheck
       - name: Test backend
-        run: yarn run test
+        run: yarn run test:unit
       - name: Build backend
         run: yarn run build
+
+  season-replay:
+    name: Season replay (2023)
+    needs: backend
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Restore fixture cache
+        uses: actions/cache@v6
+        with:
+          path: backend/test/.corpus-cache
+          key: corpus-2023-${{ hashFiles('backend/test/replay/season.ts') }}
+      - name: Replay the season
+        run: yarn run test
+        env:
+          # Object Read on the nfl-tippspiel bucket only.
+          R2_API: ${{ secrets.R2_API }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
   frontend:
     defaults:
@@ -48,8 +75,8 @@ jobs:
         working-directory: frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - name: Install dependencies
@@ -63,7 +90,7 @@ jobs:
       - name: Build frontend
         run: yarn run build
       - name: Archive build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build
           path: frontend/build

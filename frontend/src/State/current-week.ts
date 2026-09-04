@@ -1,7 +1,3 @@
-/**
- * Pure week selection, extracted from `currentWeekState` so it can be tested
- * without Recoil or the network.
- */
 export interface WeekPeriod {
   year: number;
   seasontype: number;
@@ -11,10 +7,8 @@ export interface WeekPeriod {
 }
 
 /**
- * Picks the week the app should consider current:
- * - the week we are inside of, if there is one;
- * - otherwise the latest week that has already ended, if all are past;
- * - otherwise the earliest week still to come.
+ * The week we are inside of, else the last one that ended if all are past,
+ * else the earliest one still to come.
  */
 export function selectCurrentWeek<T extends WeekPeriod>(
   weeks: T[],

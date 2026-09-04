@@ -3,6 +3,7 @@
     "module": "commonjs",
     "declaration": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -11,7 +12,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true
+    "incremental": true
   }
 }

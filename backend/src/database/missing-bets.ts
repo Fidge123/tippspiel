@@ -1,12 +1,6 @@
 /**
- * Pure part of `BetDataService.findGamesWithoutBets`: which of the upcoming
- * games is the user still missing a bet for?
- *
- * A user bets per league, so a game counts as missing as soon as there is one
- * league they are a member of that has no bet from them on that game. A user
- * who is in no league at all has nothing to be reminded about, so they get an
- * empty list rather than every game (`[].every(...)` is `true`, which used to
- * skip the game — same outcome, but stated on purpose).
+ * A game is missing as long as one of the user's leagues has no bet on it.
+ * A user in no league gets nothing rather than every game.
  */
 export function gamesWithoutBets<G extends { id: string }>(
   games: G[],

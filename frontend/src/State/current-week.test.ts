@@ -35,9 +35,6 @@ describe('selectCurrentWeek', () => {
     );
   });
 
-  // Note: in a gap the reducer returns the week that has already ended, even
-  // though the comment in the original code claimed "return later period".
-  // Pinned as it behaves today.
   it('picks the week that just ended when we are in a gap', () => {
     const early = week(1, '2025-09-01T00:00:00Z', '2025-09-05T00:00:00Z');
     const late = week(2, '2025-09-10T00:00:00Z', '2025-09-15T00:00:00Z');

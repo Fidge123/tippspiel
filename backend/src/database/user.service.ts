@@ -27,9 +27,7 @@ export class UserDataService {
     private verifyRepo: Repository<VerifyEntity>,
     @InjectRepository(ResetEntity)
     private resetRepo: Repository<ResetEntity>,
-  ) {
-    this.cleanUp();
-  }
+  ) {}
 
   async findOne(id: string): Promise<UserEntity> {
     return this.userRepo.findOneBy({ id });

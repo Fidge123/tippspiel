@@ -1,7 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-// api.ts reads window.atob / window.localStorage at call time; a minimal stub
-// keeps these tests in the plain node environment.
+// api.ts reads window at call time; a stub keeps this in the node environment.
 beforeAll(() => {
   vi.stubGlobal('window', {
     atob: (s: string) => Buffer.from(s, 'base64').toString('binary'),

@@ -36,10 +36,7 @@ describe('underdogBonus', () => {
 });
 
 describe('gamePoints', () => {
-  // 4 of 9 picks on 'home' -> no bonus for home, no bonus for away either
-  // (5 * 3 = 15 > 9), so this field is bonus-free for both sides.
   const noBonus = field(4, 9);
-  // 3 of 9 picks on 'home' -> bonus for home only.
   const homeBonus = field(3, 9);
 
   const home = { winner: 'home', pointDiff: 7 };
