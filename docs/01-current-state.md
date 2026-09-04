@@ -89,7 +89,13 @@ return game.winner === 'home' ? game.homeTeam : game.awayTeam;
 
 There is no check that the game has been played. Before kickoff `winner` is `'none'`, so
 the function returns the **away** team and every player who picked it is handed 20 points.
-That is the exact symptom reported in #38. Root cause confirmed.
+Reproduced directly: with the 2024 Super Bowl row set to `STATUS_SCHEDULED`,
+`findSbWinner(2024)` returns the away team. Two further faults in the same six lines: a
+season whose Super Bowl week was never imported throws
+`TypeError: Cannot read properties of null` and 500s the whole leaderboard, and the
+`week.seasonType` predicate is emitted as unquoted raw SQL because the entity property is
+`seasontype` — it works only because Postgres folds unquoted identifiers to lower case.
+Written up on [#38](https://github.com/Fidge123/tippspiel/issues/38).
 
 **H2 — A type-only import silently broke the data importer for nine days.**
 Commit `958206b` (2025-08-20, "Update to current season") changed
@@ -100,23 +106,65 @@ It was fixed in `e72b2c6` on 2025-08-29 — nine days into the season, with a co
 of "Update dependencies". Nothing in the repository could have caught this. This single
 incident is the strongest argument for the plan in §2.
 
-**H3 — Migrations almost certainly never run in production.**
+**H3 — Migrations never run in production. Confirmed.**
 `datasource.ts` sets `migrationsRun: true` with
 `migrations: [__dirname + '/database/migration/*.ts']`. In `dist/` there are no `.ts`
-files other than `.d.ts` declarations, which carry no runtime classes. Entities survive
-this because `app.module.ts` passes `autoLoadEntities: true`; migrations have no such
-fallback. *Needs confirmation from you — if you run `yarn typeorm migration:run` by hand
-via ts-node, this is harmless but misleading; if you rely on `migrationsRun`, the last
-migration to actually apply was applied by accident.*
+files other than `.d.ts` declarations, which carry no runtime classes.
+
+Verified by running the production build against an empty database:
+
+```
+$ node dist/main                    # DATABASE_URL -> fresh, empty database
+$ psql -c '\dt'
+ public | migrations | table     <- the bookkeeping table, and nothing else
+(1 row)
+```
+
+Zero application tables were created, and the process then died with
+`QueryFailedError: relation "reset" does not exist` thrown out of
+`UserDataService.cleanUp()` — which runs from the constructor (M2), so it takes the whole
+process down rather than being handled.
+
+Entities survive this in the running production app because `app.module.ts` passes
+`autoLoadEntities: true`; migrations have no such fallback. So the schema in production
+was applied by `yarn typeorm migration:run` (ts-node, where the `.ts` glob does match) or
+by hand, and `migrationsRun: true` has been decorative. The risk is a future migration
+that is assumed to have applied on deploy and has not.
+
+**H4 — The `team` table is not season-scoped, so historical leagues show wrong scores.**
+One row per franchise, overwritten on every import, including `playoffSeed` — which is
+what `calcDivisionPoints` sorts on. A finished season's division scores are therefore
+recomputed against today's standings and change every time the importer runs. Reproduced
+end to end: an unchanged 2024 division bet scored 15, then 0, after only `team.playoffSeed`
+changed. Filed as
+[#40](https://github.com/Fidge123/tippspiel/issues/40) with the full reproduction.
+
+**H5 — Email is broken, and every send failure is invisible.**
+The bet reminder skips every user (the season is hardcoded to `2025` in
+`bet/bet.service.ts:18`), and all ten `sendEmail` call sites end in
+`.catch((error) => console.error(error))`. Verified: `POST /user/register` returns
+`201 Created` having sent no mail at all, leaving an account that can never be verified and
+so can never log in. Filed as
+[#41](https://github.com/Fidge123/tippspiel/issues/41).
 
 ### Medium
 
-**M1 — Unbounded startup work with no error handling.**
+**M1 — Unbounded startup work with no error handling. Confirmed.**
 `ScheduleService`'s *constructor* calls `init()`, which fetches ESPN master data and then
 fires 22 `importWeek()` calls **without awaiting them** (`importSchedule`, line 141).
 If `load()` fails it returns `undefined` and `importWeek` immediately dereferences
-`response.leagues[0]` → unhandled rejection. Booting the app hits the network; so does
-booting it in a test.
+`response.leagues[0]`. Observed on a real boot:
+
+```
+Loading 2025 postseason week 5 ...
+Failed to load scoreboard!
+TypeError: Cannot read properties of undefined (reading 'leagues')
+    at ScheduleService.importWeek (dist/schedule/schedule.service.js:94:35)
+Node.js v22.22.2
+```
+
+**One failed ESPN request kills the process.** Booting the app also hits the network 20+
+times before it serves a single request, which is why tests cannot boot it as-is.
 
 **M2 — `UserDataService`'s constructor calls `cleanUp()`**, which *deletes rows*
 (expired tokens and unverified users) as a side effect of instantiating the class. Any

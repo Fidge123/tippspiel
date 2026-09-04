@@ -16,7 +16,13 @@ agent can change it confidently", and then onto a stack worth keeping.
 2. **A one-word change (`import` → `import type`) broke the data importer for nine days at
    the start of the 2025 season.** It compiled. Nothing in the repository could have caught
    it. That is the case for tests, made by the project itself.
-3. **The JavaScript-disabled requirement is an architecture decision, not a preference.**
+3. **Three confirmed data/delivery bugs are live right now**, filed with reproductions:
+   the Super Bowl points bug ([#38](https://github.com/Fidge123/tippspiel/issues/38)),
+   historical leagues scoring against today's standings
+   ([#40](https://github.com/Fidge123/tippspiel/issues/40)), and email
+   ([#41](https://github.com/Fidge123/tippspiel/issues/41)) — where registration returns
+   `201` having sent nothing at all.
+4. **The JavaScript-disabled requirement is an architecture decision, not a preference.**
    It rules out the current SPA, and it rules out incrementally modernizing it. Which is
    fine — it also means most dependency upgrades are not worth doing.
 
@@ -77,12 +83,18 @@ First point where a change to scoring gets caught automatically.
 
 After this, an agent can refactor the backend and prove nobody's points moved.
 
-### Phase 5 — Fix the bugs · ~5 h
+### Phase 5 — Fix the bugs · ~12 h
 
 Now that a snapshot diff will show exactly who is affected:
 
-- **H1 / issue #38** — `findSbWinner` must return nothing unless the game is final.
-  The snapshot diff is the proof.
+- **H1 / issue #38** — `findSbWinner` must return nothing unless the game is final; also
+  stop it 500-ing when the Super Bowl week was never imported. The snapshot diff is the proof.
+- **H5 / issue #41** — email. Stop swallowing send failures, make the transporter a
+  provider, and derive the reminder's season from `findCurrentWeek().year`. Registration
+  currently returns 201 having sent nothing.
+- **H4 / issue #40** — season-scope the `team` table. This is a schema migration that
+  deliberately changes historical scores, so it must come after the golden master: the
+  snapshot diff is how you check that every changed score is a correction.
 - **M4 / issue #10** — throw instead of silently returning `undefined` on a missed
   deadline; surface the error in the UI.
 - **M3** — `await` the doubler delete and pass criteria, not an entity.
@@ -118,9 +130,9 @@ acceptance criterion for the whole rewrite.
 | 2 Pure-logic tests | 5 | 10 |
 | 3 Refactors + API tests | 10 | 20 |
 | 4 Golden master | 8 | 28 |
-| 5 Bug fixes | 5 | 33 |
-| 6 Canaries | 3 | 36 |
-| 7 Rewrite | 40–55 | 76–91 |
+| 5 Bug fixes | 12 | 40 |
+| 6 Canaries | 3 | 43 |
+| 7 Rewrite | 40–55 | 83–98 |
 
 Phases 0–4 (~28 h) are where the confidence comes from. Phase 7 is optional in the sense
 that the site keeps working without it — but it is the only path to the JavaScript-disabled
@@ -128,15 +140,13 @@ requirement.
 
 ## Open questions for you
 
-1. **H3** — do you run `yarn typeorm migration:run` by hand, or rely on `migrationsRun`?
-   If the latter, migrations have not been applying in production.
-2. **Backups** — how far back does the R2 bucket go? Phase 4 needs one complete season of
+1. **Backups** — how far back does the R2 bucket go? Phase 4 needs one complete season of
    `scoreboard-*` recordings, ideally 2024.
-3. **Docker on the VPS/CI** — available? It decides Testcontainers vs. a plain Postgres
+2. **Docker on the VPS/CI** — available? It decides Testcontainers vs. a plain Postgres
    service container in Phase 3.
-4. **Kysely or Drizzle** (§3.3) — my recommendation is Kysely for the leaderboard query;
+3. **Kysely or Drizzle** (§3.3) — my recommendation is Kysely for the leaderboard query;
    Drizzle is the more popular choice and not a wrong answer.
-5. **Scope of the rewrite** — is issue #36 (league invites, locking, participant limits)
+4. **Scope of the rewrite** — is issue #36 (league invites, locking, participant limits)
    part of it, or does the rewrite reproduce today's features exactly? Reproducing exactly
    is what makes the golden master useful; adding features mid-rewrite is what makes
    rewrites fail.
