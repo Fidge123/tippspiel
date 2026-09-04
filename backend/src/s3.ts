@@ -1,5 +1,5 @@
 import { S3Client } from '@aws-sdk/client-s3';
-import { env } from 'process';
+import { env } from 'node:process';
 
 function createClient(): S3Client | undefined {
   try {

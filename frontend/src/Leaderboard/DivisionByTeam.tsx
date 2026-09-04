@@ -1,5 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { divisionsState, divBetsByTeamState } from "../State/states";
+import { useRecoilValue } from 'recoil';
+import { divisionsState, divBetsByTeamState } from '../State/states';
 
 function DivisionByTeam() {
   const division = useRecoilValue(divisionsState);
@@ -37,7 +37,7 @@ function DivisionByTeam() {
                       height="32"
                       alt={team.name}
                       onError={(event: any) =>
-                        (event.target.style.display = "none")
+                        (event.target.style.display = 'none')
                       }
                     ></img>
                     {team.shortName}
@@ -46,35 +46,35 @@ function DivisionByTeam() {
                     {divBetsByTeam.division.reduce(
                       (count, { first }) =>
                         first.id === team.id ? count + 1 : count,
-                      0
+                      0,
                     )}
                   </td>
                   <td>
                     {divBetsByTeam.division.reduce(
                       (count, { second }) =>
                         second.id === team.id ? count + 1 : count,
-                      0
+                      0,
                     )}
                   </td>
                   <td>
                     {divBetsByTeam.division.reduce(
                       (count, { third }) =>
                         third.id === team.id ? count + 1 : count,
-                      0
+                      0,
                     )}
                   </td>
                   <td>
                     {divBetsByTeam.division.reduce(
                       (count, { fourth }) =>
                         fourth.id === team.id ? count + 1 : count,
-                      0
+                      0,
                     )}
                   </td>
                   <td>
                     {divBetsByTeam.sb.reduce(
                       (count, { team: t }) =>
                         t.id === team.id ? count + 1 : count,
-                      0
+                      0,
                     )}
                   </td>
                 </tr>

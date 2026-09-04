@@ -175,22 +175,6 @@ export class BetDataService {
       .getMany();
   }
 
-  async findBetsByGame(league: string, year: number): Promise<GameEntity[]> {
-    if (!league || !year) {
-      throw new BadRequestException();
-    }
-    return this.gameRepo
-      .createQueryBuilder('game')
-      .where('game.status = :status', { status: 'STATUS_FINAL' })
-      .leftJoin('game.week', 'week')
-      .andWhere('week.year = :year', { year })
-      .leftJoinAndSelect('game.bets', 'bets', 'bets.league = :league', {
-        league,
-      })
-      .leftJoinAndSelect('bets.user', 'user')
-      .getMany();
-  }
-
   async finishedGames(league: string, year: number): Promise<GameEntity[]> {
     if (!league || !year) {
       throw new BadRequestException();
@@ -291,19 +275,6 @@ export class BetDataService {
       .getOne();
 
     return game.winner === 'home' ? game.homeTeam : game.awayTeam;
-  }
-
-  async votesPerGame(league: string, year: number): Promise<GameEntity[]> {
-    if (!league || !year) {
-      throw new BadRequestException();
-    }
-    return this.gameRepo
-      .createQueryBuilder('game')
-      .leftJoin('game.week', 'week')
-      .andWhere('week.year = :year', { year })
-      .leftJoinAndSelect('game.bets', 'bets')
-      .andWhere('bets.league = :league', { league })
-      .getMany();
   }
 
   async findDivisionBets(

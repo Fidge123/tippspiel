@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import OverviewTable from "./OverviewTable";
-import DivisonTable from "./DivisionTable";
-import ByTeam from "./ByTeam";
-import ByPoints from "./ByPoints";
-import ByWeek from "./ByWeek";
-import DivisionByTeam from "./DivisionByTeam";
+import OverviewTable from './OverviewTable';
+import DivisonTable from './DivisionTable';
+import ByTeam from './ByTeam';
+import ByPoints from './ByPoints';
+import ByWeek from './ByWeek';
+import DivisionByTeam from './DivisionByTeam';
 
 function Leaderboard() {
   const [openDivisionTable, setOpenDivisionTable] = useState(false);
@@ -27,7 +27,7 @@ function Leaderboard() {
           aufgedeckt. Icons mit grünem Rahmen sind korrekt und geben Punkte.
         </p>
         <button onClick={() => setOpenDivisionTable(!openDivisionTable)}>
-          {openDivisionTable ? "verstecken" : "anzeigen"}
+          {openDivisionTable ? 'verstecken' : 'anzeigen'}
         </button>
         {openDivisionTable && <DivisonTable></DivisonTable>}
       </section>
@@ -41,28 +41,28 @@ function Leaderboard() {
         <article>
           <h1 className="inline pr-4">Einsatz</h1>
           <button onClick={() => setOpenByPoints(!openByPoints)}>
-            {openByPoints ? "verstecken" : "anzeigen"}
+            {openByPoints ? 'verstecken' : 'anzeigen'}
           </button>
           {openByPoints && <ByPoints></ByPoints>}
         </article>
         <article>
           <h1 className="inline pr-4">Woche</h1>
           <button onClick={() => setOpenByWeek(!openByWeek)}>
-            {openByWeek ? "verstecken" : "anzeigen"}
+            {openByWeek ? 'verstecken' : 'anzeigen'}
           </button>
           {openByWeek && <ByWeek></ByWeek>}
         </article>
         <article>
           <h1 className="inline pr-4">Team</h1>
           <button onClick={() => setOpenByTeam(!openByTeam)}>
-            {openByTeam ? "verstecken" : "anzeigen"}
+            {openByTeam ? 'verstecken' : 'anzeigen'}
           </button>
           {openByTeam && <ByTeam></ByTeam>}
         </article>
         <article>
           <h1 className="inline pr-4">Division-Tipps</h1>
           <button onClick={() => setOpenDivByTeam(!openDivByTeam)}>
-            {openDivByTeam ? "verstecken" : "anzeigen"}
+            {openDivByTeam ? 'verstecken' : 'anzeigen'}
           </button>
           {openDivByTeam && <DivisionByTeam></DivisionByTeam>}
         </article>

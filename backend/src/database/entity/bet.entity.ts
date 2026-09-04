@@ -17,14 +17,23 @@ export class BetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => GameEntity, (game) => game.bets)
+  @ManyToOne(
+    () => GameEntity,
+    (game) => game.bets,
+  )
   game: GameEntity;
 
   @Index()
-  @ManyToOne(() => UserEntity, (user) => user.bets)
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.bets,
+  )
   user: UserEntity;
 
-  @ManyToOne(() => LeagueEntity, (league) => league.bets)
+  @ManyToOne(
+    () => LeagueEntity,
+    (league) => league.bets,
+  )
   league: LeagueEntity;
 
   @CreateDateColumn({ select: false })

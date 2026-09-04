@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { Team } from "../Schedule/types";
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import type { Team } from '../Schedule/types';
 
-import { divisionsState } from "../State/states";
+import { divisionsState } from '../State/states';
 
 function DivisionExample() {
   const division = useRecoilValue(divisionsState)[0];
@@ -37,7 +37,7 @@ function DivisionExample() {
       <div className="py-4 ml-4 w-min">
         {divisionBets.map((team, i) => (
           <div
-            key={"Div" + team.id}
+            key={`Div${team.id}`}
             className="flex items-center justify-between rounded team-l"
             style={{
               borderColor: `#${team?.color2}ff`,
@@ -50,7 +50,7 @@ function DivisionExample() {
                 width="24"
                 height="24"
                 alt="logo home team"
-                onError={(event: any) => (event.target.style.display = "none")}
+                onError={(event: any) => (event.target.style.display = 'none')}
               ></img>
             )}
             <span className="font-semibold text-gray-50">{team.name}</span>
@@ -70,7 +70,7 @@ function DivisionExample() {
                         bIndex -= 1.1;
                       }
                       return aIndex - bIndex;
-                    })
+                    }),
                   );
                 }}
               >
@@ -91,7 +91,7 @@ function DivisionExample() {
                         bIndex += 1.1;
                       }
                       return aIndex - bIndex;
-                    })
+                    }),
                   );
                 }}
               >

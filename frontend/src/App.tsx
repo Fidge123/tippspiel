@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy } from 'react';
 import {
   Route,
   Link,
@@ -6,24 +6,24 @@ import {
   Navigate,
   useLocation,
   NavLink,
-} from "react-router-dom";
+} from 'react-router-dom';
 
-import { LoggedInRoute, LoggedOutRoute } from "./PrivateRoute";
-import { ErrorBoundary } from "react-error-boundary";
-import Hamburger from "./Hamburger";
-import { isLoggedIn } from "./api";
+import { LoggedInRoute, LoggedOutRoute } from './PrivateRoute';
+import { ErrorBoundary } from 'react-error-boundary';
+import Hamburger from './Hamburger';
+import { isLoggedIn } from './api';
 
-const Leaderboard = lazy(() => import("./Leaderboard/Leaderboard"));
-const Schedule = lazy(() => import("./Schedule/Schedule"));
-const Login = lazy(() => import("./Login/Login"));
-const Register = lazy(() => import("./Register/Register"));
-const Reset = lazy(() => import("./Reset/Reset"));
-const Verify = lazy(() => import("./Verify/Verify"));
-const Impressum = lazy(() => import("./Impressum/Impressum"));
-const Account = lazy(() => import("./Account/Account"));
-const Leagues = lazy(() => import("./Leagues/Leagues"));
-const DivisionAndSbBet = lazy(() => import("./Division/DivisionAndSbBet"));
-const Rules = lazy(() => import("./Rules/Rules"));
+const Leaderboard = lazy(() => import('./Leaderboard/Leaderboard'));
+const Schedule = lazy(() => import('./Schedule/Schedule'));
+const Login = lazy(() => import('./Login/Login'));
+const Register = lazy(() => import('./Register/Register'));
+const Reset = lazy(() => import('./Reset/Reset'));
+const Verify = lazy(() => import('./Verify/Verify'));
+const Impressum = lazy(() => import('./Impressum/Impressum'));
+const Account = lazy(() => import('./Account/Account'));
+const Leagues = lazy(() => import('./Leagues/Leagues'));
+const DivisionAndSbBet = lazy(() => import('./Division/DivisionAndSbBet'));
+const Rules = lazy(() => import('./Rules/Rules'));
 
 function Placeholder() {
   return (
@@ -49,12 +49,12 @@ function App() {
               <NavLink to="/division">Divisions</NavLink>
             </>
           ) : (
-            ""
+            ''
           )}
         </nav>
         {loggedIn ? (
           <Hamburger />
-        ) : location.pathname === "/login" ? (
+        ) : location.pathname === '/login' ? (
           <Link to="/register">
             <button>Registrieren</button>
           </Link>

@@ -12,7 +12,10 @@ export class ResetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.resetTokens)
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.resetTokens,
+  )
   user: UserEntity;
 
   @Column()

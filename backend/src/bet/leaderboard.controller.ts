@@ -220,36 +220,3 @@ function calcPoints(
     return 0;
   }
 }
-
-// function correctTeam(bet: string, winner: string) {
-//   return bet === winner ? 1 : 0;
-// }
-
-// function withinPoints(
-//   pointDiff: number,
-//   winner: string,
-//   correctDiff: number,
-//   allowedDiff: number,
-// ) {
-//   const multi = winner === 'home' ? 1 : -1;
-//   return Math.abs(multi * pointDiff - correctDiff) <= allowedDiff ? 1 : 0;
-// }
-
-// function calculatePoints2021(
-//   { homeScore, awayScore, winner: actualWinner, id }: GameEntity,
-//   { pointDiff, winner: predictedWinnner }: BetEntity,
-//   doublers: BetDoublerEntity[],
-// ) {
-//   const correctDiff = homeScore - awayScore;
-//   const multi = doublers.some((d) => d.game.id === id) ? 2 : 1;
-
-//   return {
-//     id,
-//     points: [
-//       correctTeam(predictedWinnner, actualWinner) * 2 * multi,
-//       withinPoints(pointDiff, predictedWinnner, correctDiff, 0) * 1 * multi,
-//       withinPoints(pointDiff, predictedWinnner, correctDiff, 3) * 1 * multi,
-//       withinPoints(pointDiff, predictedWinnner, correctDiff, 6) * 1 * multi,
-//     ],
-//   };
-// }

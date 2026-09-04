@@ -1,5 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { leaderboardState, weeksState } from "../State/states";
+import { useRecoilValue } from 'recoil';
+import { leaderboardState, weeksState } from '../State/states';
 
 function ByWeek() {
   const leaderboard = useRecoilValue(leaderboardState);
@@ -7,7 +7,7 @@ function ByWeek() {
 
   function createCell<T extends { points: number; bet: any }>(
     list: T[],
-    key?: string
+    key?: string,
   ) {
     const winFn = (bet: T) => bet.points > 0;
     const lossFn = (bet: T) => bet.points < 0;
@@ -27,7 +27,7 @@ function ByWeek() {
             Math.round(
               (10 *
                 list.reduce((sum, bet) => sum + (bet.bet?.pointDiff ?? 0), 0)) /
-                list.length
+                list.length,
             ) / 10
           } Einsatz`}
         </div>
@@ -53,10 +53,10 @@ function ByWeek() {
             {weeks.map((week) =>
               createCell(
                 l.bets.filter((bet) =>
-                  week.games?.some((g) => g?.id === bet.game)
+                  week.games?.some((g) => g?.id === bet.game),
                 ),
-                l.user.id + week.id
-              )
+                l.user.id + week.id,
+              ),
             )}
           </tr>
         ))}

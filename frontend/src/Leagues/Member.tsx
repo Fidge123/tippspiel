@@ -1,6 +1,6 @@
-import { FormEvent } from "react";
-import { fetchFromAPI } from "../api";
-import { League } from "../State/response-types";
+import type { FormEvent } from 'react';
+import { fetchFromAPI } from '../api';
+import type { League } from '../State/response-types';
 
 function Member({ member, showControls, league, setLeague }: Props) {
   const isAdmin = league.admins.some((a) => a.id === member.id);
@@ -8,13 +8,13 @@ function Member({ member, showControls, league, setLeague }: Props) {
   async function handlePromote(e: FormEvent) {
     e.preventDefault();
     const res = await fetchFromAPI(
-      "leagues/promote",
-      "POST",
+      'leagues/promote',
+      'POST',
       {
         leagueId: league.id,
         userId: member.id,
       },
-      true
+      true,
     );
     setLeague({ ...league, admins: [...league.admins, member] });
     return res;
@@ -23,13 +23,13 @@ function Member({ member, showControls, league, setLeague }: Props) {
   async function handleDemote(e: FormEvent) {
     e.preventDefault();
     const res = await fetchFromAPI(
-      "leagues/demote",
-      "POST",
+      'leagues/demote',
+      'POST',
       {
         leagueId: league.id,
         userId: member.id,
       },
-      true
+      true,
     );
     setLeague({
       ...league,
@@ -41,13 +41,13 @@ function Member({ member, showControls, league, setLeague }: Props) {
   async function handleKick(e: FormEvent) {
     e.preventDefault();
     const res = await fetchFromAPI(
-      "leagues/kick",
-      "POST",
+      'leagues/kick',
+      'POST',
       {
         leagueId: league.id,
         userId: member.id,
       },
-      true
+      true,
     );
     setLeague({
       ...league,
@@ -58,12 +58,12 @@ function Member({ member, showControls, league, setLeague }: Props) {
   }
 
   if (!showControls) {
-    return <div>{`${member.name}${isAdmin ? " (Admin)" : ""}`}</div>;
+    return <div>{`${member.name}${isAdmin ? ' (Admin)' : ''}`}</div>;
   }
 
   return (
     <div className="flex flex-row items-center justify-between w-full">
-      <div>{`${member.name}${isAdmin ? " (Admin)" : ""}`}</div>
+      <div>{`${member.name}${isAdmin ? ' (Admin)' : ''}`}</div>
       <div>
         {isAdmin ? (
           <button onClick={handleDemote}>Demote</button>

@@ -24,25 +24,46 @@ export class GameEntity {
   @Column()
   date: Date;
 
-  @ManyToOne(() => WeekEntity, (week) => week.games)
+  @ManyToOne(
+    () => WeekEntity,
+    (week) => week.games,
+  )
   week: WeekEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.awayGames)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.awayGames,
+  )
   awayTeam: TeamEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.homeGames)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.homeGames,
+  )
   homeTeam: TeamEntity;
 
-  @OneToMany(() => BetEntity, (bet) => bet.game)
+  @OneToMany(
+    () => BetEntity,
+    (bet) => bet.game,
+  )
   bets: BetEntity[];
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.user)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.user,
+  )
   divisionBets: DivisionBetEntity[];
 
-  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.user)
+  @OneToMany(
+    () => SuperbowlBetEntity,
+    (bet) => bet.user,
+  )
   superbowlBets: SuperbowlBetEntity[];
 
-  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.user)
+  @OneToMany(
+    () => BetDoublerEntity,
+    (doubler) => doubler.user,
+  )
   doubler: BetDoublerEntity[];
 
   @Column({ type: 'int4' })

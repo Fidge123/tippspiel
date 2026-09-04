@@ -7,22 +7,18 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4",
     "react-router-dom": "^6.2.1",
-    "react-vega": "^7.4.4",
     "recoil": "^0.7.4",
-    "typescript": "^5.3.3",
-    "vega": "^5.21.0",
-    "vega-lite": "^5.2.0"
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "predeploy": "npm run build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "lint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "typecheck": "tsc --noEmit"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "proxy": "http://localhost:5001/",
   "homepage": "https://nfl-tippspiel.de/tippspiel/",
@@ -39,14 +35,12 @@
     ]
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.12",
     "@types/node": "^20.11.24",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.0",
-    "eslint": "^8.57.0",
-    "eslint-config-react-app": "^7.0.1",
     "postcss": "^8.4.5",
-    "prettier": "^3.2.5",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.0.7"
   }

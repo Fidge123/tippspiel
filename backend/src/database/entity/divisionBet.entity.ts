@@ -18,28 +18,49 @@ export class DivisionBetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => DivisionEntity, (division) => division.bets)
+  @ManyToOne(
+    () => DivisionEntity,
+    (division) => division.bets,
+  )
   division: DivisionEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.divisionBets,
+  )
   first: TeamEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.divisionBets,
+  )
   second: TeamEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.divisionBets,
+  )
   third: TeamEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.divisionBets)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.divisionBets,
+  )
   fourth: TeamEntity;
 
   @Column({ type: 'int4' })
   year: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.divisionBets)
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.divisionBets,
+  )
   user: UserEntity;
 
-  @ManyToOne(() => LeagueEntity, (league) => league.divisionBets)
+  @ManyToOne(
+    () => LeagueEntity,
+    (league) => league.divisionBets,
+  )
   league: LeagueEntity;
 
   @CreateDateColumn({ select: false })

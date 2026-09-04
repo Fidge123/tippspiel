@@ -1,6 +1,6 @@
-import { useRecoilState } from "recoil";
+import { useRecoilState } from 'recoil';
 
-import { hiddenState } from "../State/states";
+import { hiddenState } from '../State/states';
 
 function HideButton({ id, start }: Props) {
   const [hidden, setHidden] = useRecoilState(hiddenState(id));
@@ -11,15 +11,15 @@ function HideButton({ id, start }: Props) {
         onClick={() => setHidden(!hidden)}
         className={`border border-gray-800 dark:border-black rounded ${
           hidden
-            ? "text-white dark:text-white bg-gray-600 dark:bg-gray-900"
-            : "text-gray-800 dark:text-gray-900 bg-gray-100 dark:bg-gray-400"
+            ? 'text-white dark:text-white bg-gray-600 dark:bg-gray-900'
+            : 'text-gray-800 dark:text-gray-900 bg-gray-100 dark:bg-gray-400'
         }`}
       >
-        Spoilerschutz {hidden ? "an" : "aus"}
+        Spoilerschutz {hidden ? 'an' : 'aus'}
       </button>
     );
   }
-  return <></>;
+  return null;
 }
 
 interface Props {

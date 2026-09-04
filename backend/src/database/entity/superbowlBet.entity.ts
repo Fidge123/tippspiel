@@ -15,16 +15,25 @@ export class SuperbowlBetEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => TeamEntity, (team) => team.superbowlBets)
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.superbowlBets,
+  )
   team: TeamEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.superbowlBets)
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.superbowlBets,
+  )
   user: UserEntity;
 
   @Column({ type: 'int4' })
   year: number;
 
-  @ManyToOne(() => LeagueEntity, (league) => league.superbowlBets)
+  @ManyToOne(
+    () => LeagueEntity,
+    (league) => league.superbowlBets,
+  )
   league: LeagueEntity;
 
   @CreateDateColumn({ select: false })

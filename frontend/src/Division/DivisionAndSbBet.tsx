@@ -1,15 +1,15 @@
-import { useRecoilValue, useRecoilState } from "recoil";
+import { useRecoilValue, useRecoilState } from 'recoil';
 
 import {
   divisionsState,
   divisionBetsState,
   activeLeagueState,
   seasonStartDateState,
-} from "../State/states";
-import { fetchFromAPI } from "../api";
-import Division from "./Division";
-import SbBet from "./SbBet";
-import { DivisionBet } from "../State/response-types";
+} from '../State/states';
+import { fetchFromAPI } from '../api';
+import Division from './Division';
+import SbBet from './SbBet';
+import type { DivisionBet } from '../State/response-types';
 
 function DivisionAndSbBet() {
   const seasonStarted = useRecoilValue(seasonStartDateState) < new Date();
@@ -18,7 +18,7 @@ function DivisionAndSbBet() {
   const [divisionBets, setDivisionBets] = useRecoilState(divisionBetsState);
 
   async function upateDivisonBets(bet: DivisionBet) {
-    const res = await fetchFromAPI("bet/division", "POST", {
+    const res = await fetchFromAPI('bet/division', 'POST', {
       division: bet.name,
       teams: bet.teams.map((t) => t?.id),
       year: league.season,
@@ -26,8 +26,8 @@ function DivisionAndSbBet() {
     });
     setDivisionBets(
       [...divisionBets.filter((db) => db.name !== bet.name), bet].sort((a, b) =>
-        a.name.localeCompare(b.name)
-      )
+        a.name.localeCompare(b.name),
+      ),
     );
     return res;
   }
@@ -52,7 +52,7 @@ function DivisionAndSbBet() {
             key={division.name}
             division={division}
             divisionBets={divisionBets.find(
-              (bet) => bet.name === division.name
+              (bet) => bet.name === division.name,
             )}
             setDivisionBets={upateDivisonBets}
           ></Division>

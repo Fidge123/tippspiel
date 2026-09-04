@@ -1,5 +1,5 @@
-import { randomBytes, scrypt as s } from 'crypto';
-import { promisify } from 'util';
+import { randomBytes, scrypt as s } from 'node:crypto';
+import { promisify } from 'node:util';
 
 import {
   Injectable,
@@ -50,7 +50,7 @@ export class UserDataService {
       where: { email, verified: true },
     });
     if (
-      !!user &&
+      user &&
       user.password === (await hash(password, Buffer.from(user.salt, 'hex')))
     ) {
       return { id: user.id, name: user.name, email: user.email };
@@ -279,10 +279,6 @@ export class UserDataService {
     if (users.length) {
       await this.userRepo.remove(users);
     }
-  }
-
-  async deleteUser(id: string): Promise<void> {
-    await this.userRepo.delete(id);
   }
 }
 

@@ -1,9 +1,9 @@
-import { lazy } from "react";
-import { Game } from "./types";
+import { lazy } from 'react';
+import type { Game } from './types';
 
-const Scores = lazy(() => import("./Scores"));
-const MatchupInput = lazy(() => import("./MatchupInput"));
-const TeamButton = lazy(() => import("./TeamButton"));
+const Scores = lazy(() => import('./Scores'));
+const MatchupInput = lazy(() => import('./MatchupInput'));
+const TeamButton = lazy(() => import('./TeamButton'));
 
 function MatchupFallback({ game, weekId }: Props) {
   return (

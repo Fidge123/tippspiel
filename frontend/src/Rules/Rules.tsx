@@ -1,6 +1,6 @@
-import { useState } from "react";
-import DivisionExample from "./DivisionsExample";
-import WeekExample from "./WeekExample";
+import { useState } from 'react';
+import DivisionExample from './DivisionsExample';
+import WeekExample from './WeekExample';
 
 export default function Rules() {
   const [openExample1, setOpenExample1] = useState(false);
@@ -43,7 +43,7 @@ export default function Rules() {
           Spielbeginn angezeigt.
         </p>
         <button onClick={() => setOpenExample1(!openExample1)}>
-          Interaktives Beispiel {openExample1 ? "verstecken" : "anzeigen"}
+          Interaktives Beispiel {openExample1 ? 'verstecken' : 'anzeigen'}
         </button>
         {openExample1 && <WeekExample></WeekExample>}
       </section>
@@ -71,7 +71,7 @@ export default function Rules() {
           </li>
         </ul>
         <button onClick={() => setOpenExample2(!openExample2)}>
-          Interaktives Beispiel {openExample2 ? "verstecken" : "anzeigen"}
+          Interaktives Beispiel {openExample2 ? 'verstecken' : 'anzeigen'}
         </button>
         {openExample2 && (
           <p>

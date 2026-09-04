@@ -1,5 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { activeLeagueState } from "./State/states";
+import { useRecoilValue } from 'recoil';
+import { activeLeagueState } from './State/states';
 
 function LeagueDisplay() {
   const league = useRecoilValue(activeLeagueState);

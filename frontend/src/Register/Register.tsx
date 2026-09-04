@@ -1,16 +1,16 @@
-import { useState, useEffect, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { BASE_URL } from "../api";
+import { BASE_URL } from '../api';
 
 function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   // const [consent, setConsent] = useState(false);
   const [consent] = useState(true);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [credentials, setCredentials] = useState<any>();
   const navigate = useNavigate();
 
@@ -21,25 +21,25 @@ function Register() {
 
   useEffect(() => {
     (async () => {
-      setError("");
-      setSuccess("");
+      setError('');
+      setSuccess('');
       if (credentials) {
         try {
-          const res = await fetch(BASE_URL + "user/register", {
-            method: "POST",
+          const res = await fetch(`${BASE_URL}user/register`, {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify(credentials),
           });
           if (res.ok) {
             setSuccess(
-              "Erfolgreich registriert! Du solltest gleich eine E-Mail mit einem Bestätigungslink erhalten. Nach der Bestätigung kannst du dich einloggen."
+              'Erfolgreich registriert! Du solltest gleich eine E-Mail mit einem Bestätigungslink erhalten. Nach der Bestätigung kannst du dich einloggen.',
             );
-            setTimeout(() => navigate("/login", { replace: true }), 30000);
+            setTimeout(() => navigate('/login', { replace: true }), 30000);
           } else {
             const error = await res.json();
-            setPassword("");
+            setPassword('');
             setCredentials(undefined);
             setError(error.message);
           }

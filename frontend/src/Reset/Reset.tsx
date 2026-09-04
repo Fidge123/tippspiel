@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { BASE_URL } from "../api";
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { BASE_URL } from '../api';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -9,21 +9,21 @@ function useQuery() {
 function Reset() {
   const query = useQuery();
   const navigate = useNavigate();
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [done, setDone] = useState(false);
 
   async function reset() {
-    const id = query.get("id");
-    const token = query.get("token");
+    const id = query.get('id');
+    const token = query.get('token');
 
     if (id && token && !done) {
       try {
-        const res = await fetch(BASE_URL + "user/reset", {
-          method: "POST",
+        const res = await fetch(`${BASE_URL}user/reset`, {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             id,
@@ -36,9 +36,9 @@ function Reset() {
 
         if (res.ok) {
           setSuccess(
-            "Passwort erfolgreich zurückgesetzt! Du wirst in 5 Sekunden zum einloggen weitergeleitet."
+            'Passwort erfolgreich zurückgesetzt! Du wirst in 5 Sekunden zum einloggen weitergeleitet.',
           );
-          setTimeout(() => navigate("/login", { replace: true }), 5000);
+          setTimeout(() => navigate('/login', { replace: true }), 5000);
         } else {
           const e = await res.json();
           setError(e.message);
@@ -48,7 +48,7 @@ function Reset() {
       }
     } else {
       console.log(token, id);
-      setError("Link invalid!");
+      setError('Link invalid!');
     }
   }
 
