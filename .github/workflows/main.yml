@@ -1,4 +1,4 @@
-name: Build frontend
+name: Build and test
 
 on:
   push:
@@ -21,6 +21,8 @@ jobs:
           node-version: "18"
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Test frontend
+        run: yarn run test
       - name: Build frontend
         run: yarn run build
       - name: Archive build
@@ -29,3 +31,20 @@ jobs:
           name: build
           path: frontend/build
           retention-days: 2
+
+  backend:
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Test backend
+        run: yarn run test
+      - name: Build backend
+        run: yarn run build

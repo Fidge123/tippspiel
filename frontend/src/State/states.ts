@@ -1,5 +1,6 @@
 import { atom, DefaultValue, selector, selectorFamily } from "recoil";
 import { fetchFromAPI } from "../api";
+import { selectCurrentWeek, weekId } from "./current-week";
 import { ApiBet, Game } from "../Schedule/types";
 import {
   Division,
@@ -154,30 +155,9 @@ export const seasonStartDateState = selector<Date>({
 export const currentWeekState = selectorFamily<boolean, string>({
   key: "weeks/current",
   get:
-    (weekId) =>
-    ({ get }) => {
-      const now = new Date();
-      const week = get(weeksState).reduce((prev, curr) => {
-        const startA = new Date(prev.start);
-        const endA = new Date(prev.end);
-        const startB = new Date(curr.start);
-        const endB = new Date(curr.end);
-        if (now <= endA && now >= startA) {
-          return prev; // if in period A, return prev
-        }
-        if (now <= endB && now >= startB) {
-          return curr; // if in period B, return curr
-        }
-        if (endA <= now && endB <= now) {
-          return endA > endB ? prev : curr; // if both before, return later period
-        }
-        if (endA >= now && endB >= now) {
-          return endA < endB ? prev : curr; // if both after, return earlier period
-        }
-        return endA < now ? prev : curr; // if between periods, return later period
-      });
-      return `${week.year}-${week.seasontype}-${week.week}` === weekId;
-    },
+    (id) =>
+    ({ get }) =>
+      weekId(selectCurrentWeek(get(weeksState))) === id,
 });
 
 export const statsState = atom<Stats>({

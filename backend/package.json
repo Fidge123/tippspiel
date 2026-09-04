@@ -14,7 +14,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "typeorm": "typeorm-ts-node-commonjs -d src/datasource.ts"
+    "typeorm": "typeorm-ts-node-commonjs -d src/datasource.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.198.0",
@@ -57,7 +59,8 @@
     "eslint-plugin-import": "^2.20.1",
     "prettier": "^3.2.5",
     "ts-node": "10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^2.1.9"
   },
   "prettier": {
     "singleQuote": true
