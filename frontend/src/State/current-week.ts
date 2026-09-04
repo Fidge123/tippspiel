@@ -20,18 +20,18 @@ export function selectCurrentWeek<T extends WeekPeriod>(
     const startB = new Date(curr.start);
     const endB = new Date(curr.end);
     if (now <= endA && now >= startA) {
-      return prev; // if in period A, return prev
+      return prev;
     }
     if (now <= endB && now >= startB) {
-      return curr; // if in period B, return curr
+      return curr;
     }
     if (endA <= now && endB <= now) {
-      return endA > endB ? prev : curr; // if both before, return later period
+      return endA > endB ? prev : curr;
     }
     if (endA >= now && endB >= now) {
-      return endA < endB ? prev : curr; // if both after, return earlier period
+      return endA < endB ? prev : curr;
     }
-    return endA < now ? prev : curr; // if between periods, return later period
+    return endA < now ? prev : curr;
   });
 }
 

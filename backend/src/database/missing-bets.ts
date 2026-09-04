@@ -1,12 +1,9 @@
-/**
- * A game is missing as long as one of the user's leagues has no bet on it.
- * A user in no league gets nothing rather than every game.
- */
 export function gamesWithoutBets<G extends { id: string }>(
   games: G[],
   bets: { game: { id: string }; league: { id: string } }[],
   leagues: { id: string }[],
 ): G[] {
+  // Without this a user in no league would be reminded of every game.
   if (leagues.length === 0) {
     return [];
   }

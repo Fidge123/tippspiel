@@ -38,11 +38,7 @@ export function underdogBonus(
   );
 }
 
-/**
- * No bet is -1, a correct pick is (pointDiff + bonus) * multiplier, a wrong one
- * is -pointDiff, a tie is 0.
- * Neither the bonus nor the doubler applies to a loss.
- */
+/** Neither the bonus nor the doubler applies to a loss. */
 export function gamePoints({
   homeScore,
   awayScore,
@@ -81,7 +77,6 @@ function seedOf(team?: Team | null): number {
     : seed;
 }
 
-/** 7 for the division winner, 1 for each other place, 5 more for all four. */
 export function divisionPoints(bet: DivisionBet): number {
   const picks = [bet.first, bet.second, bet.third, bet.fourth];
   const correctOrder = [...picks].sort((a, b) => seedOf(a) - seedOf(b));

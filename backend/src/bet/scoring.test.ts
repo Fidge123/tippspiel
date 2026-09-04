@@ -5,7 +5,6 @@ import { divisionPoints, gamePoints, underdogBonus } from './scoring';
 const bets = (n: number, winner: string) =>
   Array.from({ length: n }, () => ({ winner }));
 
-/** A field of `total` bets of which `picks` are on 'home'. */
 const field = (picks: number, total: number) => [
   ...bets(picks, 'home'),
   ...bets(total - picks, 'away'),
