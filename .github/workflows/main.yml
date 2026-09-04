@@ -40,6 +40,36 @@ jobs:
       - name: Build backend
         run: yarn run build
 
+  golden-master:
+    name: Golden master (2023 season)
+    needs: backend
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      # The recorded ESPN responses and the database backup are immutable, so
+      # only the first run of a given fixture set downloads anything.
+      - name: Restore fixture cache
+        uses: actions/cache@v4
+        with:
+          path: backend/test/.corpus-cache
+          key: corpus-2023-${{ hashFiles('backend/test/golden/season.ts') }}
+      - name: Replay the season
+        run: yarn run test
+        env:
+          # A Cloudflare R2 API token with Object Read on the nfl-tippspiel
+          # bucket and nothing else. See backend/test/golden/README.md.
+          R2_API: ${{ secrets.R2_API }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
   frontend:
     defaults:
       run:

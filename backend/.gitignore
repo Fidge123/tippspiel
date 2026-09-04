@@ -34,3 +34,6 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .envrc
+
+# Golden master fixture cache (immutable R2 objects)
+/test/.corpus-cache
