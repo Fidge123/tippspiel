@@ -1,10 +1,10 @@
-import {
+import type {
   Team as T,
   Bet as B,
   AllStats as C,
   IStats as A,
   IWeek,
-} from "../Schedule/types";
+} from '../Schedule/types';
 
 export type Week = IWeek;
 export type Stat = A;
@@ -94,7 +94,7 @@ export interface Leaderboard {
   bets: {
     bet: {
       id: string;
-      winner: "home" | "away";
+      winner: 'home' | 'away';
       pointDiff: number;
     };
     bonus: boolean;

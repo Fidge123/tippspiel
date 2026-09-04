@@ -35,28 +35,52 @@ export class UserEntity {
   @Column('jsonb')
   settings: any;
 
-  @ManyToMany(() => LeagueEntity, (league) => league.members)
+  @ManyToMany(
+    () => LeagueEntity,
+    (league) => league.members,
+  )
   memberIn: LeagueEntity[];
 
-  @ManyToMany(() => LeagueEntity, (league) => league.admins)
+  @ManyToMany(
+    () => LeagueEntity,
+    (league) => league.admins,
+  )
   adminIn: LeagueEntity[];
 
-  @OneToMany(() => BetEntity, (bet) => bet.user)
+  @OneToMany(
+    () => BetEntity,
+    (bet) => bet.user,
+  )
   bets: BetEntity[];
 
-  @OneToMany(() => DivisionBetEntity, (bet) => bet.user)
+  @OneToMany(
+    () => DivisionBetEntity,
+    (bet) => bet.user,
+  )
   divisionBets: DivisionBetEntity[];
 
-  @OneToMany(() => SuperbowlBetEntity, (bet) => bet.user)
+  @OneToMany(
+    () => SuperbowlBetEntity,
+    (bet) => bet.user,
+  )
   superbowlBets: SuperbowlBetEntity[];
 
-  @OneToMany(() => BetDoublerEntity, (doubler) => doubler.user)
+  @OneToMany(
+    () => BetDoublerEntity,
+    (doubler) => doubler.user,
+  )
   doubler: BetDoublerEntity[];
 
-  @OneToMany(() => ResetEntity, (reset) => reset.user)
+  @OneToMany(
+    () => ResetEntity,
+    (reset) => reset.user,
+  )
   resetTokens: ResetEntity[];
 
-  @OneToMany(() => VerifyEntity, (verify) => verify.user)
+  @OneToMany(
+    () => VerifyEntity,
+    (verify) => verify.user,
+  )
   verifyTokens: VerifyEntity[];
 
   @Column({ default: false })

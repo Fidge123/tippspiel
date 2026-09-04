@@ -12,7 +12,10 @@ export class VerifyEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.verifyTokens)
+  @ManyToOne(
+    () => UserEntity,
+    (user) => user.verifyTokens,
+  )
   user: UserEntity;
 
   @Column()

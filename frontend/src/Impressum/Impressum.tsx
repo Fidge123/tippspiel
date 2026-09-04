@@ -1,5 +1,5 @@
-import Terms from "./Terms";
-import Legal from "./Legal";
+import Terms from './Terms';
+import Legal from './Legal';
 
 function Impressum() {
   return (

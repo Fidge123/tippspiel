@@ -1,12 +1,12 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { fetchFromAPI } from "../api";
-import { Team } from "../State/response-types";
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { fetchFromAPI } from '../api';
+import type { Team } from '../State/response-types';
 import {
   activeLeagueState,
   sbBetState,
   seasonStartDateState,
   teamsState,
-} from "../State/states";
+} from '../State/states';
 
 function SbBet() {
   const league = useRecoilValue(activeLeagueState);
@@ -15,7 +15,7 @@ function SbBet() {
   const [sbBet, setSBBet] = useRecoilState(sbBetState);
 
   async function selectSBWinner(teamId: string) {
-    const res = await fetchFromAPI("bet/superbowl", "POST", {
+    const res = await fetchFromAPI('bet/superbowl', 'POST', {
       teamId,
       leagueId: league.id,
       year: league.season,
@@ -31,7 +31,7 @@ function SbBet() {
       </h1>
       {teams.map((team) => (
         <button
-          key={"SB" + team.id}
+          key={`SB${team.id}`}
           disabled={seasonStart < new Date()}
           className="team-l"
           style={styleByTeam(team, sbBet === team.id)}
@@ -44,11 +44,11 @@ function SbBet() {
               width="24"
               height="24"
               alt="logo home team"
-              onError={(event: any) => (event.target.style.display = "none")}
+              onError={(event: any) => (event.target.style.display = 'none')}
             ></img>
           )}
           <span
-            className={sbBet === team.id ? "font-semibold text-gray-50" : ""}
+            className={sbBet === team.id ? 'font-semibold text-gray-50' : ''}
           >
             {team.name}
           </span>
@@ -66,7 +66,7 @@ function styleByTeam(team: Team | undefined, selected: boolean) {
         opacity: 1,
       }
     : {
-        borderColor: `#${team?.color1 || "000000"}ff`,
+        borderColor: `#${team?.color1 || '000000'}ff`,
       };
 }
 

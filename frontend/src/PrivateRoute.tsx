@@ -1,5 +1,5 @@
-import { Navigate } from "react-router-dom";
-import { isLoggedIn } from "./api";
+import { Navigate } from 'react-router-dom';
+import { isLoggedIn } from './api';
 
 export function LoggedInRoute({ children }: any) {
   const token = isLoggedIn();

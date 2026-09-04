@@ -1,19 +1,19 @@
-import { useRecoilValue } from "recoil";
-import { leaderboardState } from "../State/states";
-import DivisionCell from "./DivisionCell";
+import { useRecoilValue } from 'recoil';
+import { leaderboardState } from '../State/states';
+import DivisionCell from './DivisionCell';
 
 function DivisionTable() {
   const leaderboard = useRecoilValue(leaderboardState);
   const prefix = process.env.REACT_APP_IMG_URL;
   const divisions = [
-    "AFC North",
-    "AFC South",
-    "AFC West",
-    "AFC East",
-    "NFC North",
-    "NFC South",
-    "NFC West",
-    "NFC East",
+    'AFC North',
+    'AFC South',
+    'AFC West',
+    'AFC East',
+    'NFC North',
+    'NFC South',
+    'NFC West',
+    'NFC East',
   ];
 
   return (
@@ -40,17 +40,17 @@ function DivisionTable() {
                 <img
                   src={prefix + l.sbBet?.team.logo}
                   className={`p-1 inline-block ${
-                    l.sbBet.points ? "border-green-500 border rounded" : ""
+                    l.sbBet.points ? 'border-green-500 border rounded' : ''
                   }`}
                   width="32"
                   height="32"
                   alt="team logo for superbowl bet"
                   onError={(event: any) =>
-                    (event.target.style.display = "none")
+                    (event.target.style.display = 'none')
                   }
                 ></img>
               ) : (
-                "?"
+                '?'
               )}
             </td>
             <td>

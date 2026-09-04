@@ -3,9 +3,9 @@ function MatchupInput({ points, setPoints }: any) {
     <input
       className="h-10 p-px ml-1 text-center border-gray-700 rounded w-11"
       type="number"
-      value={points ?? ""}
+      value={points ?? ''}
       onChange={(ev) => {
-        const p = isNaN(parseInt(ev.target.value, 10))
+        const p = Number.isNaN(parseInt(ev.target.value, 10))
           ? setPoints(undefined)
           : parseInt(ev.target.value, 10);
         if (p && p <= 5 && p >= 1) {

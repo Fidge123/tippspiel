@@ -1,8 +1,8 @@
-import { lazy, useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { weeksState, widthState } from "../State/states";
+import { lazy, useEffect } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { weeksState, widthState } from '../State/states';
 
-const Week = lazy(() => import("./Week"));
+const Week = lazy(() => import('./Week'));
 
 function Schedule() {
   const weeks = useRecoilValue(weeksState);
@@ -12,8 +12,8 @@ function Schedule() {
     function handleResize() {
       setInnerWidth(window.innerWidth);
     }
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [setInnerWidth]);
 
   return (

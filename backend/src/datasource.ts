@@ -1,11 +1,11 @@
-import { env } from 'process';
+import { env } from 'node:process';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 export const config: DataSourceOptions = {
   type: 'postgres',
   url: env.DATABASE_URL,
-  entities: [__dirname + '/database/entity/*.entity.ts'],
-  migrations: [__dirname + '/database/migration/*.ts'],
+  entities: [`${__dirname}/database/entity/*.entity.ts`],
+  migrations: [`${__dirname}/database/migration/*.ts`],
   migrationsRun: true,
   maxQueryExecutionTime: 100,
   extra: {

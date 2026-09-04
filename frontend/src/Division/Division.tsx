@@ -1,10 +1,10 @@
-import { useRecoilValue } from "recoil";
-import {
+import { useRecoilValue } from 'recoil';
+import type {
   Division as DivisionType,
   DivisionBet,
   Team,
-} from "../State/response-types";
-import { seasonStartDateState } from "../State/states";
+} from '../State/response-types';
+import { seasonStartDateState } from '../State/states';
 
 function Division({ division, divisionBets, setDivisionBets }: Props) {
   const seasonStarted = useRecoilValue(seasonStartDateState) < new Date();
@@ -24,15 +24,15 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
         .sort((a, b) =>
           seasonStarted
             ? a.playoffSeed - b.playoffSeed
-            : getIndex(a.id) - getIndex(b.id)
+            : getIndex(a.id) - getIndex(b.id),
         )
         .map((team, i) => (
           <div
-            key={"Div" + team.id}
+            key={`Div${team.id}`}
             className="flex items-center justify-between pr-0 rounded team-l"
             style={styleByTeam(
               team,
-              divisionBets?.teams.some((t) => t?.id === team.id)
+              divisionBets?.teams.some((t) => t?.id === team.id),
             )}
           >
             {team.logo && (
@@ -41,28 +41,28 @@ function Division({ division, divisionBets, setDivisionBets }: Props) {
                 width="24"
                 height="24"
                 alt="logo home team"
-                onError={(event: any) => (event.target.style.display = "none")}
+                onError={(event: any) => (event.target.style.display = 'none')}
               ></img>
             )}
             <span
               className={
                 divisionBets?.teams.some((t) => t?.id === team.id)
-                  ? "text-gray-50"
-                  : ""
+                  ? 'text-gray-50'
+                  : ''
               }
             >
               <span className="font-semibold">{team.name}</span>
               {` ${team.wins}-${team.losses}${
-                team.ties > 0 ? "-" + team.ties : ""
+                team.ties > 0 ? `-${team.ties}` : ''
               }`}
             </span>
             {seasonStarted &&
               divisionBets?.teams.some((t) => t?.id === team.id) && (
                 <span className="px-1">
                   {getIndex(team.id) === i
-                    ? "✅"
-                    : Intl.NumberFormat("de-DE", {
-                        signDisplay: "always",
+                    ? '✅'
+                    : Intl.NumberFormat('de-DE', {
+                        signDisplay: 'always',
                       }).format(getIndex(team.id) - i)}
                 </span>
               )}
@@ -138,7 +138,7 @@ function styleByTeam(team: Team | undefined, betSubmitted: boolean = false) {
         opacity: 1,
       }
     : {
-        borderColor: `#${team?.color1 || "000000"}ff`,
+        borderColor: `#${team?.color1 || '000000'}ff`,
       };
 }
 

@@ -1,13 +1,13 @@
-import { Suspense, useState, lazy } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Suspense, useState, lazy } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { gameBetsState, teamState } from "../State/states";
-import { Game } from "./types";
+import { gameBetsState, teamState } from '../State/states';
+import type { Game } from './types';
 
-const Scores = lazy(() => import("./Scores"));
-const Stats = lazy(() => import("./Stats"));
-const MatchupInput = lazy(() => import("./MatchupInput"));
-const TeamButton = lazy(() => import("./TeamButton"));
+const Scores = lazy(() => import('./Scores'));
+const Stats = lazy(() => import('./Stats'));
+const MatchupInput = lazy(() => import('./MatchupInput'));
+const TeamButton = lazy(() => import('./TeamButton'));
 
 function MatchUp({ game, weekId }: Props) {
   const [bet, setBet] = useRecoilState(gameBetsState(game.id));
@@ -16,7 +16,7 @@ function MatchUp({ game, weekId }: Props) {
   const home = useRecoilValue(teamState(game.homeTeam?.id));
   const away = useRecoilValue(teamState(game.awayTeam?.id));
 
-  function select(homeAway: "home" | "away") {
+  function select(homeAway: 'home' | 'away') {
     const v = { ...bet.bets };
     if (bet.selected && bet.selected !== homeAway) {
       v[bet.selected] = (v[bet.selected] || 0) - 1;
@@ -32,8 +32,8 @@ function MatchUp({ game, weekId }: Props) {
       <div className="flex">
         <TeamButton
           team={away}
-          selected={bet.selected === "away"}
-          setSelected={() => select("away")}
+          selected={bet.selected === 'away'}
+          setSelected={() => select('away')}
           disabled={new Date(game.date) < new Date()}
         ></TeamButton>
         <Suspense fallback={<div className="w-16 sm:w-20">...</div>}>
@@ -41,8 +41,8 @@ function MatchUp({ game, weekId }: Props) {
         </Suspense>
         <TeamButton
           team={home}
-          selected={bet.selected === "home"}
-          setSelected={() => select("home")}
+          selected={bet.selected === 'home'}
+          setSelected={() => select('home')}
           disabled={new Date(game.date) < new Date()}
         ></TeamButton>
         <MatchupInput game={game}></MatchupInput>
@@ -54,8 +54,8 @@ function MatchUp({ game, weekId }: Props) {
           <div
             className={`inline-block h-2 w-2 p-0.5 border-r-2 border-b-2 border-black dark:border-gray-200 ${
               open
-                ? "transform duration-200 -rotate-135"
-                : "transform duration-200 rotate-45"
+                ? 'transform duration-200 -rotate-135'
+                : 'transform duration-200 rotate-45'
             }`}
           ></div>
         </div>

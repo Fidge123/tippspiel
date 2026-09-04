@@ -1,19 +1,19 @@
-import { useRecoilValue } from "recoil";
-import { leaderboardState } from "../State/states";
+import { useRecoilValue } from 'recoil';
+import { leaderboardState } from '../State/states';
 
 function ByPoints() {
   const leaderboard = useRecoilValue(leaderboardState);
 
   function toPercent(list: any[], fn: (el: any) => boolean) {
     const percent = (list.filter(fn).length / list.length) * 100;
-    return list.length ? `${percent.toFixed(1)}%` : "";
+    return list.length ? `${percent.toFixed(1)}%` : '';
   }
 
   function createCell(
     list: any[],
     winFn: (el: any) => boolean = (bet) => bet.points > 0,
     lossFn: (el: any) => boolean = (bet) => bet.points < 0,
-    tieFn: (el: any) => boolean = (bet) => bet.points === 0
+    tieFn: (el: any) => boolean = (bet) => bet.points === 0,
   ) {
     return (
       <td>

@@ -13,10 +13,18 @@ export class ByeEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => WeekEntity, (week) => week.byes, { nullable: false })
+  @ManyToOne(
+    () => WeekEntity,
+    (week) => week.byes,
+    { nullable: false },
+  )
   week: WeekEntity;
 
-  @ManyToOne(() => TeamEntity, (team) => team.byes, { nullable: false })
+  @ManyToOne(
+    () => TeamEntity,
+    (team) => team.byes,
+    { nullable: false },
+  )
   team: TeamEntity;
 
   @CreateDateColumn({ select: false })
