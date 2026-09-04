@@ -23,6 +23,7 @@ let database: TestDatabase;
 let replayApp: ReplayApp;
 let now = new Date(season.asOfDates[0].at);
 let leagues: { id: string; name: string; viewer: Viewer }[];
+let weekOfGame: Map<string, string>;
 let restoreEspn: () => void;
 
 beforeAll(async () => {
@@ -77,6 +78,7 @@ describe(`${season.year} season`, () => {
         now = new Date(asOf.at);
         vi.setSystemTime(now);
         await importSeason(replayApp, season);
+        weekOfGame = await gameWeeks(database.url, season.year);
       }, 600_000);
 
       it('replays without a failed ESPN request', () => {
@@ -96,7 +98,7 @@ describe(`${season.year} season`, () => {
             );
 
           expect(response.status).toBe(200);
-          expect(normalise(response.body)).toMatchSnapshot(
+          expect(normalise(response.body, season)).toMatchSnapshot(
             `${index}-${asOf.label} — ${league.name} — as seen by ${league.viewer.name}`,
           );
         }
@@ -113,6 +115,23 @@ async function importSeason(app: ReplayApp, s: Season): Promise<void> {
   for (const week of s.postWeeks) {
     await app.schedule.importWeek({ year: s.year, seasontype: 3, week });
   }
+}
+
+async function gameWeeks(url: string, year: number) {
+  const client = new Client({ connectionString: url });
+  await client.connect();
+  const { rows } = await client.query<{ id: string; weekId: string }>(
+    `SELECT id, "weekId" FROM game WHERE "weekId" LIKE $1`,
+    [`${year}-%`],
+  );
+  await client.end();
+  return new Map(rows.map((row) => [row.id, row.weekId]));
+}
+
+/** `2023-2-7` sorts after `2023-2-18` unless the week number is padded. */
+function weekLabel(weekId: string): string {
+  const [year, seasontype, week] = weekId.split('-');
+  return `${year}-${seasontype}-${week.padStart(2, '0')}`;
 }
 
 // The viewer is pinned to the lowest user id so the reveal rules — a player
@@ -136,38 +155,47 @@ async function leaguesOf(url: string, year: number) {
   return rows.filter((row) => row.viewer);
 }
 
-/** Sorts what the API leaves in database order, so a diff means a real change. */
-function normalise(body: any[]) {
+function formatBet(b: any): string {
+  const bet = b.bet ? `${b.bet.winner} ${b.bet.pointDiff}` : 'no bet';
+  return `${bet}${b.doubler ? ' x2' : ''}${b.bonus ? ' bonus' : ''} = ${b.points}`;
+}
+
+/** Keys are sorted by the snapshot serialiser, so a diff means a real change. */
+function normalise(body: any[], s: Season) {
   return [...body]
     .sort(
       (a, b) =>
         b.points.all - a.points.all || a.user.name.localeCompare(b.user.name),
     )
-    .map((entry) => ({
-      name: entry.user.name,
-      points: entry.points,
-      bets: [...entry.bets]
-        .sort((a, b) => a.game.localeCompare(b.game))
-        .map(({ game, bet, doubler, bonus, points }) => ({
-          game,
-          winner: bet?.winner ?? null,
-          pointDiff: bet?.pointDiff ?? null,
-          doubler,
-          bonus,
-          points,
-        })),
-      divBets: [...entry.divBets]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((bet) => ({
-          division: bet.name,
-          order: [bet.first, bet.second, bet.third, bet.fourth].map(
-            (team) => team?.abbreviation ?? null,
-          ),
-          points: bet.points,
-        })),
-      sbBet: {
-        team: entry.sbBet.team?.abbreviation ?? null,
-        points: entry.sbBet.points,
-      },
-    }));
+    .map((entry) => {
+      const weeks: Record<string, number> = {};
+      const bets: Record<string, Record<string, string>> = {};
+
+      for (const bet of entry.bets) {
+        const weekId = weekOfGame.get(bet.game) ?? 'unknown';
+        const label = weekLabel(weekId);
+        weeks[label] = (weeks[label] ?? 0) + bet.points;
+        if (s.detailWeeks.includes(weekId)) {
+          bets[label] ??= {};
+          bets[label][bet.game] = formatBet(bet);
+        }
+      }
+
+      return {
+        name: entry.user.name,
+        points: entry.points,
+        weeks,
+        bets,
+        divBets: Object.fromEntries(
+          entry.divBets.map((d) => [
+            d.name,
+            `${[d.first, d.second, d.third, d.fourth].map((t) => t?.abbreviation ?? '-').join(' ')} = ${d.points}`,
+          ]),
+        ),
+        sbBet: {
+          team: entry.sbBet.team?.abbreviation ?? null,
+          points: entry.sbBet.points,
+        },
+      };
+    });
 }

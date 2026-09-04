@@ -64,6 +64,15 @@ objects are immutable, so they are cached under `backend/test/.corpus-cache`
 TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/postgres yarn test
 ```
 
+## What the snapshots contain
+
+Per player: the point totals, a per-week subtotal, and the division and Super
+Bowl picks. Games are only spelled out one by one for the weeks listed in
+`detailWeeks` — the 2023 regular weeks are structurally identical to one
+another, so week 1 stands in for all of them. A scoring change in any other
+week still fails the test and still names the week; only its per-game
+breakdown is left out.
+
 ## Seasons
 
 `season.ts` is a parameter, not a constant — adding a season is adding an entry

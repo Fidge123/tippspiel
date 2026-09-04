@@ -4,6 +4,12 @@ export interface Season {
   postWeeks: number[];
   /** Must be a backup taken after the season finished. */
   backupKey: string;
+  /**
+   * Weeks the snapshot spells out game by game. Every other week is covered by
+   * its per-week subtotal, so a regression still fails the test and still names
+   * the week; only the per-game breakdown is left out.
+   */
+  detailWeeks: string[];
   asOfDates: { label: string; at: string }[];
 }
 
@@ -17,6 +23,12 @@ export const season2023: Season = {
   regularWeeks: 18,
   postWeeks: [1, 2, 3, 5],
   backupKey: 'database_backup/2024-03-03.gz',
+  // The 18 regular weeks are structurally identical — no ties anywhere in the
+  // season, the same five pointDiff values, doublers and un-placed bets in
+  // every one — so week 1 stands in for all of them. The playoff weeks differ
+  // (division bets reveal, and the Super Bowl scores separately), so the first
+  // and the last are spelled out too.
+  detailWeeks: ['2023-2-1', '2023-3-1', '2023-3-5'],
   asOfDates: [
     { label: 'before week 1 kickoff', at: '2023-09-07T12:00:00.000Z' },
     { label: 'week 1 mid-game', at: '2023-09-10T18:15:00.000Z' },
