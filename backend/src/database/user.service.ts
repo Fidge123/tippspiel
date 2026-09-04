@@ -90,7 +90,7 @@ export class UserDataService {
       const userEntity = await this.userRepo.save(user);
       await this.verifyRepo.save(token);
       return [userEntity.id, token.token];
-    } catch (_error) {
+    } catch {
       throw new HttpException(
         'A user with that email already exists!',
         HttpStatus.CONFLICT,

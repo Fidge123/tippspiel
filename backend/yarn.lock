@@ -615,7 +615,7 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.27.1.tgz#a7054dcc145a967dd4dc8fee845a57c1316c9df8"
   integrity sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==
 
-"@biomejs/biome@^2.2.2":
+"@biomejs/biome@^2.5.12":
   version "2.5.12"
   resolved "https://registry.yarnpkg.com/@biomejs/biome/-/biome-2.5.12.tgz#76848cbbc1702d7bdc78ff7ae150845489e6fffd"
   integrity sha512-Lw4VHZRebrReBBnlHa12JQjnIBm3JJAA55PDB9LbBVBF0q4RYphm6KfmIjqtPhf61MxZ5Q9KoK8R8x+7per5Aw==

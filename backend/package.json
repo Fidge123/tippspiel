@@ -14,8 +14,9 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "typeorm": "typeorm-ts-node-commonjs -d src/datasource.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.198.0",
