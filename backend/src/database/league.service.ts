@@ -82,7 +82,7 @@ export class LeagueDataService {
     if (user) {
       const league = new LeagueEntity();
       league.name = name;
-      league.season = 2025;
+      league.season = 2026;
       league.members = [user];
       league.admins = [user];
       return this.leagueRepo.save(league);
