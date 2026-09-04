@@ -1,20 +1,14 @@
 import { BASE_URL } from '../../src/schedule/schedule.service';
 import type { Corpus } from './corpus';
 
-/**
- * Replaces global `fetch` with the recorded corpus. The importer only ever
- * calls three ESPN endpoints; anything else is a bug in the test and fails
- * loudly rather than silently reaching the network.
- */
+/** Serves the ESPN endpoints the importer calls from the recorded corpus. */
 export function installEspnStub(corpus: Corpus, clock: () => Date) {
   const real = globalThis.fetch;
 
   globalThis.fetch = (async (input: any) => {
     const url = String(typeof input === 'string' ? input : input.url);
     if (!url.startsWith(BASE_URL)) {
-      throw new Error(
-        `Unexpected network call in a golden master test: ${url}`,
-      );
+      throw new Error(`Unexpected network call in a replay test: ${url}`);
     }
 
     const asOf = clock();

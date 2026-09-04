@@ -13,13 +13,10 @@ const gunzip = promisify(gunzipCb);
 
 export const BUCKET = env.R2_BUCKET ?? 'nfl-tippspiel';
 
-/**
- * Objects in the bucket are immutable — every key carries the timestamp it was
- * written at — so anything we download once can be cached forever. Only the
- * first run of the golden master pays for the download.
- */
+// Every key carries the timestamp it was written at, so nothing is ever
+// rewritten and the cache never needs invalidating.
 export const CACHE_DIR = resolve(
-  env.GOLDEN_CACHE_DIR ?? join(__dirname, '..', '.corpus-cache'),
+  env.REPLAY_CACHE_DIR ?? join(__dirname, '..', '.corpus-cache'),
 );
 
 let client: S3Client | undefined;
@@ -34,7 +31,7 @@ function getClient(): S3Client {
   const missing = missingCredentials();
   if (missing.length) {
     throw new Error(
-      `The golden master reads its fixtures from the ${BUCKET} bucket. Missing: ${missing.join(', ')}.`,
+      `The season replay reads its fixtures from the ${BUCKET} bucket. Missing: ${missing.join(', ')}.`,
     );
   }
   if (!client) {
@@ -50,7 +47,6 @@ function getClient(): S3Client {
   return client;
 }
 
-/** Every key under `prefix`, in bucket order. */
 export async function listKeys(prefix: string): Promise<string[]> {
   const cache = join(CACHE_DIR, '_index', `${encodeURIComponent(prefix)}.json`);
   const cached = await readFile(cache, 'utf8').catch(() => undefined);
@@ -82,7 +78,6 @@ export async function listKeys(prefix: string): Promise<string[]> {
   return keys;
 }
 
-/** The raw bytes of one object, served from the local cache when present. */
 export async function getObject(key: string): Promise<Buffer> {
   const cache = join(CACHE_DIR, key);
   const cached = await readFile(cache).catch(() => undefined);
@@ -101,12 +96,10 @@ export async function getObject(key: string): Promise<Buffer> {
   return body;
 }
 
-/** One gzipped JSON object from the bucket, parsed. */
 export async function getJSON<T = any>(key: string): Promise<T> {
   return JSON.parse((await gunzip(await getObject(key))).toString('utf8'));
 }
 
-/** One gzipped text object from the bucket (the database backups). */
 export async function getText(key: string): Promise<string> {
   return (await gunzip(await getObject(key))).toString('utf8');
 }

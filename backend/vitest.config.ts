@@ -26,8 +26,6 @@ export default defineConfig({
     // Decorator metadata is only recorded if reflect-metadata is loaded before
     // the first entity module is evaluated.
     setupFiles: ['test/setup.ts'],
-    // Replaying a season is a single long-lived database and app, so the
-    // suites must not run in parallel against each other.
     fileParallelism: false,
     pool: 'forks',
     testTimeout: 600_000,

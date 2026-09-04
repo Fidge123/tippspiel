@@ -46,11 +46,7 @@ async function notify(url: string) {
 export class ScheduleService implements OnModuleInit {
   constructor(private readonly databaseService: ScheduleDataService) {}
 
-  /**
-   * Importing on boot hits the ESPN API 20+ times before the app can serve a
-   * single request, so it is opt-in via IMPORT_ON_BOOT. Tests and local
-   * development leave it unset.
-   */
+  // Importing on boot hits ESPN 20+ times before the app serves a request.
   async onModuleInit(): Promise<void> {
     if (env.IMPORT_ON_BOOT !== 'true') {
       return;
@@ -118,7 +114,6 @@ export class ScheduleService implements OnModuleInit {
     try {
       response = await load(key);
     } catch (error: unknown) {
-      // A single failed ESPN request must not take the process down.
       console.error((error as Error)?.message ?? error);
       return;
     }

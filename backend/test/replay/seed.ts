@@ -11,15 +11,11 @@ import { getText, listKeys } from './r2';
 
 const scrypt = promisify(scryptCb);
 
-/** The password every anonymised user ends up with. See fixtures/anonymize.sql. */
-export const TEST_PASSWORD = 'golden-master-password';
+/** Must stay in step with the hash in fixtures/anonymize.sql. */
+export const TEST_PASSWORD = 'replay-test-password';
 const TEST_SALT = '00000000000000000000000000000000';
 
-/**
- * pg_dump writes its tables alphabetically, which does not respect foreign
- * keys, so the load runs with triggers off. `migrations` and `typeorm_metadata`
- * are owned by the migration chain we just ran and are never restored.
- */
+// Owned by the migration chain that already ran; restoring them would conflict.
 const SKIP_TABLES = new Set(['migrations', 'typeorm_metadata']);
 
 export interface CopyBlock {
@@ -28,7 +24,6 @@ export interface CopyBlock {
   body: string;
 }
 
-/** Every `COPY ... FROM stdin;` block in a plain-text pg_dump. */
 export function parseCopyBlocks(dump: string): CopyBlock[] {
   const blocks: CopyBlock[] = [];
   const lines = dump.split('\n');
@@ -75,15 +70,14 @@ export async function findBackup(asOf: Date): Promise<string> {
 }
 
 /**
- * Loads the backup's data into an already-migrated database and anonymises it
- * in the same connection, so the real names, addresses and hashes exist only
- * inside the throwaway database and never on disk in the repository.
+ * Loads the backup into an already-migrated database and anonymises it in the
+ * same connection, so the real names and hashes never leave that database.
  */
 export async function seedFromBackup(
   url: string,
   backupKey: string,
 ): Promise<string> {
-  const key = env.GOLDEN_BACKUP_KEY ?? backupKey;
+  const key = env.REPLAY_BACKUP_KEY ?? backupKey;
   const dump = await getText(key);
   const blocks = parseCopyBlocks(dump).filter(
     (block) => !SKIP_TABLES.has(block.table),
@@ -95,6 +89,8 @@ export async function seedFromBackup(
   const client = new Client({ connectionString: url });
   await client.connect();
   try {
+    // pg_dump orders its tables alphabetically, which does not respect the
+    // foreign keys, so the load runs with triggers off.
     await client.query('SET session_replication_role = replica');
     for (const block of blocks) {
       if (!block.body) {
@@ -119,10 +115,6 @@ export async function seedFromBackup(
   return key;
 }
 
-/**
- * The fixture is only safe if the anonymiser actually ran, so this is checked
- * rather than assumed. Nothing here prints a value it is checking.
- */
 async function assertAnonymised(client: Client): Promise<void> {
   const expected = (
     (await scrypt(

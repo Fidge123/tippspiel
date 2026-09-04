@@ -6,13 +6,7 @@ export interface TestDatabase {
   stop(): Promise<void>;
 }
 
-/**
- * A throwaway Postgres for one golden-master run.
- *
- * Testcontainers gives identical behaviour locally and in CI with no setup.
- * Where Docker is not available, point TEST_DATABASE_URL at a server the test
- * may create and drop databases on.
- */
+/** A throwaway Postgres, from Docker unless TEST_DATABASE_URL points at one. */
 export async function startDatabase(): Promise<TestDatabase> {
   if (env.TEST_DATABASE_URL) {
     return createScratchDatabase(env.TEST_DATABASE_URL);
@@ -29,7 +23,7 @@ export async function startDatabase(): Promise<TestDatabase> {
 }
 
 async function createScratchDatabase(adminUrl: string): Promise<TestDatabase> {
-  const name = `golden_${Date.now()}_${Math.floor(Math.random() * 1e6)}`;
+  const name = `replay_${Date.now()}_${Math.floor(Math.random() * 1e6)}`;
   const admin = new Client({ connectionString: adminUrl });
   await admin.connect();
   await admin.query(`CREATE DATABASE ${name}`);

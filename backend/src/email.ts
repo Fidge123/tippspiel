@@ -10,11 +10,7 @@ export interface RecordedEmail {
   [key: string]: unknown;
 }
 
-/**
- * Every mail the stub transporter "sent", newest last. Only populated when no
- * Postmark token is configured, which is the case in tests and in local
- * development, so mail can be asserted instead of swallowed.
- */
+/** What the stub transporter "sent"; only filled when POSTMARK is unset. */
 export const sentEmails: RecordedEmail[] = [];
 
 const transporter = createTransport();

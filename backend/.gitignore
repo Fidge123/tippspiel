@@ -35,5 +35,5 @@ lerna-debug.log*
 
 .envrc
 
-# Golden master fixture cache (immutable R2 objects)
+# Season replay fixture cache
 /test/.corpus-cache
