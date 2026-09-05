@@ -21,7 +21,7 @@ export async function fetchFromAPI<T = any>(
   if (res.status === 401) {
     throw new Error('Not authorized');
   }
-  return onlyReturnOk ? res.ok : await res.json();
+  return (onlyReturnOk ? res.ok : await res.json()) as T;
 }
 
 let lastRefresh: Date = new Date();
