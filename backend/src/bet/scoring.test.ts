@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { divisionPoints, gamePoints, underdogBonus } from './scoring';
+import {
+  divisionPoints,
+  gamePoints,
+  superbowlPoints,
+  underdogBonus,
+} from './scoring';
 
 const bets = (n: number, winner: string) =>
   Array.from({ length: n }, () => ({ winner }));
@@ -215,5 +220,29 @@ describe('divisionPoints', () => {
         fourth: teams.a,
       }),
     ).toBe(0);
+  });
+});
+
+describe('superbowlPoints', () => {
+  const kc = { id: 'kc' };
+  const sf = { id: 'sf' };
+
+  it('gives 20 for the correct pick', () => {
+    expect(superbowlPoints({ team: kc }, kc)).toBe(20);
+  });
+
+  it('gives 0 for a wrong pick', () => {
+    expect(superbowlPoints({ team: sf }, kc)).toBe(0);
+  });
+
+  it('gives 0 while the Super Bowl has no winner yet', () => {
+    expect(superbowlPoints({ team: sf }, undefined)).toBe(0);
+    expect(superbowlPoints({ team: sf }, null)).toBe(0);
+  });
+
+  it('gives 0 without a bet', () => {
+    expect(superbowlPoints(undefined, kc)).toBe(0);
+    expect(superbowlPoints(null, kc)).toBe(0);
+    expect(superbowlPoints({ team: null }, kc)).toBe(0);
   });
 });

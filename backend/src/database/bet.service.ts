@@ -257,16 +257,18 @@ export class BetDataService {
     );
   }
 
-  async findSbWinner(year: number): Promise<TeamEntity> {
-    const game = await this.gameRepo
-      .createQueryBuilder('game')
-      .leftJoinAndSelect('game.week', 'week')
-      .leftJoinAndSelect('game.homeTeam', 'home')
-      .leftJoinAndSelect('game.awayTeam', 'away')
-      .where('week.seasonType = :st', { st: 3 })
-      .andWhere('week.week = :w', { w: 5 })
-      .andWhere('week.year = :year', { year })
-      .getOne();
+  async findSbWinner(year: number): Promise<TeamEntity | undefined> {
+    const game = await this.gameRepo.findOne({
+      where: {
+        week: { year, seasontype: 3, week: 5 },
+        status: 'STATUS_FINAL',
+      },
+      relations: { homeTeam: true, awayTeam: true },
+    });
+
+    if (!game || game.winner === 'none') {
+      return undefined;
+    }
 
     return game.winner === 'home' ? game.homeTeam : game.awayTeam;
   }
