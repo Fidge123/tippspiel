@@ -19,6 +19,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:unit": "vitest run src",
+    "test:api": "vitest run -c vitest.config.api.ts",
+    "test:replay": "vitest run test/replay",
     "test:watch": "vitest",
     "test:update": "vitest run -u"
   },

@@ -21,7 +21,7 @@ export default defineConfig({
     globals: false,
     environment: 'node',
     root: __dirname,
-    include: ['test/**/*.test.ts', 'src/**/*.test.ts'],
+    include: ['test/replay/**/*.test.ts', 'src/**/*.test.ts'],
     // reflect-metadata must load before the first entity module is evaluated.
     setupFiles: ['test/setup.ts'],
     fileParallelism: false,

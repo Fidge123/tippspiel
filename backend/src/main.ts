@@ -2,9 +2,7 @@ import { env } from 'node:process';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import compression from 'compression';
-import helmet from 'helmet';
-import cookieParser from 'cookie-parser';
+import { configureApp } from './app.setup';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,10 +14,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
-  app.use(helmet());
-  app.use(compression());
-  app.use(cookieParser(env.COOKIE_SECRET));
-  app.enableCors();
+  configureApp(app);
 
   await app.listen(env.PORT || 3000);
 }

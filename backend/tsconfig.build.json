@@ -9,6 +9,7 @@
     "test",
     "dist",
     "vitest.config.ts",
+    "vitest.config.api.ts",
     "**/*spec.ts",
     "**/*.test.ts"
   ]

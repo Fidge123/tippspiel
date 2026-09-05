@@ -42,9 +42,40 @@ jobs:
       - name: Build backend
         run: yarn run build
 
+  api:
+    name: API tests
+    needs: backend
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Test the API
+        run: yarn run test:api
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+
   season-replay:
     name: Season replay (2023)
-    needs: backend
+    needs: api
     defaults:
       run:
         working-directory: backend
@@ -62,7 +93,7 @@ jobs:
           path: backend/test/.corpus-cache
           key: corpus-2023-${{ hashFiles('backend/test/replay/season.ts') }}
       - name: Replay the season
-        run: yarn run test
+        run: yarn run test:replay
         env:
           # Object Read on the nfl-tippspiel bucket only.
           R2_API: ${{ secrets.R2_API }}
