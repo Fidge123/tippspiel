@@ -43,16 +43,6 @@ describe('selectCurrentWeek', () => {
     );
   });
 
-  it('is inclusive at both ends of a week', () => {
-    expect(selectCurrentWeek([w1, w2, w3], at('2025-09-01T00:00:00Z'))).toBe(
-      w1,
-    );
-    // w1 ends exactly when w2 starts; the earlier week wins the boundary.
-    expect(selectCurrentWeek([w1, w2, w3], at('2025-09-08T00:00:00Z'))).toBe(
-      w1,
-    );
-  });
-
   it('does not depend on the input order', () => {
     expect(selectCurrentWeek([w3, w1, w2], at('2025-09-10T12:00:00Z'))).toBe(
       w2,

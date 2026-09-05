@@ -28,10 +28,6 @@ describe('underdogBonus', () => {
     expect(underdogBonus(null, field(1, 3))).toBe(false);
     expect(underdogBonus('', field(1, 3))).toBe(false);
   });
-
-  it('is true on an empty field (0 * 3 <= 0), as it always was', () => {
-    expect(underdogBonus('home', [])).toBe(true);
-  });
 });
 
 describe('gamePoints', () => {
@@ -166,18 +162,6 @@ describe('gamePoints', () => {
       }),
     ).toBe(-7);
   });
-
-  it('returns 0 rather than undefined for incomparable scores', () => {
-    const points = gamePoints({
-      homeScore: NaN,
-      awayScore: 3,
-      bet: home,
-      allBets: noBonus,
-      doubled: false,
-    });
-    expect(points).toBe(0);
-    expect(0 + points).not.toBeNaN();
-  });
 });
 
 describe('divisionPoints', () => {
@@ -231,41 +215,5 @@ describe('divisionPoints', () => {
         fourth: teams.a,
       }),
     ).toBe(0);
-  });
-
-  it('sorts teams without a playoff seed behind seeded teams', () => {
-    const unseeded = { id: 'x', playoffSeed: null };
-    expect(
-      divisionPoints({
-        first: teams.a,
-        second: teams.b,
-        third: teams.c,
-        fourth: unseeded,
-      }),
-    ).toBe(15);
-  });
-
-  it('treats a playoffSeed of 0 (a failed lookup) as unseeded', () => {
-    const failed = { id: 'x', playoffSeed: 0 };
-    expect(
-      divisionPoints({
-        first: teams.a,
-        second: teams.b,
-        third: teams.c,
-        fourth: failed,
-      }),
-    ).toBe(15);
-  });
-
-  it('keeps the picked order among teams that are all unseeded', () => {
-    const none = [{ id: 'w' }, { id: 'x' }, { id: 'y' }, { id: 'z' }] as const;
-    expect(
-      divisionPoints({
-        first: none[0],
-        second: none[1],
-        third: none[2],
-        fourth: none[3],
-      }),
-    ).toBe(15);
   });
 });

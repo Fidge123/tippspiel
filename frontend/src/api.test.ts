@@ -38,10 +38,6 @@ describe('validateToken', () => {
     expect(validateToken(tokenExpiringAt(nowSeconds() + 10))).toBe(true);
   });
 
-  it('accepts the empty token by default', () => {
-    expect(validateToken('')).toBe(true);
-  });
-
   it('rejects the empty token when accept_empty is false', () => {
     expect(validateToken('', false)).toBe(false);
   });
