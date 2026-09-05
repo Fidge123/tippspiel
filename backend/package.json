@@ -43,7 +43,7 @@
     "postmark": "^4.0.2",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.3.0",
-    "typeorm": "^0.3.7"
+    "typeorm": "^0.3.31"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",
