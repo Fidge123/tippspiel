@@ -103,15 +103,12 @@ describe('game bets', () => {
   it('stores no bet placed a second after kickoff', async () => {
     await setKickoff(aSecondAgo());
 
-    await request(api.server)
-      .post('/bet')
-      .set(auth(stranger))
-      .send({
-        gameId: game.id,
-        leagueId: league.id,
-        winner: 'away',
-        pointDiff: 1,
-      });
+    await request(api.server).post('/bet').set(auth(stranger)).send({
+      gameId: game.id,
+      leagueId: league.id,
+      winner: 'away',
+      pointDiff: 1,
+    });
 
     expect(
       await api.dataSource
