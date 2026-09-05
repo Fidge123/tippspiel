@@ -99,3 +99,10 @@ export function divisionPoints(bet: DivisionBet): number {
   }
   return score;
 }
+
+export function superbowlPoints(
+  bet?: { team?: Team | null } | null,
+  winner?: Team | null,
+): number {
+  return winner && bet?.team?.id === winner.id ? 20 : 0;
+}

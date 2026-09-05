@@ -16,7 +16,12 @@ import type {
 } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
 import { LeagueDataService } from '../database/league.service';
-import { divisionPoints, gamePoints, underdogBonus } from './scoring';
+import {
+  divisionPoints,
+  gamePoints,
+  superbowlPoints,
+  underdogBonus,
+} from './scoring';
 
 @Controller('leaderboard')
 export class LeaderboardController {
@@ -124,7 +129,7 @@ export class LeaderboardController {
             })),
             sbBet: {
               team: sbBet?.team ?? {},
-              points: sbWinner && sbBet?.team.id === sbWinner.id ? 20 : 0,
+              points: superbowlPoints(sbBet, sbWinner),
             },
           };
           const sums = {
