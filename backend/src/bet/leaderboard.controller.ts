@@ -11,12 +11,12 @@ import { CurrentUser, User } from '../user.decorator';
 import type {
   BetDoublerEntity,
   BetEntity,
-  DivisionBetEntity,
   GameEntity,
   UserEntity,
 } from '../database/entity';
 import { BetDataService } from '../database/bet.service';
 import { LeagueDataService } from '../database/league.service';
+import { divisionPoints, gamePoints, underdogBonus } from './scoring';
 
 @Controller('leaderboard')
 export class LeaderboardController {
@@ -107,8 +107,8 @@ export class LeaderboardController {
             bets: games.map((game) => ({
               game: game.id,
               bet: formatBet(game.bets.find((bet) => bet.user.id === user.id)),
-              doubler: getMult(doublers, game, user) === 2,
-              bonus: getBonus(
+              doubler: isDoubled(doublers, game, user),
+              bonus: underdogBonus(
                 game.bets.find((bet) => bet.user.id === user.id)?.winner,
                 game.bets,
               ),
@@ -120,8 +120,7 @@ export class LeaderboardController {
               second: bet.second,
               third: bet.third,
               fourth: bet.fourth,
-              points:
-                isPlayoffs || season < w.year ? calcDivisionPoints(bet) : 0,
+              points: isPlayoffs || season < w.year ? divisionPoints(bet) : 0,
             })),
             sbBet: {
               team: sbBet?.team ?? {},
@@ -150,73 +149,24 @@ function formatBet(bet?: BetEntity) {
     : undefined;
 }
 
-function calcDivisionPoints(bet: DivisionBetEntity) {
-  let score = 0;
-  const bets = [bet.first, bet.second, bet.third, bet.fourth];
-  const correctOrder = bets.sort((a, b) => a.playoffSeed - b.playoffSeed);
-  if (bet.first && bet.first.id === correctOrder[0].id) {
-    score += 7;
-  }
-  if (bet.second && bet.second.id === correctOrder[1].id) {
-    score += 1;
-  }
-  if (bet.third && bet.third.id === correctOrder[2].id) {
-    score += 1;
-  }
-  if (bet.fourth && bet.fourth.id === correctOrder[3].id) {
-    score += 1;
-  }
-  if (score === 10) {
-    score += 5;
-  }
-  return score;
-}
-
-function getMult(
+function isDoubled(
   doublers: BetDoublerEntity[],
   game: GameEntity,
   user: UserEntity,
-): 1 | 2 {
-  return doublers.some((d) => d.game.id === game.id && d.user.id === user.id)
-    ? 2
-    : 1;
-}
-
-function getBonus(winner: string, bets: BetEntity[]) {
-  return (
-    winner && bets.filter((b) => b.winner === winner).length * 3 <= bets.length
-  );
+): boolean {
+  return doublers.some((d) => d.game.id === game.id && d.user.id === user.id);
 }
 
 function calcPoints(
   game: GameEntity,
   user: UserEntity,
   doublers: BetDoublerEntity[],
-) {
-  const bet = game.bets.find((bet) => bet.user.id === user.id);
-
-  if (!bet) {
-    return -1;
-  }
-
-  const multi = getMult(doublers, game, user);
-  const extraPoint = getBonus(bet.winner, game.bets);
-
-  if (game.homeScore > game.awayScore) {
-    if (bet.winner === 'home') {
-      return (bet.pointDiff + (extraPoint ? 1 : 0)) * multi;
-    }
-    return -bet.pointDiff;
-  }
-
-  if (game.awayScore > game.homeScore) {
-    if (bet.winner === 'away') {
-      return (bet.pointDiff + (extraPoint ? 1 : 0)) * multi;
-    }
-    return -bet.pointDiff;
-  }
-
-  if (game.awayScore === game.homeScore) {
-    return 0;
-  }
+): number {
+  return gamePoints({
+    homeScore: game.homeScore,
+    awayScore: game.awayScore,
+    bet: game.bets.find((bet) => bet.user.id === user.id),
+    allBets: game.bets,
+    doubled: isDoubled(doublers, game, user),
+  });
 }

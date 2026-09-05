@@ -18,6 +18,7 @@
     "typeorm": "typeorm-ts-node-commonjs -d src/datasource.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:unit": "vitest run src",
     "test:watch": "vitest",
     "test:update": "vitest run -u"
   },

@@ -4,6 +4,7 @@ import { CreateDivisionBetDto } from '../bet/division.dto';
 import { In, MoreThan, Repository } from 'typeorm';
 
 import { CreateBetDto } from '../bet/bet.dto';
+import { gamesWithoutBets } from './missing-bets';
 
 import {
   BetEntity,
@@ -78,14 +79,7 @@ export class BetDataService {
       .andWhere('game.date <= :soon')
       .setParameters({ now, soon, status })
       .getMany();
-    return games.filter(
-      (game) =>
-        !leagues.every((l) =>
-          bets
-            .filter((bet) => bet.league.id === l.id)
-            .some((bet) => bet.game.id === game.id),
-        ),
-    );
+    return gamesWithoutBets(games, bets, leagues);
   }
 
   async divisionBets(

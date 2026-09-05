@@ -37,6 +37,8 @@ jobs:
         run: yarn run lint
       - name: Typecheck backend
         run: yarn run typecheck
+      - name: Test backend
+        run: yarn run test:unit
       - name: Build backend
         run: yarn run build
 
@@ -83,6 +85,8 @@ jobs:
         run: yarn run lint
       - name: Typecheck frontend
         run: yarn run typecheck
+      - name: Test frontend
+        run: yarn run test
       - name: Build frontend
         run: yarn run build
       - name: Archive build
