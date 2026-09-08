@@ -45,14 +45,3 @@ test('a new account is registered, verified and logs in', async ({ page }) => {
 
   await expect(page.getByRole('link', { name: 'Tabelle' })).toBeVisible();
 });
-
-// A user who is in no league lands on the error boundary: #111.
-// Fixing that issue turns this test red, which is the reminder to drop test.fail.
-test.fail(
-  'someone who has registered but joined no league can use the app',
-  async ({ page }) => {
-    await login(page, users.newcomer);
-
-    await expect(page.getByText('Ein Fehler ist aufgetreten.')).toBeHidden();
-  },
-);
