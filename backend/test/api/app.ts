@@ -38,7 +38,7 @@ export async function bootApiApp(
   env.COOKIE_SECRET = 'api-cookie-secret';
   env.EMAIL = 'admin@example.invalid';
   env.SKIP_BACKUP = 'true';
-  delete env.POSTMARK;
+  delete env.SMTP2GO_API_KEY;
   if (options.importOnBoot) {
     env.IMPORT_ON_BOOT = 'true';
   } else {

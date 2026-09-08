@@ -8,7 +8,7 @@ import { ListBucketsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import type { Scoreboard, Team } from '../database/api.type';
-import { getTransporter } from '../email';
+import { sendEmail } from '../email';
 import { s3Client } from '../s3';
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
 import { ScheduleDataService } from '../database/schedule.service';
@@ -30,16 +30,12 @@ export const postSeason = {
 };
 
 async function notify(url: string) {
-  const transporter = await getTransporter();
-  await transporter
-    .sendEmail({
-      From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-      To: env.EMAIL,
-      Subject: `API Request failed`,
-      TextBody: await loadTXT('requestFailed', { url }),
-      HtmlBody: await loadHTML('requestFailed', { url }),
-    })
-    .catch((error) => console.error(error));
+  await sendEmail({
+    to: env.EMAIL,
+    subject: `API Request failed`,
+    text: await loadTXT('requestFailed', { url }),
+    html: await loadHTML('requestFailed', { url }),
+  }).catch((error) => console.error(error));
 }
 
 @Injectable()

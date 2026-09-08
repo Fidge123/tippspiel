@@ -86,7 +86,7 @@ describe('import on boot', () => {
         .findOneBy({ id: `${regularSeason.year}-2-${FAILING_WEEK}` }),
     ).toBeNull();
     expect(
-      sentEmails.some((mail) => mail.Subject === 'API Request failed'),
+      sentEmails.some((mail) => mail.subject === 'API Request failed'),
     ).toBe(true);
   });
 });

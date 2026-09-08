@@ -25,7 +25,7 @@ The schema comes from running the migration chain, which is also the only check 
 Only two things are substituted.
 
 - **ESPN.** Global `fetch` is served from the recorded corpus in R2, picking the newest snapshot at or before the as-of date for each `(year, seasontype, week)`.
-- **Postmark.** `src/email.ts` records into `sentEmails` when `POSTMARK` is unset, so mail can be asserted rather than swallowed.
+- **SMTP2GO.** `src/email.ts` records into `sentEmails` when `SMTP2GO_API_KEY` is unset, so mail can be asserted rather than swallowed.
 
 ## Nothing sensitive is committed
 

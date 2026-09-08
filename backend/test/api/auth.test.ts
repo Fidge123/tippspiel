@@ -31,8 +31,8 @@ beforeEach(() => {
 });
 
 function verificationFrom(email: string): { id: string; token: string } {
-  const mail = sentEmails.find((m) => m.To === email);
-  const link = /verify\?id=([^&]+)&token=(\w+)/.exec(String(mail?.TextBody));
+  const mail = sentEmails.find((m) => m.to === email);
+  const link = /verify\?id=([^&]+)&token=(\w+)/.exec(String(mail?.text));
   if (!link) {
     throw new Error(`No verification link was mailed to ${email}`);
   }
@@ -179,10 +179,8 @@ describe('password reset', () => {
       .send({ email: user.email })
       .expect(201);
 
-    const mail = sentEmails.find((m) => m.To === user.email);
-    const token = /reset\?id=[^&]+&token=(\w+)/.exec(
-      String(mail?.TextBody),
-    )?.[1];
+    const mail = sentEmails.find((m) => m.to === user.email);
+    const token = /reset\?id=[^&]+&token=(\w+)/.exec(String(mail?.text))?.[1];
     expect(token).toBeTruthy();
 
     await request(api.server)

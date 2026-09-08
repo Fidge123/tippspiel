@@ -22,7 +22,7 @@ export async function bootReplayApp(databaseUrl: string): Promise<ReplayApp> {
   env.COOKIE_SECRET = 'replay-cookie-secret';
   env.SKIP_BACKUP = 'true';
   delete env.IMPORT_ON_BOOT;
-  delete env.POSTMARK;
+  delete env.SMTP2GO_API_KEY;
 
   // datasource.ts reads DATABASE_URL when app.module.ts first loads it.
   const { AppModule } = await import('../../src/app.module');
