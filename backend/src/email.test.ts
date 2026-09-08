@@ -38,6 +38,18 @@ describe('without an API key', () => {
   });
 });
 
+describe('without a recipient', () => {
+  it('sends nothing when EMAIL is not configured', async () => {
+    env.SMTP2GO_API_KEY = 'api-2GO-key';
+    const fetchMock = respondWith({});
+
+    await sendEmail({ ...email, to: '' });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(sentEmails).toEqual([]);
+  });
+});
+
 describe('with an API key', () => {
   beforeEach(() => {
     env.SMTP2GO_API_KEY = 'api-2GO-key';

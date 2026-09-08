@@ -20,6 +20,11 @@ const API_URL = 'https://api.smtp2go.com/v3/email/send';
 export const sentEmails: Email[] = [];
 
 export async function sendEmail(email: Email): Promise<void> {
+  // The admin alerts go to EMAIL, which a deployment may leave unset.
+  if (!email.to) {
+    return;
+  }
+
   if (!env.SMTP2GO_API_KEY) {
     sentEmails.push(email);
     return;
