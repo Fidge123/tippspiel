@@ -8,18 +8,33 @@ import { seed } from './seed';
 import { startWeb } from './web';
 
 export default async function globalSetup(): Promise<() => Promise<void>> {
-  const postgres = await startPostgres();
-  const database = await createDatabase(postgres.adminUrl);
-  const backend = await startBackend(database.url, apiPort);
-  await seed(database.url);
-  const web = await startWeb(webPort, apiPort);
-
-  process.env.E2E_DATABASE_URL = database.url;
-
-  return async () => {
-    await web.stop();
-    await backend.stop();
-    await database.stop();
-    await postgres.stop();
+  const started: (() => Promise<void>)[] = [];
+  const teardown = async () => {
+    for (const stop of started) {
+      await stop();
+    }
   };
+
+  try {
+    const postgres = await startPostgres();
+    started.unshift(() => postgres.stop());
+
+    const database = await createDatabase(postgres.adminUrl);
+    started.unshift(() => database.stop());
+
+    const backend = await startBackend(database.url, apiPort);
+    started.unshift(() => backend.stop());
+
+    await seed(database.url);
+
+    const web = await startWeb(webPort, apiPort);
+    started.unshift(() => web.stop());
+
+    process.env.E2E_DATABASE_URL = database.url;
+
+    return teardown;
+  } catch (error) {
+    await teardown();
+    throw error;
+  }
 }

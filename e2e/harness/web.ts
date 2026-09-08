@@ -1,5 +1,5 @@
 import { createReadStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import {
   createServer,
   type IncomingMessage,
@@ -32,6 +32,8 @@ export async function startWeb(
   port: number,
   backendPort: number,
 ): Promise<WebServer> {
+  await checkBuild();
+
   const server = createServer((req, res) => {
     const url = req.url ?? '/';
     if (url.startsWith(`${apiPrefix}/`)) {
@@ -40,8 +42,11 @@ export async function startWeb(
       serve(res, url.slice(appPath.length + 1).split('?')[0]).catch(() =>
         res.destroy(),
       );
-    } else {
+    } else if (url === '/' || url === appPath) {
       res.writeHead(302, { Location: `${appPath}/` }).end();
+    } else {
+      // Answering anything else with the app would turn a failed call into a page.
+      res.writeHead(404, { 'Content-Type': 'text/plain' }).end(url);
     }
   });
 
@@ -92,6 +97,25 @@ async function serve(res: ServerResponse, path: string): Promise<void> {
   createReadStream(served)
     .on('error', () => res.destroy())
     .pipe(res);
+}
+
+async function checkBuild(): Promise<void> {
+  const scripts = join(build, 'static', 'js');
+  const names = await readdir(scripts).catch(() => {
+    throw new Error(
+      `No frontend build in ${build}, run yarn --cwd ../frontend build`,
+    );
+  });
+  const bundles = await Promise.all(
+    names
+      .filter((name) => name.endsWith('.js'))
+      .map((name) => readFile(join(scripts, name), 'utf8')),
+  );
+  if (!bundles.some((bundle) => bundle.includes(apiPrefix))) {
+    throw new Error(
+      `The frontend build calls an API url the harness does not serve, expected ${apiPrefix}. Check REACT_APP_API_URL in frontend/.env and its local overrides, then run yarn --cwd ../frontend build`,
+    );
+  }
 }
 
 async function isFile(path: string): Promise<boolean> {

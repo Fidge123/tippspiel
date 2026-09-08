@@ -1,4 +1,5 @@
 import { type ChildProcess, spawn } from 'node:child_process';
+import { connect } from 'node:net';
 import { resolve } from 'node:path';
 import { season } from './seed';
 
@@ -12,9 +13,15 @@ export async function startBackend(
   databaseUrl: string,
   port: number,
 ): Promise<Backend> {
+  // A backend left over from an earlier run would answer the readiness probe.
+  if (await inUse(port)) {
+    throw new Error(`Port ${port} is taken, stop what is listening on it`);
+  }
+
+  const log: string[] = [];
   const child = spawn(process.execPath, ['dist/main.js'], {
     cwd: backend,
-    stdio: ['ignore', 'ignore', 'inherit'],
+    stdio: ['ignore', 'pipe', 'pipe'],
     env: {
       ...process.env,
       DATABASE_URL: databaseUrl,
@@ -28,7 +35,14 @@ export async function startBackend(
     },
   });
 
-  await waitForBoot(child, port);
+  const record = (chunk: Buffer) => {
+    log.push(chunk.toString());
+    log.splice(0, log.length - 200);
+  };
+  child.stdout.on('data', record);
+  child.stderr.on('data', record);
+
+  await waitForBoot(child, port, log);
 
   return {
     stop: () =>
@@ -39,12 +53,29 @@ export async function startBackend(
   };
 }
 
+function inUse(port: number): Promise<boolean> {
+  return new Promise((done) => {
+    const socket = connect({ port, host: '127.0.0.1' })
+      .on('connect', () => {
+        socket.destroy();
+        done(true);
+      })
+      .on('error', () => done(false));
+  });
+}
+
 // The application applies the migrations on boot, so it answers once the schema is there.
-async function waitForBoot(child: ChildProcess, port: number): Promise<void> {
+async function waitForBoot(
+  child: ChildProcess,
+  port: number,
+  log: string[],
+): Promise<void> {
   const deadline = Date.now() + 60_000;
   while (Date.now() < deadline) {
     if (child.exitCode !== null) {
-      throw new Error(`Backend exited with code ${child.exitCode}`);
+      throw new Error(
+        `Backend exited with code ${child.exitCode}\n${log.join('')}`,
+      );
     }
     const reached = await fetch(`http://127.0.0.1:${port}/schedule/${season}`)
       .then(() => true)
@@ -54,5 +85,5 @@ async function waitForBoot(child: ChildProcess, port: number): Promise<void> {
     }
     await new Promise((done) => setTimeout(done, 200));
   }
-  throw new Error(`Backend did not answer on port ${port}`);
+  throw new Error(`Backend did not answer on port ${port}\n${log.join('')}`);
 }
