@@ -1,8 +1,13 @@
+import { randomUUID } from 'node:crypto';
 import { Client } from 'pg';
-import { password } from '../harness/seed';
-import { expect, test } from './app';
+import { password, users } from '../harness/seed';
+import { expect, login, test } from './app';
 
-const newUser = { name: 'Carla', email: 'carla@example.invalid' };
+// Registration is throttled and emails are unique, so a rerun needs its own account.
+const newUser = {
+  name: 'Carla',
+  email: `carla-${randomUUID().slice(0, 8)}@example.invalid`,
+};
 
 async function verification(
   email: string,
@@ -40,3 +45,14 @@ test('a new account is registered, verified and logs in', async ({ page }) => {
 
   await expect(page.getByRole('link', { name: 'Tabelle' })).toBeVisible();
 });
+
+// A user who is in no league lands on the error boundary: #111.
+// Fixing that issue turns this test red, which is the reminder to drop test.fail.
+test.fail(
+  'someone who has registered but joined no league can use the app',
+  async ({ page }) => {
+    await login(page, users.newcomer);
+
+    await expect(page.getByText('Ein Fehler ist aufgetreten.')).toBeHidden();
+  },
+);

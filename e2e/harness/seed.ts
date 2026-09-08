@@ -8,6 +8,8 @@ export const password = 'tippspiel1234';
 export const users = {
   alice: { name: 'Alice', email: 'alice@example.invalid' },
   bob: { name: 'Bob', email: 'bob@example.invalid' },
+  // In no league, like everyone who has just registered.
+  newcomer: { name: 'Dana', email: 'dana@example.invalid' },
 };
 
 export const league = 'Testliga';
@@ -46,6 +48,7 @@ export async function seed(databaseUrl: string): Promise<void> {
     await seedSchedule(client);
     const alice = await createUser(client, users.alice);
     const bob = await createUser(client, users.bob);
+    await createUser(client, users.newcomer);
     const leagueId = await createLeague(client, [alice, bob], alice);
     await seedBets(client, leagueId, alice, bob);
   } finally {

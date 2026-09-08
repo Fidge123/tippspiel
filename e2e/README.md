@@ -18,18 +18,22 @@ The suite stays at six flows on purpose, because this tier is the slowest and th
 2. `doubler` sets a doubler, moves it to another game of the same week and removes it.
 3. `leaderboard` compares the totals in the table against the leaderboard endpoint.
 4. `registration` registers an account, follows the verification link and logs in.
-5. `spoiler` hides the scores of a finished week and reloads.
+5. `spoiler` turns off the spoiler protection of a finished week and reloads.
 6. `mobile` renders the schedule on an iPhone sized viewport without horizontal scroll.
+
+Where the application does not behave as intended yet, the test states the intended behaviour and carries `test.fail` with the issue that will fix it named above it.
+Fixing the issue turns the test red, which is the reminder to drop the marker.
 
 ## The harness
 
 - **Database.** `startPostgres` from `backend/test/support`, so this suite and the API tests share one testcontainer setup. Set `TEST_DATABASE_URL` where Docker is not available.
 - **Backend.** `backend/dist/main.js` as a child process. It applies the migrations on boot, so the schema comes from the migration chain.
 - **Frontend.** `frontend/build`, served by the harness under `/tippspiel/` with `/nfl/api/` proxied to the backend. Serving both from one origin is what the deployment does, and it keeps the refresh cookie working.
-- **Seed.** Written straight to the database in `harness/seed.ts`: two divisions, a finished week, an upcoming week, two users in one league and their bets on the finished week. Kickoffs are placed relative to now, so no test depends on the day it runs.
+- **Seed.** Written straight to the database in `harness/seed.ts`: two divisions, a finished week, an upcoming week, two users in one league with their bets on the finished week, and a third user in no league. Kickoffs are placed relative to now, so no test depends on the day it runs.
 - **Selectors.** Roles and labels only. The markup is Tailwind heavy and about to be rewritten, so a class based selector would not survive.
 
 The flows share one seeded database and therefore run one after another.
+They are not idempotent either, so they need a freshly seeded database: turning on retries would replay them against the state a failed attempt left behind.
 
 ## Browser
 

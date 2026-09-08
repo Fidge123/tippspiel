@@ -4,7 +4,9 @@ import { expect, login, matchup, test, week } from './app';
 
 const [, homeScore] = scores.finishedFirst;
 
-test('hiding the scores of a week survives a reload', async ({ page }) => {
+test('turning off the spoiler protection of a week survives a reload', async ({
+  page,
+}) => {
   await login(page, users.alice);
 
   const toggle = week(page, weeks.finished.label).getByRole('button', {

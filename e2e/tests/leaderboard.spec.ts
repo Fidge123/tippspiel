@@ -1,6 +1,5 @@
-import { apiPrefix } from '../harness/ports';
 import { season, users } from '../harness/seed';
-import { expect, login, test } from './app';
+import { activeLeague, expect, login, readApi, test } from './app';
 
 interface Standing {
   user: { name: string };
@@ -17,23 +16,18 @@ test('the leaderboard shows the totals the API reports', async ({
   const table = page.getByRole('table').first();
   await expect(table).toBeVisible();
 
-  const token = await page.evaluate(() =>
-    window.localStorage.getItem('access_token'),
+  const league = await activeLeague(page, request);
+  const standings = await readApi<Standing[]>(
+    page,
+    request,
+    `leaderboard?season=${season}&league=${league}`,
   );
-  const auth = { Authorization: `Bearer ${token}` };
-  const leagues = await request
-    .get(`${apiPrefix}/leagues`, { headers: auth })
-    .then((response) => response.json());
-  const standings: Standing[] = await request
-    .get(`${apiPrefix}/leaderboard?season=${season}&league=${leagues[0].id}`, {
-      headers: auth,
-    })
-    .then((response) => response.json());
 
   expect(standings.map((standing) => standing.user.name).sort()).toEqual([
     users.alice.name,
     users.bob.name,
   ]);
+  expect(standings.some((standing) => standing.points.all > 0)).toBe(true);
   for (const standing of standings) {
     const row = table.getByRole('row').filter({ hasText: standing.user.name });
     await expect(row.getByRole('cell').last()).toHaveText(
