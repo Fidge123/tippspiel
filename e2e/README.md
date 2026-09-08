@@ -8,6 +8,8 @@ yarn --cwd ../frontend build
 yarn test
 ```
 
+Postgres comes from a container, so a first run needs [a container runtime](#the-container-runtime).
+
 ## What it covers
 
 Only the integration failures the lower tiers cannot see: that the frontend and the API agree on urls, payloads, cookies and deadlines.
@@ -26,7 +28,7 @@ Fixing the issue turns the test red, which is the reminder to drop the marker.
 
 ## The harness
 
-- **Database.** `startPostgres` from `backend/test/support`, so this suite and the API tests share one testcontainer setup. Set `TEST_DATABASE_URL` where Docker is not available.
+- **Database.** `startPostgres` from `backend/test/support`, so this suite and the API tests share one testcontainer setup. It needs a container runtime, see below.
 - **Backend.** `backend/dist/main.js` as a child process. It applies the migrations on boot, so the schema comes from the migration chain.
 - **Frontend.** `frontend/build`, served by the harness under `/tippspiel/` with `/nfl/api/` proxied to the backend. Serving both from one origin is what the deployment does, and it keeps the refresh cookie working.
 - **Seed.** Written straight to the database in `harness/seed.ts`: two divisions, a finished week, an upcoming week, two users in one league with their bets on the finished week, and a third user in no league. Kickoffs are placed relative to now, so no test depends on the day it runs.
@@ -35,9 +37,49 @@ Fixing the issue turns the test red, which is the reminder to drop the marker.
 The flows share one seeded database and therefore run one after another.
 They are not idempotent either, so they need a freshly seeded database: turning on retries would replay them against the state a failed attempt left behind.
 
+## The container runtime
+
+`startPostgres` uses [Testcontainers](https://node.testcontainers.org), so the machine running the suite needs a Docker compatible runtime.
+Without one the global setup stops with `Could not find a working container runtime strategy`.
+The way out is either a runtime, as below, or `TEST_DATABASE_URL` pointing at a Postgres the tests may create and drop databases on, which is what CI does.
+
+Docker Desktop and Docker Engine need no further setup.
+Podman works as well, once its socket is exposed and the resource reaper is turned off.
+[Supported container runtimes](https://node.testcontainers.org/supported-container-runtimes/) is the reference for both.
+
+### Podman on Linux
+
+```
+sudo apt install podman
+systemctl --user enable --now podman.socket
+
+export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
+export TESTCONTAINERS_RYUK_DISABLED=true
+```
+
+### Podman on macOS
+
+```
+brew install podman
+podman machine init
+podman machine start
+
+export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+export TESTCONTAINERS_RYUK_DISABLED=true
+```
+
+Rootless Podman cannot run the resource reaper, the container Testcontainers otherwise uses to clean up after a run that died, which is what `TESTCONTAINERS_RYUK_DISABLED` is about.
+A normal run leaks nothing either way, because the global setup stops the Postgres container itself.
+A run that is killed halfway leaves it behind, so keep `podman ps` and `podman rm` in reach.
+Under rootful Podman keep the reaper and set `TESTCONTAINERS_RYUK_PRIVILEGED=true` instead.
+
+Every shell that runs the suite needs those exports, so they belong in a shell profile or in `.envrc`.
+
 ## Browser
 
-By default Playwright's own Chromium runs the suite. Set `PLAYWRIGHT_CHANNEL=chrome` to use a Chrome that is already installed, which is what CI does to avoid downloading a browser.
+By default Playwright's own Chromium runs the suite.
+Set `PLAYWRIGHT_CHANNEL=chrome` to use a Chrome that is already installed, which is what CI does to avoid downloading a browser.
 
 ## When something fails
 
