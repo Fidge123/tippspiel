@@ -32,7 +32,7 @@ Fixing the issue turns the test red, which is the reminder to drop the marker.
 `mail` is the only test that sends a real mail, and it needs two secrets: `SMTP2GO_API_KEY` for the backend to send through SMTP2GO, and `GETTESTMAIL_KEY` for the suite to read the mail out of a throwaway [GetTestMail](https://gettestmail.com) inbox.
 Both are set in CI and the test fails without them.
 
-Neither free tier is generous, GetTestMail allows 300 mails a month, so the flow stays at exactly one mail per run.
+SMTP2GO allows 200 mails a day and GetTestMail 300 a month, so the mailbox is the tighter limit and the flow stays at exactly one mail per run.
 That is why it registers against a second backend that only this test starts: the shared backend runs without an API key and records its mail instead of sending it, which is what keeps `registration` and the API tests free.
 The same reasoning leaves `EMAIL` unset on that second backend, because the admin alert on a registration would otherwise double the cost.
 

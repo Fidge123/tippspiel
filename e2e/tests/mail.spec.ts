@@ -7,7 +7,6 @@ import { expect, test } from './app';
 const MAILBOX_MINUTES = 15;
 const DELIVERY_TIMEOUT = 120_000;
 
-// The free tier allows 300 mails a month, so this is the only flow that sends one.
 test('the verification mail is delivered through SMTP2GO', async ({
   page,
   request,
