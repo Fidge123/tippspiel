@@ -17,10 +17,10 @@ interface SMTP2GoResponse {
 const SENDER = 'Tippspiel <tippspiel@nfl-tippspiel.de>';
 const API_URL = 'https://api.smtp2go.com/v3/email/send';
 
-export const sentEmails: Email[] = [];
+export let sentEmails: Email[] = [];
 
 export function clearSentEmails(): void {
-  sentEmails.length = 0;
+  sentEmails = [];
 }
 
 export async function sendEmail(email: Email): Promise<void> {
