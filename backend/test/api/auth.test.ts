@@ -5,7 +5,7 @@ import {
   UserEntity,
   VerifyEntity,
 } from '../../src/database/entity';
-import { sentEmails } from '../../src/email';
+import { clearSentEmails, sentEmails } from '../../src/email';
 import { TestDatabase } from '../support/database';
 import { ApiApp, bootApiApp } from './app';
 import { freshDatabase } from './database';
@@ -27,7 +27,7 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
-  sentEmails.length = 0;
+  clearSentEmails();
 });
 
 function verificationFrom(email: string): { id: string; token: string } {

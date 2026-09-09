@@ -1,6 +1,6 @@
 import { env } from 'node:process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { sendEmail, sentEmails } from './email';
+import { clearSentEmails, sendEmail, sentEmails } from './email';
 
 const email = {
   to: 'spieler@example.invalid',
@@ -19,7 +19,7 @@ function respondWith(body: unknown, init: ResponseInit = {}) {
 }
 
 beforeEach(() => {
-  sentEmails.length = 0;
+  clearSentEmails();
 });
 
 afterEach(() => {

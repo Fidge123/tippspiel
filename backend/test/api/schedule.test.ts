@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GameEntity, TeamEntity, WeekEntity } from '../../src/database/entity';
-import { sentEmails } from '../../src/email';
+import { clearSentEmails, sentEmails } from '../../src/email';
 import { postSeason, regularSeason } from '../../src/schedule/schedule.service';
 import { TestDatabase } from '../support/database';
 import { ApiApp, bootApiApp } from './app';
@@ -19,7 +19,7 @@ describe('import on boot', () => {
 
   beforeAll(async () => {
     database = await freshDatabase();
-    sentEmails.length = 0;
+    clearSentEmails();
     espn = installEspn((key) => ({
       kickoff: kickoff(key),
       status:
