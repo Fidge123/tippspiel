@@ -1,6 +1,6 @@
 import { env } from 'node:process';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { clearSentEmails, sendEmail, sentEmails } from './email';
+import { sendEmail } from './email';
 
 const email = {
   to: 'spieler@example.invalid',
@@ -18,23 +18,18 @@ function respondWith(body: unknown, init: ResponseInit = {}) {
   return fetchMock;
 }
 
-beforeEach(() => {
-  clearSentEmails();
-});
-
 afterEach(() => {
   vi.unstubAllGlobals();
   delete env.SMTP2GO_API_KEY;
 });
 
 describe('without an API key', () => {
-  it('records the email instead of sending it', async () => {
+  it('sends nothing', async () => {
     const fetchMock = respondWith({});
 
     await sendEmail(email);
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(sentEmails).toEqual([email]);
   });
 });
 
@@ -46,7 +41,6 @@ describe('without a recipient', () => {
     await sendEmail({ ...email, to: '' });
 
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(sentEmails).toEqual([]);
   });
 });
 
@@ -60,7 +54,6 @@ describe('with an API key', () => {
 
     await sendEmail(email);
 
-    expect(sentEmails).toEqual([]);
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('https://api.smtp2go.com/v3/email/send');
     expect(init.method).toBe('POST');

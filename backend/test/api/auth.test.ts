@@ -1,15 +1,25 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import request from 'supertest';
 import {
   ResetEntity,
   UserEntity,
   VerifyEntity,
 } from '../../src/database/entity';
-import { clearSentEmails, sentEmails } from '../../src/email';
+import { clearSentEmails, sentEmails } from '../support/mail';
 import { TestDatabase } from '../support/database';
 import { ApiApp, bootApiApp } from './app';
 import { freshDatabase } from './database';
 import { ageRow, createUser, PASSWORD, userById } from './fixtures';
+
+vi.mock('../../src/email', () => import('../support/mail'));
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 

@@ -8,8 +8,10 @@ import { installEspnStub } from './espn';
 import { runMigrations } from '../support/migrate';
 import { missingCredentials } from './r2';
 import { seedFromBackup } from './seed';
-import { sentEmails } from '../../src/email';
+import { sentEmails } from '../support/mail';
 import { season2023, Season } from './season';
+
+vi.mock('../../src/email', () => import('../support/mail'));
 
 const season: Season = season2023;
 

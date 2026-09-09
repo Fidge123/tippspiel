@@ -17,20 +17,9 @@ interface SMTP2GoResponse {
 const SENDER = 'Tippspiel <tippspiel@nfl-tippspiel.de>';
 const API_URL = 'https://api.smtp2go.com/v3/email/send';
 
-export let sentEmails: Email[] = [];
-
-export function clearSentEmails(): void {
-  sentEmails = [];
-}
-
 export async function sendEmail(email: Email): Promise<void> {
-  // The admin alerts go to EMAIL, which a deployment may leave unset.
-  if (!email.to) {
-    return;
-  }
-
-  if (!env.SMTP2GO_API_KEY) {
-    sentEmails.push(email);
+  // A deployment may leave the key, or EMAIL that the admin alerts go to, unset.
+  if (!email.to || !env.SMTP2GO_API_KEY) {
     return;
   }
 

@@ -1,11 +1,13 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { GameEntity, TeamEntity, WeekEntity } from '../../src/database/entity';
-import { clearSentEmails, sentEmails } from '../../src/email';
+import { clearSentEmails, sentEmails } from '../support/mail';
 import { postSeason, regularSeason } from '../../src/schedule/schedule.service';
 import { TestDatabase } from '../support/database';
 import { ApiApp, bootApiApp } from './app';
 import { freshDatabase } from './database';
 import { EspnStub, installEspn, TEAMS, WeekKey } from './espn';
+
+vi.mock('../../src/email', () => import('../support/mail'));
 
 const kickoff = (key: WeekKey) =>
   new Date(Date.UTC(key.year, 8, 1) + key.week * 7 * 24 * 60 * 60 * 1000);

@@ -33,11 +33,11 @@ Fixing the issue turns the test red, which is the reminder to drop the marker.
 Both are set in CI and the test fails without them.
 
 SMTP2GO allows 200 mails a day and GetTestMail 300 a month, so the mailbox is the tighter limit and the flow stays at exactly one mail per run.
-That is why it registers against a second backend that only this test starts: the shared backend runs without an API key and records its mail instead of sending it, which is what keeps `registration` and the API tests free.
+That is why it registers against a second backend that only this test starts: the shared backend runs without an API key and therefore sends nothing, which is what keeps `registration` free.
 The same reasoning leaves `EMAIL` unset on that second backend, because the admin alert on a registration would otherwise double the cost.
 
 Keep it that way when adding tests.
-A flow that needs to assert on mail belongs in `backend/test/api`, where `sentEmails` holds everything the application tried to send.
+A flow that needs to assert on mail belongs in `backend/test/api`, where `test/support/mail.ts` stands in for the sender and records everything the application tried to send.
 
 ## The harness
 
