@@ -12,7 +12,6 @@ export interface Backend {
 export async function startBackend(
   databaseUrl: string,
   port: number,
-  overrides: Record<string, string | undefined> = {},
 ): Promise<Backend> {
   // A backend left over from an earlier run would answer the readiness probe.
   if (await inUse(port)) {
@@ -33,7 +32,6 @@ export async function startBackend(
       EMAIL: 'admin@example.invalid',
       SKIP_BACKUP: 'true',
       SMTP2GO_API_KEY: undefined,
-      ...overrides,
     },
   });
 

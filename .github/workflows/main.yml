@@ -165,8 +165,6 @@ jobs:
           TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
           # The runner ships with Chrome, so no browser has to be downloaded.
           PLAYWRIGHT_CHANNEL: chrome
-          SMTP2GO_API_KEY: ${{ secrets.SMTP2GO_API_KEY }}
-          GETTESTMAIL_KEY: ${{ secrets.GETTESTMAIL_KEY }}
       - name: Archive traces
         if: failure()
         uses: actions/upload-artifact@v7
