@@ -31,7 +31,7 @@ export async function startBackend(
       COOKIE_SECRET: 'e2e-cookie-secret',
       EMAIL: 'admin@example.invalid',
       SKIP_BACKUP: 'true',
-      POSTMARK: undefined,
+      SMTP2GO_API_KEY: undefined,
     },
   });
 

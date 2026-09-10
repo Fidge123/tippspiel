@@ -21,6 +21,7 @@
     "test:unit": "vitest run src",
     "test:api": "vitest run -c vitest.config.api.ts",
     "test:replay": "vitest run test/replay",
+    "test:delivery": "vitest run -c vitest.config.delivery.ts",
     "test:watch": "vitest",
     "test:update": "vitest run -u"
   },
@@ -42,7 +43,6 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.23.0",
-    "postmark": "^4.0.2",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.3.0",
     "typeorm": "^0.3.7"

@@ -1,11 +1,13 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { GameEntity, TeamEntity, WeekEntity } from '../../src/database/entity';
-import { sentEmails } from '../../src/email';
+import { clearSentEmails, sentEmails } from '../support/mail';
 import { postSeason, regularSeason } from '../../src/schedule/schedule.service';
 import { TestDatabase } from '../support/database';
 import { ApiApp, bootApiApp } from './app';
 import { freshDatabase } from './database';
 import { EspnStub, installEspn, TEAMS, WeekKey } from './espn';
+
+vi.mock('../../src/email', () => import('../support/mail'));
 
 const kickoff = (key: WeekKey) =>
   new Date(Date.UTC(key.year, 8, 1) + key.week * 7 * 24 * 60 * 60 * 1000);
@@ -19,7 +21,7 @@ describe('import on boot', () => {
 
   beforeAll(async () => {
     database = await freshDatabase();
-    sentEmails.length = 0;
+    clearSentEmails();
     espn = installEspn((key) => ({
       kickoff: kickoff(key),
       status:
@@ -86,7 +88,7 @@ describe('import on boot', () => {
         .findOneBy({ id: `${regularSeason.year}-2-${FAILING_WEEK}` }),
     ).toBeNull();
     expect(
-      sentEmails.some((mail) => mail.Subject === 'API Request failed'),
+      sentEmails.some((mail) => mail.subject === 'API Request failed'),
     ).toBe(true);
   });
 });

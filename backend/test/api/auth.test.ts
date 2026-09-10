@@ -1,15 +1,25 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import request from 'supertest';
 import {
   ResetEntity,
   UserEntity,
   VerifyEntity,
 } from '../../src/database/entity';
-import { sentEmails } from '../../src/email';
+import { clearSentEmails, sentEmails } from '../support/mail';
 import { TestDatabase } from '../support/database';
 import { ApiApp, bootApiApp } from './app';
 import { freshDatabase } from './database';
 import { ageRow, createUser, PASSWORD, userById } from './fixtures';
+
+vi.mock('../../src/email', () => import('../support/mail'));
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -27,12 +37,12 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
-  sentEmails.length = 0;
+  clearSentEmails();
 });
 
 function verificationFrom(email: string): { id: string; token: string } {
-  const mail = sentEmails.find((m) => m.To === email);
-  const link = /verify\?id=([^&]+)&token=(\w+)/.exec(String(mail?.TextBody));
+  const mail = sentEmails.find((m) => m.to === email);
+  const link = /verify\?id=([^&]+)&token=(\w+)/.exec(String(mail?.text));
   if (!link) {
     throw new Error(`No verification link was mailed to ${email}`);
   }
@@ -179,10 +189,8 @@ describe('password reset', () => {
       .send({ email: user.email })
       .expect(201);
 
-    const mail = sentEmails.find((m) => m.To === user.email);
-    const token = /reset\?id=[^&]+&token=(\w+)/.exec(
-      String(mail?.TextBody),
-    )?.[1];
+    const mail = sentEmails.find((m) => m.to === user.email);
+    const token = /reset\?id=[^&]+&token=(\w+)/.exec(String(mail?.text))?.[1];
     expect(token).toBeTruthy();
 
     await request(api.server)

@@ -1,7 +1,7 @@
 # API tests
 
 Boots the real Nest application against a real Postgres and calls it over HTTP.
-Requests go through the real guards, pipes and serialisation; only ESPN and Postmark are substituted.
+Requests go through the real guards, pipes and serialisation; only ESPN and SMTP2GO are substituted.
 
 ```
 yarn test:api
@@ -18,7 +18,7 @@ Fixing the issue turns the test red, which is the reminder to drop the `it.fails
 - **Database.** `@testcontainers/postgresql` by default, one container for the whole run. Where Docker is not available, set `TEST_DATABASE_URL` to a Postgres the tests may create and drop databases on. Every test file gets its own database.
 - **Schema.** Created by running the migration chain, never by `synchronize`. `migrations.test.ts` asserts that the chain applies to an empty database.
 - **ESPN.** `espn.ts` serves global `fetch` from generated fixtures and throws on any other host, so a test that reaches the network fails instead of flaking.
-- **Postmark.** `src/email.ts` records into `sentEmails` when `POSTMARK` is unset, so mail can be asserted rather than swallowed.
+- **SMTP2GO.** `test/support/mail.ts` replaces `src/email.ts`, so mail can be asserted rather than swallowed.
 - **Time.** Deadlines are exercised by placing kickoffs a second either side of the current time, so no clock is faked.
 
 ```

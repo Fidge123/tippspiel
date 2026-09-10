@@ -8,8 +8,7 @@
     "node_modules",
     "test",
     "dist",
-    "vitest.config.ts",
-    "vitest.config.api.ts",
+    "vitest.config*.ts",
     "**/*spec.ts",
     "**/*.test.ts"
   ]

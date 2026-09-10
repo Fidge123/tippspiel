@@ -13,7 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
-import { getTransporter } from '../email';
+import { sendEmail } from '../email';
 
 import { UserDataService } from '../database/user.service';
 import { AuthService } from '../auth/auth.service';
@@ -93,28 +93,21 @@ export class UserController {
     );
     const now = new Date();
     const link = `https://nfl-tippspiel.de/tippspiel/verify?id=${id}&token=${token}`;
-    const transporter = await getTransporter();
-    await transporter
-      .sendEmail({
-        From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-        To: process.env.EMAIL,
-        Subject: 'Neuer Nutzer registriert',
-        TextBody: await loadTXT('newUserAlert'),
-        HtmlBody: await loadHTML('newUserAlert', {
-          id,
-          time: now.toLocaleString(),
-        }),
-      })
-      .catch((error) => console.error(error));
-    await transporter
-      .sendEmail({
-        From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-        To: email,
-        Subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
-        TextBody: await loadTXT('verifyUser', { name, link }),
-        HtmlBody: await loadHTML('verifyUser', { name, link }),
-      })
-      .catch((error) => console.error(error));
+    await sendEmail({
+      to: process.env.EMAIL,
+      subject: 'Neuer Nutzer registriert',
+      text: await loadTXT('newUserAlert'),
+      html: await loadHTML('newUserAlert', {
+        id,
+        time: now.toLocaleString(),
+      }),
+    }).catch((error) => console.error(error));
+    await sendEmail({
+      to: email,
+      subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
+      text: await loadTXT('verifyUser', { name, link }),
+      html: await loadHTML('verifyUser', { name, link }),
+    }).catch((error) => console.error(error));
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -134,20 +127,16 @@ export class UserController {
   ): Promise<void> {
     const now = new Date();
 
-    const transporter = await getTransporter();
     await this.databaseService.verify(id, token);
-    await transporter
-      .sendEmail({
-        From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-        To: process.env.EMAIL,
-        Subject: 'Nutzer verifiziert',
-        TextBody: await loadTXT('userVerifiedAlert'),
-        HtmlBody: await loadHTML('userVerifiedAlert', {
-          id,
-          time: now.toLocaleString(),
-        }),
-      })
-      .catch((error) => console.error(error));
+    await sendEmail({
+      to: process.env.EMAIL,
+      subject: 'Nutzer verifiziert',
+      text: await loadTXT('userVerifiedAlert'),
+      html: await loadHTML('userVerifiedAlert', {
+        id,
+        time: now.toLocaleString(),
+      }),
+    }).catch((error) => console.error(error));
   }
 
   @UseGuards(ThrottlerGuard)
@@ -159,28 +148,21 @@ export class UserController {
     if (reset) {
       const { user, token } = reset;
       const link = `https://nfl-tippspiel.de/tippspiel/reset?id=${user.id}&token=${token}`;
-      const transporter = await getTransporter();
-      await transporter
-        .sendEmail({
-          From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-          To: process.env.EMAIL,
-          Subject: 'Passwort Reset angefragt',
-          TextBody: await loadTXT('passwordResetAlert'),
-          HtmlBody: await loadHTML('passwordResetAlert', {
-            id: user.id,
-            time: now.toLocaleString(),
-          }),
-        })
-        .catch((error) => console.error(error));
-      await transporter
-        .sendEmail({
-          From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-          To: email,
-          Subject: 'Tippspiel Passwort zurücksetzen',
-          TextBody: await loadTXT('passwordReset', { name: user.name, link }),
-          HtmlBody: await loadHTML('passwordReset', { name: user.name, link }),
-        })
-        .catch((error) => console.error(error));
+      await sendEmail({
+        to: process.env.EMAIL,
+        subject: 'Passwort Reset angefragt',
+        text: await loadTXT('passwordResetAlert'),
+        html: await loadHTML('passwordResetAlert', {
+          id: user.id,
+          time: now.toLocaleString(),
+        }),
+      }).catch((error) => console.error(error));
+      await sendEmail({
+        to: email,
+        subject: 'Tippspiel Passwort zurücksetzen',
+        text: await loadTXT('passwordReset', { name: user.name, link }),
+        html: await loadHTML('passwordReset', { name: user.name, link }),
+      }).catch((error) => console.error(error));
     }
   }
 

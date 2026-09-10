@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { loadHTML, loadTXT } from '../templates/loadTemplate';
 
 import { BetDataService } from '../database/bet.service';
-import { getTransporter } from '../email';
+import { sendEmail } from '../email';
 
 @Injectable()
 export class BetService {
@@ -23,49 +23,45 @@ export class BetService {
       const games = await this.databaseService.findGamesWithoutBets(user.id);
       if (games.length) {
         console.log('Found', games.length, 'games without bets for', user.name);
-        const transporter = await getTransporter();
         const countString =
           games.length > 1 ? `${games.length} Spiele` : `ein Spiel`;
-        await transporter
-          .sendEmail({
-            From: 'Tippspiel <tippspiel@nfl-tippspiel.de>',
-            To: user.email,
-            Subject: `Du hast ${countString} noch nicht getippt`,
-            TextBody: await loadTXT('betReminder', {
-              name: user.name,
-              list: games
-                .map(
-                  (game) =>
-                    `  - ${game.awayTeam.name} @ ${
-                      game.homeTeam.name
-                    } (${game.date.toLocaleString('de', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })})`,
-                )
-                .join('\n'),
-            }),
-            HtmlBody: await loadHTML('betReminder', {
-              name: user.name,
-              count: countString,
-              list: games
-                .map(
-                  (game) =>
-                    `    <li>${game.awayTeam.name} @ ${
-                      game.homeTeam.name
-                    } (${game.date.toLocaleString('de', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })})</li>`,
-                )
-                .join('\n'),
-            }),
-          })
-          .catch((error) => console.error(error));
+        await sendEmail({
+          to: user.email,
+          subject: `Du hast ${countString} noch nicht getippt`,
+          text: await loadTXT('betReminder', {
+            name: user.name,
+            list: games
+              .map(
+                (game) =>
+                  `  - ${game.awayTeam.name} @ ${
+                    game.homeTeam.name
+                  } (${game.date.toLocaleString('de', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })})`,
+              )
+              .join('\n'),
+          }),
+          html: await loadHTML('betReminder', {
+            name: user.name,
+            count: countString,
+            list: games
+              .map(
+                (game) =>
+                  `    <li>${game.awayTeam.name} @ ${
+                    game.homeTeam.name
+                  } (${game.date.toLocaleString('de', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })})</li>`,
+              )
+              .join('\n'),
+          }),
+        }).catch((error) => console.error(error));
       }
     }
   }
