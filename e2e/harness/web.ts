@@ -103,7 +103,7 @@ async function checkBuild(): Promise<void> {
   const scripts = join(build, 'static', 'js');
   const names = await readdir(scripts).catch(() => {
     throw new Error(
-      `No frontend build in ${build}, run yarn --cwd ../frontend build`,
+      `No frontend build in ${build}, run bun run build in frontend`,
     );
   });
   const bundles = await Promise.all(
@@ -113,7 +113,7 @@ async function checkBuild(): Promise<void> {
   );
   if (!bundles.some((bundle) => bundle.includes(apiPrefix))) {
     throw new Error(
-      `The frontend build calls an API url the harness does not serve, expected ${apiPrefix}. Check REACT_APP_API_URL in frontend/.env and its local overrides, then run yarn --cwd ../frontend build`,
+      `The frontend build calls an API url the harness does not serve, expected ${apiPrefix}. Check REACT_APP_API_URL in frontend/.env and its local overrides, then run bun run build in frontend`,
     );
   }
 }

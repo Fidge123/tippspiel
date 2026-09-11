@@ -3,9 +3,9 @@
 Six flows through the built frontend and the real backend, in Chromium.
 
 ```
-yarn --cwd ../backend build
-yarn --cwd ../frontend build
-yarn test
+(cd ../backend && bun run build)
+(cd ../frontend && bun run build)
+bun run test
 ```
 
 Postgres comes from a container, so a first run needs [a container runtime](#the-container-runtime).

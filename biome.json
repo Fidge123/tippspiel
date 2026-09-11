@@ -11,7 +11,7 @@
       "!**/build",
       "!**/dist",
       "!**/node_modules",
-      "!**/yarn.lock",
+      "!**/bun.lock",
       "!backend/src/templates",
       "!**/*.css"
     ]

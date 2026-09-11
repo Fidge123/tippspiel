@@ -16,10 +16,13 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Check formatting and lint across the repo
-        run: yarn run lint
+        run: bun run lint
 
   backend:
     defaults:
@@ -31,16 +34,19 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Lint backend
-        run: yarn run lint
+        run: bun run lint
       - name: Typecheck backend
-        run: yarn run typecheck
+        run: bun run typecheck
       - name: Test backend
-        run: yarn run test:unit
+        run: bun run test:unit
       - name: Build backend
-        run: yarn run build
+        run: bun run build
 
   api:
     name: API tests
@@ -66,10 +72,13 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Test the API
-        run: yarn run test:api
+        run: bun run test:api
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
 
@@ -85,15 +94,18 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Restore fixture cache
         uses: actions/cache@v6
         with:
           path: backend/test/.corpus-cache
           key: corpus-2023-${{ hashFiles('backend/test/replay/season.ts') }}
       - name: Replay the season
-        run: yarn run test:replay
+        run: bun run test:replay
         env:
           # Object Read on the nfl-tippspiel bucket only.
           R2_API: ${{ secrets.R2_API }}
@@ -110,16 +122,19 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Lint frontend
-        run: yarn run lint
+        run: bun run lint
       - name: Typecheck frontend
-        run: yarn run typecheck
+        run: bun run typecheck
       - name: Test frontend
-        run: yarn run test
+        run: bun run test
       - name: Build frontend
-        run: yarn run build
+        run: bun run build
       - name: Archive build
         uses: actions/upload-artifact@v7
         with:
@@ -148,19 +163,24 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
         run: |
-          yarn --cwd backend install --frozen-lockfile
-          yarn --cwd frontend install --frozen-lockfile
-          yarn --cwd e2e install --frozen-lockfile
+          cd backend && bun install --frozen-lockfile && cd ..
+          cd frontend && bun install --frozen-lockfile && cd ..
+          cd e2e && bun install --frozen-lockfile
       - name: Build the application
         run: |
-          yarn --cwd backend run build
-          yarn --cwd frontend run build
+          cd backend && bun run build && cd ..
+          cd frontend && bun run build
       - name: Typecheck the browser tests
-        run: yarn --cwd e2e run typecheck
+        working-directory: e2e
+        run: bun run typecheck
       - name: Walk through the flows
-        run: yarn --cwd e2e run test
+        working-directory: e2e
+        run: bun run test
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
           # The runner ships with Chrome, so no browser has to be downloaded.

@@ -5,8 +5,8 @@ It then calls the real HTTP API and snapshots the leaderboard of every league in
 Any change to any player's points shows up as a snapshot diff.
 
 ```
-yarn test:replay       # run it
-yarn test:update       # accept the new numbers, deliberately
+bun run test:replay       # run it
+bun run test:update       # accept the new numbers, deliberately
 ```
 
 ## What it does
@@ -54,7 +54,7 @@ Downloaded objects are immutable, so they are cached under `backend/test/.corpus
 Where Docker is not available, set `TEST_DATABASE_URL` to a Postgres the test may create and drop a database on.
 
 ```
-TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/postgres yarn test:replay
+TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/postgres bun run test:replay
 ```
 
 ## What the snapshots contain

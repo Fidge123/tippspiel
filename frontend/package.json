@@ -37,7 +37,7 @@
     ]
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.12",
+    "@biomejs/biome": "2.5.12",
     "@types/node": "^20.11.24",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",

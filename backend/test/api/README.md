@@ -4,7 +4,7 @@ Boots the real Nest application against a real Postgres and calls it over HTTP.
 Requests go through the real guards, pipes and serialisation; only ESPN and SMTP2GO are substituted.
 
 ```
-yarn test:api
+bun run test:api
 ```
 
 ## What it covers
@@ -22,7 +22,7 @@ Fixing the issue turns the test red, which is the reminder to drop the `it.fails
 - **Time.** Deadlines are exercised by placing kickoffs a second either side of the current time, so no clock is faked.
 
 ```
-TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/postgres yarn test:api
+TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/postgres bun run test:api
 ```
 
 ## One application per file

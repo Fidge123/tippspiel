@@ -3,7 +3,7 @@
 One mail through the real SMTP2GO account, to confirm that the application can still send.
 
 ```
-SMTP2GO_API_KEY=... EMAIL=... yarn test:delivery
+SMTP2GO_API_KEY=... EMAIL=... bun run test:delivery
 ```
 
 ## What it covers
