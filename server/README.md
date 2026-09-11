@@ -29,6 +29,7 @@ Set `INSECURE_COOKIES=true` to develop over plain HTTP.
 | `src/index.tsx` | The Bun entry. Adds static file serving and exports `{ fetch, port }` for `Bun.serve` |
 | `src/routes/` | Route handlers, grouped by the page they serve |
 | `src/leaderboard/` | The one leaderboard query and the assembly on top of it |
+| `src/schedule/` | The schedule read, and the bet, doubler and spoiler writes |
 | `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |
 | `src/views/` | Hono JSX components, rendered server-side |
 | `src/auth/` | Passwords, sessions, cookies and the SPA bridge |
@@ -69,6 +70,26 @@ The route answers JSON when asked for it. That projection exists so the
 equivalence can be checked across the runtime split:
 `e2e/tests/leaderboard-equivalence.spec.ts` drives both stacks against the same
 database and compares them entry for entry.
+
+## The betting page
+
+Every bet is its own `<form method="post">`: two radios for the winner, a select
+for the stake, one submit. The doubler is a radio per game that belongs to a
+week-level form through the `form` attribute, because a form cannot be nested
+inside the per-game ones.
+
+Every deadline is checked against the server clock and nothing else.
+`schedule.integration.test.ts` covers each rejection on its own: a late bet, a
+doubler moved onto or off a game that has started, removing one that has
+started, and a league the player is not a member of.
+
+The compact layout is CSS. The SPA chose the team label and the statistics
+headers from `window.innerWidth`; all the variants are rendered and the
+breakpoints choose, which needs no script and cannot go stale on resize.
+
+Spoiler protection defaults to **on**, matching the SPA's `hideByDefault ?? true`.
+A user who has never touched the toggle should not be shown a score they have
+not watched yet.
 
 ## No JavaScript
 

@@ -1,4 +1,9 @@
-import { expect, type Page, test as base } from '@playwright/test';
+import {
+  expect,
+  type Locator,
+  type Page,
+  test as base,
+} from '@playwright/test';
 import { password } from '../harness/seed';
 
 export const test = base.extend({
@@ -23,6 +28,20 @@ export async function login(
   await page.getByLabel('E-Mail').fill(user.email);
   await page.getByLabel('Passwort').fill(password);
   await page.getByRole('button', { name: 'Einloggen' }).click();
+}
+
+/**
+ * The winner and doubler inputs are visually hidden radios wrapped in a styled
+ * label, which is the accessible pattern but not a clickable target. The label
+ * is what a user clicks, so it is what the tests click too.
+ */
+export function pick(scope: Locator, name: string | RegExp): Locator {
+  return scope.locator('label').filter({ hasText: name });
+}
+
+/** The doubler label shows only a symbol, so it is found by its title. */
+export function doublerToggle(scope: Locator): Locator {
+  return scope.locator('label[title="Doppler"]');
 }
 
 /** Opens the header menu, which is a details element rather than a dropdown. */

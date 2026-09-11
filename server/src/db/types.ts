@@ -149,6 +149,12 @@ export interface DivisionTable {
   name: string;
 }
 
+export interface ByeTable {
+  id: Generated<string>;
+  teamId: string | null;
+  weekId: string | null;
+}
+
 export interface Database {
   user: UserTable;
   verify: VerifyTable;
@@ -165,4 +171,5 @@ export interface Database {
   league: LeagueTable;
   member: MemberTable;
   division: DivisionTable;
+  bye: ByeTable;
 }

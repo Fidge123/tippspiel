@@ -79,6 +79,53 @@ location = /tippspiel/leaderboard {
     proxy_set_header X-Forwarded-Proto $scheme;
 }
 
+# The schedule and its writes, moved in 4/6. The schedule is the app root,
+# so this exact match is what takes it from the SPA.
+location = /tippspiel/ {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location = /tippspiel/bet {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location = /tippspiel/doubler {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location = /tippspiel/doubler/remove {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location = /tippspiel/hidden {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
 location = /tippspiel/app.css {
     proxy_pass http://127.0.0.1:5002;
     proxy_http_version 1.1;

@@ -101,6 +101,14 @@ export async function createSchema(): Promise<void> {
       "updatedAt" timestamp not null default now()
     )`.execute(db());
   await sql`
+    create table if not exists "bye" (
+      "id" uuid not null default uuid_generate_v4() primary key,
+      "teamId" character varying references "team"("id"),
+      "weekId" character varying references "week"("id"),
+      "createdAt" timestamp not null default now(),
+      "updatedAt" timestamp not null default now()
+    )`.execute(db());
+  await sql`
     create table if not exists "league" (
       "id" uuid not null default uuid_generate_v4() primary key,
       "name" character varying not null,
@@ -164,7 +172,7 @@ export async function createSchema(): Promise<void> {
 
 export async function truncate(): Promise<void> {
   await sql`truncate "session", "verify", "reset", "user", "league", "member",
-            "bet", "betDoubler", "divisionBet", "superbowlBet", "game",
+            "bet", "betDoubler", "divisionBet", "superbowlBet", "bye", "game",
             "week", "team_season", "team", "division" cascade`.execute(db());
 }
 

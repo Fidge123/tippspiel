@@ -30,15 +30,44 @@ export async function login(
   await expect(page.getByRole('link', { name: 'Tabelle' })).toBeVisible();
 }
 
+const tokens = new WeakMap<Page, Promise<string>>();
+
+/**
+ * Trades the refresh cookie for an access token, which is what the SPA does and
+ * what the bridge in #87 exists for. It replaced reading localStorage, because
+ * the pages that used to fill it have moved to the Hono app.
+ *
+ * Cached per page because the Nest app answers by rewriting the cookie with
+ * Secure set, and Playwright's request context will not send that back over
+ * plain http, so only the first exchange in a test can succeed.
+ */
+export function apiToken(page: Page): Promise<string> {
+  const cached = tokens.get(page);
+  if (cached) {
+    return cached;
+  }
+  const fresh = exchange(page);
+  tokens.set(page, fresh);
+  return fresh;
+}
+
+async function exchange(page: Page): Promise<string> {
+  const response = await page.request.post(`${apiPrefix}/user/refresh`);
+  if (!response.ok()) {
+    throw new Error(
+      `POST user/refresh answered ${response.status()}: ${await response.text()}`,
+    );
+  }
+  return response.json();
+}
+
 export async function readApi<T>(
   page: Page,
-  request: APIRequestContext,
+  _request: APIRequestContext,
   path: string,
 ): Promise<T> {
-  const token = await page.evaluate(() =>
-    window.localStorage.getItem('access_token'),
-  );
-  const response = await request.get(`${apiPrefix}/${path}`, {
+  const token = await apiToken(page);
+  const response = await page.request.get(`${apiPrefix}/${path}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   expect(response.ok()).toBe(true);
