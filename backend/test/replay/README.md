@@ -1,6 +1,6 @@
 # Season replay
 
-Replays a complete, already-played season through the real importer into a real database seeded from a real production backup.
+Replays a complete, already-played season through the real importer into a real database seeded from an anonymised production snapshot.
 It then calls the real HTTP API and snapshots the leaderboard of every league in that season.
 Any change to any player's points shows up as a snapshot diff.
 
@@ -12,7 +12,7 @@ yarn test:update       # accept the new numbers, deliberately
 ## What it does
 
 ```
-given   the 2023 backup loaded into a throwaway Postgres and anonymised
+given   the anonymised 2023 seed loaded into a throwaway Postgres
 and     the clock frozen at <as-of>
 and     ESPN served from the recorded snapshots as of that moment
 when    the importer runs every week of the season
@@ -27,17 +27,29 @@ Only two things are substituted.
 - **ESPN.** Global `fetch` is served from the recorded corpus in R2, picking the newest snapshot at or before the as-of date for each `(year, seasontype, week)`.
 - **SMTP2GO.** `test/support/mail.ts` replaces `src/email.ts`, so mail can be asserted rather than swallowed.
 
-## Nothing sensitive is committed
+## Nothing identifiable leaves the publishing machine
 
 The production dump holds real names, email addresses, scrypt hashes and live password-reset and verification tokens.
-It is never written to the repository and never committed.
-The test downloads it, loads it into the throwaway database, and runs `test/fixtures/anonymize.sql` before anything reads a row.
-`seed.ts` then verifies the anonymiser ran and fails the suite if a single user is still identifiable.
+The replay never reads it.
+It reads `replay_seed/2023.gz`, an already anonymised seed, and `seed.ts` still fails the suite if a single user in it is identifiable.
 The snapshots key on the pseudonyms.
+
+Publishing that seed is a deliberate step, run by hand with credentials that may read `database_backup/`.
+
+```
+yarn replay:publish 2023
+```
+
+It loads the backup named by `season.ts` into a throwaway Postgres, runs `test/fixtures/anonymize.sql`, verifies the result, and uploads the anonymised tables as the season's `seedKey`.
+Re-run it when the anonymiser or the chosen backup changes.
+
+Keeping the dump out of CI matters because `getObject` caches every download under `backend/test/.corpus-cache`, and the workflow persists that directory in an Actions cache that outlives the run that wrote it.
+For the same reason `getObject` refuses to cache anything under `database_backup/`.
 
 ## Credentials
 
 Read-only access to the `nfl-tippspiel` bucket, from the environment, using the same three variables the application uses.
+The replay reads the ESPN corpus and `replay_seed/`; publishing a seed additionally needs read on `database_backup/` and write on `replay_seed/`.
 
 ```
 R2_API=https://<account id>.r2.cloudflarestorage.com
@@ -45,7 +57,7 @@ R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
 ```
 
-The token needs Object Read on that one bucket and nothing else.
+The token CI holds must not reach `database_backup/`, per point 5 of #39.
 Downloaded objects are immutable, so they are cached under `backend/test/.corpus-cache` and only the first run pays for the download.
 
 ## Database
