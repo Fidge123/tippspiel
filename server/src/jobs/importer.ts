@@ -146,11 +146,23 @@ async function upsertGame(event: NFLEvent, weekId: string): Promise<void> {
   const home = competition.competitors.find((c) => c.homeAway === 'home')!;
   const away = competition.competitors.find((c) => c.homeAway === 'away')!;
 
+  // The Pro Bowl fields teams that are in no division and therefore in no team
+  // row, so the reference has to drop rather than fail the import.
+  const known = new Set(
+    (
+      await db()
+        .selectFrom('team')
+        .select('id')
+        .where('id', 'in', [home.uid, away.uid])
+        .execute()
+    ).map((row) => row.id),
+  );
+
   const game = {
     date: new Date(event.date),
     weekId,
-    homeTeamId: home.uid,
-    awayTeamId: away.uid,
+    homeTeamId: known.has(home.uid) ? home.uid : null,
+    awayTeamId: known.has(away.uid) ? away.uid : null,
     homeScore: Number.parseInt(home.score, 10),
     awayScore: Number.parseInt(away.score, 10),
     winner: getWinner(home, away),

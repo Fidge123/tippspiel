@@ -17,7 +17,7 @@ function formatKickoff(date: Date): string {
 
 /**
  * The season it reminds for comes from config rather than a literal, so the
- * reminder does not go quiet the year nobody remembers to edit it (#42).
+ * reminder does not go quiet the year nobody remembers to edit it (#41).
  */
 export async function betReminder(year: number = season): Promise<void> {
   const now = new Date();

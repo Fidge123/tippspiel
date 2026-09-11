@@ -5,8 +5,6 @@ test.describe('Auth, without JavaScript', () => {
   test('logs in through a real form and lands on the app', async ({ page }) => {
     await login(page, users.alice);
 
-    // The SPA takes over after the redirect, which is the strangler window
-    // working as intended: the session cookie is what carries across.
     await expect(page).toHaveURL(/\/tippspiel\/$/);
   });
 
@@ -17,20 +15,6 @@ test.describe('Auth, without JavaScript', () => {
     expect(session).toBeDefined();
     expect(session?.httpOnly).toBe(true);
     expect(session?.path).toBe('/tippspiel');
-  });
-
-  test('issues the legacy refresh cookie that keeps the SPA alive', async ({
-    page,
-    context,
-  }) => {
-    await login(page, users.alice);
-
-    const legacy = (await context.cookies()).find(
-      (c) => c.name === 'refreshToken',
-    );
-    expect(legacy).toBeDefined();
-    expect(legacy?.httpOnly).toBe(true);
-    expect(legacy?.path).toBe('/');
   });
 
   test('rejects a wrong password on the page, not in a console', async ({
@@ -53,7 +37,7 @@ test.describe('Auth, without JavaScript', () => {
     await page.goto('./impressum');
 
     // details/summary opens natively, which is the whole reason it replaced
-    // the SPA's useState dropdown.
+    // the useState dropdown it replaced.
     await page.locator('summary').click();
     await page.getByRole('button', { name: 'Ausloggen' }).click();
 

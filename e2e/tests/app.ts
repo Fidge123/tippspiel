@@ -26,7 +26,7 @@ export async function login(
   await expect(page.getByRole('link', { name: 'Tabelle' })).toBeVisible();
 }
 
-/** Read off the page the SPA API used to answer for. */
+/** Read off the page rather than queried, so the test uses only what a browser sees. */
 export async function activeLeague(page: Page): Promise<string> {
   const value = await page
     .locator('input[type="hidden"][name="league"]')
