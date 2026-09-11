@@ -39,11 +39,13 @@ const tokenPair = z.object({ id: z.string().min(1), token: z.string().min(1) });
 export const auth = new Hono<{ Variables: Variables }>();
 
 auth.get('/login', (c) =>
-  c.html(
-    <Layout title="Einloggen" loginAction="register">
-      <Login />
-    </Layout>,
-  ),
+  c.get('user')
+    ? c.redirect(`${basePath}/`, 303)
+    : c.html(
+        <Layout title="Einloggen" loginAction="register">
+          <Login />
+        </Layout>,
+      ),
 );
 
 auth.post(
@@ -94,11 +96,13 @@ auth.post('/logout', async (c) => {
 });
 
 auth.get('/register', (c) =>
-  c.html(
-    <Layout title="Registrieren">
-      <Register />
-    </Layout>,
-  ),
+  c.get('user')
+    ? c.redirect(`${basePath}/`, 303)
+    : c.html(
+        <Layout title="Registrieren">
+          <Register />
+        </Layout>,
+      ),
 );
 
 auth.post(

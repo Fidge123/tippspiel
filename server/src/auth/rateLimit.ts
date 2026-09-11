@@ -1,4 +1,5 @@
 import type { Context, Next } from 'hono';
+import { rateLimitEnabled } from '../config';
 
 interface Bucket {
   count: number;
@@ -15,6 +16,10 @@ function clientKey(c: Context, name: string): string {
 /** Replaces @nestjs/throttler, which kept the same counters in memory. */
 export function rateLimit(name: string, limit: number, windowMs = 60_000) {
   return async (c: Context, next: Next) => {
+    if (!rateLimitEnabled) {
+      return next();
+    }
+
     const key = clientKey(c, name);
     const now = Date.now();
     const bucket = buckets.get(key);

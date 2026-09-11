@@ -1,5 +1,6 @@
 export const webPort = Number(process.env.E2E_WEB_PORT ?? 4173);
 export const apiPort = Number(process.env.E2E_API_PORT ?? 4174);
+export const serverPort = Number(process.env.E2E_SERVER_PORT ?? 4175);
 
 // Mirrors REACT_APP_API_URL in frontend/.env and homepage in frontend/package.json.
 export const apiPrefix = '/nfl/api';

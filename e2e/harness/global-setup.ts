@@ -3,8 +3,9 @@ import {
   startPostgres,
 } from '../../backend/test/support/database';
 import { startBackend } from './backend';
-import { apiPort, webPort } from './ports';
+import { apiPort, serverPort, webPort } from './ports';
 import { seed } from './seed';
+import { startServer } from './server';
 import { startWeb } from './web';
 
 export default async function globalSetup(): Promise<() => Promise<void>> {
@@ -27,7 +28,10 @@ export default async function globalSetup(): Promise<() => Promise<void>> {
 
     await seed(database.url);
 
-    const web = await startWeb(webPort, apiPort);
+    const server = await startServer(database.url, serverPort);
+    started.unshift(() => server.stop());
+
+    const web = await startWeb(webPort, apiPort, serverPort);
     started.unshift(() => web.stop());
 
     process.env.E2E_DATABASE_URL = database.url;

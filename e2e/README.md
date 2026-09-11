@@ -1,6 +1,6 @@
 # Browser tests
 
-Six flows through the built frontend and the real backend, in Chromium.
+The flows through the built frontend, the real backend and the Hono server, in Chromium.
 
 ```
 (cd ../backend && bun run build)
@@ -12,7 +12,28 @@ Postgres comes from a container, so a first run needs [a container runtime](#the
 
 ## What it covers
 
-Only the integration failures the lower tiers cannot see: that the frontend and the API agree on urls, payloads, cookies and deadlines.
+Only the integration failures the lower tiers cannot see: that the frontend, the API and the Hono server agree on urls, payloads, cookies and deadlines.
+
+## The route split
+
+From #86 until #91 the site is served by two applications behind nginx, so the harness runs three upstreams: the SPA build, the Nest API, and the Hono server on its own port.
+
+`harness/routes.ts` reads the exact-match `location` blocks out of `server/deploy/nginx.conf.example` rather than restating them, so the harness cannot drift from the routing that actually ships.
+Moving a route across is a one-line change to that config, and the harness follows.
+
+## Projects
+
+| Project | What |
+|---|---|
+| `desktop` | The SPA flows, in a normal browser |
+| `mobile` | The schedule at iPhone width |
+| `no-js` | `javaScriptEnabled: false` — the acceptance criterion for #85 |
+
+The `no-js` project covers the routes that have moved to the Hono app.
+Each migration issue adds its own flow as its route moves; nothing in the config needs touching.
+
+Rate limiting is disabled for the Hono upstream here, because every test logs in from 127.0.0.1 and would share one bucket.
+The limiter has its own tests in `server/src/routes/auth.integration.test.ts`.
 Coverage of rules belongs in the unit tests, coverage of the API in `backend/test/api`.
 The suite stays at six flows on purpose, because this tier is the slowest and the first to break on unrelated markup changes.
 

@@ -187,7 +187,7 @@ jobs:
 
   browser:
     name: Browser tests
-    needs: [backend, frontend]
+    needs: [backend, frontend, server]
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     services:
@@ -214,6 +214,7 @@ jobs:
         run: |
           cd backend && bun install --frozen-lockfile && cd ..
           cd frontend && bun install --frozen-lockfile && cd ..
+          cd server && bun install --frozen-lockfile && cd ..
           cd e2e && bun install --frozen-lockfile
       - name: Build the application
         run: |

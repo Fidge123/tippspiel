@@ -17,6 +17,8 @@ export const test = base.extend({
 
 export { expect };
 
+// /login belongs to the Hono app from 2/6, so this submits its form and then
+// waits for the SPA to trade the refresh cookie for an access token.
 export async function login(
   page: Page,
   user: { email: string },

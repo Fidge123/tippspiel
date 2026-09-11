@@ -9,6 +9,7 @@ import {
 } from 'node:http';
 import { extname, join, resolve, sep } from 'node:path';
 import { apiPrefix, appPath } from './ports';
+import { honoRoutes } from './routes';
 
 const build = resolve(__dirname, '../../frontend/build');
 
@@ -31,13 +32,20 @@ export interface WebServer {
 export async function startWeb(
   port: number,
   backendPort: number,
+  serverPort: number,
 ): Promise<WebServer> {
   await checkBuild();
 
+  // Stands in for the nginx location blocks, read from the config itself.
+  const moved = new Set(honoRoutes());
+
   const server = createServer((req, res) => {
     const url = req.url ?? '/';
+    const path = url.split('?')[0];
     if (url.startsWith(`${apiPrefix}/`)) {
       proxy(req, res, backendPort, url.slice(apiPrefix.length));
+    } else if (moved.has(path)) {
+      proxy(req, res, serverPort, url);
     } else if (url.startsWith(`${appPath}/`)) {
       serve(res, url.slice(appPath.length + 1).split('?')[0]).catch(() =>
         res.destroy(),
@@ -72,7 +80,14 @@ function proxy(
       port,
       path,
       method: req.method,
-      headers: { ...req.headers, host: `127.0.0.1:${port}` },
+      headers: {
+        ...req.headers,
+        host: `127.0.0.1:${port}`,
+        // nginx sets this on every proxied location, and the rate limiter
+        // buckets on it.
+        'x-forwarded-for': req.socket.remoteAddress ?? '127.0.0.1',
+        'x-forwarded-proto': 'http',
+      },
     },
     (response) => {
       res.writeHead(response.statusCode ?? 502, response.headers);
