@@ -1,4 +1,4 @@
-import { randomBytes, scrypt as s } from 'node:crypto';
+import { randomBytes, scrypt as s, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 
 import {
@@ -17,6 +17,9 @@ import { User } from '../user.decorator';
 import { UserEntity, ResetEntity, VerifyEntity } from './entity';
 
 const scrypt = promisify(s);
+
+const KEY_LENGTH = 128;
+const DUMMY_SALT = randomBytes(KEY_LENGTH);
 
 @Injectable()
 export class UserDataService {
@@ -47,14 +50,23 @@ export class UserDataService {
       select: { id: true, name: true, email: true, salt: true, password: true },
       where: { email, verified: true },
     });
+    // Hash even without a user so both paths take the same time
+    const expected = user
+      ? Buffer.from(user.password, 'hex')
+      : Buffer.alloc(KEY_LENGTH);
+    const actual = await hash(
+      password,
+      user ? Buffer.from(user.salt, 'hex') : DUMMY_SALT,
+    );
+
     if (
-      user &&
-      user.password === (await hash(password, Buffer.from(user.salt, 'hex')))
+      !user ||
+      expected.length !== actual.length ||
+      !timingSafeEqual(expected, actual)
     ) {
-      return { id: user.id, name: user.name, email: user.email };
-    } else {
       throw new UnauthorizedException();
     }
+    return { id: user.id, name: user.name, email: user.email };
   }
 
   async createUser(
@@ -79,7 +91,7 @@ export class UserDataService {
       user.salt = salt.toString('hex');
       user.settings = {};
       user.consentedAt = new Date();
-      user.password = await hash(password, salt);
+      user.password = (await hash(password, salt)).toString('hex');
 
       const token = new VerifyEntity();
       token.token = randomBytes(128).toString('hex');
@@ -227,7 +239,7 @@ export class UserDataService {
     if (tokenEntity) {
       const salt = randomBytes(128);
       user.salt = salt.toString('hex');
-      user.password = await hash(password, salt);
+      user.password = (await hash(password, salt)).toString('hex');
       await this.userRepo.save(user);
       await this.resetRepo.remove(tokenEntity);
     } else {
@@ -280,7 +292,6 @@ export class UserDataService {
   }
 }
 
-async function hash(password: string, salt: Buffer): Promise<string> {
-  const hash: any = await scrypt(password.normalize(), salt, 128);
-  return hash.toString('hex');
+async function hash(password: string, salt: Buffer): Promise<Buffer> {
+  return scrypt(password.normalize(), salt, KEY_LENGTH) as Promise<Buffer>;
 }
