@@ -75,6 +75,27 @@ test.describe('Betting, without JavaScript', () => {
     await expect(game.getByLabel('Einsatz')).toBeDisabled();
   });
 
+  test('a bet after kickoff says so instead of failing silently', async ({
+    page,
+  }) => {
+    await login(page, users.alice);
+
+    // The form is gone once a game starts, so the late POST is made directly,
+    // which is what a stale page or a slow submit would do.
+    const response = await page.request.post('./bet', {
+      form: {
+        game: games.finishedFirst.id,
+        league: await activeLeague(page, page.request as never),
+        week: weeks.finished.id,
+        winner: 'home',
+        pointDiff: '3',
+      },
+    });
+
+    expect(response.status()).toBe(400);
+    expect(await response.text()).toContain('Zu spät');
+  });
+
   test('the week label and byes render', async ({ page }) => {
     await login(page, users.alice);
 
