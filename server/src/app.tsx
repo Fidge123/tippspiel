@@ -3,6 +3,7 @@ import { currentUser, type Variables } from './auth/middleware';
 import { basePath } from './config';
 import { isDatabaseReachable } from './db/kysely';
 import { auth } from './routes/auth';
+import { leaderboard } from './routes/leaderboard';
 import { Impressum } from './views/Impressum';
 import { Layout } from './views/Layout';
 
@@ -20,6 +21,7 @@ app.get('/health', async (c) => {
 app.use('*', currentUser);
 
 app.route('/', auth);
+app.route('/', leaderboard);
 
 app.get('/impressum', (c) =>
   c.html(

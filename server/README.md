@@ -28,6 +28,8 @@ Set `INSECURE_COOKIES=true` to develop over plain HTTP.
 | `src/app.tsx` | The Hono app and its routes. Runtime-agnostic, so the test suite can import it under Node |
 | `src/index.tsx` | The Bun entry. Adds static file serving and exports `{ fetch, port }` for `Bun.serve` |
 | `src/routes/` | Route handlers, grouped by the page they serve |
+| `src/leaderboard/` | The one leaderboard query and the assembly on top of it |
+| `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |
 | `src/views/` | Hono JSX components, rendered server-side |
 | `src/auth/` | Passwords, sessions, cookies and the SPA bridge |
 | `src/db/` | Kysely, the schema types and the migration runner |
@@ -47,6 +49,26 @@ Three tiers, all Vitest on Node:
 
 The first two drive `app.request()` directly, which is why `src/app.tsx` must not import `hono/bun`: the Bun-only pieces live in `src/index.tsx`.
 The integration suite creates the legacy `user`, `verify` and `reset` tables itself, so it does not need the Nest package.
+
+## The leaderboard
+
+`src/leaderboard/query.ts` reads the whole table in one query. The Nest
+controller issued two per league member on top of three collection reads, which
+is 43 round trips for a twenty-person league; `leaderboard.integration.test.ts`
+pins the new count at five, none of them per member.
+
+The reveal rules are applied after the read rather than folded into it, because
+hiding is about who is asking, not about the data.
+
+`src/scoring.ts` is a byte-identical copy of `backend/src/bet/scoring.ts`, and
+`scoring.drift.test.ts` fails if the two ever disagree while both exist. The
+arithmetic was moved, not retyped, which is what makes the golden master
+evidence for the port rather than for a reimplementation.
+
+The route answers JSON when asked for it. That projection exists so the
+equivalence can be checked across the runtime split:
+`e2e/tests/leaderboard-equivalence.spec.ts` drives both stacks against the same
+database and compares them entry for entry.
 
 ## No JavaScript
 

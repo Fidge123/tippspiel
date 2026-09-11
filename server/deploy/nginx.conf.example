@@ -69,6 +69,16 @@ location = /tippspiel/reset/request {
     proxy_set_header X-Forwarded-Proto $scheme;
 }
 
+# The leaderboard, moved in 3/6.
+location = /tippspiel/leaderboard {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
 location = /tippspiel/app.css {
     proxy_pass http://127.0.0.1:5002;
     proxy_http_version 1.1;
