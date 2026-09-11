@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@source '../src';
+
+/* theme.screens in the Tailwind 3 config replaced the defaults rather than
+   extending them, so the namespace is reset before sm and md are declared. */
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 448px;
+  --breakpoint-md: 720px;
+}
+
+@layer base {
+  html {
+    @apply dark:bg-gray-800;
+  }
+
+  button,
+  [type='submit'] {
+    @apply border border-black rounded;
+    @apply h-8 bg-white dark:bg-gray-600 dark:text-gray-100;
+    @apply text-sm px-1.5;
+    @apply disabled:pointer-events-none;
+  }
+}
