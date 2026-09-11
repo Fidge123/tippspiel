@@ -11,8 +11,8 @@
       "!**/build",
       "!**/dist",
       "!**/node_modules",
-      "!**/yarn.lock",
-      "!backend/src/templates",
+      "!**/bun.lock",
+      "!server/src/email/templates",
       "!**/*.css"
     ]
   },
@@ -25,9 +25,6 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
-    },
-    "parser": {
-      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "linter": {
@@ -58,17 +55,5 @@
         "organizeImports": "off"
       }
     }
-  },
-  "overrides": [
-    {
-      "includes": ["backend/**"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useImportType": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

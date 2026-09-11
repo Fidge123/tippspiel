@@ -1,0 +1,21 @@
+# The Hono server answers every path under /tippspiel. The SPA and the Nest API
+# it replaced are gone, so there is nothing left to split traffic with.
+
+location /tippspiel/ {
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    # The rate limiter buckets on this.
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+# Not exposed publicly; reachable from the host for monitoring.
+location = /tippspiel/health {
+    allow 127.0.0.1;
+    deny all;
+    proxy_pass http://127.0.0.1:5002;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+}

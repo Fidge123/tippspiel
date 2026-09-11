@@ -1,0 +1,11 @@
+[Unit]
+Description=Import teams and divisions from ESPN
+
+[Timer]
+OnCalendar=*-08..12-* 07:03:00
+OnCalendar=*-01,02-* 07:03:00
+Unit=tippspiel-job@import-master-data.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -4,8 +4,6 @@ on:
   schedule:
     # Wednesdays and Fridays through the season, which runs from August to February.
     - cron: "0 6 * 8-12,1-2 3,5"
-  pull_request:
-    branches: [master]
 
   workflow_dispatch:
 
@@ -14,17 +12,20 @@ jobs:
     name: Mail delivery
     defaults:
       run:
-        working-directory: backend
+        working-directory: server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Send a mail and wait for SMTP2GO to report it delivered
-        run: yarn run test:delivery
+        run: bun run test:delivery
         env:
           SMTP2GO_API_KEY: ${{ secrets.SMTP2GO_API_KEY }}
           EMAIL: ${{ secrets.EMAIL }}

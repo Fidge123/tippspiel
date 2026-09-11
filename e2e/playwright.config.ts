@@ -17,10 +17,21 @@ export default defineConfig({
   projects: [
     {
       name: 'desktop',
-      testIgnore: /mobile\.spec\.ts/,
+      testIgnore: /mobile\.spec\.ts|nojs\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel: process.env.PLAYWRIGHT_CHANNEL,
+      },
+    },
+    {
+      // The acceptance criterion for #85: every flow, with no JavaScript at
+      // all. Flows join as their route moves to the Hono app.
+      name: 'no-js',
+      testMatch: /nojs\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: process.env.PLAYWRIGHT_CHANNEL,
+        javaScriptEnabled: false,
       },
     },
     {

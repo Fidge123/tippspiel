@@ -1,0 +1,9 @@
+[Unit]
+Description=Delete expired tokens, sessions and unverified users
+
+[Timer]
+OnCalendar=hourly
+Unit=tippspiel-job@clean-up.service
+
+[Install]
+WantedBy=timers.target

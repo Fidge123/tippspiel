@@ -1,0 +1,11 @@
+[Unit]
+Description=Import the full season schedule from ESPN
+
+[Timer]
+OnCalendar=*-08..12-* 07:48:00
+OnCalendar=*-01,02-* 07:48:00
+Unit=tippspiel-job@import-schedule.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target

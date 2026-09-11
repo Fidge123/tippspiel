@@ -1,36 +1,39 @@
 # Browser tests
 
-Six flows through the built frontend and the real backend, in Chromium.
+The flows through the real server, in Chromium.
 
 ```
-yarn --cwd ../backend build
-yarn --cwd ../frontend build
-yarn test
+bun run test
 ```
 
 Postgres comes from a container, so a first run needs [a container runtime](#the-container-runtime).
 
 ## What it covers
 
-Only the integration failures the lower tiers cannot see: that the frontend and the API agree on urls, payloads, cookies and deadlines.
-Coverage of rules belongs in the unit tests, coverage of the API in `backend/test/api`.
-The suite stays at six flows on purpose, because this tier is the slowest and the first to break on unrelated markup changes.
+Only the integration failures the lower tiers cannot see: that the rendered pages, the cookies and the deadlines agree once a real browser drives them.
 
-1. `bets` places a bet on an upcoming game and reloads.
-2. `doubler` sets a doubler, moves it to another game of the same week and removes it.
-3. `leaderboard` compares the totals in the table against the leaderboard endpoint.
-4. `registration` registers an account, follows the verification link and logs in.
-5. `spoiler` turns off the spoiler protection of a finished week and reloads.
-6. `mobile` renders the schedule on an iPhone sized viewport without horizontal scroll.
+## Projects
+
+| Project | What |
+|---|---|
+| `desktop` | The flows in a normal browser |
+| `mobile` | The schedule at iPhone width |
+| `no-js` | `javaScriptEnabled: false` — the acceptance criterion for #85 |
+
+Playwright talks to the server directly on its own port, under the same `/tippspiel` prefix nginx proxies in production.
+
+Rate limiting is disabled here, because every test logs in from 127.0.0.1 and would share one bucket.
+The limiter has its own tests in `server/src/routes/auth.integration.test.ts`.
+Coverage of rules belongs in the unit tests.
+The suite stays small on purpose, because this tier is the slowest and the first to break on unrelated markup changes.
 
 Where the application does not behave as intended yet, the test states the intended behaviour and carries `test.fail` with the issue that will fix it named above it.
 Fixing the issue turns the test red, which is the reminder to drop the marker.
 
 ## The harness
 
-- **Database.** `startPostgres` from `backend/test/support`, so this suite and the API tests share one testcontainer setup. It needs a container runtime, see below.
-- **Backend.** `backend/dist/main.js` as a child process. It applies the migrations on boot, so the schema comes from the migration chain.
-- **Frontend.** `frontend/build`, served by the harness under `/tippspiel/` with `/nfl/api/` proxied to the backend. Serving both from one origin is what the deployment does, and it keeps the refresh cookie working.
+- **Database.** `startPostgres` from `server/test/support`, so this suite and the golden master share one testcontainer setup. It needs a container runtime, see below.
+- **Server.** `bun run src/index.tsx` as a child process, after `bun run migrate` and `bun run build:css`, so the schema comes from the migration chain and the stylesheet is never stale.
 - **Seed.** Written straight to the database in `harness/seed.ts`: two divisions, a finished week, an upcoming week, two users in one league with their bets on the finished week, and a third user in no league. Kickoffs are placed relative to now, so no test depends on the day it runs.
 - **Selectors.** Roles and labels only. The markup is Tailwind heavy and about to be rewritten, so a class based selector would not survive.
 

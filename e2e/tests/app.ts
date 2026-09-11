@@ -1,11 +1,9 @@
 import {
-  type APIRequestContext,
   expect,
   type Locator,
   type Page,
   test as base,
 } from '@playwright/test';
-import { apiPrefix } from '../harness/ports';
 import { password } from '../harness/seed';
 
 export const test = base.extend({
@@ -28,27 +26,16 @@ export async function login(
   await expect(page.getByRole('link', { name: 'Tabelle' })).toBeVisible();
 }
 
-export async function readApi<T>(
-  page: Page,
-  request: APIRequestContext,
-  path: string,
-): Promise<T> {
-  const token = await page.evaluate(() =>
-    window.localStorage.getItem('access_token'),
-  );
-  const response = await request.get(`${apiPrefix}/${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  expect(response.ok()).toBe(true);
-  return response.json();
-}
-
-export async function activeLeague(
-  page: Page,
-  request: APIRequestContext,
-): Promise<string> {
-  const leagues = await readApi<{ id: string }[]>(page, request, 'leagues');
-  return leagues[0].id;
+/** Read off the page rather than queried, so the test uses only what a browser sees. */
+export async function activeLeague(page: Page): Promise<string> {
+  const value = await page
+    .locator('input[type="hidden"][name="league"]')
+    .first()
+    .inputValue();
+  if (!value) {
+    throw new Error('No league on the page, the user is in none');
+  }
+  return value;
 }
 
 export function week(page: Page, label: string): Locator {

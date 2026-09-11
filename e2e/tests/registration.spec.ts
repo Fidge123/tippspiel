@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Client } from 'pg';
-import { password, users } from '../harness/seed';
-import { expect, login, test } from './app';
+import { password } from '../harness/seed';
+import { expect, test } from './app';
 
 // Registration is throttled and emails are unique, so a rerun needs its own account.
 const newUser = {
@@ -34,9 +34,12 @@ test('a new account is registered, verified and logs in', async ({ page }) => {
   await page.getByRole('button', { name: 'Registrieren' }).click();
   await expect(page.getByText('Erfolgreich registriert!')).toBeVisible();
 
+  // The Hono verify page confirms on submit rather than on load: an emailed
+  // link cannot run a useEffect when there is no JavaScript.
   const { id, token } = await verification(newUser.email);
   await page.goto(`./verify?id=${id}&token=${token}`);
-  await expect(page.getByText('Account erfolgreich bestätigt!')).toBeVisible();
+  await page.getByRole('button', { name: 'Account bestätigen' }).click();
+  await expect(page.getByText('erfolgreich bestätigt')).toBeVisible();
 
   await page.goto('./login');
   await page.getByLabel('E-Mail').fill(newUser.email);
