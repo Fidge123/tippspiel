@@ -14,6 +14,7 @@ import {
   authenticate,
   createResetToken,
   createUser,
+  deleteUser,
   resetPassword,
   verifyUser,
 } from '../auth/users';
@@ -139,12 +140,27 @@ auth.post(
       }),
     }).catch((error) => console.error(error));
 
-    await sendEmail({
-      to: email,
-      subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
-      text: await loadTXT('verifyUser', { name, link }),
-      html: await loadHTML('verifyUser', { name, link }),
-    }).catch((error) => console.error(error));
+    // An account nobody can verify is an account nobody can log into, so a
+    // failed verification mail undoes the registration instead of reporting
+    // success. The admin alert above is not worth failing a signup over.
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Bitte verifiziere deinen neuen Tippspiel Account',
+        text: await loadTXT('verifyUser', { name, link }),
+        html: await loadHTML('verifyUser', { name, link }),
+      });
+    } catch (error) {
+      console.error(error);
+      await deleteUser(created.id);
+
+      return c.html(
+        <Layout title="Registrieren">
+          <Register error="Die Bestätigungs-E-Mail konnte nicht verschickt werden. Bitte versuche es später noch einmal." />
+        </Layout>,
+        502,
+      );
+    }
 
     return c.html(
       <Layout title="Registrieren">

@@ -138,3 +138,8 @@ export async function resetPassword(
       return true;
     });
 }
+
+/** Undoes a registration whose verification mail never went out. */
+export async function deleteUser(id: string): Promise<void> {
+  await db().deleteFrom('user').where('id', '=', id).execute();
+}

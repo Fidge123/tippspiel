@@ -1,6 +1,24 @@
 import { env } from 'node:process';
 import jwt from 'jsonwebtoken';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+
+let mailFails = false;
+
+vi.mock('../email/send', () => ({
+  sendEmail: vi.fn(async () => {
+    if (mailFails) {
+      throw new Error('SMTP2GO rejected 1 recipient(s)');
+    }
+  }),
+}));
 
 env.DATABASE_URL = env.TEST_DATABASE_URL;
 env.REFRESH_SECRET = 'refresh-secret-for-tests';
@@ -57,6 +75,7 @@ beforeAll(createSchema);
 beforeEach(async () => {
   await truncate();
   resetRateLimits();
+  mailFails = false;
 });
 afterAll(closeDatabase);
 
@@ -161,6 +180,20 @@ describe('the SPA bridge', () => {
       email: 'player@example.com',
     });
   });
+
+  it('expires the refresh cookie after 29 days, not 290', async () => {
+    await insertUser('player@example.com');
+
+    const response = await app.request(
+      `${BASE}/login`,
+      form({ email: 'player@example.com', password: PASSWORD }),
+    );
+    const legacy = response.headers
+      .getSetCookie()
+      .find((c) => c.startsWith('refreshToken='));
+
+    expect(legacy).toContain(`Max-Age=${29 * 24 * 60 * 60}`);
+  });
 });
 
 describe('logout', () => {
@@ -242,6 +275,27 @@ describe('register', () => {
     );
 
     expect(response.status).toBe(409);
+    expect(await db().selectFrom('verify').selectAll().execute()).toEqual([]);
+  });
+
+  it('reports failure, and keeps no account, when the mail does not go out', async () => {
+    mailFails = true;
+
+    const response = await app.request(
+      `${BASE}/register`,
+      form({
+        name: 'Neuer Nutzer',
+        email: 'new@example.com',
+        password: PASSWORD,
+      }),
+    );
+
+    expect(response.status).toBe(502);
+    expect(await response.text()).not.toContain('Erfolgreich registriert');
+
+    // An account that can never be verified can never be logged into, and its
+    // email would block the retry.
+    expect(await db().selectFrom('user').selectAll().execute()).toEqual([]);
     expect(await db().selectFrom('verify').selectAll().execute()).toEqual([]);
   });
 

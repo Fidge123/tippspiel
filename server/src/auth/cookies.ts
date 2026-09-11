@@ -12,6 +12,10 @@ import type { SessionUser } from './session';
 export const SESSION_COOKIE = 'session';
 export const LEGACY_COOKIE = 'refreshToken';
 
+// The Nest app wrote 29 * 24 * 60 * 60 * 10000 into a milliseconds field, so
+// the cookie it set lived 290 days rather than the 29 its comment claimed.
+const LEGACY_MAX_AGE_SECONDS = 29 * 24 * 60 * 60;
+
 // Lax rather than Strict: Strict drops the cookie when the user arrives from an
 // emailed verification or reset link, which is how those flows are entered.
 const options = {
@@ -65,7 +69,7 @@ export async function setLegacyRefreshCookie(
     'Set-Cookie',
     `${LEGACY_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax${
       secureCookies ? '; Secure' : ''
-    }; Max-Age=${(29 * 24 * 60 * 60 * 10000) / 1000}`,
+    }; Max-Age=${LEGACY_MAX_AGE_SECONDS}`,
     { append: true },
   );
 }
