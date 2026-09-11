@@ -128,6 +128,13 @@ describe('registration and login', () => {
       .expect(401);
   });
 
+  it('rejects an unknown email', async () => {
+    await request(api.server)
+      .post('/user/login')
+      .send({ email: 'unknown@example.invalid', password: PASSWORD })
+      .expect(401);
+  });
+
   it('rejects a verification token that has already been used', async () => {
     const user = await createUser(api, { verified: false });
     await request(api.server)
