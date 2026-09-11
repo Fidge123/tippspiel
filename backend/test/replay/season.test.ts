@@ -107,7 +107,7 @@ describe(`${season.year} season`, () => {
 });
 
 async function importSeason(app: ReplayApp, s: Season): Promise<void> {
-  await app.schedule.importMasterData();
+  await app.schedule.importMasterData(s.year);
   for (let week = 1; week <= s.regularWeeks; week++) {
     await app.schedule.importWeek({ year: s.year, seasontype: 2, week });
   }

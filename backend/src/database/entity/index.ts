@@ -8,6 +8,7 @@ export * from './league.entity';
 export * from './reset.entity';
 export * from './superbowlBet.entity';
 export * from './team.entity';
+export * from './teamSeason.entity';
 export * from './user.entity';
 export * from './verify.entity';
 export * from './week.entity';

@@ -5,6 +5,7 @@ import { WeekInteger1662402825392 } from './1662402825392-WeekInteger';
 import { WeekId1662404323063 } from './1662404323063-WeekId';
 import { Indices1673624598450 } from './1673624598450-Indices';
 import { Indices21673625077228 } from './1673625077228-Indices2';
+import { TeamSeason1757600000000 } from './1757600000000-TeamSeason';
 
 // Listed rather than globbed: dist/ holds no .ts files, so a glob silently matches none.
 export const migrations = [
@@ -15,4 +16,5 @@ export const migrations = [
   WeekId1662404323063,
   Indices1673624598450,
   Indices21673625077228,
+  TeamSeason1757600000000,
 ];

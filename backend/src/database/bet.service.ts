@@ -12,6 +12,7 @@ import {
   DivisionBetEntity,
   GameEntity,
   TeamEntity,
+  TeamSeasonEntity,
   UserEntity,
   SuperbowlBetEntity,
   BetDoublerEntity,
@@ -38,6 +39,8 @@ export class BetDataService {
     private gameRepo: Repository<GameEntity>,
     @InjectRepository(TeamEntity)
     private teamRepo: Repository<TeamEntity>,
+    @InjectRepository(TeamSeasonEntity)
+    private teamSeasonRepo: Repository<TeamSeasonEntity>,
     @InjectRepository(UserEntity)
     private userRepo: Repository<UserEntity>,
     @InjectRepository(WeekEntity)
@@ -214,7 +217,7 @@ export class BetDataService {
     if (!user || !league || !year) {
       throw new BadRequestException();
     }
-    return this.divBetRepo.find({
+    const bets = await this.divBetRepo.find({
       where: {
         user: { id: user },
         league: { id: league },
@@ -228,6 +231,41 @@ export class BetDataService {
         fourth: true,
       },
     });
+
+    await this.applySeasonSeeds(bets, year);
+
+    return bets;
+  }
+
+  /**
+   * The seed on `team` is whatever the last import wrote, so scoring a finished
+   * season against it moved everyone's points every time the importer ran.
+   * Seasons with no recorded seeds keep the old behaviour rather than silently
+   * dropping to zero; #40 recovers those from the R2 recordings.
+   */
+  private async applySeasonSeeds(
+    bets: DivisionBetEntity[],
+    year: number,
+  ): Promise<void> {
+    const picks = bets
+      .flatMap((bet) => [bet.first, bet.second, bet.third, bet.fourth])
+      .filter((team): team is TeamEntity => !!team);
+
+    if (!picks.length) {
+      return;
+    }
+
+    const rows = await this.teamSeasonRepo.find({
+      where: { year, teamId: In([...new Set(picks.map((t) => t.id))]) },
+      select: { teamId: true, playoffSeed: true },
+    });
+    const seeds = new Map(rows.map((row) => [row.teamId, row.playoffSeed]));
+
+    for (const team of picks) {
+      if (seeds.has(team.id)) {
+        team.playoffSeed = seeds.get(team.id);
+      }
+    }
   }
 
   async userSbBets(

@@ -976,6 +976,7 @@ exports[`2023 season > applies the migration chain to an empty database > migrat
   "WeekId1662404323063",
   "Indices1673624598450",
   "Indices21673625077228",
+  "TeamSeason1757600000000",
 ]
 `;
 

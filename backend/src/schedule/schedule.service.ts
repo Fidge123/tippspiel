@@ -52,7 +52,7 @@ export class ScheduleService implements OnModuleInit {
   }
 
   @Cron('3 7 * Aug-Dec,Jan,Feb *')
-  async importMasterData(): Promise<void> {
+  async importMasterData(year: number = regularSeason.year): Promise<void> {
     const response = await fetch(`${BASE_URL}groups`);
     if (!response.ok) {
       console.error('Error loading divisions!');
@@ -67,13 +67,13 @@ export class ScheduleService implements OnModuleInit {
       console.log(`--- Loading ${conf.abbreviation} divisions ---`);
       await Promise.all(
         conf.children.map((division: any) =>
-          this.importTeamsOfDivision(division),
+          this.importTeamsOfDivision(division, year),
         ),
       );
     }
   }
 
-  async importTeamsOfDivision(division: any): Promise<void> {
+  async importTeamsOfDivision(division: any, year: number): Promise<void> {
     const divEntity = await this.databaseService.createOrUpdateDivision({
       name: division.name,
     });
@@ -88,7 +88,7 @@ export class ScheduleService implements OnModuleInit {
 
       for (const t of teamResponses.map((t) => t.team)) {
         console.log(`Creating ${t.displayName}`);
-        await this.databaseService.createOrUpdateTeam(t, divEntity);
+        await this.databaseService.createOrUpdateTeam(t, divEntity, year);
       }
     } catch (e: unknown) {
       await notify(`${BASE_URL}teams/<team.id>`);

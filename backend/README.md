@@ -53,3 +53,11 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Season-scoped team state
+
+`team` holds the newest values the importer wrote; `team_season` holds the per-season ones, keyed on `(teamId, year)`.
+Division bets are scored against `team_season`, so a finished season stops being rescored every time the importer runs (#40).
+
+Seasons that finished before that table existed have no rows in it and still fall back to `team`.
+`scripts/backfill-team-seasons.ts` recovers them from the recorded ESPN responses in R2.

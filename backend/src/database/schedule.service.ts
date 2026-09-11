@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
-import { ByeEntity, WeekEntity, GameEntity, TeamEntity } from './entity';
+import {
+  ByeEntity,
+  WeekEntity,
+  GameEntity,
+  TeamEntity,
+  TeamSeasonEntity,
+} from './entity';
 import { Competitors, NFLEvent, Team } from './api.type';
 import { DivisionEntity } from './entity/division.entity';
 
@@ -16,6 +22,8 @@ export class ScheduleDataService {
     private divisonRepo: Repository<DivisionEntity>,
     @InjectRepository(TeamEntity)
     private teamRepo: Repository<TeamEntity>,
+    @InjectRepository(TeamSeasonEntity)
+    private teamSeasonRepo: Repository<TeamSeasonEntity>,
     @InjectRepository(WeekEntity)
     private weekRepo: Repository<WeekEntity>,
   ) {}
@@ -102,25 +110,42 @@ export class ScheduleDataService {
   async createOrUpdateTeam(
     team: Team,
     division: DivisionEntity,
+    year: number,
   ): Promise<TeamEntity> {
+    const state = {
+      logo: team.logos[0].href.split('/').reverse()[0],
+      abbreviation: team.abbreviation,
+      shortName: team.shortDisplayName,
+      name: team.displayName,
+      playoffSeed: findStat(team, 'playoffSeed'),
+      wins: findStat(team, 'wins'),
+      losses: findStat(team, 'losses'),
+      ties: findStat(team, 'ties'),
+      pointsFor: findStat(team, 'pointsFor'),
+      pointsAgainst: findStat(team, 'pointsAgainst'),
+      streak: findStat(team, 'streak'),
+      color1: team.color,
+      color2: team.alternateColor,
+    };
+
     const t =
       (await this.teamRepo.findOneBy({ id: team.uid })) || new TeamEntity();
     t.id = team.uid;
-    t.logo = team.logos[0].href.split('/').reverse()[0];
-    t.abbreviation = team.abbreviation;
-    t.shortName = team.shortDisplayName;
-    t.name = team.displayName;
     t.division = division;
-    t.playoffSeed = findStat(team, 'playoffSeed');
-    t.wins = findStat(team, 'wins');
-    t.losses = findStat(team, 'losses');
-    t.ties = findStat(team, 'ties');
-    t.pointsFor = findStat(team, 'pointsFor');
-    t.pointsAgainst = findStat(team, 'pointsAgainst');
-    t.streak = findStat(team, 'streak');
-    t.color1 = team.color;
-    t.color2 = team.alternateColor;
-    return this.teamRepo.save(t);
+    Object.assign(t, state);
+    const saved = await this.teamRepo.save(t);
+
+    // The per-season row is what scoring reads. The team row above keeps
+    // holding the newest values, because the current schedule view still
+    // reads them; it is no longer what a finished season is scored against.
+    await this.teamSeasonRepo.save({
+      teamId: team.uid,
+      year,
+      divisionName: division.name,
+      ...state,
+    });
+
+    return saved;
   }
 
   async createOrUpdateWeek(key: any, calendar: any): Promise<WeekEntity> {
@@ -182,7 +207,7 @@ export class ScheduleDataService {
   }
 }
 
-function findStat(team: Team, name: string): number {
+export function findStat(team: Team, name: string): number {
   try {
     return team.record.items[0].stats.find((s) => s.name === name).value;
   } catch {
