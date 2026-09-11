@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { db } from './kysely';
+import { closeDatabase, db } from './kysely';
 import { migrateToLatest } from './migrate';
 
 /**
@@ -48,4 +48,11 @@ export async function truncate(): Promise<void> {
   await sql`truncate "session", "verify", "reset", "user" cascade`.execute(
     db(),
   );
+}
+
+// Runnable so the smoke test can stand up a schema of its own instead of
+// depending on the integration suite having run first.
+if (import.meta.main) {
+  await createSchema();
+  await closeDatabase();
 }
