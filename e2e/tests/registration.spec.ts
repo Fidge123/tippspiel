@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Client } from 'pg';
-import { password, users } from '../harness/seed';
-import { expect, login, test } from './app';
+import { password } from '../harness/seed';
+import { expect, test } from './app';
 
 // Registration is throttled and emails are unique, so a rerun needs its own account.
 const newUser = {

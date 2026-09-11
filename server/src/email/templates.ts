@@ -3,6 +3,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 type Template =
+  | 'betReminder'
+  | 'requestFailed'
   | 'newUserAlert'
   | 'passwordReset'
   | 'passwordResetAlert'

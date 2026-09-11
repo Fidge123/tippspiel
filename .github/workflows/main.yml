@@ -24,123 +24,6 @@ jobs:
       - name: Check formatting and lint across the repo
         run: bun run lint
 
-  backend:
-    defaults:
-      run:
-        working-directory: backend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Lint backend
-        run: bun run lint
-      - name: Typecheck backend
-        run: bun run typecheck
-      - name: Test backend
-        run: bun run test:unit
-      - name: Build backend
-        run: bun run build
-
-  api:
-    name: API tests
-    needs: backend
-    defaults:
-      run:
-        working-directory: backend
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Test the API
-        run: bun run test:api
-        env:
-          TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
-
-  season-replay:
-    name: Season replay (2023)
-    needs: api
-    defaults:
-      run:
-        working-directory: backend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Restore fixture cache
-        uses: actions/cache@v6
-        with:
-          path: backend/test/.corpus-cache
-          key: corpus-2023-${{ hashFiles('backend/test/replay/season.ts') }}
-      - name: Replay the season
-        run: bun run test:replay
-        env:
-          # Object Read on the nfl-tippspiel bucket only.
-          R2_API: ${{ secrets.R2_API }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-
-  frontend:
-    defaults:
-      run:
-        working-directory: frontend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Lint frontend
-        run: bun run lint
-      - name: Typecheck frontend
-        run: bun run typecheck
-      - name: Test frontend
-        run: bun run test
-      - name: Build frontend
-        run: bun run build
-      - name: Archive build
-        uses: actions/upload-artifact@v7
-        with:
-          name: build
-          path: frontend/build
-          retention-days: 2
   server:
     defaults:
       run:
@@ -185,9 +68,39 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
 
+  season-replay:
+    name: Season replay (2023)
+    needs: server
+    defaults:
+      run:
+        working-directory: server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Restore fixture cache
+        uses: actions/cache@v6
+        with:
+          path: server/test/.corpus-cache
+          key: corpus-2023-${{ hashFiles('server/test/replay/season.ts') }}
+      - name: Replay the season
+        run: bun run test:replay
+        env:
+          # Object Read on the nfl-tippspiel bucket only.
+          R2_API: ${{ secrets.R2_API }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
   browser:
     name: Browser tests
-    needs: [backend, frontend, server]
+    needs: server
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     services:
@@ -212,14 +125,8 @@ jobs:
           bun-version-file: .bun-version
       - name: Install dependencies
         run: |
-          cd backend && bun install --frozen-lockfile && cd ..
-          cd frontend && bun install --frozen-lockfile && cd ..
           cd server && bun install --frozen-lockfile && cd ..
           cd e2e && bun install --frozen-lockfile
-      - name: Build the application
-        run: |
-          cd backend && bun run build && cd ..
-          cd frontend && bun run build
       - name: Typecheck the browser tests
         working-directory: e2e
         run: bun run typecheck

@@ -6,8 +6,8 @@ set -euo pipefail
 PORT="${PORT:-5099}"
 BASE="http://127.0.0.1:${PORT}/tippspiel"
 
-# Stands up the legacy tables the Nest app owns, plus this package's
-# migrations, so the run does not depend on another CI step having gone first.
+# Stands up the schema, so the run does not depend on another CI step having
+# gone first.
 bun run src/db/fixture.ts
 
 PORT="$PORT" bun run src/index.tsx &

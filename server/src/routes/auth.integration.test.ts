@@ -1,5 +1,4 @@
 import { env } from 'node:process';
-import jwt from 'jsonwebtoken';
 import {
   afterAll,
   beforeAll,
@@ -21,7 +20,6 @@ vi.mock('../email/send', () => ({
 }));
 
 env.DATABASE_URL = env.TEST_DATABASE_URL;
-env.REFRESH_SECRET = 'refresh-secret-for-tests';
 env.COOKIE_SECRET = 'cookie-secret-for-tests';
 env.INSECURE_COOKIES = 'true';
 
@@ -148,51 +146,6 @@ describe('login', () => {
       expect((await attempt()).status).toBe(401);
     }
     expect((await attempt()).status).toBe(429);
-  });
-});
-
-describe('the SPA bridge', () => {
-  it('issues a refreshToken the Nest app can verify', async () => {
-    const id = await insertUser('player@example.com');
-
-    const response = await app.request(
-      `${BASE}/login`,
-      form({ email: 'player@example.com', password: PASSWORD }),
-    );
-    const legacy = response.headers
-      .getSetCookie()
-      .find((c) => c.startsWith('refreshToken='));
-
-    expect(legacy).toBeDefined();
-    expect(legacy).toContain('Path=/');
-    expect(legacy).toContain('HttpOnly');
-
-    // Verified with jsonwebtoken, the library @nestjs/jwt wraps, rather than
-    // with Hono's own verifier: the point is that the other stack accepts it.
-    const token = legacy!.slice('refreshToken='.length).split(';')[0];
-    const payload = jwt.verify(token, 'refresh-secret-for-tests', {
-      algorithms: ['HS256'],
-    });
-
-    expect(payload).toMatchObject({
-      id,
-      name: 'Testnutzer',
-      email: 'player@example.com',
-    });
-  });
-
-  it('expires the refresh cookie after 29 days, not 290', async () => {
-    await insertUser('player@example.com');
-
-    const response = await app.request(
-      `${BASE}/login`,
-      form({ email: 'player@example.com', password: PASSWORD }),
-    );
-    const legacy = response.headers
-      .getSetCookie()
-      .find((c) => c.startsWith('refreshToken='));
-
-    expect(legacy).toContain(`Max-Age=${29 * 24 * 60 * 60}`);
   });
 });
 

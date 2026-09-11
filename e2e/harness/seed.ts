@@ -232,7 +232,7 @@ async function seedBets(
   }
 }
 
-// Same derivation as hash() in backend/src/database/user.service.ts.
+// Same derivation as hash() in server/src/auth/password.ts.
 async function hash(value: string, salt: Buffer): Promise<string> {
   const derived = await promisify(scrypt)(value.normalize(), salt, 128);
   return (derived as Buffer).toString('hex');

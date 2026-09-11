@@ -1,0 +1,9 @@
+[Unit]
+Description=Refresh scores for games that have kicked off
+
+[Timer]
+OnCalendar=*:0/5
+Unit=tippspiel-job@update-games.service
+
+[Install]
+WantedBy=timers.target

@@ -9,11 +9,6 @@ export interface HonoServer {
   stop(): Promise<void>;
 }
 
-/**
- * The third upstream. From #86 until #91 nginx splits traffic between this and
- * the SPA, so CI has to run both or every migration step ships a routing
- * topology that has never been exercised.
- */
 export async function startServer(
   databaseUrl: string,
   port: number,
@@ -28,8 +23,6 @@ export async function startServer(
     PORT: String(port),
     BASE_PATH: appPath,
     COOKIE_SECRET: 'e2e-cookie-secret',
-    // Byte-identical to the backend harness, or the SPA bridge cannot work.
-    REFRESH_SECRET: 'e2e-refresh-secret',
     EMAIL: 'admin@example.invalid',
     INSECURE_COOKIES: 'true',
     RATE_LIMIT_DISABLED: 'true',

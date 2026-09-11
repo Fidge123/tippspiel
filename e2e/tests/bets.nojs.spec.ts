@@ -1,18 +1,9 @@
-import { games, season, teams, users, weeks } from '../harness/seed';
-import { activeLeague, readApi } from './app';
+import { games, teams, users, weeks } from '../harness/seed';
+import { activeLeague } from './app';
 import { expect, expectNoScript, login, pick, test } from './nojs';
 
-interface ApiBet {
-  id: string;
-  selected?: string;
-  points?: number;
-}
-
 test.describe('Betting, without JavaScript', () => {
-  test('a bet on an upcoming game survives a reload', async ({
-    page,
-    request,
-  }) => {
+  test('a bet on an upcoming game survives a reload', async ({ page }) => {
     await login(page, users.alice);
 
     const game = page.locator(`[id="game-${games.upcomingFirst.id}"]`);
@@ -29,21 +20,6 @@ test.describe('Betting, without JavaScript', () => {
     await expect(
       reloaded.getByRole('radio', { name: teams.ravens.name, exact: true }),
     ).toBeChecked();
-
-    // The API is the other stack's view of the same bet.
-    const league = await activeLeague(page, request);
-    const bets = await readApi<ApiBet[]>(
-      page,
-      request,
-      `bet?season=${season}&league=${league}`,
-    );
-    expect(bets).toContainEqual(
-      expect.objectContaining({
-        id: games.upcomingFirst.id,
-        selected: 'away',
-        points: 3,
-      }),
-    );
   });
 
   test('a bet can be changed', async ({ page }) => {
@@ -85,7 +61,7 @@ test.describe('Betting, without JavaScript', () => {
     const response = await page.request.post('./bet', {
       form: {
         game: games.finishedFirst.id,
-        league: await activeLeague(page, page.request as never),
+        league: await activeLeague(page),
         week: weeks.finished.id,
         winner: 'home',
         pointDiff: '3',

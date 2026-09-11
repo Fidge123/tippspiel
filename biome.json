@@ -12,7 +12,6 @@
       "!**/dist",
       "!**/node_modules",
       "!**/bun.lock",
-      "!backend/src/templates",
       "!server/src/email/templates",
       "!**/*.css"
     ]
@@ -26,9 +25,6 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
-    },
-    "parser": {
-      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "linter": {
@@ -59,17 +55,5 @@
         "organizeImports": "off"
       }
     }
-  },
-  "overrides": [
-    {
-      "includes": ["backend/**"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useImportType": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

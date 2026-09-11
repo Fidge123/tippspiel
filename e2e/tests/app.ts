@@ -1,11 +1,9 @@
 import {
-  type APIRequestContext,
   expect,
   type Locator,
   type Page,
   test as base,
 } from '@playwright/test';
-import { apiPrefix } from '../harness/ports';
 import { password } from '../harness/seed';
 
 export const test = base.extend({
@@ -17,8 +15,6 @@ export const test = base.extend({
 
 export { expect };
 
-// /login belongs to the Hono app from 2/6, so this submits its form and then
-// waits for the SPA to trade the refresh cookie for an access token.
 export async function login(
   page: Page,
   user: { email: string },
@@ -30,56 +26,16 @@ export async function login(
   await expect(page.getByRole('link', { name: 'Tabelle' })).toBeVisible();
 }
 
-const tokens = new WeakMap<Page, Promise<string>>();
-
-/**
- * Trades the refresh cookie for an access token, which is what the SPA does and
- * what the bridge in #87 exists for. It replaced reading localStorage, because
- * the pages that used to fill it have moved to the Hono app.
- *
- * Cached per page because the Nest app answers by rewriting the cookie with
- * Secure set, and Playwright's request context will not send that back over
- * plain http, so only the first exchange in a test can succeed.
- */
-export function apiToken(page: Page): Promise<string> {
-  const cached = tokens.get(page);
-  if (cached) {
-    return cached;
+/** Read off the page the SPA API used to answer for. */
+export async function activeLeague(page: Page): Promise<string> {
+  const value = await page
+    .locator('input[type="hidden"][name="league"]')
+    .first()
+    .inputValue();
+  if (!value) {
+    throw new Error('No league on the page, the user is in none');
   }
-  const fresh = exchange(page);
-  tokens.set(page, fresh);
-  return fresh;
-}
-
-async function exchange(page: Page): Promise<string> {
-  const response = await page.request.post(`${apiPrefix}/user/refresh`);
-  if (!response.ok()) {
-    throw new Error(
-      `POST user/refresh answered ${response.status()}: ${await response.text()}`,
-    );
-  }
-  return response.json();
-}
-
-export async function readApi<T>(
-  page: Page,
-  _request: APIRequestContext,
-  path: string,
-): Promise<T> {
-  const token = await apiToken(page);
-  const response = await page.request.get(`${apiPrefix}/${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  expect(response.ok()).toBe(true);
-  return response.json();
-}
-
-export async function activeLeague(
-  page: Page,
-  request: APIRequestContext,
-): Promise<string> {
-  const leagues = await readApi<{ id: string }[]>(page, request, 'leagues');
-  return leagues[0].id;
+  return value;
 }
 
 export function week(page: Page, label: string): Locator {

@@ -1,7 +1,7 @@
 # Server
 
-The server-rendered application that replaces the SPA and the Nest API, one route at a time.
-See #85 for the plan and #86 for the step that created this package.
+The whole application.
+It replaced an SPA and a Nest API one route at a time; #85 has the plan and #91 the step that deleted them.
 
 Hono on Bun, Hono JSX rendered to a string, Tailwind 4.
 Nothing ships to the browser: every page here works with JavaScript disabled because there is no JavaScript to disable.
@@ -17,7 +17,7 @@ bun run dev
 
 Then open http://localhost:5002/tippspiel/impressum.
 
-`DATABASE_URL` has to point at a database that already carries the Nest schema, because `session` references `user(id)`.
+`DATABASE_URL` can point at an empty database: `bun run migrate` builds the schema from scratch.
 `deploy/README.md` lists the rest of the environment.
 Set `INSECURE_COOKIES=true` to develop over plain HTTP.
 
@@ -34,8 +34,9 @@ Set `INSECURE_COOKIES=true` to develop over plain HTTP.
 | `src/leagues/` | League administration and its permission checks |
 | `src/account/` | The three account settings |
 | `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |
+| `src/jobs/` | The ESPN imports, the bet reminder and the token cleanup, run by systemd timers |
 | `src/views/` | Hono JSX components, rendered server-side |
-| `src/auth/` | Passwords, sessions, cookies and the SPA bridge |
+| `src/auth/` | Passwords, sessions and cookies |
 | `src/db/` | Kysely, the schema types and the migration runner |
 | `src/email/` | SMTP2GO delivery and the templates the auth flows send |
 | `styles/app.css` | Tailwind source. `build:css` emits `static/app.css`, which is generated and not committed |
@@ -49,10 +50,11 @@ Three tiers, all Vitest on Node:
 |---|---|
 | `bun run test` | Unit and route tests, no database |
 | `bun run test:integration` | The auth flows against a real Postgres, via `TEST_DATABASE_URL` |
+| `bun run test:replay` | The golden master: a recorded season imported week by week, see `test/replay` |
+| `bun run test:delivery` | One real mail through SMTP2GO, see `test/delivery` |
 | `./test/smoke.sh` | Boots the real service under Bun and walks the routes over HTTP |
 
 The first two drive `app.request()` directly, which is why `src/app.tsx` must not import `hono/bun`: the Bun-only pieces live in `src/index.tsx`.
-The integration suite creates the legacy `user`, `verify` and `reset` tables itself, so it does not need the Nest package.
 
 ## The leaderboard
 
@@ -64,15 +66,16 @@ pins the new count at five, none of them per member.
 The reveal rules are applied after the read rather than folded into it, because
 hiding is about who is asking, not about the data.
 
-`src/scoring.ts` is a byte-identical copy of `backend/src/bet/scoring.ts`, and
-`scoring.drift.test.ts` fails if the two ever disagree while both exist. The
-arithmetic was moved, not retyped, which is what makes the golden master
-evidence for the port rather than for a reimplementation.
+`src/scoring.ts` was moved from the Nest app byte for byte, not retyped, which
+is what makes the golden master in `test/replay` evidence for the port rather
+than for a reimplementation.
 
-The route answers JSON when asked for it. That projection exists so the
-equivalence can be checked across the runtime split:
-`e2e/tests/leaderboard-equivalence.spec.ts` drives both stacks against the same
-database and compares them entry for entry.
+## Scheduled jobs
+
+Nest ran the five jobs inside the web process, on `@Cron` decorators. They are
+systemd timers now, one `bun run src/jobs/cli.ts <name>` each, so a restart
+cannot drop one mid-flight and a crash in one cannot take the site down.
+`deploy/README.md` has the schedule.
 
 ## The betting page
 

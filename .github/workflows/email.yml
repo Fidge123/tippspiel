@@ -12,7 +12,7 @@ jobs:
     name: Mail delivery
     defaults:
       run:
-        working-directory: backend
+        working-directory: server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

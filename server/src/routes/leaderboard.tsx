@@ -40,12 +40,6 @@ leaderboard.get('/leaderboard', async (c) => {
     return c.text('Diese Liga hat diese Saison nicht gespielt.', 400);
   }
 
-  // The JSON projection exists so the golden master can compare this
-  // implementation against the Nest one over HTTP, across the runtime split.
-  if (c.req.header('accept')?.includes('application/json')) {
-    return c.json(board.entries);
-  }
-
   const [weeks, teams, divisions, anonymous] = await Promise.all([
     seasonSchedule(season),
     seasonTeams(season),

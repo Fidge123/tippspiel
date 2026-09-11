@@ -4,7 +4,6 @@ import { z } from 'zod';
 import {
   clearAuthCookies,
   readSessionCookie,
-  setLegacyRefreshCookie,
   setSessionCookie,
 } from '../auth/cookies';
 import type { Variables } from '../auth/middleware';
@@ -79,7 +78,6 @@ auth.post(
       c.req.header('user-agent') ?? null,
     );
     await setSessionCookie(c, session.id, session.expiresAt);
-    await setLegacyRefreshCookie(c, user);
 
     return c.redirect(`${basePath}/`, 303);
   },

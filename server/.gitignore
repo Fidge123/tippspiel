@@ -1,1 +1,4 @@
 static/
+
+# Season replay fixture cache
+/test/.corpus-cache

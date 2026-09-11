@@ -1,9 +1,6 @@
-export const webPort = Number(process.env.E2E_WEB_PORT ?? 4173);
-export const apiPort = Number(process.env.E2E_API_PORT ?? 4174);
 export const serverPort = Number(process.env.E2E_SERVER_PORT ?? 4175);
 
-// Mirrors REACT_APP_API_URL in frontend/.env and homepage in frontend/package.json.
-export const apiPrefix = '/nfl/api';
+// Mirrors the location block in server/deploy/nginx.conf.example.
 export const appPath = '/tippspiel';
 
-export const baseURL = `http://127.0.0.1:${webPort}${appPath}/`;
+export const baseURL = `http://127.0.0.1:${serverPort}${appPath}/`;

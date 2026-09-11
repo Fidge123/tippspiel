@@ -1,20 +1,12 @@
 import type { Context } from 'hono';
 import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie';
-import { sign } from 'hono/jwt';
-import {
-  basePath,
-  cookieSecret,
-  refreshSecret,
-  secureCookies,
-} from '../config';
-import type { SessionUser } from './session';
+import { basePath, cookieSecret, secureCookies } from '../config';
 
 export const SESSION_COOKIE = 'session';
-export const LEGACY_COOKIE = 'refreshToken';
 
-// The Nest app wrote 29 * 24 * 60 * 60 * 10000 into a milliseconds field, so
-// the cookie it set lived 290 days rather than the 29 its comment claimed.
-const LEGACY_MAX_AGE_SECONDS = 29 * 24 * 60 * 60;
+// The retired SPA set this for 290 days, so browsers keep sending it until it
+// is cleared.
+const LEGACY_COOKIE = 'refreshToken';
 
 // Lax rather than Strict: Strict drops the cookie when the user arrives from an
 // emailed verification or reset link, which is how those flows are entered.
@@ -41,37 +33,6 @@ export async function readSessionCookie(
 ): Promise<string | undefined> {
   const value = await getSignedCookie(c, cookieSecret, SESSION_COOKIE);
   return typeof value === 'string' ? value : undefined;
-}
-
-/**
- * The SPA trades this cookie for an access token at POST user/refresh. Issuing
- * it here keeps the SPA working unchanged while pages move to Hono; it is
- * deleted along with the SPA in 6/6.
- */
-export async function setLegacyRefreshCookie(
-  c: Context,
-  { id, name, email }: SessionUser,
-): Promise<void> {
-  if (!refreshSecret) {
-    return;
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-  // HS256 and this payload are what @nestjs/jwt signed, so refresh.strategy.ts
-  // verifies the token unchanged.
-  const token = await sign(
-    { id, name, email, iat: now, exp: now + 365 * 24 * 60 * 60 },
-    refreshSecret,
-    'HS256',
-  );
-
-  c.header(
-    'Set-Cookie',
-    `${LEGACY_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax${
-      secureCookies ? '; Secure' : ''
-    }; Max-Age=${LEGACY_MAX_AGE_SECONDS}`,
-    { append: true },
-  );
 }
 
 export function clearAuthCookies(c: Context): void {
