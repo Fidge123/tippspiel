@@ -2,7 +2,9 @@ export interface Season {
   year: number;
   regularWeeks: number;
   postWeeks: number[];
-  /** Must be a backup taken after the season finished. */
+  /** The anonymised seed the replay loads, published by publish-seed.ts. */
+  seedKey: string;
+  /** Must be a backup taken after the season finished; read only when publishing. */
   backupKey: string;
   /** Weeks the snapshot spells out game by game; the rest keep only a subtotal. */
   detailWeeks: string[];
@@ -16,6 +18,7 @@ export const season2023: Season = {
   year: 2023,
   regularWeeks: 18,
   postWeeks: [1, 2, 3, 5],
+  seedKey: 'replay_seed/2023.gz',
   backupKey: 'database_backup/2024-03-03.gz',
   // The regular weeks are structurally alike, with no ties all season, the same
   // five pointDiff values and doublers and un-placed bets throughout.

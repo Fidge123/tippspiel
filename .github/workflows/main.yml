@@ -91,11 +91,12 @@ jobs:
         uses: actions/cache@v6
         with:
           path: backend/test/.corpus-cache
-          key: corpus-2023-${{ hashFiles('backend/test/replay/season.ts') }}
+          key: corpus-v2-2023-${{ hashFiles('backend/test/replay/season.ts') }}
       - name: Replay the season
         run: yarn run test:replay
         env:
-          # Object Read on the nfl-tippspiel bucket only.
+          # Object Read on the espn corpus and replay_seed prefixes only.
+          # It must not reach database_backup/: the fixture cache outlives the run.
           R2_API: ${{ secrets.R2_API }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

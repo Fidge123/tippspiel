@@ -7,7 +7,7 @@ import { startDatabase, TestDatabase } from '../support/database';
 import { installEspnStub } from './espn';
 import { runMigrations } from '../support/migrate';
 import { missingCredentials } from './r2';
-import { seedFromBackup } from './seed';
+import { seedFromFixture } from './seed';
 import { sentEmails } from '../support/mail';
 import { season2023, Season } from './season';
 
@@ -38,7 +38,7 @@ beforeAll(async () => {
 
   database = await startDatabase();
   await runMigrations(database.url);
-  await seedFromBackup(database.url, season.backupKey);
+  await seedFromFixture(database.url, season.seedKey);
 
   const corpus = await loadCorpus(season.year);
   restoreEspn = installEspnStub(corpus, () => now);

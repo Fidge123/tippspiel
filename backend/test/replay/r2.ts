@@ -6,6 +6,7 @@ import { promisify } from 'node:util';
 import {
   GetObjectCommand,
   ListObjectsV2Command,
+  PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
 
@@ -90,9 +91,17 @@ export async function getObject(key: string): Promise<Buffer> {
   );
   const body = Buffer.from(await response.Body.transformToByteArray());
 
-  await mkdir(dirname(cache), { recursive: true });
-  await writeFile(cache, body);
+  // CI persists this directory, so a production dump must never enter it.
+  if (!key.startsWith('database_backup/')) {
+    await mkdir(dirname(cache), { recursive: true });
+    await writeFile(cache, body);
+  }
   return body;
+}
+
+export async function putObject(key: string, body: Buffer): Promise<void> {
+  const s3 = getClient();
+  await s3.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: body }));
 }
 
 export async function getJSON<T = any>(key: string): Promise<T> {

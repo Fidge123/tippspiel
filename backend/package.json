@@ -21,6 +21,7 @@
     "test:unit": "vitest run src",
     "test:api": "vitest run -c vitest.config.api.ts",
     "test:replay": "vitest run test/replay",
+    "replay:publish": "ts-node -P tsconfig.json test/replay/publish-seed.ts",
     "test:delivery": "vitest run -c vitest.config.delivery.ts",
     "test:watch": "vitest",
     "test:update": "vitest run -u"

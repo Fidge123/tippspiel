@@ -68,33 +68,33 @@ export async function findBackup(asOf: Date): Promise<string> {
   return chosen;
 }
 
+/** The replay seed is published anonymised, so nothing here may identify a user. */
+export async function seedFromFixture(
+  url: string,
+  seedKey: string,
+): Promise<string> {
+  const key = env.REPLAY_SEED_KEY ?? seedKey;
+  const client = new Client({ connectionString: url });
+  await client.connect();
+  try {
+    await restore(client, await getText(key), key);
+    await assertAnonymised(client);
+  } finally {
+    await client.end();
+  }
+  return key;
+}
+
 // Anonymising shares the connection so no other reader can observe the raw rows.
 export async function seedFromBackup(
   url: string,
   backupKey: string,
-): Promise<string> {
+): Promise<{ key: string; blocks: CopyBlock[] }> {
   const key = env.REPLAY_BACKUP_KEY ?? backupKey;
-  const dump = await getText(key);
-  const blocks = parseCopyBlocks(dump).filter(
-    (block) => !SKIP_TABLES.has(block.table),
-  );
-  if (!blocks.length) {
-    throw new Error(`No table data found in ${key}.`);
-  }
-
   const client = new Client({ connectionString: url });
   await client.connect();
   try {
-    // pg_dump orders tables alphabetically, which does not respect foreign keys.
-    await client.query('SET session_replication_role = replica');
-    for (const block of blocks) {
-      if (!block.body) {
-        continue;
-      }
-      const stream = client.query(copyFrom(block.header));
-      await pipeline(Readable.from([block.body]), stream);
-    }
-    await client.query('SET session_replication_role = origin');
+    const blocks = await restore(client, await getText(key), key);
 
     const anonymize = await readFile(
       join(__dirname, '..', 'fixtures', 'anonymize.sql'),
@@ -103,11 +103,36 @@ export async function seedFromBackup(
     await client.query(anonymize);
 
     await assertAnonymised(client);
+    return { key, blocks };
   } finally {
     await client.end();
   }
+}
 
-  return key;
+async function restore(
+  client: Client,
+  dump: string,
+  key: string,
+): Promise<CopyBlock[]> {
+  const blocks = parseCopyBlocks(dump).filter(
+    (block) => !SKIP_TABLES.has(block.table),
+  );
+  if (!blocks.length) {
+    throw new Error(`No table data found in ${key}.`);
+  }
+
+  // pg_dump orders tables alphabetically, which does not respect foreign keys.
+  await client.query('SET session_replication_role = replica');
+  for (const block of blocks) {
+    if (!block.body) {
+      continue;
+    }
+    const stream = client.query(copyFrom(block.header));
+    await pipeline(Readable.from([block.body]), stream);
+  }
+  await client.query('SET session_replication_role = origin');
+
+  return blocks;
 }
 
 async function assertAnonymised(client: Client): Promise<void> {
@@ -138,7 +163,7 @@ async function assertAnonymised(client: Client): Promise<void> {
 
   const [{ total, pseudonymous, credentialled, tokens }] = rows;
   if (total === '0') {
-    throw new Error('The backup contained no users.');
+    throw new Error('The dump contained no users.');
   }
   if (pseudonymous !== total) {
     throw new Error(
