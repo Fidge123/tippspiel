@@ -145,6 +145,11 @@ export interface MemberTable {
   userId: string;
 }
 
+export interface AdminTable {
+  leagueId: string;
+  userId: string;
+}
+
 export interface DivisionTable {
   name: string;
 }
@@ -170,6 +175,7 @@ export interface Database {
   superbowlBet: SuperbowlBetTable;
   league: LeagueTable;
   member: MemberTable;
+  admin: AdminTable;
   division: DivisionTable;
   bye: ByeTable;
 }

@@ -30,6 +30,9 @@ Set `INSECURE_COOKIES=true` to develop over plain HTTP.
 | `src/routes/` | Route handlers, grouped by the page they serve |
 | `src/leaderboard/` | The one leaderboard query and the assembly on top of it |
 | `src/schedule/` | The schedule read, and the bet, doubler and spoiler writes |
+| `src/division/` | Pre-season division and Super Bowl bets |
+| `src/leagues/` | League administration and its permission checks |
+| `src/account/` | The three account settings |
 | `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |
 | `src/views/` | Hono JSX components, rendered server-side |
 | `src/auth/` | Passwords, sessions, cookies and the SPA bridge |
@@ -90,6 +93,17 @@ breakpoints choose, which needs no script and cannot go stale on resize.
 Spoiler protection defaults to **on**, matching the SPA's `hideByDefault ?? true`.
 A user who has never touched the toggle should not be shown a score they have
 not watched yet.
+
+## League permissions
+
+`leagues/writes.ts` is the only place that decides who may change a league, and
+every branch has a test: who may rename, delete, add, kick, promote and demote,
+that a league keeps at least one admin and at least one member, and that a
+member must already be in the league to become an admin.
+
+Two behaviours are reproduced rather than corrected, because this is a port:
+a removed member's bets stay behind, and removing a member drops their admin row
+without checking whether they were the last admin.
 
 ## No JavaScript
 

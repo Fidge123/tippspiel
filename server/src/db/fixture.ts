@@ -123,6 +123,12 @@ export async function createSchema(): Promise<void> {
       primary key ("leagueId", "userId")
     )`.execute(db());
   await sql`
+    create table if not exists "admin" (
+      "leagueId" uuid not null references "league"("id") on delete cascade,
+      "userId" uuid not null references "user"("id") on delete cascade,
+      primary key ("leagueId", "userId")
+    )`.execute(db());
+  await sql`
     create table if not exists "bet" (
       "id" uuid not null default uuid_generate_v4() primary key,
       "winner" character varying not null, "pointDiff" integer not null,
@@ -171,7 +177,7 @@ export async function createSchema(): Promise<void> {
 }
 
 export async function truncate(): Promise<void> {
-  await sql`truncate "session", "verify", "reset", "user", "league", "member",
+  await sql`truncate "session", "verify", "reset", "user", "league", "member", "admin",
             "bet", "betDoubler", "divisionBet", "superbowlBet", "bye", "game",
             "week", "team_season", "team", "division" cascade`.execute(db());
 }

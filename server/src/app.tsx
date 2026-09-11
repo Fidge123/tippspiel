@@ -4,6 +4,10 @@ import { basePath } from './config';
 import { isDatabaseReachable } from './db/kysely';
 import { auth } from './routes/auth';
 import { leaderboard } from './routes/leaderboard';
+import { account } from './routes/account';
+import { division } from './routes/division';
+import { leagues } from './routes/leagues';
+import { rules } from './routes/rules';
 import { schedule } from './routes/schedule';
 import { Impressum } from './views/Impressum';
 import { Layout } from './views/Layout';
@@ -28,6 +32,10 @@ app.use('*', currentUser);
 app.route('/', auth);
 app.route('/', leaderboard);
 app.route('/', schedule);
+app.route('/', account);
+app.route('/', leagues);
+app.route('/', division);
+app.route('/', rules);
 
 app.get('/impressum', (c) =>
   c.html(
