@@ -156,18 +156,38 @@ describe('removing a member', () => {
     ).toEqual([]);
   });
 
-  it('leaves the bets of a removed member behind, as today', async () => {
+  it('refuses to remove the only admin, leaving nobody able to administer', async () => {
+    expect(await w.removeMember(league, admin, admin)).toEqual({
+      ok: false,
+      reason: 'last-admin',
+    });
+  });
+
+  it('allows removing an admin once a second one exists', async () => {
+    await w.promote(league, member, admin);
+
+    expect(await w.removeMember(league, admin, admin)).toEqual({ ok: true });
+    expect((await leaguesOfUser(member))[0].members).toHaveLength(1);
+  });
+
+  it('takes the bets of a removed member with them', async () => {
     await db().insertInto('division').values({ name: 'AFC North' }).execute();
     await db()
       .insertInto('superbowlBet')
       .values({ year: 2026, userId: member, leagueId: league })
       .execute();
+    await db()
+      .insertInto('superbowlBet')
+      .values({ year: 2026, userId: admin, leagueId: league })
+      .execute();
 
     await w.removeMember(league, member, admin);
 
-    expect(
-      await db().selectFrom('superbowlBet').selectAll().execute(),
-    ).toHaveLength(1);
+    // Otherwise they keep voting in a league they have left: the vote counts
+    // and the underdog bonus are computed over every bet on a game.
+    const left = await db().selectFrom('superbowlBet').selectAll().execute();
+    expect(left).toHaveLength(1);
+    expect(left[0].userId).toBe(admin);
   });
 });
 

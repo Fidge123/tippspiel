@@ -174,11 +174,33 @@ export async function removeMember(
   if ((await countOf('member', leagueId)) < 2) {
     return { ok: false, reason: 'last-member' };
   }
+  // Removing the sole admin used to be allowed, which left a league nobody
+  // could administer and no way back.
+  if (
+    (await isAdmin(leagueId, userId)) &&
+    (await countOf('admin', leagueId)) < 2
+  ) {
+    return { ok: false, reason: 'last-admin' };
+  }
 
-  // Their bets stay behind, as they do today. See the TODO in removeMember.
   await db()
     .transaction()
     .execute(async (trx) => {
+      // Their bets went too, or they kept voting in a league they had left:
+      // the counts and the underdog bonus are computed over every bet on a
+      // game, not over the current members.
+      for (const table of [
+        'betDoubler',
+        'bet',
+        'divisionBet',
+        'superbowlBet',
+      ] as const) {
+        await trx
+          .deleteFrom(table)
+          .where('leagueId', '=', leagueId)
+          .where('userId', '=', userId)
+          .execute();
+      }
       await trx
         .deleteFrom('admin')
         .where('leagueId', '=', leagueId)

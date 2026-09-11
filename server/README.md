@@ -101,9 +101,10 @@ every branch has a test: who may rename, delete, add, kick, promote and demote,
 that a league keeps at least one admin and at least one member, and that a
 member must already be in the league to become an admin.
 
-Two behaviours are reproduced rather than corrected, because this is a port:
-a removed member's bets stay behind, and removing a member drops their admin row
-without checking whether they were the last admin.
+Removing a member takes their bets for that league with them, and refuses when
+it would leave the league without an admin. Both were wrong in the Nest service:
+a departed member kept skewing the vote counts and the underdog bonus, and
+removing the sole admin left a league nobody could administer.
 
 ## No JavaScript
 
