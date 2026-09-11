@@ -13,6 +13,7 @@
       "!**/node_modules",
       "!**/bun.lock",
       "!backend/src/templates",
+      "!server/src/email/templates",
       "!**/*.css"
     ]
   },

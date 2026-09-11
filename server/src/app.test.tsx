@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('./db', () => ({
-  isDatabaseReachable: vi.fn(() => Promise.resolve(reachable)),
-}));
-
 let reachable = true;
+
+vi.mock('./db/kysely', () => ({
+  isDatabaseReachable: vi.fn(() => Promise.resolve(reachable)),
+  db: vi.fn(),
+  closeDatabase: vi.fn(),
+}));
 
 const { app } = await import('./app');
 
@@ -62,6 +64,39 @@ describe('/health', () => {
       status: 'degraded',
       database: false,
     });
+  });
+});
+
+describe('the auth forms', () => {
+  it.each([
+    ['/tippspiel/login', 'Mit bestehendem Konto einloggen'],
+    ['/tippspiel/register', 'Ein neues Konto registrieren'],
+    ['/tippspiel/reset', 'Passwort zurücksetzen'],
+    ['/tippspiel/verify', 'Account bestätigen'],
+  ])('renders %s without JavaScript', async (path, heading) => {
+    const response = await app.request(path);
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(html).toContain(heading);
+    expect(html).not.toContain('<script');
+    expect(html).toContain('method="post"');
+  });
+
+  it('carries the link id and token into the verify form', async () => {
+    const html = await (
+      await app.request('/tippspiel/verify?id=abc&token=def')
+    ).text();
+
+    expect(html).toContain('name="id" value="abc"');
+    expect(html).toContain('name="token" value="def"');
+  });
+
+  it('sends the forgotten-password button to the reset request', async () => {
+    const html = await (await app.request('/tippspiel/login')).text();
+
+    expect(html).toContain('formaction="/tippspiel/reset/request"');
+    expect(html).toContain('Passwort vergessen?');
   });
 });
 

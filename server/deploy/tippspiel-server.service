@@ -12,6 +12,7 @@ WorkingDirectory=/srv/tippspiel/server
 EnvironmentFile=/etc/tippspiel/server.env
 Environment=PORT=5002
 Environment=BASE_PATH=/tippspiel
+ExecStartPre=/usr/local/bin/bun run migrate
 ExecStartPre=/usr/local/bin/bun run build:css
 ExecStart=/usr/local/bin/bun run src/index.tsx
 Restart=always

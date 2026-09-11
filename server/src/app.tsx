@@ -1,10 +1,12 @@
 import { Hono } from 'hono';
+import { currentUser, type Variables } from './auth/middleware';
 import { basePath } from './config';
-import { isDatabaseReachable } from './db';
+import { isDatabaseReachable } from './db/kysely';
+import { auth } from './routes/auth';
 import { Impressum } from './views/Impressum';
 import { Layout } from './views/Layout';
 
-export const app = new Hono().basePath(basePath);
+export const app = new Hono<{ Variables: Variables }>().basePath(basePath);
 
 app.get('/health', async (c) => {
   const database = await isDatabaseReachable();
@@ -14,9 +16,14 @@ app.get('/health', async (c) => {
   );
 });
 
+// Registered after /health so the health probe does not hit the session table.
+app.use('*', currentUser);
+
+app.route('/', auth);
+
 app.get('/impressum', (c) =>
   c.html(
-    <Layout title="Impressum">
+    <Layout title="Impressum" user={c.get('user')}>
       <Impressum />
     </Layout>,
   ),

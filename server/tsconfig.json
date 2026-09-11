@@ -17,5 +17,5 @@
     "jsxImportSource": "hono/jsx",
     "types": ["bun"]
   },
-  "include": ["src"]
+  "include": ["src", "vitest.config.ts", "vitest.config.integration.ts"]
 }

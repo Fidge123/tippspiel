@@ -25,7 +25,18 @@ git clone https://github.com/Fidge123/tippspiel /srv/tippspiel
 cd /srv/tippspiel/server && bun install --frozen-lockfile
 ```
 
-`/etc/tippspiel/server.env` holds `DATABASE_URL`, and should be `0600` and owned by root.
+`/etc/tippspiel/server.env` should be `0600` and owned by root:
+
+| Variable | What |
+|---|---|
+| `DATABASE_URL` | The same database the Nest app uses |
+| `COOKIE_SECRET` | Signs the session cookie. Rotating it logs everyone out |
+| `REFRESH_SECRET` | **Must be byte-identical to the Nest app's**, or the SPA bridge breaks |
+| `EMAIL` | Where the admin alerts go |
+| `SMTP2GO_API_KEY` | Unset means no mail is sent at all |
+
+`REFRESH_SECRET` is the one that matters for the migration window.
+The Hono app signs the legacy `refreshToken` cookie with it so `refresh.strategy.ts` in the Nest app accepts the token and the SPA keeps working unchanged.
 
 ```
 cp deploy/tippspiel-server.service /etc/systemd/system/
@@ -33,8 +44,17 @@ systemctl daemon-reload
 systemctl enable --now tippspiel-server
 ```
 
-`ExecStartPre` regenerates the stylesheet on every start, so the only generated file is never stale and nothing is committed.
+`ExecStartPre` runs the migrations and regenerates the stylesheet on every start, so a failed migration is a failed start rather than a half-running server, and the only generated file is never stale or committed.
 The application itself runs from the `.ts` and `.tsx` sources, with no build step.
+
+## Migration ordering
+
+Two runners touch this database during the window, and they book their work in different tables: TypeORM in `migrations`, Kysely in `kysely_migration`.
+They cannot fight over the same rows.
+
+They are not independent, though.
+`session` references `user(id)`, which TypeORM owns until 6/6, so `bun run migrate` against a database without the Nest schema fails rather than creating a dangling table.
+Deploy the Nest app first on a fresh environment.
 
 Confirm it survives a reboot rather than assuming it: `systemctl reboot`, then `curl -sf localhost:5002/tippspiel/health`.
 
