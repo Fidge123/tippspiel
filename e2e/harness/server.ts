@@ -3,7 +3,7 @@ import { connect } from 'node:net';
 import { resolve } from 'node:path';
 import { appPath } from './ports';
 
-const server = resolve(__dirname, '../../server');
+const root = resolve(import.meta.dirname, '../..');
 
 export interface HonoServer {
   stop(): Promise<void>;
@@ -36,7 +36,7 @@ export async function startServer(
 
   const log: string[] = [];
   const child = spawn('bun', ['run', 'src/index.tsx'], {
-    cwd: server,
+    cwd: root,
     stdio: ['ignore', 'pipe', 'pipe'],
     env,
   });
@@ -67,7 +67,7 @@ function run(
   return new Promise((done, fail) => {
     const log: string[] = [];
     const child = spawn(command, args, {
-      cwd: server,
+      cwd: root,
       stdio: ['ignore', 'pipe', 'pipe'],
       env,
     });

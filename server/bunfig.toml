@@ -1,4 +1,0 @@
-[run]
-# Vitest and tsc resolve to node shebangs otherwise, and the suite needs the
-# Bun globals the application runs on.
-bun = true

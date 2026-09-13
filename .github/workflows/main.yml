@@ -22,9 +22,6 @@ jobs:
         run: bun run lint
 
   server:
-    defaults:
-      run:
-        working-directory: server
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -65,9 +62,6 @@ jobs:
   season-replay:
     name: Season replay (2023)
     needs: server
-    defaults:
-      run:
-        working-directory: server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -79,8 +73,8 @@ jobs:
       - name: Restore fixture cache
         uses: actions/cache@v6
         with:
-          path: server/test/.corpus-cache
-          key: corpus-2023-${{ hashFiles('server/test/replay/season.ts') }}
+          path: test/.corpus-cache
+          key: corpus-2023-${{ hashFiles('test/replay/season.ts') }}
       - name: Replay the season
         run: bun run test:replay
         env:
@@ -115,15 +109,9 @@ jobs:
         with:
           bun-version-file: .bun-version
       - name: Install dependencies
-        run: |
-          cd server && bun install --frozen-lockfile && cd ..
-          cd e2e && bun install --frozen-lockfile
-      - name: Typecheck the browser tests
-        working-directory: e2e
-        run: bun run typecheck
+        run: bun install --frozen-lockfile
       - name: Walk through the flows
-        working-directory: e2e
-        run: bun run test
+        run: bun run test:browser
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
           # The runner ships with Chrome, so no browser has to be downloaded.

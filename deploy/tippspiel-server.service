@@ -1,6 +1,6 @@
 [Unit]
 Description=NFL Tippspiel Hono server
-Documentation=https://github.com/Fidge123/tippspiel/blob/master/server/deploy/README.md
+Documentation=https://github.com/Fidge123/tippspiel/blob/master/deploy/README.md
 After=network-online.target postgresql.service
 Wants=network-online.target
 
@@ -8,11 +8,11 @@ Wants=network-online.target
 Type=simple
 User=tippspiel
 Group=tippspiel
-WorkingDirectory=/srv/tippspiel/server
+WorkingDirectory=/srv/tippspiel
 EnvironmentFile=/etc/tippspiel/server.env
 Environment=PORT=5002
 Environment=BASE_PATH=/tippspiel
-Environment=BACKUP_DIR=/srv/tippspiel/backup
+Environment=BACKUP_DIR=%S/tippspiel/backup
 ExecStartPre=/usr/local/bin/bun run migrate
 ExecStartPre=/usr/local/bin/bun run build:css
 ExecStart=/usr/local/bin/bun run src/index.tsx
@@ -23,7 +23,8 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
-ReadWritePaths=/srv/tippspiel/server/static /srv/tippspiel/backup
+StateDirectory=tippspiel
+ReadWritePaths=/srv/tippspiel/static
 
 [Install]
 WantedBy=multi-user.target

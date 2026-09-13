@@ -12,9 +12,6 @@ on:
 jobs:
   delivery:
     name: Mail delivery
-    defaults:
-      run:
-        working-directory: server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

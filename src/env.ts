@@ -106,7 +106,7 @@ export function checkEnvironment(env: Env = processEnv): void {
 
   if (findings.some((finding) => finding.level === 'fatal')) {
     console.error(
-      'Refusing to start. Set the variables above in /etc/tippspiel/server.env; server/deploy/README.md documents each one.',
+      'Refusing to start. Set the variables above in /etc/tippspiel/server.env; deploy/README.md documents each one.',
     );
     exit(1);
   }

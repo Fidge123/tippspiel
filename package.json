@@ -1,12 +1,45 @@
 {
+  "name": "tippspiel",
   "private": true,
+  "type": "module",
   "packageManager": "bun@1.4.2",
   "scripts": {
-    "lint": "biome ci .",
+    "start": "bun run src/index.tsx",
+    "dev": "bun --watch src/index.tsx",
+    "migrate": "bun run src/db/migrate.ts",
+    "build:css": "tailwindcss -i styles/app.css -o static/app.css --minify",
+    "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "typecheck": "bun --bun tsc --noEmit && bun --bun tsc -p e2e --noEmit",
+    "test": "bun --bun vitest run",
+    "test:watch": "bun --bun vitest",
+    "test:integration": "bun --bun vitest run -c vitest.config.integration.ts",
+    "test:replay": "bun --bun vitest run -c vitest.config.replay.ts",
+    "test:delivery": "bun --bun vitest run -c vitest.config.delivery.ts",
+    "deploy": "bun install --frozen-lockfile --production",
+    "test:browser": "playwright test --config e2e/playwright.config.ts"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.9.1",
+    "@tailwindcss/cli": "^4.2.5",
+    "hono": "^4.10.4",
+    "kysely": "^0.29.5",
+    "pg": "^8.23.0",
+    "tailwindcss": "^4.2.5",
+    "zod": "^4.6.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.12"
+    "@biomejs/biome": "2.5.12",
+    "@playwright/test": "1.56.0",
+    "@testcontainers/postgresql": "^12.1.0",
+    "@types/bun": "^1.4.2",
+    "@types/node": "^20.11.24",
+    "@types/pg": "^8.15.5",
+    "@types/pg-copy-streams": "^1.2.5",
+    "pg-copy-streams": "^7.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
   }
 }

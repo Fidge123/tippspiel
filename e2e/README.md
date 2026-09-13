@@ -1,9 +1,10 @@
 # Browser tests
 
 The flows through the real server, in Chromium.
+Run from the repository root, because this is a directory of the one package rather than a package of its own.
 
 ```
-bun run test
+bun run test:browser
 ```
 
 Postgres comes from a container, so a first run needs [a container runtime](#the-container-runtime).
@@ -21,9 +22,10 @@ Only the integration failures the lower tiers cannot see: that the rendered page
 | `no-js` | `javaScriptEnabled: false`, the acceptance criterion for #85 |
 
 Playwright talks to the server directly on its own port, under the same `/tippspiel` prefix nginx proxies in production.
+It is also the only suite that runs on Node: the runner finds no tests under Bun and exits 0, so `bun run test:browser` deliberately does not go through `bun --bun`.
 
 Rate limiting is disabled here, because every test logs in from 127.0.0.1 and would share one bucket.
-The limiter has its own tests in `server/src/routes/auth.integration.test.ts`.
+The limiter has its own tests in `src/routes/auth.integration.test.ts`.
 Coverage of rules belongs in the unit tests.
 The suite stays small on purpose, because this tier is the slowest and the first to break on unrelated markup changes.
 
@@ -32,7 +34,7 @@ Fixing the issue turns the test red, which is the reminder to drop the marker.
 
 ## The harness
 
-- **Database.** `startPostgres` from `server/test/support`, so this suite and the golden master share one testcontainer setup. It needs a container runtime, see below.
+- **Database.** `startPostgres` from `test/support`, so this suite and the golden master share one testcontainer setup. It needs a container runtime, see below.
 - **Server.** `bun run src/index.tsx` as a child process, after `bun run migrate` and `bun run build:css`, so the schema comes from the migration chain and the stylesheet is never stale.
 - **Seed.** Written straight to the database in `harness/seed.ts`: two divisions, a finished week, an upcoming week, two users in one league with their bets on the finished week, and a third user in no league. Kickoffs are placed relative to now, so no test depends on the day it runs.
 - **Selectors.** Roles and labels only. The markup is Tailwind heavy and about to be rewritten, so a class based selector would not survive.

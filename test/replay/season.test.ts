@@ -33,7 +33,7 @@ beforeAll(async () => {
   const missing = missingCredentials();
   if (missing.length) {
     throw new Error(
-      `The season replay reads a recorded season out of R2 and cannot run without read access to the bucket. Missing: ${missing.join(', ')}. See server/test/replay/README.md.`,
+      `The season replay reads a recorded season out of R2 and cannot run without read access to the bucket. Missing: ${missing.join(', ')}. See test/replay/README.md.`,
     );
   }
 

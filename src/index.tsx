@@ -6,8 +6,7 @@ import { startJobs } from './jobs/cron';
 
 checkEnvironment();
 
-// Registered from the Bun entry rather than app.tsx: hono/bun reaches for Bun
-// globals, and app.tsx has to stay importable by the Vitest suite on Node.
+// Serving belongs to the entry point; app.tsx stays the routes.
 app.get('/app.css', serveStatic({ path: './static/app.css' }));
 app.get(
   '/*',

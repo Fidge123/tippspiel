@@ -14,9 +14,9 @@ The session cookie gets `Path=/tippspiel` for the same reason.
 
 ```
 useradd --system --home /srv/tippspiel tippspiel
-install -d -o tippspiel -g tippspiel /srv/tippspiel /srv/tippspiel/backup
 git clone https://github.com/Fidge123/tippspiel /srv/tippspiel
-cd /srv/tippspiel/server && bun run deploy
+chown -R tippspiel:tippspiel /srv/tippspiel
+cd /srv/tippspiel && bun run deploy
 ```
 
 `bun run deploy` is `bun install --frozen-lockfile --production`, which installs the seven runtime dependencies and none of the test, lint or type tooling: 50 MB rather than 314 MB.
@@ -40,7 +40,8 @@ Everything else that is missing is a `WARN` line naming what stops working, and 
 
 The R2 credentials are not optional in practice.
 Every ESPN response an import reads is written to that bucket, and the recorded corpus is what the golden master in `test/replay` replays.
-Without them the recordings land in `/srv/tippspiel/backup` instead and the corpus stops growing.
+Without them the recordings land in `/var/lib/tippspiel/backup` instead and the corpus stops growing.
+systemd creates that directory from `StateDirectory`, so it sits outside the checkout and survives a redeploy.
 
 ```
 cp deploy/tippspiel-server.service /etc/systemd/system/
@@ -55,7 +56,7 @@ The application itself runs from the `.ts` and `.tsx` sources, with no build ste
 
 ```
 cd /srv/tippspiel && git pull
-cd server && bun run deploy
+bun run deploy
 systemctl restart tippspiel-server
 ```
 
@@ -84,8 +85,8 @@ Bun computes the next fire only once a handler settles, so a run that overruns i
 Run one by hand without waiting for its schedule, in its own process:
 
 ```
-sudo -u tippspiel BACKUP_DIR=/srv/tippspiel/backup \
-  bash -c 'set -a; . /etc/tippspiel/server.env; set +a; cd /srv/tippspiel/server && bun run src/jobs/cli.ts update-games'
+sudo -u tippspiel BACKUP_DIR=/var/lib/tippspiel/backup \
+  bash -c 'set -a; . /etc/tippspiel/server.env; set +a; cd /srv/tippspiel && bun run src/jobs/cli.ts update-games'
 ```
 
 Read what they did with `journalctl -u tippspiel-server -f`; each run logs its name and duration.
@@ -112,7 +113,7 @@ There is no second application to fall back to any more.
 Rolling back means checking out the previous commit and restarting:
 
 ```
-cd /srv/tippspiel && git checkout <previous> && cd server && bun install --frozen-lockfile
+cd /srv/tippspiel && git checkout <previous> && bun run deploy
 systemctl restart tippspiel-server
 ```
 

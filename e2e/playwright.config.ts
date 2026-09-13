@@ -1,9 +1,11 @@
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { baseURL } from './harness/ports';
 
 export default defineConfig({
-  testDir: './tests',
-  globalSetup: './harness/global-setup.ts',
+  // Absolute, because the suite is run from the repository root.
+  testDir: join(import.meta.dirname, 'tests'),
+  globalSetup: join(import.meta.dirname, 'harness', 'global-setup.ts'),
   // The suite shares one seeded database, so the flows run one after another.
   workers: 1,
   forbidOnly: !!process.env.CI,

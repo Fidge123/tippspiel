@@ -1,7 +1,4 @@
-import {
-  createDatabase,
-  startPostgres,
-} from '../../server/test/support/database';
+import { createDatabase, startPostgres } from '../../test/support/database';
 import { serverPort } from './ports';
 import { seed } from './seed';
 import { startServer } from './server';

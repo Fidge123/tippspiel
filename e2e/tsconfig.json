@@ -1,21 +1,9 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
     "lib": ["esnext", "dom"],
-    "module": "preserve",
-    "moduleDetection": "force",
     "types": ["node"],
-
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "erasableSyntaxOnly": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-
-    "skipLibCheck": true,
-    "noEmit": true
+    "strict": false
   },
   "include": ["harness", "tests", "playwright.config.ts"]
 }

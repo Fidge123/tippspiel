@@ -46,7 +46,7 @@ R2_SECRET_ACCESS_KEY=...
 ```
 
 The token needs Object Read on that one bucket and nothing else.
-Downloaded objects are immutable, so they are cached under `server/test/.corpus-cache` and only the first run pays for the download.
+Downloaded objects are immutable, so they are cached under `test/.corpus-cache` and only the first run pays for the download.
 
 ## Database
 
