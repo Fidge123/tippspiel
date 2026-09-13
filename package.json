@@ -17,7 +17,7 @@
     "test:integration": "bun test integration",
     "test:replay": "bun test test/replay --timeout=600000",
     "test:delivery": "bun test test/delivery --timeout=360000",
-    "deploy": "bun install --frozen-lockfile --production",
+    "deploy": "bun ci --production",
     "test:browser": "playwright test --config e2e/playwright.config.ts"
   },
   "dependencies": {

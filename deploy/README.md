@@ -19,7 +19,7 @@ chown -R tippspiel:tippspiel /srv/tippspiel
 cd /srv/tippspiel && bun run deploy
 ```
 
-`bun run deploy` is `bun install --frozen-lockfile --production`, which installs the seven runtime dependencies and none of the test, lint or type tooling: 50 MB rather than 314 MB.
+`bun run deploy` is `bun ci --production`, which installs the seven runtime dependencies and none of the test, lint or type tooling: 50 MB rather than 314 MB.
 Tailwind is a runtime dependency rather than a development one because the service builds its own stylesheet on every start, which is what keeps that file from ever being stale.
 
 `/etc/tippspiel/server.env` should be `0600` and owned by root:
@@ -60,7 +60,7 @@ bun run deploy
 systemctl restart tippspiel-server
 ```
 
-Run `bun install --frozen-lockfile` instead of `bun run deploy` when you need the test tooling on the box, and `bun run deploy` again afterwards to get back to the runtime set.
+Run `bun ci` instead of `bun run deploy` when you need the test tooling on the box, and `bun run deploy` again afterwards to get back to the runtime set.
 
 Confirm it survives a reboot rather than assuming it: `systemctl reboot`, then `curl -sf localhost:5002/tippspiel/health`.
 

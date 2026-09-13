@@ -19,7 +19,7 @@ jobs:
         with:
           bun-version-file: .bun-version
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun ci
       - name: Send a mail and wait for SMTP2GO to report it delivered
         run: bun run test:delivery
         env:
