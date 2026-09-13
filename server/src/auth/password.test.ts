@@ -2,9 +2,8 @@ import { scryptSync } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { hash, KEY_LENGTH, verifyPassword } from './password';
 
-// Pinned rather than assumed: the epic's runtime choice rests on Bun and Node
-// deriving the same key for the parameters the existing rows were written with,
-// so stored passwords keep working after the cutover.
+// Bun and Node must derive the same key for the parameters the stored rows were
+// written with, or every existing password stops working.
 const SALT = Buffer.from('a'.repeat(KEY_LENGTH * 2), 'hex');
 const PASSWORD = 'correct horse battery staple';
 

@@ -10,7 +10,6 @@ export interface CleanupResult {
   sessions: number;
 }
 
-/** Never runs on import: instantiating something should not delete rows. */
 export async function cleanUp(): Promise<CleanupResult> {
   const now = Date.now();
 

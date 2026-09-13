@@ -248,8 +248,7 @@ describe('the query count', () => {
     queries.length = 0;
     await buildLeaderboard(league, SEASON, alice);
 
-    // The Nest controller issued two per member on top of three collection
-    // reads. This is one per concern, and none per member.
+    // One per concern, and none per member.
     expect(queries.length).toBe(EXPECTED_QUERIES);
   });
 });

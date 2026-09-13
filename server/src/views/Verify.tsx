@@ -1,10 +1,7 @@
 import type { FC } from 'hono/jsx';
 import { basePath } from '../config';
 
-/**
- * The SPA verified from a useEffect on page load. Without JavaScript the link
- * can only land on a page, so the confirmation is an explicit submit.
- */
+/** An emailed link can only land on a page, so verifying is an explicit submit. */
 export const Verify: FC<{
   id?: string;
   token?: string;

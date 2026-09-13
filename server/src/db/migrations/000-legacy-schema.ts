@@ -1,14 +1,9 @@
 import { type Kysely, sql } from 'kysely';
 
 /**
- * The schema TypeORM owned, so a database can still be built from empty once
- * backend/ is gone. Dumped from the migration chain it replaces rather than
- * retyped.
- *
- * A no-op where that chain has already run, which is every environment that
- * existed before 6/6. Kysely is configured to allow unordered migrations so
- * this can sort before 001-session on a fresh database while staying unapplied
- * on the ones that already carry it.
+ * Builds the schema on an empty database, and does nothing on one that already
+ * carries it. Dumped rather than retyped, so it is the schema in production and
+ * not a second opinion about it.
  */
 const STATEMENTS = [
   `CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public`,

@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { guard } from './cron';
 import { JOBS, SCHEDULES } from './registry';
 
-// Bun.cron is the scheduler, but the expressions are plain data and the rest of
-// the suite runs on Node, so this asserts the schedule rather than the firing.
+// The suite runs on Node, where Bun.cron does not exist, so this asserts the
+// expressions rather than the firing.
 describe('the job schedules', () => {
   it('covers every job exactly once', () => {
     expect(Object.keys(SCHEDULES).sort()).toEqual(Object.keys(JOBS).sort());

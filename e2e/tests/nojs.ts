@@ -15,11 +15,7 @@ export const test = base.extend({
 
 export { expect };
 
-/**
- * The JavaScript-free counterpart of tests/app.ts. There is no access token to
- * read out of localStorage here, and no page.evaluate to read it with, so these
- * helpers drive forms and assert against rendered HTML.
- */
+/** Drives forms and asserts against rendered HTML, with no page.evaluate anywhere. */
 export async function login(
   page: Page,
   user: { email: string },

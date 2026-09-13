@@ -36,8 +36,7 @@ test.describe('Auth, without JavaScript', () => {
     await login(page, users.alice);
     await page.goto('./impressum');
 
-    // details/summary opens natively, which is the whole reason it replaced
-    // the useState dropdown it replaced.
+    // details/summary opens natively, with no script.
     await page.locator('summary').click();
     await page.getByRole('button', { name: 'Ausloggen' }).click();
 

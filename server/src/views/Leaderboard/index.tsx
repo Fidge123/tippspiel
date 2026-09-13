@@ -9,7 +9,6 @@ import { DivisionByTeam } from './DivisionByTeam';
 import { DivisionTable } from './DivisionTable';
 import { OverviewTable } from './OverviewTable';
 
-/** The SPA toggled these with useState; details needs no script. */
 const Toggle: FC<PropsWithChildren<{ label: string; inline?: boolean }>> = ({
   label,
   inline,

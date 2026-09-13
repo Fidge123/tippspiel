@@ -207,7 +207,6 @@ export async function importSchedule(year: number = season): Promise<void> {
   }
 }
 
-/** Re-imports the weeks of every game that started in the last four hours. */
 export async function updateGames(): Promise<void> {
   const now = new Date();
   const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);

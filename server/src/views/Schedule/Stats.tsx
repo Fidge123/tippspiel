@@ -7,7 +7,7 @@ const IN_PROGRESS = [
   'STATUS_END_PERIOD',
 ];
 
-/** "Tipp"/"Punkte" below 720px became "T"/"P"; that is a breakpoint, not state. */
+/** Both spellings are rendered; the breakpoint picks one, so a resize cannot stale it. */
 const Abbreviated: FC<{ short: string; long: string }> = ({ short, long }) => (
   <>
     <span class="md:hidden">{short}</span>

@@ -120,7 +120,7 @@ export async function divisions(
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/** How many players picked each team first, and for the Super Bowl (#24). */
+/** How many players picked each team first, and for the Super Bowl. */
 export async function pickCounts(
   leagueId: string,
   year: number,

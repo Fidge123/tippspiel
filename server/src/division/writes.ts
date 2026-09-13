@@ -33,8 +33,7 @@ export async function setDivisionBet(
   if (teams.length !== 4 || teams.some((team) => !team)) {
     return { ok: false, reason: 'invalid' };
   }
-  // The Nest service wrote whatever four ids it was given, so a bet could name
-  // the same team twice and be scored against itself.
+  // A bet naming the same team twice would be scored against itself.
   if (new Set(teams).size !== teams.length) {
     return { ok: false, reason: 'duplicate' };
   }

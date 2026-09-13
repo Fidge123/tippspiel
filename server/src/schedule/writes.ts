@@ -190,8 +190,8 @@ export async function hiddenSettings(
     hideByDefault?: boolean;
   };
 
-  // Defaults to on, as in the SPA: a user who has never touched the toggle
-  // expects not to be shown a score they have not watched yet.
+  // Defaults to on: a user who has never touched the toggle expects not to be
+  // shown a score they have not watched yet.
   return {
     hidden: settings.hidden ?? {},
     hideByDefault: settings.hideByDefault ?? true,

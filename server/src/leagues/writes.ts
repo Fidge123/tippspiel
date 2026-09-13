@@ -99,10 +99,7 @@ export async function renameLeague(
   return { ok: true };
 }
 
-/**
- * The bets are deleted before the league row, in the order the Nest service
- * used, because none of these carry a cascading foreign key.
- */
+/** Nothing here cascades, so the order of these deletes is load-bearing. */
 export async function deleteLeague(
   leagueId: string,
   adminId: string,
@@ -174,8 +171,7 @@ export async function removeMember(
   if ((await countOf('member', leagueId)) < 2) {
     return { ok: false, reason: 'last-member' };
   }
-  // Removing the sole admin used to be allowed, which left a league nobody
-  // could administer and no way back.
+  // A league with no admin is a league nobody can administer, and no way back.
   if (
     (await isAdmin(leagueId, userId)) &&
     (await countOf('admin', leagueId)) < 2
@@ -186,9 +182,8 @@ export async function removeMember(
   await db()
     .transaction()
     .execute(async (trx) => {
-      // Their bets went too, or they kept voting in a league they had left:
-      // the counts and the underdog bonus are computed over every bet on a
-      // game, not over the current members.
+      // Their bets go too: the vote counts and the underdog bonus are computed
+      // over every bet on a game, not over the current members.
       for (const table of [
         'betDoubler',
         'bet',

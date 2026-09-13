@@ -47,7 +47,7 @@ const teamColumns = [
 
 /**
  * Seeds come from team_season for the bet's year, not from the team row, so a
- * finished season is not rescored by the next import (#40).
+ * finished season is not rescored by the next import.
  */
 function pick(
   column: 'firstId' | 'secondId' | 'thirdId' | 'fourthId',
@@ -72,11 +72,7 @@ function pick(
     );
 }
 
-/**
- * One query for the whole table. The Nest controller issued two per league
- * member on top of three collection queries, which is 43 round trips for a
- * twenty-person league.
- */
+/** One query for the whole table, and none per member. */
 export async function leaderboardRows(
   leagueId: string,
   year: number,
@@ -317,7 +313,6 @@ export interface ScheduleWeek {
   }[];
 }
 
-/** Feeds the statistics tables, which group bets by week and by team. */
 export async function seasonSchedule(year: number): Promise<ScheduleWeek[]> {
   return db()
     .selectFrom('week')
@@ -370,10 +365,7 @@ export async function seasonTeams(year: number): Promise<LeaderboardTeam[]> {
     .execute() as Promise<LeaderboardTeam[]>;
 }
 
-/**
- * Counts only, never attributed, which is why this is not behind the reveal
- * rules: it is the same data the Nest app served from /leaderboard/divisions.
- */
+/** Counts only, never attributed, which is why the reveal rules do not apply. */
 export async function anonymousBets(
   leagueId: string,
   year: number,

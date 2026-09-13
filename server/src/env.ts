@@ -91,10 +91,7 @@ export function inspect(env: Env): Finding[] {
   return findings;
 }
 
-/**
- * Reports what the process resolved and stops it when a variable is missing in
- * a way no amount of running would recover from.
- */
+/** Stops the process when a variable is missing in a way running cannot recover from. */
 export function checkEnvironment(env: Env = processEnv): void {
   const findings = inspect(env);
 

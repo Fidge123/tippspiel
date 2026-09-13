@@ -2,11 +2,7 @@ import { sql } from 'kysely';
 import { closeDatabase, db } from './kysely';
 import { migrateToLatest } from './migrate';
 
-/**
- * TypeORM owns user, verify and reset until 6/6, so the integration suite
- * recreates their live shape rather than importing the Nest migrations.
- * Kept in sync with 1662130125888-StartSeason2022.
- */
+/** Must stay in step with src/db/migrations, which is what production runs. */
 export async function createSchema(): Promise<void> {
   await sql`create extension if not exists "uuid-ossp"`.execute(db());
   await sql`

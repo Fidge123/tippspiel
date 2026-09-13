@@ -3,8 +3,6 @@ import * as legacy from './migrations/000-legacy-schema';
 import * as session from './migrations/001-session';
 import { closeDatabase, db } from './kysely';
 
-// Kysely books migrations in kysely_migration and TypeORM in migrations, so the
-// two runners cannot fight while both stacks are deployed.
 const migrations = {
   '000-legacy-schema': legacy,
   '001-session': session,
@@ -14,8 +12,8 @@ export async function migrateToLatest(): Promise<void> {
   const migrator = new Migrator({
     db: db(),
     provider: { getMigrations: async () => migrations },
-    // 000 was written after 001 and sorts before it, so that a fresh database
-    // gets the legacy schema first while the deployed ones keep 001 applied.
+    // 000 sorts before 001 but was written after it, so a fresh database builds
+    // the schema first while the deployed ones keep 001 applied.
     allowUnorderedMigrations: true,
   });
 

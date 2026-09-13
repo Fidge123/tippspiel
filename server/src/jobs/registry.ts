@@ -12,7 +12,7 @@ export const JOBS = {
 
 export type JobName = keyof typeof JOBS;
 
-/** The expressions the Nest @Cron decorators carried, read in the server's local time. */
+/** Read in the server's local time zone, like crontab. */
 export const SCHEDULES: Record<JobName, string> = {
   'import-master-data': '3 7 * Aug-Dec,Jan,Feb *',
   'import-schedule': '48 7 * Aug-Dec,Jan,Feb *',

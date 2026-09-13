@@ -59,8 +59,6 @@ export async function recordToFile(name: string, data: unknown): Promise<void> {
     }
   }
 
-  // The Nest version wrote to the literal path "~/backup", which no shell ever
-  // expanded, so it made a directory called ~ wherever it happened to run.
   const path = env.BACKUP_DIR ?? resolve(homedir(), 'backup');
   await mkdir(path, { recursive: true });
   await writeFile(

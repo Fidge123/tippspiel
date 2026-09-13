@@ -1,10 +1,5 @@
 import type { FC } from 'hono/jsx';
 
-/**
- * The examples in the SPA were parallel mock renderings of the real components.
- * They were interactive only in the sense of being behind a toggle, so they are
- * a details element and static markup here.
- */
 const WeekExample: FC = () => (
   <table class="mt-2 text-sm">
     <thead>

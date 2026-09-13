@@ -51,7 +51,7 @@ export interface ScheduleWeekView {
 
 /**
  * Records come from team_season for the year on screen, so a 2022 week shows
- * the 2022 records rather than today's (#40).
+ * the 2022 records rather than today's.
  */
 export async function teamsForSeason(
   year: number,
@@ -82,7 +82,6 @@ export async function teamsForSeason(
   return new Map(rows.map((row) => [row.id, row as TeamView]));
 }
 
-/** The whole schedule, the viewer's bets and the votes, in one read. */
 export async function scheduleFor(
   leagueId: string,
   year: number,

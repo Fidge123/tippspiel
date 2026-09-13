@@ -12,8 +12,7 @@ import { schedule } from './routes/schedule';
 import { Impressum } from './views/Impressum';
 import { Layout } from './views/Layout';
 
-// The SPA is served at /tippspiel/ and links to it with the trailing slash,
-// so the schedule has to answer both spellings of the app root.
+// Links in the wild carry the trailing slash, so the app root answers both.
 export const app = new Hono<{ Variables: Variables }>({
   strict: false,
 }).basePath(basePath);

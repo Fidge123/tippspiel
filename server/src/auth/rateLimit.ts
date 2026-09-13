@@ -13,7 +13,6 @@ function clientKey(c: Context, name: string): string {
   return `${name}:${forwarded ?? c.req.header('x-real-ip') ?? 'unknown'}`;
 }
 
-/** Replaces @nestjs/throttler, which kept the same counters in memory. */
 export function rateLimit(name: string, limit: number, windowMs = 60_000) {
   return async (c: Context, next: Next) => {
     if (!rateLimitEnabled) {

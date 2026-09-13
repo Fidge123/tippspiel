@@ -111,7 +111,6 @@ schedule.post(
     if (result.success) {
       return undefined;
     }
-    // A rejected bet used to be a 200 with an empty body that nobody read (#10).
     const game = (await c.req.parseBody()).game;
     return renderSchedule(
       c as unknown as Ctx,

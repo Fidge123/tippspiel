@@ -100,8 +100,7 @@ leagues.post(
     }
     const { league, confirm } = c.req.valid('form');
 
-    // The SPA asked for the name in a prompt(); without script it is a field,
-    // and it is still the only thing standing between a click and a lost season.
+    // The only thing standing between a click and a lost season.
     const mine = await leaguesOfUser(user.id);
     const target = mine.find((l) => l.id === league);
     if (!target || target.name !== confirm) {

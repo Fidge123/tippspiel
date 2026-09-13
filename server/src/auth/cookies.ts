@@ -4,7 +4,7 @@ import { basePath, cookieSecret, secureCookies } from '../config';
 
 export const SESSION_COOKIE = 'session';
 
-// The retired SPA set this for 290 days, so browsers keep sending it until it
+// Obsolete, but it was set for 290 days and browsers keep sending it until it
 // is cleared.
 const LEGACY_COOKIE = 'refreshToken';
 

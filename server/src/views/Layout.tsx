@@ -9,7 +9,6 @@ type LayoutProps = PropsWithChildren<{
   loginAction?: 'login' | 'register';
 }>;
 
-/** The SPA's hamburger was a useState dropdown; details/summary needs no script. */
 const Menu: FC = () => (
   <details class="relative pointer-events-auto">
     <summary class="list-none cursor-pointer">

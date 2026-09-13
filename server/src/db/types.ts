@@ -1,7 +1,6 @@
 import type { Generated } from 'kysely';
 
-// Only the tables the Hono app reads. TypeORM still owns their definitions
-// until 6/6, so these types describe the live schema rather than declare it.
+// Describes the live schema; src/db/migrations is what defines it.
 export interface UserTable {
   id: Generated<string>;
   email: string;
