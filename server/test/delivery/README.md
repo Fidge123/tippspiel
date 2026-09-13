@@ -12,8 +12,9 @@ That sending works end to end: the key is valid, `src/email/send.ts` builds a re
 Nothing else belongs here.
 The payload is pinned by `src/email/send.test.ts` and the wording of each mail by the route tests, both without sending anything.
 
-This is a check on a third party, not on a change, so it does not run per pull request.
-`.github/workflows/email.yml` runs it on Wednesdays and Fridays from August to February, which is the season, and it can be started by hand from the Actions tab at any time.
+`.github/workflows/email.yml` runs it on every pull request, on Wednesdays and Fridays from August to February, which is the season, and by hand from the Actions tab.
+It sends a real mail each time, so it is the slowest check on a pull request and the only one that can fail because a third party is having a bad day.
+A pull request from a fork has no access to the secrets and cannot run it at all.
 A failure means the mail the application sends is not reaching anyone, which is [#97](https://github.com/Fidge123/tippspiel/issues/97) happening again.
 
 ## How it works
