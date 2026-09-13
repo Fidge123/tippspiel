@@ -18,8 +18,8 @@ bun run dev
 Then open http://localhost:5002/tippspiel/impressum.
 
 `DATABASE_URL` can point at an empty database: `bun run migrate` builds the schema from scratch.
-`deploy/README.md` lists the rest of the environment.
-Set `INSECURE_COOKIES=true` to develop over plain HTTP.
+Set `INSECURE_COOKIES=true` to develop over plain HTTP, which also lets the app start without a `COOKIE_SECRET`.
+The server prints what it resolved on startup and refuses to start on a missing or unparseable variable it cannot work without; `deploy/README.md` lists them all.
 
 ## Layout
 
@@ -34,10 +34,11 @@ Set `INSECURE_COOKIES=true` to develop over plain HTTP.
 | `src/leagues/` | League administration and its permission checks |
 | `src/account/` | The three account settings |
 | `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |
-| `src/jobs/` | The ESPN imports, the bet reminder and the token cleanup, run by systemd timers |
+| `src/jobs/` | The ESPN imports, the bet reminder and the token cleanup, and the schedule they run on |
 | `src/views/` | Hono JSX components, rendered server-side |
 | `src/auth/` | Passwords, sessions and cookies |
 | `src/db/` | Kysely, the schema types and the migration runner |
+| `src/env.ts` | The startup check over every environment variable the app reads |
 | `src/email/` | SMTP2GO delivery and the templates the auth flows send |
 | `styles/app.css` | Tailwind source. `build:css` emits `static/app.css`, which is generated and not committed |
 | `deploy/` | systemd unit, nginx blocks, and the cut-over and rollback procedure |
@@ -72,10 +73,17 @@ than for a reimplementation.
 
 ## Scheduled jobs
 
-Nest ran the five jobs inside the web process, on `@Cron` decorators. They are
-systemd timers now, one `bun run src/jobs/cli.ts <name>` each, so a restart
-cannot drop one mid-flight and a crash in one cannot take the site down.
-`deploy/README.md` has the schedule.
+The five jobs run in the server process on `Bun.cron`, registered from
+`src/index.tsx` and listed in `src/jobs/registry.ts` with the expressions the
+Nest `@Cron` decorators carried. `deploy/README.md` has the schedule.
+
+A rejected `Bun.cron` handler reaches `unhandledRejection`, which ends the
+process, so every job is wrapped in a catch that logs and returns; one bad ESPN
+response costs a run, not the site. `JOBS_DISABLED=true` keeps them from
+registering, which is what the browser suite and the smoke test set, because
+the imports call ESPN for real.
+
+`bun run src/jobs/cli.ts <name>` runs one on demand in its own process.
 
 ## The betting page
 

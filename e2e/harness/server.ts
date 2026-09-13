@@ -26,6 +26,8 @@ export async function startServer(
     EMAIL: 'admin@example.invalid',
     INSECURE_COOKIES: 'true',
     RATE_LIMIT_DISABLED: 'true',
+    // The imports call ESPN for real.
+    JOBS_DISABLED: 'true',
     SMTP2GO_API_KEY: undefined,
   };
 

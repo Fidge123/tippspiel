@@ -10,7 +10,8 @@ BASE="http://127.0.0.1:${PORT}/tippspiel"
 # gone first.
 bun run src/db/fixture.ts
 
-PORT="$PORT" bun run src/index.tsx &
+PORT="$PORT" JOBS_DISABLED=true COOKIE_SECRET=smoke-test-secret \
+  bun run src/index.tsx &
 server=$!
 trap 'kill "$server" 2>/dev/null || true' EXIT
 

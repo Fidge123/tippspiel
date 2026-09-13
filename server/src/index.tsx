@@ -1,6 +1,7 @@
 import { serveStatic } from 'hono/bun';
 import { app } from './app';
-import { basePath, port } from './config';
+import { basePath, jobsEnabled, port } from './config';
+import { startJobs } from './jobs/cron';
 
 // Registered from the Bun entry rather than app.tsx: hono/bun reaches for Bun
 // globals, and app.tsx has to stay importable by the Vitest suite on Node.
@@ -12,5 +13,9 @@ app.get(
     rewriteRequestPath: (path) => path.slice(basePath.length) || '/',
   }),
 );
+
+if (jobsEnabled) {
+  startJobs();
+}
 
 export default { fetch: app.fetch, port };

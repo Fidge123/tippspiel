@@ -12,3 +12,5 @@ export const imageUrl = env.IMAGE_URL ?? 'https://nfl-tippspiel.de/logos/';
 // Every browser test logs in from 127.0.0.1, so they share one bucket. The
 // limiter has its own tests; making the browser suite fight it proves nothing.
 export const rateLimitEnabled = env.RATE_LIMIT_DISABLED !== 'true';
+// The scheduled imports call ESPN for real, which no test or dev server should.
+export const jobsEnabled = env.JOBS_DISABLED !== 'true';
