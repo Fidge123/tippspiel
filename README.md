@@ -22,3 +22,5 @@ bun run dev
 ```
 
 `DATABASE_URL` points at Postgres, and `server/deploy/README.md` documents the rest of the environment and how the thing is deployed.
+
+Bun runs everything except the browser suite, which is why `.nvmrc` is still here: Playwright's test runner is the one tool that does not work under Bun, so `browser` is the only CI job that installs Node.
