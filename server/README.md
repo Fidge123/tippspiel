@@ -59,63 +59,45 @@ The first two drive `app.request()` directly, which is why `src/app.tsx` must no
 
 ## The leaderboard
 
-`src/leaderboard/query.ts` reads the whole table in one query. The Nest
-controller issued two per league member on top of three collection reads, which
-is 43 round trips for a twenty-person league; `leaderboard.integration.test.ts`
-pins the new count at five, none of them per member.
+`src/leaderboard/query.ts` reads the whole table in one query.
+The Nest controller issued two per league member on top of three collection reads, which is 43 round trips for a twenty-person league.
+`leaderboard.integration.test.ts` pins the new count at five, none of them per member.
 
-The reveal rules are applied after the read rather than folded into it, because
-hiding is about who is asking, not about the data.
+The reveal rules are applied after the read rather than folded into it, because hiding is about who is asking, not about the data.
 
-`src/scoring.ts` was moved from the Nest app byte for byte, not retyped, which
-is what makes the golden master in `test/replay` evidence for the port rather
-than for a reimplementation.
+`src/scoring.ts` was moved from the Nest app byte for byte, not retyped, which is what makes the golden master in `test/replay` evidence for the port rather than for a reimplementation.
 
 ## Scheduled jobs
 
-The five jobs run in the server process on `Bun.cron`, registered from
-`src/index.tsx` and listed in `src/jobs/registry.ts` with the expressions the
-Nest `@Cron` decorators carried. `deploy/README.md` has the schedule.
+The five jobs run in the server process on `Bun.cron`, registered from `src/index.tsx` and listed in `src/jobs/registry.ts`.
+`deploy/README.md` has the schedule.
 
-A rejected `Bun.cron` handler reaches `unhandledRejection`, which ends the
-process, so every job is wrapped in a catch that logs and returns; one bad ESPN
-response costs a run, not the site. `JOBS_DISABLED=true` keeps them from
-registering, which is what the browser suite and the smoke test set, because
-the imports call ESPN for real.
+A rejected `Bun.cron` handler reaches `unhandledRejection`, which ends the process, so every job is wrapped in a catch that logs and returns.
+One bad ESPN response costs a run, not the site.
+`JOBS_DISABLED=true` keeps them from registering, which is what the browser suite and the smoke test set, because the imports call ESPN for real.
 
 `bun run src/jobs/cli.ts <name>` runs one on demand in its own process.
 
 ## The betting page
 
-Every bet is its own `<form method="post">`: two radios for the winner, a select
-for the stake, one submit. The doubler is a radio per game that belongs to a
-week-level form through the `form` attribute, because a form cannot be nested
-inside the per-game ones.
+Every bet is its own `<form method="post">`: two radios for the winner, a select for the stake, one submit.
+The doubler is a radio per game that belongs to a week-level form through the `form` attribute, because a form cannot be nested inside the per-game ones.
 
 Every deadline is checked against the server clock and nothing else.
-`schedule.integration.test.ts` covers each rejection on its own: a late bet, a
-doubler moved onto or off a game that has started, removing one that has
-started, and a league the player is not a member of.
+`schedule.integration.test.ts` covers each rejection on its own: a late bet, a doubler moved onto or off a game that has started, removing one that has started, and a league the player is not a member of.
 
-The compact layout is CSS. The SPA chose the team label and the statistics
-headers from `window.innerWidth`; all the variants are rendered and the
-breakpoints choose, which needs no script and cannot go stale on resize.
+The compact layout is CSS.
+The SPA chose the team label and the statistics headers from `window.innerWidth`; all the variants are rendered and the breakpoints choose, which needs no script and cannot go stale on resize.
 
 Spoiler protection defaults to **on**, matching the SPA's `hideByDefault ?? true`.
-A user who has never touched the toggle should not be shown a score they have
-not watched yet.
+A user who has never touched the toggle should not be shown a score they have not watched yet.
 
 ## League permissions
 
-`leagues/writes.ts` is the only place that decides who may change a league, and
-every branch has a test: who may rename, delete, add, kick, promote and demote,
-that a league keeps at least one admin and at least one member, and that a
-member must already be in the league to become an admin.
+`leagues/writes.ts` is the only place that decides who may change a league, and every branch has a test: who may rename, delete, add, kick, promote and demote, that a league keeps at least one admin and at least one member, and that a member must already be in the league to become an admin.
 
-Removing a member takes their bets for that league with them, and refuses when
-it would leave the league without an admin. Both were wrong in the Nest service:
-a departed member kept skewing the vote counts and the underdog bonus, and
-removing the sole admin left a league nobody could administer.
+Removing a member takes their bets for that league with them, and refuses when it would leave the league without an admin.
+Both were wrong in the Nest service: a departed member kept skewing the vote counts and the underdog bonus, and removing the sole admin left a league nobody could administer.
 
 ## No JavaScript
 

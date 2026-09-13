@@ -18,7 +18,7 @@ Only the integration failures the lower tiers cannot see: that the rendered page
 |---|---|
 | `desktop` | The flows in a normal browser |
 | `mobile` | The schedule at iPhone width |
-| `no-js` | `javaScriptEnabled: false` — the acceptance criterion for #85 |
+| `no-js` | `javaScriptEnabled: false`, the acceptance criterion for #85 |
 
 Playwright talks to the server directly on its own port, under the same `/tippspiel` prefix nginx proxies in production.
 
