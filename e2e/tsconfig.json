@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "preserve",
     "target": "es2021",
     "lib": ["es2023", "dom"],
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": false,
     "skipLibCheck": true,
