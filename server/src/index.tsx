@@ -1,7 +1,10 @@
 import { serveStatic } from 'hono/bun';
 import { app } from './app';
-import { basePath, jobsEnabled, port } from './config';
+import { adminEmail, basePath, jobsEnabled, port, season } from './config';
+import { checkEnvironment } from './env';
 import { startJobs } from './jobs/cron';
+
+checkEnvironment();
 
 // Registered from the Bun entry rather than app.tsx: hono/bun reaches for Bun
 // globals, and app.tsx has to stay importable by the Vitest suite on Node.
@@ -17,5 +20,9 @@ app.get(
 if (jobsEnabled) {
   startJobs();
 }
+
+console.log(
+  `tippspiel listening on ${port}${basePath} season=${season} jobs=${jobsEnabled ? 'on' : 'off'} alerts=${adminEmail ?? 'none'}`,
+);
 
 export default { fetch: app.fetch, port };
