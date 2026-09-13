@@ -4,34 +4,36 @@ import { resolve } from 'node:path';
 import { env } from 'node:process';
 import { promisify } from 'node:util';
 import { gzip as gzipCb } from 'node:zlib';
-import {
-  ListBucketsCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
 
 const gzip = promisify(gzipCb);
-const BUCKET = 'nfl-tippspiel';
+const BUCKET = env.R2_BUCKET ?? 'nfl-tippspiel';
 
-let client: S3Client | undefined;
+let client: Bun.S3Client | undefined;
 let tried = false;
 
-function s3(): S3Client | undefined {
-  if (!tried) {
-    tried = true;
-    try {
-      client = new S3Client({
-        region: 'auto',
-        endpoint: env.R2_API,
-        credentials: {
-          accessKeyId: env.R2_ACCESS_KEY_ID!,
-          secretAccessKey: env.R2_SECRET_ACCESS_KEY!,
-        },
-      });
-    } catch {
-      console.warn('Could not connect to S3-compatible storage');
-    }
+function s3(): Bun.S3Client | undefined {
+  if (tried) {
+    return client;
   }
+  tried = true;
+
+  // The replay harness drives the importer under Vitest on Node, where there
+  // is no Bun global; recording falls back to disk there.
+  if (typeof Bun === 'undefined') {
+    return undefined;
+  }
+
+  const { R2_API, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY } = env;
+  if (!R2_API || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
+    return undefined;
+  }
+
+  client = new Bun.S3Client({
+    bucket: BUCKET,
+    endpoint: R2_API,
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
+  });
   return client;
 }
 
@@ -50,17 +52,8 @@ export async function recordToFile(name: string, data: unknown): Promise<void> {
 
   if (bucket) {
     try {
-      const { Buckets } = await bucket.send(new ListBucketsCommand({}));
-      if (Buckets?.some((b) => b.Name === BUCKET)) {
-        await bucket.send(
-          new PutObjectCommand({
-            Bucket: BUCKET,
-            Key: `${name}/${today.toISOString()}.json.gz`,
-            Body: body,
-          }),
-        );
-        return;
-      }
+      await bucket.write(`${name}/${today.toISOString()}.json.gz`, body);
+      return;
     } catch (error) {
       console.error(error);
     }
