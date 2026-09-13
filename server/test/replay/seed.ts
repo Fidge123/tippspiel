@@ -31,18 +31,18 @@ export function parseCopyBlocks(dump: string): CopyBlock[] {
 
   for (let i = 0; i < lines.length; i++) {
     const match =
-      /^COPY (?:public\.)?"?([A-Za-z_]+)"? \(.*\) FROM stdin;$/.exec(lines[i]);
+      /^COPY (?:public\.)?"?([A-Za-z_]+)"? \(.*\) FROM stdin;$/.exec(lines[i]!);
     if (!match) {
       continue;
     }
     const body: string[] = [];
     let j = i + 1;
     for (; j < lines.length && lines[j] !== '\\.'; j++) {
-      body.push(lines[j]);
+      body.push(lines[j]!);
     }
     blocks.push({
-      table: match[1],
-      header: lines[i],
+      table: match[1]!,
+      header: lines[i]!,
       body: body.length ? `${body.join('\n')}\n` : '',
     });
     i = j;
@@ -142,7 +142,7 @@ async function assertAnonymised(client: Client): Promise<void> {
     [TEST_SALT, expected],
   );
 
-  const [{ total, pseudonymous, credentialled, tokens }] = rows;
+  const { total, pseudonymous, credentialled, tokens } = rows[0]!;
   if (total === '0') {
     throw new Error('The backup contained no users.');
   }

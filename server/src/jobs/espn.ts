@@ -52,12 +52,20 @@ export async function loadGroups(): Promise<{ groups: unknown[] }> {
   return (await response.json()) as { groups: unknown[] };
 }
 
-export function findStat(team: Team, name: string): number {
-  try {
-    return team.record!.items[0].stats.find((s) => s.name === name)!.value;
-  } catch {
-    return 0;
+/** ESPN serves several sizes; the database stores the file name of the first. */
+export function logoFile(team: Team): string {
+  const href = team.logos?.[0]?.href;
+  if (!href) {
+    throw new Error(`ESPN returned no logo for ${team.uid}`);
   }
+  return href.split('/').reverse()[0] ?? href;
+}
+
+/** A team ESPN has no record for yet reads as zero rather than failing the import. */
+export function findStat(team: Team, name: string): number {
+  return (
+    team.record?.items[0]?.stats.find((stat) => stat.name === name)?.value ?? 0
+  );
 }
 
 export function getWinner(

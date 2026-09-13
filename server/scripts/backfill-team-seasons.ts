@@ -1,5 +1,5 @@
 import { closeDatabase, db } from '../src/db/kysely';
-import { findStat } from '../src/jobs/espn';
+import { findStat, logoFile } from '../src/jobs/espn';
 import type { Team } from '../src/jobs/espn.types';
 import { newestAtOrBefore, snapshotsOf } from '../test/replay/corpus';
 import { getJSON, missingCredentials } from '../test/replay/r2';
@@ -51,7 +51,7 @@ async function main(): Promise<void> {
         const row = {
           teamId: team.uid,
           year,
-          logo: team.logos![0].href.split('/').reverse()[0],
+          logo: logoFile(team),
           abbreviation: team.abbreviation,
           shortName: team.shortDisplayName,
           name: team.displayName,

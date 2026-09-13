@@ -210,7 +210,8 @@ describe('the leaderboard', () => {
     const missing = board?.entries.find((e) => e.user.name === 'bob');
 
     expect(missing?.points.all).toBe(-1);
-    expect(missing?.bets[0].bet).toBeUndefined();
+    expect(missing?.bets).toHaveLength(1);
+    expect(missing?.bets[0]?.bet).toBeUndefined();
   });
 
   it('refuses a season the league was not played in', async () => {

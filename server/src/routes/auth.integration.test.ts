@@ -216,7 +216,7 @@ describe('register', () => {
 
     const tokens = await db().selectFrom('verify').selectAll().execute();
     expect(tokens).toHaveLength(1);
-    expect(tokens[0].userId).toBe(user.id);
+    expect(tokens[0]!.userId).toBe(user.id);
   });
 
   it('refuses a duplicate email with 409 and writes nothing', async () => {

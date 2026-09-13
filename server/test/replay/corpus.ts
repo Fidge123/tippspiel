@@ -15,7 +15,7 @@ export function parseKey(key: string): Snapshot | undefined {
   if (!match) {
     return undefined;
   }
-  return { key, group: match[1], recordedAt: new Date(match[2]) };
+  return { key, group: match[1]!, recordedAt: new Date(match[2]!) };
 }
 
 export async function snapshotsOf(prefix: string): Promise<Snapshot[]> {

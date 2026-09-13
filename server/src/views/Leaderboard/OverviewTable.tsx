@@ -29,7 +29,7 @@ export const OverviewTable: FC<{ entries: LeaderboardEntry[] }> = ({
       {entries.map((entry, index) => (
         <tr>
           <td>
-            {index && entries[index - 1].points.all === entry.points.all
+            {index && entries[index - 1]?.points.all === entry.points.all
               ? ''
               : `${index + 1}.`}
           </td>

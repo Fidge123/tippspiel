@@ -4,6 +4,7 @@ import {
   BASE_URL,
   findStat,
   getWinner,
+  logoFile,
   loadGroups,
   loadScoreboard,
   notify,
@@ -29,7 +30,7 @@ async function upsertTeam(
   year: number,
 ): Promise<void> {
   const state = {
-    logo: team.logos![0].href.split('/').reverse()[0],
+    logo: logoFile(team),
     abbreviation: team.abbreviation,
     shortName: team.shortDisplayName,
     name: team.displayName,
@@ -113,7 +114,12 @@ export async function importWeek(key: WeekKey): Promise<void> {
   );
 
   const calendar =
-    response.leagues[0].calendar[key.seasontype - 1].entries[key.week - 1];
+    response.leagues[0]?.calendar[key.seasontype - 1]?.entries[key.week - 1];
+  if (!calendar) {
+    throw new Error(
+      `ESPN's scoreboard for ${key.year}-${key.seasontype}-${key.week} carries no calendar entry for that week`,
+    );
+  }
   const weekId = `${key.year}-${key.seasontype}-${key.week}`;
 
   const week = {
@@ -143,8 +149,11 @@ export async function importWeek(key: WeekKey): Promise<void> {
 
 async function upsertGame(event: NFLEvent, weekId: string): Promise<void> {
   const competition = event.competitions[0];
-  const home = competition.competitors.find((c) => c.homeAway === 'home')!;
-  const away = competition.competitors.find((c) => c.homeAway === 'away')!;
+  const home = competition?.competitors.find((c) => c.homeAway === 'home');
+  const away = competition?.competitors.find((c) => c.homeAway === 'away');
+  if (!competition || !home || !away) {
+    throw new Error(`ESPN's event ${event.uid} names no home and away pair`);
+  }
 
   // The Pro Bowl fields teams that are in no division and therefore in no team
   // row, so the reference has to drop rather than fail the import.

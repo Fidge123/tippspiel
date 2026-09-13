@@ -1,21 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "lib": ["es2023"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-    "noEmit": true,
+    "target": "esnext",
+    "lib": ["esnext"],
+    "module": "preserve",
+    "moduleDetection": "force",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "types": ["bun"]
+    "types": ["bun"],
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    "skipLibCheck": true,
+    "noEmit": true
   },
   "include": [
     "src",

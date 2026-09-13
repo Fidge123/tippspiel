@@ -46,13 +46,13 @@ async function activeLeague(userId: string, requested?: string) {
   return leagues.find((league) => league.id === requested) ?? leagues[0];
 }
 
-const MESSAGES: Record<string, string> = {
+const MESSAGES = {
   late: 'Zu spät: das Spiel hat bereits begonnen.',
   invalid: 'Diese Eingabe passt nicht zu diesem Spiel.',
   'not-a-member': 'Du bist kein Mitglied dieser Liga.',
   'no-doubler': 'Für diese Woche ist kein Doppler gesetzt.',
   form: 'Bitte wähle ein Team und einen Einsatz zwischen 1 und 5.',
-};
+} as const;
 
 type Ctx = Context<{ Variables: Variables }>;
 

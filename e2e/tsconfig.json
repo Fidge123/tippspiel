@@ -1,13 +1,21 @@
 {
   "compilerOptions": {
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
     "module": "preserve",
-    "target": "es2021",
-    "lib": ["es2023", "dom"],
-    "esModuleInterop": true,
-    "strict": false,
+    "moduleDetection": "force",
+    "types": ["node"],
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
     "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["node"]
+    "noEmit": true
   },
   "include": ["harness", "tests", "playwright.config.ts"]
 }

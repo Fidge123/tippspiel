@@ -137,7 +137,7 @@ describe('before the season starts', () => {
 
     const rows = await db().selectFrom('divisionBet').selectAll().execute();
     expect(rows).toHaveLength(1);
-    expect(rows[0].firstId).toBe('PIT');
+    expect(rows[0]!.firstId).toBe('PIT');
   });
 
   it('refuses the same team twice', async () => {

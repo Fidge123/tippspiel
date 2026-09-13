@@ -106,8 +106,8 @@ async function seed() {
     ])
     .returning('id')
     .execute();
-  league = rows[0].id;
-  otherLeague = rows[1].id;
+  league = rows[0]!.id;
+  otherLeague = rows[1]!.id;
 
   alice = await user('alice');
   outsider = await user('outsider');
@@ -131,7 +131,7 @@ describe('placing a bet', () => {
     );
 
     const weeks = await scheduleFor(league, SEASON, alice);
-    const game = weeks[0].games.find((g) => g.id === upcoming);
+    const game = weeks[0]!.games.find((g) => g.id === upcoming);
 
     expect(game?.myWinner).toBe('home');
     expect(game?.myPointDiff).toBe(3);
@@ -182,7 +182,7 @@ describe('the doubler', () => {
     });
 
     const weeks = await scheduleFor(league, SEASON, alice);
-    expect(weeks[0].doublerGameId).toBe(upcoming);
+    expect(weeks[0]!.doublerGameId).toBe(upcoming);
   });
 
   it('refuses a game that has already kicked off', async () => {
@@ -316,7 +316,7 @@ describe('the schedule read', () => {
     await writes.setGameBet(outsider, otherLeague, upcoming, 'home', 5);
 
     const weeks = await scheduleFor(league, SEASON, alice);
-    const game = weeks[0].games.find((g) => g.id === upcoming);
+    const game = weeks[0]!.games.find((g) => g.id === upcoming);
 
     expect(game?.homeVotes).toBe(1);
     expect(game?.awayVotes).toBe(1);
@@ -326,6 +326,6 @@ describe('the schedule read', () => {
   it('orders games by kickoff', async () => {
     const weeks = await scheduleFor(league, SEASON, alice);
 
-    expect(weeks[0].games.map((g) => g.id)).toEqual([started, upcoming]);
+    expect(weeks[0]!.games.map((g) => g.id)).toEqual([started, upcoming]);
   });
 });

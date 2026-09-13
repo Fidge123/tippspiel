@@ -54,7 +54,7 @@ describe('with an API key', () => {
 
     await sendEmail(email);
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe('https://api.smtp2go.com/v3/email/send');
     expect(init.method).toBe('POST');
     expect(init.headers).toMatchObject({

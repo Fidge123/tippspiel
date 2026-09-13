@@ -20,7 +20,7 @@ interface Viewer {
 }
 
 let database: TestDatabase;
-let now = new Date(season.asOfDates[0].at);
+let now = new Date(season.asOfDates[0]!.at);
 let leagues: { id: string; name: string; viewer: Viewer }[];
 let weekOfGame: Map<string, string>;
 let restoreEspn: () => void;
@@ -136,7 +136,7 @@ async function gameWeeks(url: string, year: number) {
 /** `2023-2-7` sorts after `2023-2-18` unless the week number is padded. */
 function weekLabel(weekId: string): string {
   const [year, seasontype, week] = weekId.split('-');
-  return `${year}-${seasontype}-${week.padStart(2, '0')}`;
+  return `${year}-${seasontype}-${(week ?? '').padStart(2, '0')}`;
 }
 
 // A fixed viewer keeps the reveal rules, which depend on who is asking,

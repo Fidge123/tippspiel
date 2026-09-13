@@ -19,12 +19,12 @@ export const division = new Hono<{ Variables: Variables }>();
 
 type Ctx = Context<{ Variables: Variables }>;
 
-const MESSAGES: Record<string, string> = {
+const MESSAGES = {
   late: 'Die Saison hat begonnen, die Tipps sind geschlossen.',
   duplicate: 'Jedes Team darf in einer Division nur einmal vorkommen.',
   'not-a-member': 'Du bist kein Mitglied dieser Liga.',
   invalid: 'Bitte wähle für jede Position ein Team dieser Division.',
-};
+} as const;
 
 async function leagueOf(userId: string) {
   const [mine, active] = await Promise.all([

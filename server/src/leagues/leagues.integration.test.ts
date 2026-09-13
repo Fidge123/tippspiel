@@ -72,7 +72,7 @@ describe('renaming', () => {
     expect(await w.renameLeague(league, 'Andere Liga', admin)).toEqual({
       ok: true,
     });
-    expect((await leaguesOfUser(admin))[0].name).toBe('Andere Liga');
+    expect((await leaguesOfUser(admin))[0]!.name).toBe('Andere Liga');
   });
 
   it('is refused for a plain member', async () => {
@@ -167,7 +167,7 @@ describe('removing a member', () => {
     await w.promote(league, member, admin);
 
     expect(await w.removeMember(league, admin, admin)).toEqual({ ok: true });
-    expect((await leaguesOfUser(member))[0].members).toHaveLength(1);
+    expect((await leaguesOfUser(member))[0]!.members).toHaveLength(1);
   });
 
   it('takes the bets of a removed member with them', async () => {
@@ -187,7 +187,7 @@ describe('removing a member', () => {
     // and the underdog bonus are computed over every bet on a game.
     const left = await db().selectFrom('superbowlBet').selectAll().execute();
     expect(left).toHaveLength(1);
-    expect(left[0].userId).toBe(admin);
+    expect(left[0]!.userId).toBe(admin);
   });
 });
 
@@ -217,8 +217,10 @@ describe('promoting', () => {
     expect(await w.promote(league, member, admin)).toEqual({ ok: true });
 
     const leagues = await leaguesOfUser(member);
-    expect(leagues[0].members.find((m) => m.id === member)?.isAdmin).toBe(true);
-    expect(leagues[0].amAdmin).toBe(true);
+    expect(leagues[0]!.members.find((m) => m.id === member)?.isAdmin).toBe(
+      true,
+    );
+    expect(leagues[0]!.amAdmin).toBe(true);
   });
 });
 
@@ -248,7 +250,7 @@ describe('demoting', () => {
     await w.promote(league, member, admin);
 
     expect(await w.demote(league, admin, admin)).toEqual({ ok: true });
-    expect((await leaguesOfUser(admin))[0].amAdmin).toBe(false);
+    expect((await leaguesOfUser(admin))[0]!.amAdmin).toBe(false);
   });
 });
 

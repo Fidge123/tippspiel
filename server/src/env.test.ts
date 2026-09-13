@@ -89,7 +89,7 @@ describe('what only costs functionality', () => {
     const findings = inspect({ ...complete, SMTP2GO_API_KEY: undefined });
     expect(fatal(findings)).toEqual([]);
     expect(warnings(findings)).toEqual(['SMTP2GO_API_KEY']);
-    expect(findings[0].message).toContain('password reset');
+    expect(findings[0]!.message).toContain('password reset');
   });
 
   it('runs without an alert address', () => {
@@ -101,7 +101,7 @@ describe('what only costs functionality', () => {
   it('runs without R2, and names the corpus that stops growing', () => {
     const findings = inspect({ ...complete, R2_ACCESS_KEY_ID: undefined });
     expect(fatal(findings)).toEqual([]);
-    expect(findings[0].message).toContain('golden-master');
+    expect(findings[0]!.message).toContain('golden-master');
   });
 
   it('stays quiet about R2 where nothing would record anyway', () => {
