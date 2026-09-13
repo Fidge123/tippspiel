@@ -1,5 +1,5 @@
 import { scryptSync } from 'node:crypto';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'bun:test';
 import { hash, KEY_LENGTH, verifyPassword } from './password';
 
 // Bun and Node must derive the same key for the parameters the stored rows were

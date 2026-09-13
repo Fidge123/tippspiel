@@ -1,5 +1,12 @@
 import { env } from 'node:process';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from 'bun:test';
 
 env.DATABASE_URL = env.TEST_DATABASE_URL;
 env.COOKIE_SECRET = 'cookie-secret-for-tests';

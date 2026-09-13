@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'bun:test';
 import { DEV_COOKIE_SECRET, type Finding, inspect } from './env';
 
 const complete = {

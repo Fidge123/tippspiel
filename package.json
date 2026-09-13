@@ -11,12 +11,12 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "typecheck": "bun --bun tsc --noEmit && bun --bun tsc -p e2e --noEmit",
-    "test": "bun --bun vitest run",
-    "test:watch": "bun --bun vitest",
-    "test:integration": "bun --bun vitest run -c vitest.config.integration.ts",
-    "test:replay": "bun --bun vitest run -c vitest.config.replay.ts",
-    "test:delivery": "bun --bun vitest run -c vitest.config.delivery.ts",
+    "typecheck": "tsc --noEmit && tsc -p e2e --noEmit",
+    "test": "bun test src --path-ignore-patterns='**/*.integration.test.ts'",
+    "test:watch": "bun test --watch src --path-ignore-patterns='**/*.integration.test.ts'",
+    "test:integration": "bun test integration",
+    "test:replay": "bun test test/replay --timeout=600000",
+    "test:delivery": "bun test test/delivery --timeout=360000",
     "deploy": "bun install --frozen-lockfile --production",
     "test:browser": "playwright test --config e2e/playwright.config.ts"
   },
@@ -38,8 +38,6 @@
     "@types/pg": "^8.15.5",
     "@types/pg-copy-streams": "^1.2.5",
     "pg-copy-streams": "^7.0.0",
-    "typescript": "^7.0.2",
-    "vite": "^8.2.2",
-    "vitest": "^5.0.0"
+    "typescript": "^7.0.2"
   }
 }

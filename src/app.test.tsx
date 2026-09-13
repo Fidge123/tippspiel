@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, mock } from 'bun:test';
 
 let reachable = true;
 
-vi.mock('./db/kysely', () => ({
-  isDatabaseReachable: vi.fn(() => Promise.resolve(reachable)),
-  db: vi.fn(),
-  closeDatabase: vi.fn(),
+await mock.module('./db/kysely', () => ({
+  isDatabaseReachable: mock(() => Promise.resolve(reachable)),
+  db: mock(),
+  closeDatabase: mock(),
 }));
 
 const { app } = await import('./app');

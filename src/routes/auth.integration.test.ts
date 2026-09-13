@@ -6,13 +6,13 @@ import {
   describe,
   expect,
   it,
-  vi,
-} from 'vitest';
+  mock,
+} from 'bun:test';
 
 let mailFails = false;
 
-vi.mock('../email/send', () => ({
-  sendEmail: vi.fn(async () => {
+await mock.module('../email/send', () => ({
+  sendEmail: mock(async () => {
     if (mailFails) {
       throw new Error('SMTP2GO rejected 1 recipient(s)');
     }

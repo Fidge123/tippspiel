@@ -9,6 +9,8 @@ bun run test:replay       # run it
 bun run test:replay -u    # accept the new numbers, deliberately
 ```
 
+Snapshots are never written in CI unless `-u` is passed, so a missing or stale snapshot fails the job rather than quietly recording whatever the run produced.
+
 ## What it does
 
 ```

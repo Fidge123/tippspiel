@@ -47,7 +47,7 @@ The server prints what it resolved on startup and refuses to start on a missing 
 
 ## Tests
 
-Vitest, run through `bun --bun` so a test and the server see the same globals:
+`bun test`, so a test and the server run on the same runtime with the same globals:
 
 | Command | What |
 |---|---|
@@ -59,6 +59,7 @@ Vitest, run through `bun --bun` so a test and the server see the same globals:
 | `./test/smoke.sh` | Boots the real service under Bun and walks the routes over HTTP |
 
 The first two drive `app.request()` directly rather than over HTTP, so they exercise the routes without a listening socket.
+Bun runs test files one after another unless `--parallel` says otherwise, which is what the suites sharing one database need.
 
 ## The leaderboard
 

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { env } from 'node:process';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'bun:test';
 import { sendEmail } from '../../src/email/send';
 import { waitForDelivery } from './activity';
 
@@ -26,6 +26,6 @@ describe('SMTP2GO', () => {
 
     const delivered = await waitForDelivery(subject, DELIVERY_TIMEOUT);
 
-    expect(delivered.recipient).toBe(env.EMAIL);
+    expect(delivered.recipient).toBe(env.EMAIL!);
   }, 360_000);
 });

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, mock, spyOn } from 'bun:test';
 import { guard } from './cron';
 import { JOBS, SCHEDULES } from './registry';
 
@@ -30,7 +30,7 @@ describe('the job schedules', () => {
 // which in this app is the web server.
 describe('the guard around each job', () => {
   it('does not reject when the job throws', async () => {
-    const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const logged = spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(
       guard('update-games', async () => {
@@ -46,8 +46,8 @@ describe('the guard around each job', () => {
   });
 
   it('still awaits a job that succeeds', async () => {
-    const run = vi.fn(async () => 'done');
+    const run = mock(async () => 'done');
     await guard('clean-up', run);
-    expect(run).toHaveBeenCalledOnce();
+    expect(run).toHaveBeenCalledTimes(1);
   });
 });

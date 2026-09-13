@@ -1,15 +1,25 @@
 import { env } from 'node:process';
 import { Client } from 'pg';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  jest,
+  mock,
+} from 'bun:test';
 import { loadCorpus } from './corpus';
 import { installEspnStub } from './espn';
 import { missingCredentials } from './r2';
 import { type Season, season2023 } from './season';
 import { seedFromBackup } from './seed';
 import { startDatabase, type TestDatabase } from '../support/database';
-import { sentEmails } from '../support/mail';
+import * as mail from '../support/mail';
 
-vi.mock('../../src/email/send', () => import('../support/mail'));
+// The factory returns the module this file already imports. Importing it again
+// from inside the factory deadlocks, because mock.module is still resolving.
+await mock.module('../../src/email/send', () => mail);
 
 const season: Season = season2023;
 
@@ -58,15 +68,14 @@ beforeAll(async () => {
   leagues = await leaguesOf(database.url, season.year);
   expect(leagues.length).toBeGreaterThan(0);
 
-  vi.useFakeTimers({ toFake: ['Date'], shouldAdvanceTime: true });
-  vi.setSystemTime(now);
+  jest.setSystemTime(now);
 }, 600_000);
 
 afterAll(async () => {
   restoreEspn?.();
   await closeDatabase?.();
   await database?.stop();
-  vi.useRealTimers();
+  jest.setSystemTime();
 });
 
 describe(`${season.year} season`, () => {
@@ -85,13 +94,13 @@ describe(`${season.year} season`, () => {
     describe(asOf.label, () => {
       beforeAll(async () => {
         now = new Date(asOf.at);
-        vi.setSystemTime(now);
+        jest.setSystemTime(now);
         await importSeason(season);
         weekOfGame = await gameWeeks(database.url, season.year);
       }, 600_000);
 
       it('replays without a failed ESPN request', () => {
-        expect(sentEmails).toEqual([]);
+        expect(mail.sentEmails).toEqual([]);
       });
 
       it('matches the committed leaderboards', async () => {

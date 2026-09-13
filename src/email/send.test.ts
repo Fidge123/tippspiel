@@ -1,5 +1,5 @@
 import { env } from 'node:process';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
 import { sendEmail } from './send';
 
 const email = {
@@ -9,17 +9,19 @@ const email = {
   html: '<p>Hallo Spieler</p>',
 };
 
+const realFetch = globalThis.fetch;
+
 function respondWith(body: unknown, init: ResponseInit = {}) {
-  const fetchMock = vi.fn(
+  const fetchMock = mock(
     async (_url: string, _init: RequestInit) =>
       new Response(JSON.stringify(body), init),
   );
-  vi.stubGlobal('fetch', fetchMock);
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
   return fetchMock;
 }
 
 afterEach(() => {
-  vi.unstubAllGlobals();
+  globalThis.fetch = realFetch;
   delete env.SMTP2GO_API_KEY;
 });
 
