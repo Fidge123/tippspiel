@@ -42,10 +42,11 @@ The server prints what it resolved on startup and refuses to start on a missing 
 | `src/email/` | SMTP2GO delivery and the templates the auth flows send |
 | `styles/app.css` | Tailwind source. `build:css` emits `static/app.css`, which is generated and not committed |
 | `deploy/` | systemd unit, nginx blocks, and the cut-over and rollback procedure |
+| `bunfig.toml` | Makes `bun run` use the Bun runtime, so the tests run on what production runs |
 
 ## Tests
 
-Three tiers, all Vitest on Node:
+Vitest, on the Bun runtime rather than on Node, so a test and the server see the same globals:
 
 | Command | What |
 |---|---|

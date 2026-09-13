@@ -16,8 +16,11 @@ The session cookie gets `Path=/tippspiel` for the same reason.
 useradd --system --home /srv/tippspiel tippspiel
 install -d -o tippspiel -g tippspiel /srv/tippspiel /srv/tippspiel/backup
 git clone https://github.com/Fidge123/tippspiel /srv/tippspiel
-cd /srv/tippspiel/server && bun install --frozen-lockfile
+cd /srv/tippspiel/server && bun run deploy
 ```
+
+`bun run deploy` is `bun install --frozen-lockfile --production`, which installs the seven runtime dependencies and none of the test, lint or type tooling: 50 MB rather than 314 MB.
+Tailwind is a runtime dependency rather than a development one because the service builds its own stylesheet on every start, which is what keeps that file from ever being stale.
 
 `/etc/tippspiel/server.env` should be `0600` and owned by root:
 
@@ -47,6 +50,16 @@ systemctl enable --now tippspiel-server
 
 `ExecStartPre` runs the migrations and regenerates the stylesheet on every start, so a failed migration is a failed start rather than a half-running server, and the only generated file is never stale or committed.
 The application itself runs from the `.ts` and `.tsx` sources, with no build step.
+
+## Updating
+
+```
+cd /srv/tippspiel && git pull
+cd server && bun run deploy
+systemctl restart tippspiel-server
+```
+
+Run `bun install --frozen-lockfile` instead of `bun run deploy` when you need the test tooling on the box, and `bun run deploy` again afterwards to get back to the runtime set.
 
 Confirm it survives a reboot rather than assuming it: `systemctl reboot`, then `curl -sf localhost:5002/tippspiel/health`.
 

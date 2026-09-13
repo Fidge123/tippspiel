@@ -4,11 +4,6 @@ import { env } from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { gunzip as gunzipCb } from 'node:zlib';
 import { promisify } from 'node:util';
-import {
-  GetObjectCommand,
-  ListObjectsV2Command,
-  S3Client,
-} from '@aws-sdk/client-s3';
 
 const gunzip = promisify(gunzipCb);
 
@@ -20,7 +15,7 @@ export const CACHE_DIR = resolve(
     join(dirname(fileURLToPath(import.meta.url)), '..', '.corpus-cache'),
 );
 
-let client: S3Client | undefined;
+let client: Bun.S3Client | undefined;
 
 export function missingCredentials(): string[] {
   return ['R2_API', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'].filter(
@@ -28,23 +23,19 @@ export function missingCredentials(): string[] {
   );
 }
 
-function getClient(): S3Client {
+function getClient(): Bun.S3Client {
   const missing = missingCredentials();
   if (missing.length) {
     throw new Error(
       `The season replay reads its fixtures from the ${BUCKET} bucket. Missing: ${missing.join(', ')}.`,
     );
   }
-  if (!client) {
-    client = new S3Client({
-      region: 'auto',
-      endpoint: env.R2_API,
-      credentials: {
-        accessKeyId: String(env.R2_ACCESS_KEY_ID),
-        secretAccessKey: String(env.R2_SECRET_ACCESS_KEY),
-      },
-    });
-  }
+  client ??= new Bun.S3Client({
+    bucket: BUCKET,
+    endpoint: env.R2_API,
+    accessKeyId: String(env.R2_ACCESS_KEY_ID),
+    secretAccessKey: String(env.R2_SECRET_ACCESS_KEY),
+  });
   return client;
 }
 
@@ -57,22 +48,14 @@ export async function listKeys(prefix: string): Promise<string[]> {
 
   const s3 = getClient();
   const keys: string[] = [];
-  let ContinuationToken: string | undefined;
+  let continuationToken: string | undefined;
   do {
-    const page = await s3.send(
-      new ListObjectsV2Command({
-        Bucket: BUCKET,
-        Prefix: prefix,
-        ContinuationToken,
-      }),
-    );
-    for (const object of page.Contents ?? []) {
-      if (object.Key) {
-        keys.push(object.Key);
-      }
+    const page = await s3.list({ prefix, continuationToken });
+    for (const object of page.contents ?? []) {
+      keys.push(object.key);
     }
-    ContinuationToken = page.NextContinuationToken;
-  } while (ContinuationToken);
+    continuationToken = page.nextContinuationToken;
+  } while (continuationToken);
 
   await mkdir(dirname(cache), { recursive: true });
   await writeFile(cache, JSON.stringify(keys));
@@ -86,14 +69,7 @@ export async function getObject(key: string): Promise<Buffer> {
     return cached;
   }
 
-  const s3 = getClient();
-  const response = await s3.send(
-    new GetObjectCommand({ Bucket: BUCKET, Key: key }),
-  );
-  if (!response.Body) {
-    throw new Error(`The ${BUCKET} bucket returned no body for ${key}.`);
-  }
-  const body = Buffer.from(await response.Body.transformToByteArray());
+  const body = Buffer.from(await getClient().file(key).arrayBuffer());
 
   await mkdir(dirname(cache), { recursive: true });
   await writeFile(cache, body);

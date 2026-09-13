@@ -17,12 +17,6 @@ function s3(): Bun.S3Client | undefined {
   }
   tried = true;
 
-  // The replay harness drives the importer under Vitest on Node, where there
-  // is no Bun global; recording falls back to disk there.
-  if (typeof Bun === 'undefined') {
-    return undefined;
-  }
-
   const { R2_API, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY } = env;
   if (!R2_API || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
     return undefined;
