@@ -1,5 +1,5 @@
 [Unit]
-Description=NFL Tippspiel Hono server
+Description=Tippspiel Hono server
 Documentation=https://github.com/Fidge123/tippspiel/blob/master/deploy/README.md
 After=network-online.target postgresql.service
 Wants=network-online.target

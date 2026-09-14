@@ -16,7 +16,7 @@ const { buildLeaderboard } = await import('./build');
 const { hash, newSalt } = await import('../auth/password');
 
 const SEASON = 2026;
-// League, current week, the member read, finished games, Super Bowl winner.
+// League, current week, the member read, finished games, the champion.
 const EXPECTED_QUERIES = 5;
 const DIVISION = 'AFC North';
 const TEAMS = ['BAL', 'CIN', 'CLE', 'PIT'];
@@ -316,7 +316,7 @@ describe('the reveal rules', () => {
     ).toBe(15);
   });
 
-  it('hides another player Super Bowl bet until the final game', async () => {
+  it('hides another player champion bet until the final game', async () => {
     await seedWorld(new Date(Date.now() + 86_400_000), 3, 1);
     await db()
       .insertInto('superbowlBet')

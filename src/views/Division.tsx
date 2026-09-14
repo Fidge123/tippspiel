@@ -73,12 +73,12 @@ const DivisionForm: FC<{
 export const Division: FC<{
   divisions: { name: string; teams: DivisionTeam[] }[];
   picks: DivisionPick[];
-  superbowl: string | null;
-  counts: { first: Map<string, number>; sb: Map<string, number> };
+  champion: string | null;
+  counts: { first: Map<string, number>; champion: Map<string, number> };
   closed: boolean;
   errors: Map<string, string>;
   notice?: string;
-}> = ({ divisions, picks, superbowl, counts, closed, errors, notice }) => (
+}> = ({ divisions, picks, champion, counts, closed, errors, notice }) => (
   <div class="flex flex-wrap sm:mx-4">
     <article class="py-4 ml-4 w-min">
       <h1 class="text-xl font-semibold">Wähle den Sieger je Division:</h1>
@@ -99,15 +99,15 @@ export const Division: FC<{
       ))}
     </article>
     <article class="py-4 ml-4 w-min">
-      <h1 class="text-xl font-semibold">Super Bowl Sieger:</h1>
-      {errors.get('superbowl') ? (
-        <p class="text-red-600">{errors.get('superbowl')}</p>
+      <h1 class="text-xl font-semibold">Champion:</h1>
+      {errors.get('champion') ? (
+        <p class="text-red-600">{errors.get('champion')}</p>
       ) : (
         ''
       )}
       <form
         method="post"
-        action={`${basePath}/division/superbowl`}
+        action={`${basePath}/division/champion`}
         class="pt-2 space-x-2"
       >
         <select
@@ -115,15 +115,17 @@ export const Division: FC<{
           class="px-1"
           disabled={closed}
           required
-          aria-label="Super Bowl Sieger"
+          aria-label="Champion"
         >
           <option value="">—</option>
           {divisions
             .flatMap((division) => division.teams)
             .map((team) => (
-              <option value={team.id} selected={superbowl === team.id}>
+              <option value={team.id} selected={champion === team.id}>
                 {team.name}
-                {counts.sb.get(team.id) ? ` (${counts.sb.get(team.id)})` : ''}
+                {counts.champion.get(team.id)
+                  ? ` (${counts.champion.get(team.id)})`
+                  : ''}
               </option>
             ))}
         </select>

@@ -184,11 +184,11 @@ describe('before the season starts', () => {
     ).toEqual({ ok: false, reason: 'not-a-member' });
   });
 
-  it('stores a Super Bowl pick', async () => {
-    expect(await w.setSuperbowlBet(alice, league, SEASON, 'BAL')).toEqual({
+  it('stores a champion pick', async () => {
+    expect(await w.setChampionBet(alice, league, SEASON, 'BAL')).toEqual({
       ok: true,
     });
-    expect(await q.mySuperbowlBet(league, SEASON, alice)).toBe('BAL');
+    expect(await q.myChampionBet(league, SEASON, alice)).toBe('BAL');
   });
 
   it('counts how many players picked each team', async () => {
@@ -200,13 +200,13 @@ describe('before the season starts', () => {
 
     await w.setDivisionBet(alice, league, SEASON, DIVISION, TEAMS);
     await w.setDivisionBet(bob, league, SEASON, DIVISION, TEAMS);
-    await w.setSuperbowlBet(alice, league, SEASON, 'BAL');
-    await w.setSuperbowlBet(bob, league, SEASON, 'CIN');
+    await w.setChampionBet(alice, league, SEASON, 'BAL');
+    await w.setChampionBet(bob, league, SEASON, 'CIN');
 
     const counts = await q.pickCounts(league, SEASON);
     expect(counts.first.get('BAL')).toBe(2);
-    expect(counts.sb.get('BAL')).toBe(1);
-    expect(counts.sb.get('CIN')).toBe(1);
+    expect(counts.champion.get('BAL')).toBe(1);
+    expect(counts.champion.get('CIN')).toBe(1);
   });
 });
 
@@ -219,8 +219,8 @@ describe('once the season has started', () => {
     ).toEqual({ ok: false, reason: 'late' });
   });
 
-  it('refuses a Super Bowl bet and says so', async () => {
-    expect(await w.setSuperbowlBet(alice, league, SEASON, 'BAL')).toEqual({
+  it('refuses a champion bet and says so', async () => {
+    expect(await w.setChampionBet(alice, league, SEASON, 'BAL')).toEqual({
       ok: false,
       reason: 'late',
     });

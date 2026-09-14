@@ -137,7 +137,7 @@ export interface CurrentSeason {
   type: number;
 }
 
-export interface NFLEvent {
+export interface EspnEvent {
   competitions: Competition[];
   date: string;
   id: string;
@@ -190,7 +190,7 @@ export interface Week {
 }
 
 export interface Scoreboard {
-  events: NFLEvent[];
+  events: EspnEvent[];
   leagues: League[];
   season: CurrentSeason;
   week: Week;

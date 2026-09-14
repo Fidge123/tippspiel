@@ -227,7 +227,7 @@ export async function currentWeek(): Promise<{
   return last;
 }
 
-export async function superbowlWinner(
+export async function seasonChampion(
   year: number,
 ): Promise<LeaderboardTeam | null> {
   const game = await db()

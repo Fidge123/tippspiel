@@ -61,7 +61,7 @@ TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/postgres bun run test:rep
 
 ## What the snapshots contain
 
-Per player: the point totals, a per-week subtotal, and the division and Super Bowl picks.
+Per player: the point totals, a per-week subtotal, and the division and champion picks.
 Games are spelled out one by one only for the weeks listed in `detailWeeks`.
 The 2023 regular weeks are structurally alike, so week 1 stands in for all of them.
 A scoring change in any other week still fails the test and still names the week; only its per-game breakdown is left out.

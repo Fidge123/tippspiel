@@ -31,7 +31,7 @@ async function main(): Promise<void> {
   const teams = await snapshotsOf('teams-');
 
   for (const year of years) {
-    // The final standings: after the Super Bowl, before the next import moves the seeds.
+    // The final standings: after the last game, before the next import moves the seeds.
     const asOf = new Date(`${year + 1}${AS_OF_MONTH_DAY}`);
     const divisions = [...new Set(teams.map((snapshot) => snapshot.group))];
     let written = 0;

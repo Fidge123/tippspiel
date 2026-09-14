@@ -11,7 +11,7 @@ test.describe('The rules page, without JavaScript', () => {
       page.getByRole('heading', { name: 'Reguläre Saison und Playoffs' }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: 'Divisions und Superbowl' }),
+      page.getByRole('heading', { name: 'Divisions und Champion' }),
     ).toBeVisible();
     await expectNoScript(page);
 

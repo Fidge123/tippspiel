@@ -1,6 +1,6 @@
 # tippspiel
 
-An NFL prediction game: players bet on every game of the season, double one bet a week, and pick the division winners and the Super Bowl champion before kickoff.
+An American football prediction game: players bet on every game of the season, double one bet a week, and pick the division winners and the champion before kickoff.
 Live at [nfl-tippspiel.de](https://nfl-tippspiel.de/tippspiel/).
 
 Hono on Bun, Hono JSX rendered to a string, Tailwind 4, Kysely on Postgres.
@@ -31,7 +31,7 @@ The server prints what it resolved on startup and refuses to start on a missing 
 | `src/routes/` | Route handlers, grouped by the page they serve |
 | `src/leaderboard/` | The one leaderboard query and the assembly on top of it |
 | `src/schedule/` | The schedule read, and the bet, doubler and spoiler writes |
-| `src/division/` | Pre-season division and Super Bowl bets |
+| `src/division/` | Pre-season division and champion bets |
 | `src/leagues/` | League administration and its permission checks |
 | `src/account/` | The three account settings |
 | `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |

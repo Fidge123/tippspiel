@@ -50,7 +50,7 @@ export async function myDivisionBets(
   }));
 }
 
-export async function mySuperbowlBet(
+export async function myChampionBet(
   leagueId: string,
   year: number,
   userId: string,
@@ -122,8 +122,8 @@ export async function divisions(
 export async function pickCounts(
   leagueId: string,
   year: number,
-): Promise<{ first: Map<string, number>; sb: Map<string, number> }> {
-  const [firsts, sbs] = await Promise.all([
+): Promise<{ first: Map<string, number>; champion: Map<string, number> }> {
+  const [firsts, champions] = await Promise.all([
     db()
       .selectFrom('divisionBet')
       .select((eb) => ['firstId', eb.fn.countAll<string>().as('n')])
@@ -144,8 +144,8 @@ export async function pickCounts(
     first: new Map(
       firsts.filter((r) => r.firstId).map((r) => [r.firstId!, Number(r.n)]),
     ),
-    sb: new Map(
-      sbs.filter((r) => r.teamId).map((r) => [r.teamId!, Number(r.n)]),
+    champion: new Map(
+      champions.filter((r) => r.teamId).map((r) => [r.teamId!, Number(r.n)]),
     ),
   };
 }

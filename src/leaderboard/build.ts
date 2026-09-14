@@ -1,7 +1,7 @@
 import {
   divisionPoints,
   gamePoints,
-  superbowlPoints,
+  championPoints,
   underdogBonus,
 } from '../scoring';
 import {
@@ -9,7 +9,7 @@ import {
   finishedGames,
   leaderboardRows,
   leagueOf,
-  superbowlWinner,
+  seasonChampion,
   type LeaderboardTeam,
 } from './query';
 
@@ -60,10 +60,10 @@ export async function buildLeaderboard(
     sbBet: isFinalGame || past,
   };
 
-  const [rows, games, sbWinner] = await Promise.all([
+  const [rows, games, champion] = await Promise.all([
     leaderboardRows(leagueId, season, { ...revealed, viewerId }),
     finishedGames(leagueId, season),
-    superbowlWinner(season),
+    seasonChampion(season),
   ]);
 
   const entries = rows.map((row) => {
@@ -102,7 +102,7 @@ export async function buildLeaderboard(
 
     const sbBet = {
       team: row.sbBet?.team ?? {},
-      points: superbowlPoints(row.sbBet, sbWinner),
+      points: championPoints(row.sbBet, champion),
     };
 
     const sums = {

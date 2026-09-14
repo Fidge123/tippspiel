@@ -6,11 +6,11 @@ import { basePath } from '../config';
 import {
   divisions,
   myDivisionBets,
-  mySuperbowlBet,
+  myChampionBet,
   pickCounts,
   seasonStart,
 } from '../division/query';
-import { setDivisionBet, setSuperbowlBet } from '../division/writes';
+import { setChampionBet, setDivisionBet } from '../division/writes';
 import { activeLeagueId, leaguesOfUser } from '../leagues/query';
 import { Division } from '../views/Division';
 import { Layout } from '../views/Layout';
@@ -54,10 +54,10 @@ async function render(
     );
   }
 
-  const [all, picks, superbowl, counts, start] = await Promise.all([
+  const [all, picks, champion, counts, start] = await Promise.all([
     divisions(league.season),
     myDivisionBets(league.id, league.season, user.id),
-    mySuperbowlBet(league.id, league.season, user.id),
+    myChampionBet(league.id, league.season, user.id),
     pickCounts(league.id, league.season),
     seasonStart(league.season),
   ]);
@@ -67,7 +67,7 @@ async function render(
       <Division
         divisions={all}
         picks={picks}
-        superbowl={superbowl}
+        champion={champion}
         counts={counts}
         closed={!start || new Date() >= start}
         errors={errors}
@@ -117,7 +117,7 @@ division.post(
 );
 
 division.post(
-  '/division/superbowl',
+  '/division/champion',
   zValidator('form', z.object({ team: z.string().min(1) })),
   async (c) => {
     const user = c.get('user');
@@ -130,7 +130,7 @@ division.post(
       return render(c, new Map());
     }
 
-    const result = await setSuperbowlBet(
+    const result = await setChampionBet(
       user.id,
       league.id,
       league.season,
@@ -139,6 +139,6 @@ division.post(
 
     return result.ok
       ? c.redirect(`${basePath}/division`, 303)
-      : render(c, new Map([['superbowl', MESSAGES[result.reason]]]), 400);
+      : render(c, new Map([['champion', MESSAGES[result.reason]]]), 400);
   },
 );

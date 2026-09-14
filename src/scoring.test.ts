@@ -3,7 +3,7 @@ import { describe, expect, it } from 'bun:test';
 import {
   divisionPoints,
   gamePoints,
-  superbowlPoints,
+  championPoints,
   underdogBonus,
 } from './scoring';
 
@@ -223,26 +223,26 @@ describe('divisionPoints', () => {
   });
 });
 
-describe('superbowlPoints', () => {
+describe('championPoints', () => {
   const kc = { id: 'kc' };
   const sf = { id: 'sf' };
 
   it('gives 20 for the correct pick', () => {
-    expect(superbowlPoints({ team: kc }, kc)).toBe(20);
+    expect(championPoints({ team: kc }, kc)).toBe(20);
   });
 
   it('gives 0 for a wrong pick', () => {
-    expect(superbowlPoints({ team: sf }, kc)).toBe(0);
+    expect(championPoints({ team: sf }, kc)).toBe(0);
   });
 
-  it('gives 0 while the Super Bowl has no winner yet', () => {
-    expect(superbowlPoints({ team: sf }, undefined)).toBe(0);
-    expect(superbowlPoints({ team: sf }, null)).toBe(0);
+  it('gives 0 while the final has no winner yet', () => {
+    expect(championPoints({ team: sf }, undefined)).toBe(0);
+    expect(championPoints({ team: sf }, null)).toBe(0);
   });
 
   it('gives 0 without a bet', () => {
-    expect(superbowlPoints(undefined, kc)).toBe(0);
-    expect(superbowlPoints(null, kc)).toBe(0);
-    expect(superbowlPoints({ team: null }, kc)).toBe(0);
+    expect(championPoints(undefined, kc)).toBe(0);
+    expect(championPoints(null, kc)).toBe(0);
+    expect(championPoints({ team: null }, kc)).toBe(0);
   });
 });

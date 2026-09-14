@@ -100,7 +100,7 @@ export function divisionPoints(bet: DivisionBet): number {
   return score;
 }
 
-export function superbowlPoints(
+export function championPoints(
   bet?: { team?: Team | null } | null,
   winner?: Team | null,
 ): number {

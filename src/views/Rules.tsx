@@ -127,9 +127,9 @@ export const Rules: FC = () => (
       </details>
     </section>
     <section class="py-2">
-      <h2 class="py-4 font-bold text-l">Divisions und Superbowl</h2>
+      <h2 class="py-4 font-bold text-l">Divisions und Champion</h2>
       <p>
-        Divisions und Superbowl müssen vor dem Start des ersten Saisonspiels
+        Divisions und Champion müssen vor dem Start des ersten Saisonspiels
         getippt werden.
       </p>
       <ul class="py-2 pl-12 list-disc list-outside">
@@ -143,8 +143,7 @@ export const Rules: FC = () => (
           Extrapunkte.
         </li>
         <li>
-          Ein korrekter Tipp vor der Saison auf den Sieger des Superbowl gibt 20
-          Punkte.
+          Ein korrekter Tipp vor der Saison auf den Champion gibt 20 Punkte.
         </li>
       </ul>
       <details>

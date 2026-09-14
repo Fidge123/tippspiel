@@ -105,7 +105,7 @@ export async function setDivisionBet(
   return { ok: true };
 }
 
-export async function setSuperbowlBet(
+export async function setChampionBet(
   userId: string,
   leagueId: string,
   year: number,

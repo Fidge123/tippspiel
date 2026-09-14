@@ -24,7 +24,7 @@ export const season2023: Season = {
     { label: 'week 1 mid-game', at: '2023-09-10T18:15:00.000Z' },
     // The last in-season recording of 2023.
     { label: 'week 7 complete', at: '2023-10-27T06:00:00.000Z' },
-    { label: 'super bowl week before kickoff', at: '2024-02-11T12:00:00.000Z' },
-    { label: 'after the super bowl', at: '2024-03-04T12:00:00.000Z' },
+    { label: 'final week before kickoff', at: '2024-02-11T12:00:00.000Z' },
+    { label: 'after the final', at: '2024-03-04T12:00:00.000Z' },
   ],
 };

@@ -17,5 +17,5 @@ Needs `DATABASE_URL` and read access to the `nfl-tippspiel` bucket: `R2_API`, `R
 Until it has run, finished seasons are still scored against whatever the last import wrote, because their seeds are not in the database at all.
 `src/schedule/query.ts` deliberately falls back to the `team` row rather than showing nothing, so running this is what completes #40 rather than what starts it.
 
-It takes each season's standings as recorded shortly after that season's Super Bowl, which is the last point before the next season's first import moves the seeds again.
+It takes each season's standings as recorded shortly after that season's final, which is the last point before the next season's first import moves the seeds again.
 Check the printed seeds against the real final standings for at least one season before writing.

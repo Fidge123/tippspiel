@@ -10,7 +10,7 @@ import {
   notify,
   type WeekKey,
 } from './espn';
-import type { NFLEvent, Team } from './espn.types';
+import type { EspnEvent, Team } from './espn.types';
 import { recordToFile } from './record';
 
 export const regularSeason = { seasonType: 2, weeks: 18 };
@@ -147,7 +147,7 @@ export async function importWeek(key: WeekKey): Promise<void> {
   }
 }
 
-async function upsertGame(event: NFLEvent, weekId: string): Promise<void> {
+async function upsertGame(event: EspnEvent, weekId: string): Promise<void> {
   const competition = event.competitions[0];
   const home = competition?.competitors.find((c) => c.homeAway === 'home');
   const away = competition?.competitors.find((c) => c.homeAway === 'away');
