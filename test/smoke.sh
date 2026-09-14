@@ -68,6 +68,7 @@ esac
 
 # A rejected login must come back as a rendered page, not a JSON error.
 rejected=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+  -H 'sec-fetch-site: same-origin' \
   --data 'email=nobody@example.com&password=not-a-real-password' \
   "${BASE}/login")
 if [ "$rejected" != "401" ]; then

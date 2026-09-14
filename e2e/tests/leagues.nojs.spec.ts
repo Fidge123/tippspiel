@@ -1,5 +1,5 @@
 import { league, users } from '../harness/seed';
-import { expect, expectNoScript, login, test } from './nojs';
+import { expect, expectNoScript, login, post, test } from './nojs';
 
 function row(page: import('@playwright/test').Page, name: string) {
   return page.getByRole('row').filter({ hasText: name });
@@ -32,9 +32,7 @@ test.describe('League administration, without JavaScript', () => {
   test('refuses a name under three characters', async ({ page }) => {
     await login(page, users.alice);
 
-    const response = await page.request.post('./leagues/create', {
-      form: { name: 'ab' },
-    });
+    const response = await post(page, './leagues/create', { name: 'ab' });
 
     expect(response.status()).toBe(400);
     expect(await response.text()).toContain('mindestens 3 Zeichen');

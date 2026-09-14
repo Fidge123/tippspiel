@@ -1,6 +1,6 @@
 import { games, teams, users, weeks } from '../harness/seed';
 import { activeLeague } from './app';
-import { expect, expectNoScript, login, pick, test } from './nojs';
+import { expect, expectNoScript, login, pick, post, test } from './nojs';
 
 test.describe('Betting, without JavaScript', () => {
   test('a bet on an upcoming game survives a reload', async ({ page }) => {
@@ -57,14 +57,12 @@ test.describe('Betting, without JavaScript', () => {
     await login(page, users.alice);
 
     // The form is gone once a game starts, so a stale page would post like this.
-    const response = await page.request.post('./bet', {
-      form: {
-        game: games.finishedFirst.id,
-        league: await activeLeague(page),
-        week: weeks.finished.id,
-        winner: 'home',
-        pointDiff: '3',
-      },
+    const response = await post(page, './bet', {
+      game: games.finishedFirst.id,
+      league: await activeLeague(page),
+      week: weeks.finished.id,
+      winner: 'home',
+      pointDiff: '3',
     });
 
     expect(response.status()).toBe(400);

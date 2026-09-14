@@ -1,4 +1,5 @@
 import {
+  type APIResponse,
   expect,
   type Locator,
   type Page,
@@ -23,6 +24,18 @@ export async function login(
   await page.getByLabel('E-Mail').fill(user.email);
   await page.getByLabel('Passwort').fill(password);
   await page.getByRole('button', { name: 'Einloggen' }).click();
+}
+
+/** The request context sends none of the fetch metadata the CSRF check looks for. */
+export function post(
+  page: Page,
+  path: string,
+  form: Record<string, string>,
+): Promise<APIResponse> {
+  return page.request.post(path, {
+    form,
+    headers: { 'sec-fetch-site': 'same-origin' },
+  });
 }
 
 /** The radios are sr-only, so the label is the clickable target. */

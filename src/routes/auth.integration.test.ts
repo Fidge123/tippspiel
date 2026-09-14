@@ -57,7 +57,10 @@ async function insertUser(
 function form(fields: Record<string, string>): RequestInit {
   return {
     method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      'sec-fetch-site': 'same-origin',
+    },
     body: new URLSearchParams(fields).toString(),
   };
 }
@@ -138,6 +141,7 @@ describe('login', () => {
         ...form({ email: 'nobody@example.com', password: PASSWORD }),
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
+          'sec-fetch-site': 'same-origin',
           'x-forwarded-for': '203.0.113.7',
         },
       });
@@ -159,7 +163,7 @@ describe('logout', () => {
 
     const response = await app.request(`${BASE}/logout`, {
       method: 'POST',
-      headers: { cookie: cookiesFrom(login) },
+      headers: { cookie: cookiesFrom(login), 'sec-fetch-site': 'same-origin' },
     });
 
     expect(response.status).toBe(303);

@@ -118,7 +118,10 @@ async function seed() {
   // Logs in for real, so these break if the session format changes.
   const login = await app.request(`${BASE}/login`, {
     method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      'sec-fetch-site': 'same-origin',
+    },
     body: new URLSearchParams({
       email: 'alice@example.invalid',
       password: PASSWORD,
@@ -135,6 +138,7 @@ function form(fields: Record<string, string>): RequestInit {
     method: 'POST',
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
+      'sec-fetch-site': 'same-origin',
       cookie,
     },
     body: new URLSearchParams(fields).toString(),

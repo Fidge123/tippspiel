@@ -105,3 +105,45 @@ describe('routing', () => {
     expect((await app.request('/impressum')).status).toBe(404);
   });
 });
+
+describe('the security headers', () => {
+  it('allows nothing the pages do not use', async () => {
+    const csp = (await app.request('/tippspiel/impressum')).headers.get(
+      'content-security-policy',
+    );
+
+    expect(csp).toContain("default-src 'none'");
+    expect(csp).toContain("form-action 'self'");
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toContain("base-uri 'none'");
+    expect(csp).toContain("img-src 'self' https://nfl-tippspiel.de");
+  });
+
+  it('refuses framing and sniffing, and asks for HTTPS', async () => {
+    const { headers } = await app.request('/tippspiel/impressum');
+
+    expect(headers.get('x-frame-options')).toBe('DENY');
+    expect(headers.get('x-content-type-options')).toBe('nosniff');
+    expect(headers.get('referrer-policy')).toBe('no-referrer');
+    expect(headers.get('strict-transport-security')).toBe('max-age=31536000');
+  });
+});
+
+describe('the CSRF check', () => {
+  it('refuses a post that claims no same-origin form', async () => {
+    const response = await app.request('/tippspiel/logout', {
+      method: 'POST',
+    });
+
+    expect(response.status).toBe(403);
+  });
+
+  it('accepts one from the configured site', async () => {
+    const response = await app.request('/tippspiel/logout', {
+      method: 'POST',
+      headers: { origin: 'https://nfl-tippspiel.de' },
+    });
+
+    expect(response.status).toBe(303);
+  });
+});

@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
+import { csrf } from 'hono/csrf';
+import { secureHeaders } from 'hono/secure-headers';
 import { currentUser, type Variables } from './auth/middleware';
-import { basePath } from './config';
+import { basePath, imageUrl, siteUrl } from './config';
 import { isDatabaseReachable } from './db/kysely';
 import { auth } from './routes/auth';
 import { leaderboard } from './routes/leaderboard';
@@ -16,6 +18,28 @@ import { Layout } from './views/Layout';
 export const app = new Hono<{ Variables: Variables }>({
   strict: false,
 }).basePath(basePath);
+
+app.use(
+  '*',
+  secureHeaders({
+    contentSecurityPolicy: {
+      defaultSrc: ["'none'"],
+      // Team colours are per-team, so the buttons carry a style attribute.
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", new URL(imageUrl).origin],
+      manifestSrc: ["'self'"],
+      formAction: ["'self'"],
+      baseUri: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+    xFrameOptions: 'DENY',
+    // Without includeSubDomains, because this app does not speak for its siblings.
+    strictTransportSecurity: 'max-age=31536000',
+  }),
+);
+
+// Behind the proxy the request scheme is http, so the browser origin never matches it.
+app.use('*', csrf({ origin: new URL(siteUrl).origin }));
 
 app.get('/health', async (c) => {
   const database = await isDatabaseReachable();

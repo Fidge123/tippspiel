@@ -1,5 +1,5 @@
 import { users } from '../harness/seed';
-import { expect, expectNoScript, login, test } from './nojs';
+import { expect, expectNoScript, login, post, test } from './nojs';
 
 // Dana is in no league, so her settings cannot disturb the specs that read Alice.
 test.describe('Account settings, without JavaScript', () => {
@@ -19,9 +19,7 @@ test.describe('Account settings, without JavaScript', () => {
   test('refuses an empty name', async ({ page }) => {
     await login(page, users.newcomer);
 
-    const response = await page.request.post('./account/name', {
-      form: { name: '   ' },
-    });
+    const response = await post(page, './account/name', { name: '   ' });
 
     expect(response.status()).toBe(400);
     expect(await response.text()).toContain('darf nicht leer sein');
