@@ -64,6 +64,17 @@ Run `bun ci` instead of `bun run deploy` when you need the test tooling on the b
 
 Confirm it survives a reboot rather than assuming it: `systemctl reboot`, then `curl -sf localhost:5002/tippspiel/health`.
 
+## Monitoring
+
+`/tippspiel/health` is reachable from anywhere, because the monitoring runs on another machine.
+Restricting it to `127.0.0.1` would mean the one outage that matters most, this machine being unreachable, is the one outage the check cannot report.
+
+It answers `200` with `{"status":"ok","database":true}` while the database is reachable, and `503` with `"degraded"` when it is not, so watching the status code is enough.
+The body names no internals and the check behind it is a single `SELECT 1`, which is cheaper than any page that was already public.
+
+Point the external check at `https://nfl-tippspiel.de/tippspiel/health`.
+It goes through the same `location` block as the rest of the application, so there is nothing to keep in step when the proxy configuration changes.
+
 ## Scheduled jobs
 
 The five jobs run inside the server process on `Bun.cron`, on the schedules the Nest `@Cron` decorators carried, read in the server's local time zone.
