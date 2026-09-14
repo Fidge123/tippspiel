@@ -1,8 +1,7 @@
 import { users } from '../harness/seed';
 import { expect, expectNoScript, login, test } from './nojs';
 
-// Dana is in no league, so changing her name and settings cannot disturb the
-// flows that read Alice out of the same shared database.
+// Dana is in no league, so her settings cannot disturb the specs that read Alice.
 test.describe('Account settings, without JavaScript', () => {
   test('renames the user and shows it in the header menu', async ({ page }) => {
     await login(page, users.newcomer);

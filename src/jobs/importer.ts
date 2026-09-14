@@ -155,8 +155,7 @@ async function upsertGame(event: NFLEvent, weekId: string): Promise<void> {
     throw new Error(`ESPN's event ${event.uid} names no home and away pair`);
   }
 
-  // The Pro Bowl fields teams that are in no division and therefore in no team
-  // row, so the reference has to drop rather than fail the import.
+  // Pro Bowl teams are in no division, and so in no team row.
   const known = new Set(
     (
       await db()

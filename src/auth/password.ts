@@ -18,10 +18,7 @@ export function newToken(): string {
   return randomBytes(KEY_LENGTH).toString('hex');
 }
 
-/**
- * Hashes even when there is no stored credential, so a missing user and a wrong
- * password take the same time.
- */
+/** Hashes even with no stored credential, so a missing user costs the same time. */
 export async function verifyPassword(
   password: string,
   stored: { password: string; salt: string } | undefined,

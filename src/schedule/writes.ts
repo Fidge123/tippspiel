@@ -97,8 +97,7 @@ export async function setDoubler(
     .where('betDoubler.leagueId', '=', leagueId)
     .executeTakeFirst();
 
-  // You may move the doubler only while the game it is currently on has not
-  // started, and only onto a game that has not started.
+  // Both the game it is on and the game it moves to must not have started.
   if (
     now() >= game.date ||
     (existing?.gameDate && now() >= existing.gameDate)
@@ -190,8 +189,7 @@ export async function hiddenSettings(
     hideByDefault?: boolean;
   };
 
-  // Defaults to on: a user who has never touched the toggle expects not to be
-  // shown a score they have not watched yet.
+  // Defaults to on: an untouched toggle must not reveal an unwatched score.
   return {
     hidden: settings.hidden ?? {},
     hideByDefault: settings.hideByDefault ?? true,

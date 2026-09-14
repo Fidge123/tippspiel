@@ -56,8 +56,7 @@ test.describe('Betting, without JavaScript', () => {
   }) => {
     await login(page, users.alice);
 
-    // The form is gone once a game starts, so the late POST is made directly,
-    // which is what a stale page or a slow submit would do.
+    // The form is gone once a game starts, so a stale page would post like this.
     const response = await page.request.post('./bet', {
       form: {
         game: games.finishedFirst.id,

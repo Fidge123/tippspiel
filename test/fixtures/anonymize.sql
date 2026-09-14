@@ -13,7 +13,7 @@ SET
   name = 'Player ' || numbered.n,
   email = 'player-' || numbered.n || '@example.invalid',
   salt = '00000000000000000000000000000000',
-  -- scrypt(TEST_PASSWORD, salt) with UserDataService's parameters.
+  -- scrypt(TEST_PASSWORD, salt) with the parameters in src/auth/password.ts.
   -- Must stay in step with TEST_PASSWORD in test/replay/seed.ts.
   password = 'c9bccd8cac9db122f8ff459047e84bb84752effff5d088f59179d1ee22856fd1'
              '23a7b24e2c8144ddc094efcb6a7638f4157738f05c6cafd92de2f5927b5fbf5b'

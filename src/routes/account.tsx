@@ -14,8 +14,7 @@ import { Layout } from '../views/Layout';
 
 export const account = new Hono<{ Variables: Variables }>();
 
-// An unchecked box sends no field at all, so the key has to be optional and
-// not merely allowed to be undefined.
+// An unchecked box sends no field, so the key must be optional, not just undefined.
 const checkbox = z
   .literal('on')
   .optional()

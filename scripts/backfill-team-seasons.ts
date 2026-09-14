@@ -5,15 +5,9 @@ import { newestAtOrBefore, snapshotsOf } from '../test/replay/corpus';
 import { getJSON, missingCredentials } from '../test/replay/r2';
 
 /**
- * Recovers per-season team state for seasons that finished before team_season
- * existed. The team row only ever held the newest import, so the seeds those
- * seasons were scored against are not in the database at all; they are in the
- * recorded ESPN responses in R2.
- *
- *   bun run scripts/backfill-team-seasons.ts 2022 2023 2024
- *
- * Dry run by default. Pass --write to apply, and read the diff it prints first:
- * this changes historical scores, which is the point and also the risk.
+ * Recovers per-season team state from the recorded ESPN responses in R2, because the team row only ever held the newest import.
+ * Usage: bun run scripts/backfill-team-seasons.ts [--write] 2022 2023 2024
+ * Dry run by default; --write rewrites historical scores, so read the printed diff first.
  */
 
 const AS_OF_MONTH_DAY = '-02-20T00:00:00Z';
@@ -37,8 +31,7 @@ async function main(): Promise<void> {
   const teams = await snapshotsOf('teams-');
 
   for (const year of years) {
-    // A season's final standings: after the Super Bowl, before the next
-    // season's first import moves the seeds again.
+    // The final standings: after the Super Bowl, before the next import moves the seeds.
     const asOf = new Date(`${year + 1}${AS_OF_MONTH_DAY}`);
     const divisions = [...new Set(teams.map((snapshot) => snapshot.group))];
     let written = 0;

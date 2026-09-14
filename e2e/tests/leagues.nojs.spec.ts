@@ -71,8 +71,7 @@ test.describe('League administration, without JavaScript', () => {
     await login(page, users.alice);
     await page.goto('./leagues');
 
-    // Other specs create leagues in the same shared database, so everything
-    // here is scoped to the seeded one.
+    // Other specs add leagues to the same database, so this scopes to the seeded one.
     const liga = row(page, league);
     await liga.locator('summary').filter({ hasText: 'Anpassen' }).click();
     await liga.getByLabel('Zum Löschen den Namen eingeben').fill('falsch');

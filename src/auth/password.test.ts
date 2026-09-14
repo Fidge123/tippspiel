@@ -2,8 +2,7 @@ import { scryptSync } from 'node:crypto';
 import { describe, expect, it } from 'bun:test';
 import { hash, KEY_LENGTH, verifyPassword } from './password';
 
-// Bun and Node must derive the same key for the parameters the stored rows were
-// written with, or every existing password stops working.
+// Bun must derive the key Node did for the stored parameters, or logins break.
 const SALT = Buffer.from('a'.repeat(KEY_LENGTH * 2), 'hex');
 const PASSWORD = 'correct horse battery staple';
 

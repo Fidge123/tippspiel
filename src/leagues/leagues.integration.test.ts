@@ -190,8 +190,7 @@ describe('removing a member', () => {
 
     await w.removeMember(league, member, admin);
 
-    // Otherwise they keep voting in a league they have left: the vote counts
-    // and the underdog bonus are computed over every bet on a game.
+    // The vote counts and the underdog bonus are computed over every bet on a game.
     const left = await db().selectFrom('superbowlBet').selectAll().execute();
     expect(left).toHaveLength(1);
     expect(left[0]!.userId).toBe(admin);

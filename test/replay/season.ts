@@ -10,15 +10,13 @@ export interface Season {
 }
 
 // No 2023 scoreboard was recorded between 2023-10-27 and 2024-03.
-// An as-of date in that window is served the October recording, in which the
-// later games are still STATUS_SCHEDULED.
+// An as-of date in that window is served the October recording, where later games are still STATUS_SCHEDULED.
 export const season2023: Season = {
   year: 2023,
   regularWeeks: 18,
   postWeeks: [1, 2, 3, 5],
   backupKey: 'database_backup/2024-03-03.gz',
-  // The regular weeks are structurally alike, with no ties all season, the same
-  // five pointDiff values and doublers and un-placed bets throughout.
+  // The regular weeks are alike: no ties, the same five pointDiff values throughout.
   // The playoff weeks differ, so the first and the last are kept in full.
   detailWeeks: ['2023-2-1', '2023-3-1', '2023-3-5'],
   asOfDates: [

@@ -17,8 +17,8 @@ import { seedFromBackup } from './seed';
 import { startDatabase, type TestDatabase } from '../support/database';
 import * as mail from '../support/mail';
 
-// The factory returns the module this file already imports. Importing it again
-// from inside the factory deadlocks, because mock.module is still resolving.
+// The factory returns the module this file already imports.
+// Importing it again from inside the factory deadlocks while mock.module resolves.
 await mock.module('../../src/email/send', () => mail);
 
 const season: Season = season2023;
@@ -148,8 +148,7 @@ function weekLabel(weekId: string): string {
   return `${year}-${seasontype}-${(week ?? '').padStart(2, '0')}`;
 }
 
-// A fixed viewer keeps the reveal rules, which depend on who is asking,
-// deterministic across runs.
+// A fixed viewer keeps the reveal rules deterministic across runs.
 async function leaguesOf(url: string, year: number) {
   const client = new Client({ connectionString: url });
   await client.connect();

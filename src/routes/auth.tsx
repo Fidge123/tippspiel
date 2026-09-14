@@ -142,9 +142,8 @@ auth.post(
       }),
     }).catch((error) => console.error(error));
 
-    // An account nobody can verify is an account nobody can log into, so a
-    // failed verification mail undoes the registration instead of reporting
-    // success. The admin alert above is not worth failing a signup over.
+    // An account nobody can verify is one nobody can log into, so registration rolls back.
+    // The admin alert above is not worth failing a signup over.
     try {
       await sendEmail({
         to: email,
@@ -262,8 +261,7 @@ auth.post(
       }).catch((error) => console.error(error));
     }
 
-    // Says the same thing either way, so the form cannot be used to find out
-    // which addresses have an account.
+    // The same answer either way, so the form cannot enumerate accounts.
     return c.html(
       <Layout title="Einloggen" loginAction="register">
         <Login notice="Falls ein Konto mit dieser E-Mail existiert, wurde ein Link zum Zurücksetzen verschickt." />

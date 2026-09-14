@@ -31,10 +31,7 @@ function s3(): Bun.S3Client | undefined {
   return client;
 }
 
-/**
- * The recorded responses are the source corpus for the golden master, so this
- * failing is worth a log line but never worth failing an import over.
- */
+/** The corpus the golden master replays, so failing here is a log line, never a failed import. */
 export async function recordToFile(name: string, data: unknown): Promise<void> {
   if (env.SKIP_BACKUP) {
     return;

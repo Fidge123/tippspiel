@@ -2,8 +2,7 @@
 
 @source '../src';
 
-/* theme.screens in the Tailwind 3 config replaced the defaults rather than
-   extending them, so the namespace is reset before sm and md are declared. */
+/* The namespace is reset, so sm and md replace the defaults instead of extending them. */
 @theme {
   --breakpoint-*: initial;
   --breakpoint-sm: 448px;
@@ -15,8 +14,7 @@
   --container-39r: 39rem;
 }
 
-/* Not named grid-cols-*: v4 has a built-in numeric grid-cols-<n> that wins,
-   and it means n equal columns, which silently breaks this layout. */
+/* Not grid-cols-*: the built-in numeric grid-cols-<n> wins and means n equal columns. */
 @utility grid-fill-23 {
   grid-template-columns: repeat(auto-fill, minmax(23rem, 1fr));
 }

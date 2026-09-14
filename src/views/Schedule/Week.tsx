@@ -88,8 +88,7 @@ export const Week: FC<{
         </section>
       ))}
 
-      {/* The doubler radios above belong to this form through their form
-          attribute, because a form cannot be nested inside the per-game ones. */}
+      {/* The doubler radios above join this form by their form attribute, because a form cannot nest inside the per-game ones. */}
       <form
         method="post"
         action={`${basePath}/doubler`}

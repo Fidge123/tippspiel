@@ -115,8 +115,7 @@ async function seed() {
     .values({ leagueId: league, userId: alice })
     .execute();
 
-  // Logs in for real rather than forging a cookie, so these tests break if the
-  // session format changes.
+  // Logs in for real, so these break if the session format changes.
   const login = await app.request(`${BASE}/login`, {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },

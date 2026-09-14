@@ -45,10 +45,7 @@ const teamColumns = [
   'team.logo as logo',
 ] as const;
 
-/**
- * Seeds come from team_season for the bet's year, not from the team row, so a
- * finished season is not rescored by the next import.
- */
+/** Seeds come from team_season for the bet's year, so the next import cannot rescore it. */
 function pick(
   column: 'firstId' | 'secondId' | 'thirdId' | 'fourthId',
   year: number,
@@ -164,8 +161,7 @@ export async function leaderboardRows(
     ])
     .execute();
 
-  // The reveal rules are per viewer, so they are applied after the read rather
-  // than folded into it: hiding is about who is asking, not about the data.
+  // Hiding is about who is asking, so the reveal rules apply after the read.
   return rows.map((row) => ({
     ...row,
     divBets:

@@ -16,8 +16,7 @@ const { buildLeaderboard } = await import('./build');
 const { hash, newSalt } = await import('../auth/password');
 
 const SEASON = 2026;
-// league, current week, the one member+bets+divBets+sbBet read, finished
-// games, and the Super Bowl winner.
+// League, current week, the member read, finished games, Super Bowl winner.
 const EXPECTED_QUERIES = 5;
 const DIVISION = 'AFC North';
 const TEAMS = ['BAL', 'CIN', 'CLE', 'PIT'];

@@ -22,8 +22,7 @@ test.describe('The leaderboard, without JavaScript', () => {
     await login(page, users.alice);
     await page.goto('./leaderboard');
 
-    // details/summary, so the content is in the document and the browser
-    // toggles it natively.
+    // details/summary keeps the content in the document whether open or not.
     const stake = page.locator('summary').filter({ hasText: 'Einsatz' });
     await expect(stake).toBeVisible();
 

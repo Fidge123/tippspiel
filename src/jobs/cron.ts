@@ -1,9 +1,8 @@
 import { type JobName, JOBS, runJob, SCHEDULES } from './registry';
 
 /**
- * A rejected Bun.cron handler reaches unhandledRejection, which ends the web
- * server. Swallowing here is narrower than a global listener that would also
- * hide real bugs.
+ * A rejected Bun.cron handler reaches unhandledRejection, which ends the web server.
+ * Swallowing here is narrower than a global listener that would hide real bugs too.
  */
 export async function guard(
   name: string,

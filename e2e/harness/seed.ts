@@ -82,8 +82,7 @@ async function seedTeams(client: Client): Promise<void> {
   }
 }
 
-// Kickoffs sit days away from now so that neither deadline nor the score
-// import that follows a kickoff depends on when the suite runs.
+// Kickoffs sit days from now, so no deadline depends on when the suite runs.
 async function seedSchedule(client: Client): Promise<void> {
   const now = Date.now();
   await createWeek(client, weeks.finished, 1, now - 9 * days, now - 2 * days);

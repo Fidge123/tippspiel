@@ -32,8 +32,7 @@ export function inspect(env: Env): Finding[] {
     fatal('DATABASE_URL', 'is not a postgres:// or postgresql:// url');
   }
 
-  // An unset secret is not a missing feature but a forgeable session, so it is
-  // fatal anywhere the deployment is not already declaring itself insecure.
+  // An unset secret is a forgeable session, not a missing feature.
   const secret = env.COOKIE_SECRET;
   if (
     (!secret || secret === DEV_COOKIE_SECRET) &&
@@ -51,8 +50,7 @@ export function inspect(env: Env): Finding[] {
     fatal('PORT', `is not a number: ${env.PORT}`);
   }
 
-  // Number('') and Number('abc') both reach the queries as NaN, which matches
-  // no season at all rather than failing.
+  // Number('abc') reaches the queries as NaN, which matches nothing rather than failing.
   if (env.SEASON !== undefined && !/^\d{4}$/.test(env.SEASON)) {
     fatal('SEASON', `is not a four-digit year: ${env.SEASON}`);
   }

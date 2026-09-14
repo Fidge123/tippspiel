@@ -4,12 +4,10 @@ import { basePath, cookieSecret, secureCookies } from '../config';
 
 export const SESSION_COOKIE = 'session';
 
-// Obsolete, but it was set for 290 days and browsers keep sending it until it
-// is cleared.
+// Obsolete, but it was set for 290 days and browsers keep sending it until cleared.
 const LEGACY_COOKIE = 'refreshToken';
 
-// Lax rather than Strict: Strict drops the cookie when the user arrives from an
-// emailed verification or reset link, which is how those flows are entered.
+// Strict would drop the cookie on the emailed verification and reset links.
 const options = {
   httpOnly: true,
   secure: secureCookies,

@@ -182,8 +182,7 @@ export async function removeMember(
   await db()
     .transaction()
     .execute(async (trx) => {
-      // Their bets go too: the vote counts and the underdog bonus are computed
-      // over every bet on a game, not over the current members.
+      // The vote counts and the underdog bonus read every bet, not the members.
       for (const table of [
         'betDoubler',
         'bet',

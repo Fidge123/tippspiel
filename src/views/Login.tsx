@@ -39,8 +39,7 @@ export const Login: FC<{ error?: string; notice?: string }> = ({
       </button>
 
       <div class="flex flex-col items-center">
-        {/* Shares the form so the address is carried over, and skips validation
-            because the password field is irrelevant to a reset. */}
+        {/* Shares the form to carry the address over, and skips validation because the password is irrelevant to a reset. */}
         <button
           type="submit"
           formaction={`${basePath}/reset/request`}

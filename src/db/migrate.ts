@@ -12,8 +12,7 @@ export async function migrateToLatest(): Promise<void> {
   const migrator = new Migrator({
     db: db(),
     provider: { getMigrations: async () => migrations },
-    // 000 sorts before 001 but was written after it, so a fresh database builds
-    // the schema first while the deployed ones keep 001 applied.
+    // 000 sorts before 001 but was written after it, so both orders must apply.
     allowUnorderedMigrations: true,
   });
 
@@ -30,8 +29,7 @@ export async function migrateToLatest(): Promise<void> {
   }
 }
 
-// Run as a deploy step rather than from the request entry, so a failed
-// migration is a failed deploy instead of a half-started server.
+// A deploy step, so a failed migration is a failed deploy, not a half-started server.
 if (import.meta.main) {
   await migrateToLatest();
   await closeDatabase();

@@ -49,10 +49,7 @@ export interface ScheduleWeekView {
   doublerGameId: string | null;
 }
 
-/**
- * Records come from team_season for the year on screen, so a 2022 week shows
- * the 2022 records rather than today's.
- */
+/** Records come from team_season for the year on screen, not today's. */
 export async function teamsForSeason(
   year: number,
 ): Promise<Map<string, TeamView>> {

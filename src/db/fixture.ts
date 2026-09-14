@@ -178,8 +178,7 @@ export async function truncate(): Promise<void> {
             "week", "team_season", "team", "division" cascade`.execute(db());
 }
 
-// Runnable so the smoke test can stand up a schema of its own instead of
-// depending on the integration suite having run first.
+// So the smoke test can build a schema without the integration suite.
 if (import.meta.main) {
   await createSchema();
   await closeDatabase();
