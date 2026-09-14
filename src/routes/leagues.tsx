@@ -1,7 +1,11 @@
 import { zValidator } from '@hono/zod-validator';
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
-import type { Variables } from '../auth/middleware';
+import {
+  type AuthedVariables,
+  requireUser,
+  type Variables,
+} from '../auth/middleware';
 import { basePath } from '../config';
 import {
   activeLeagueId,
@@ -15,7 +19,7 @@ import { Leagues } from '../views/Leagues';
 
 export const leagues = new Hono<{ Variables: Variables }>();
 
-type Ctx = Context<{ Variables: Variables }>;
+type Ctx = Context<{ Variables: AuthedVariables }>;
 
 const MESSAGES: Record<LeagueError, string> = {
   'not-admin': 'Dafür musst du Admin dieser Liga sein.',
@@ -32,10 +36,6 @@ const MESSAGES: Record<LeagueError, string> = {
 
 async function render(c: Ctx, error?: string, status: 200 | 400 = 200) {
   const user = c.get('user');
-  if (!user) {
-    return c.redirect(`${basePath}/login`, 303);
-  }
-
   const [mine, active] = await Promise.all([
     leaguesOfUser(user.id),
     activeLeagueId(user.id),
@@ -60,28 +60,24 @@ const leagueAndUser = z.object({
   user: z.string().min(1),
 });
 
-leagues.get('/leagues', (c) => render(c));
+leagues.get('/leagues', requireUser, (c) => render(c));
 
 leagues.post(
   '/leagues/create',
+  requireUser,
   zValidator('form', z.object({ name: z.string() })),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
     return act(c, await writes.createLeague(c.req.valid('form').name, user.id));
   },
 );
 
 leagues.post(
   '/leagues/rename',
+  requireUser,
   zValidator('form', z.object({ league: z.string().min(1), name: z.string() })),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
     const { league, name } = c.req.valid('form');
     return act(c, await writes.renameLeague(league, name, user.id));
   },
@@ -89,15 +85,13 @@ leagues.post(
 
 leagues.post(
   '/leagues/delete',
+  requireUser,
   zValidator(
     'form',
     z.object({ league: z.string().min(1), confirm: z.string() }),
   ),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
     const { league, confirm } = c.req.valid('form');
 
     const mine = await leaguesOfUser(user.id);
@@ -112,37 +106,35 @@ leagues.post(
 
 leagues.post(
   '/leagues/add',
+  requireUser,
   zValidator(
     'form',
     z.object({ league: z.string().min(1), email: z.string().email() }),
   ),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
     const { league, email } = c.req.valid('form');
     return act(c, await writes.addMember(league, email, user.id));
   },
 );
 
-leagues.post('/leagues/kick', zValidator('form', leagueAndUser), async (c) => {
-  const me = c.get('user');
-  if (!me) {
-    return c.redirect(`${basePath}/login`, 303);
-  }
-  const { league, user } = c.req.valid('form');
-  return act(c, await writes.removeMember(league, user, me.id));
-});
-
 leagues.post(
-  '/leagues/promote',
+  '/leagues/kick',
+  requireUser,
   zValidator('form', leagueAndUser),
   async (c) => {
     const me = c.get('user');
-    if (!me) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
+    const { league, user } = c.req.valid('form');
+    return act(c, await writes.removeMember(league, user, me.id));
+  },
+);
+
+leagues.post(
+  '/leagues/promote',
+  requireUser,
+  zValidator('form', leagueAndUser),
+  async (c) => {
+    const me = c.get('user');
     const { league, user } = c.req.valid('form');
     return act(c, await writes.promote(league, user, me.id));
   },
@@ -150,12 +142,10 @@ leagues.post(
 
 leagues.post(
   '/leagues/demote',
+  requireUser,
   zValidator('form', leagueAndUser),
   async (c) => {
     const me = c.get('user');
-    if (!me) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
     const { league, user } = c.req.valid('form');
     return act(c, await writes.demote(league, user, me.id));
   },
@@ -163,12 +153,10 @@ leagues.post(
 
 leagues.post(
   '/leagues/activate',
+  requireUser,
   zValidator('form', z.object({ league: z.string().min(1) })),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
     const { league } = c.req.valid('form');
 
     const mine = await leaguesOfUser(user.id);

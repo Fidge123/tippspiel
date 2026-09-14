@@ -1,7 +1,11 @@
 import { zValidator } from '@hono/zod-validator';
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
-import type { Variables } from '../auth/middleware';
+import {
+  type AuthedVariables,
+  requireUser,
+  type Variables,
+} from '../auth/middleware';
 import { basePath } from '../config';
 import { leaguesOf } from '../leaderboard/query';
 import { scheduleFor, teamsForSeason } from '../schedule/query';
@@ -54,7 +58,7 @@ const MESSAGES = {
   form: 'Bitte wähle ein Team und einen Einsatz zwischen 1 und 5.',
 } as const;
 
-type Ctx = Context<{ Variables: Variables }>;
+type Ctx = Context<{ Variables: AuthedVariables }>;
 
 async function renderSchedule(
   c: Ctx,
@@ -62,10 +66,6 @@ async function renderSchedule(
   status: 200 | 400 = 200,
 ) {
   const user = c.get('user');
-  if (!user) {
-    return c.redirect(`${basePath}/login`, 303);
-  }
-
   const league = await activeLeague(user.id, c.req.query('league'));
   if (!league) {
     return c.html(
@@ -98,7 +98,7 @@ async function renderSchedule(
   );
 }
 
-schedule.get('/', (c) => renderSchedule(c, new Map()));
+schedule.get('/', requireUser, (c) => renderSchedule(c, new Map()));
 
 const back = (
   c: { redirect: (url: string, status: 303) => Response },
@@ -107,6 +107,7 @@ const back = (
 
 schedule.post(
   '/bet',
+  requireUser,
   zValidator('form', betForm, async (result, c) => {
     if (result.success) {
       return undefined;
@@ -121,10 +122,6 @@ schedule.post(
   async (c) => {
     const { game, league, winner, pointDiff } = c.req.valid('form');
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
     const result = await setGameBet(user.id, league, game, winner, pointDiff);
     if (!result.ok) {
       return renderSchedule(c, new Map([[game, MESSAGES[result.reason]]]), 400);
@@ -136,16 +133,13 @@ schedule.post(
 
 schedule.post(
   '/doubler',
+  requireUser,
   zValidator('form', doublerForm, (result, c) =>
     result.success ? undefined : c.redirect(`${basePath}/`, 303),
   ),
   async (c) => {
     const { game, league, week } = c.req.valid('form');
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
     const result = await setDoubler(user.id, league, week, game);
     if (!result.ok) {
       return renderSchedule(c, new Map([[game, MESSAGES[result.reason]]]), 400);
@@ -157,16 +151,13 @@ schedule.post(
 
 schedule.post(
   '/doubler/remove',
+  requireUser,
   zValidator('form', removeForm, (result, c) =>
     result.success ? undefined : c.redirect(`${basePath}/`, 303),
   ),
   async (c) => {
     const { league, week } = c.req.valid('form');
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
     const result = await removeDoubler(user.id, league, week);
     if (!result.ok) {
       return renderSchedule(c, new Map([[week, MESSAGES[result.reason]]]), 400);
@@ -178,16 +169,13 @@ schedule.post(
 
 schedule.post(
   '/hidden',
+  requireUser,
   zValidator('form', hiddenForm, (result, c) =>
     result.success ? undefined : c.redirect(`${basePath}/`, 303),
   ),
   async (c) => {
     const { week, hidden } = c.req.valid('form');
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
     await setHidden(user.id, week, hidden === 'on');
 
     return back(c, `#week-${week}`);

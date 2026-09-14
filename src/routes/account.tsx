@@ -7,7 +7,7 @@ import {
   setHideByDefault,
   setSendReminder,
 } from '../account/writes';
-import type { Variables } from '../auth/middleware';
+import { requireUser, type Variables } from '../auth/middleware';
 import { basePath } from '../config';
 import { Account } from '../views/Account';
 import { Layout } from '../views/Layout';
@@ -20,11 +20,8 @@ const checkbox = z
   .optional()
   .transform((value) => value === 'on');
 
-account.get('/account', async (c) => {
+account.get('/account', requireUser, async (c) => {
   const user = c.get('user');
-  if (!user) {
-    return c.redirect(`${basePath}/login`, 303);
-  }
 
   return c.html(
     <Layout title="Account" user={user}>
@@ -35,12 +32,10 @@ account.get('/account', async (c) => {
 
 account.post(
   '/account/name',
+  requireUser,
   zValidator('form', z.object({ name: z.string() })),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
 
     const result = await renameUser(user.id, c.req.valid('form').name);
     if (!result.ok) {
@@ -61,14 +56,10 @@ account.post(
 
 account.post(
   '/account/spoiler',
+  requireUser,
   zValidator('form', z.object({ hideByDefault: checkbox })),
   async (c) => {
-    const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
-    await setHideByDefault(user.id, c.req.valid('form').hideByDefault);
+    await setHideByDefault(c.get('user').id, c.req.valid('form').hideByDefault);
 
     return c.redirect(`${basePath}/account`, 303);
   },
@@ -76,14 +67,10 @@ account.post(
 
 account.post(
   '/account/reminder',
+  requireUser,
   zValidator('form', z.object({ sendReminder: checkbox })),
   async (c) => {
-    const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
-    await setSendReminder(user.id, c.req.valid('form').sendReminder);
+    await setSendReminder(c.get('user').id, c.req.valid('form').sendReminder);
 
     return c.redirect(`${basePath}/account`, 303);
   },

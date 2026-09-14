@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
-import type { Variables } from '../auth/middleware';
-import { basePath } from '../config';
+import { requireUser, type Variables } from '../auth/middleware';
 import { buildLeaderboard } from '../leaderboard/build';
 import {
   anonymousBets,
@@ -14,11 +13,8 @@ import { Layout } from '../views/Layout';
 
 export const leaderboard = new Hono<{ Variables: Variables }>();
 
-leaderboard.get('/leaderboard', async (c) => {
+leaderboard.get('/leaderboard', requireUser, async (c) => {
   const user = c.get('user');
-  if (!user) {
-    return c.redirect(`${basePath}/login`, 303);
-  }
 
   const leagues = await leaguesOf(user.id);
   const requested = c.req.query('league');

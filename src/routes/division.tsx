@@ -1,7 +1,11 @@
 import { zValidator } from '@hono/zod-validator';
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
-import type { Variables } from '../auth/middleware';
+import {
+  type AuthedVariables,
+  requireUser,
+  type Variables,
+} from '../auth/middleware';
 import { basePath } from '../config';
 import {
   divisions,
@@ -17,7 +21,7 @@ import { Layout } from '../views/Layout';
 
 export const division = new Hono<{ Variables: Variables }>();
 
-type Ctx = Context<{ Variables: Variables }>;
+type Ctx = Context<{ Variables: AuthedVariables }>;
 
 const MESSAGES = {
   late: 'Die Saison hat begonnen, die Tipps sind geschlossen.',
@@ -40,10 +44,6 @@ async function render(
   status: 200 | 400 = 200,
 ) {
   const user = c.get('user');
-  if (!user) {
-    return c.redirect(`${basePath}/login`, 303);
-  }
-
   const league = await leagueOf(user.id);
   if (!league) {
     return c.html(
@@ -77,10 +77,11 @@ async function render(
   );
 }
 
-division.get('/division', (c) => render(c, new Map()));
+division.get('/division', requireUser, (c) => render(c, new Map()));
 
 division.post(
   '/division',
+  requireUser,
   zValidator(
     'form',
     z.object({
@@ -90,10 +91,6 @@ division.post(
   ),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
     const league = await leagueOf(user.id);
     if (!league) {
       return render(c, new Map());
@@ -118,13 +115,10 @@ division.post(
 
 division.post(
   '/division/champion',
+  requireUser,
   zValidator('form', z.object({ team: z.string().min(1) })),
   async (c) => {
     const user = c.get('user');
-    if (!user) {
-      return c.redirect(`${basePath}/login`, 303);
-    }
-
     const league = await leagueOf(user.id);
     if (!league) {
       return render(c, new Map());
