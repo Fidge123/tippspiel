@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
 import { csrf } from 'hono/csrf';
 import { secureHeaders } from 'hono/secure-headers';
 import { currentUser, type Variables } from './auth/middleware';
@@ -49,7 +50,17 @@ app.get('/health', async (c) => {
   );
 });
 
-// Registered after /health so the health probe does not hit the session table.
+// The pattern takes only file names, which no page route is.
+app.get('/app.css', serveStatic({ path: './static/app.css' }));
+app.get(
+  '/:file{[^/]+\\.[a-z0-9]+}',
+  serveStatic({
+    root: './public',
+    rewriteRequestPath: (path) => path.slice(basePath.length),
+  }),
+);
+
+// Registered after /health and the assets, so neither hits the session table.
 app.use('*', currentUser);
 
 app.route('/', auth);
