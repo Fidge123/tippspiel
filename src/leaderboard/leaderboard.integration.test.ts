@@ -255,7 +255,6 @@ describe('the query count', () => {
     queries.length = 0;
     await buildLeaderboard(league, SEASON, alice);
 
-    // One per concern, and none per member.
     expect(queries.length).toBe(EXPECTED_QUERIES);
   });
 });

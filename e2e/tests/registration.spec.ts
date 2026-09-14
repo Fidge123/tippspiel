@@ -34,7 +34,6 @@ test('a new account is registered, verified and logs in', async ({ page }) => {
   await page.getByRole('button', { name: 'Registrieren' }).click();
   await expect(page.getByText('Erfolgreich registriert!')).toBeVisible();
 
-  // Verification confirms on submit, because an emailed link runs no script.
   const { id, token } = await verification(newUser.email);
   await page.goto(`./verify?id=${id}&token=${token}`);
   await page.getByRole('button', { name: 'Account bestätigen' }).click();

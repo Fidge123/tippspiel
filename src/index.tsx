@@ -6,7 +6,6 @@ import { startJobs } from './jobs/cron';
 
 checkEnvironment();
 
-// Serving belongs to the entry point; app.tsx stays the routes.
 app.get('/app.css', serveStatic({ path: './static/app.css' }));
 app.get(
   '/*',

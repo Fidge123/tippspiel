@@ -1,10 +1,6 @@
 import { type Kysely, sql } from 'kysely';
 
-/**
- * Builds the schema on an empty database, and does nothing on one that already
- * carries it. Dumped rather than retyped, so it is the schema in production and
- * not a second opinion about it.
- */
+/** Dumped rather than retyped, so it is the schema in production and not a second opinion about it. */
 const STATEMENTS = [
   `CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public`,
   `CREATE TABLE public.admin ( "leagueId" uuid NOT NULL, "userId" uuid NOT NULL )`,

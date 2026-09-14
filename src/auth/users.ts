@@ -132,7 +132,6 @@ export async function resetPassword(
         .execute();
       await trx.deleteFrom('reset').where('id', '=', row.id).execute();
 
-      // A password change should end every other session.
       await trx.deleteFrom('session').where('userId', '=', id).execute();
 
       return true;

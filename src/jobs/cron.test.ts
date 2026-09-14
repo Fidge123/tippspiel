@@ -2,14 +2,12 @@ import { describe, expect, it, mock, spyOn } from 'bun:test';
 import { guard } from './cron';
 import { JOBS, SCHEDULES } from './registry';
 
-// The suite runs on Node, where Bun.cron does not exist, so this asserts the
-// expressions rather than the firing.
 describe('the job schedules', () => {
   it('covers every job exactly once', () => {
     expect(Object.keys(SCHEDULES).sort()).toEqual(Object.keys(JOBS).sort());
   });
 
-  it('carries the expressions the Nest decorators had', () => {
+  it('carries the expressions the jobs have always run on', () => {
     expect(SCHEDULES).toEqual({
       'import-master-data': '3 7 * Aug-Dec,Jan,Feb *',
       'import-schedule': '48 7 * Aug-Dec,Jan,Feb *',
@@ -26,8 +24,6 @@ describe('the job schedules', () => {
   });
 });
 
-// A rejected Bun.cron handler reaches unhandledRejection and ends the process,
-// which in this app is the web server.
 describe('the guard around each job', () => {
   it('does not reject when the job throws', async () => {
     const logged = spyOn(console, 'error').mockImplementation(() => {});

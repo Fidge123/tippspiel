@@ -72,7 +72,6 @@ function pick(
     );
 }
 
-/** One query for the whole table, and none per member. */
 export async function leaderboardRows(
   leagueId: string,
   year: number,

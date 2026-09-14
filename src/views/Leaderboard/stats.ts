@@ -6,7 +6,7 @@ export const won = (bet: Bet) => bet.points > 0;
 export const lost = (bet: Bet) => bet.points < 0;
 export const tied = (bet: Bet) => bet.points === 0;
 
-/** "3-1" or "3-1-2" — ties are only shown when there are any. */
+/** "3-1", or "3-1-2" when there are ties. */
 export function record(bets: Bet[]): string {
   const ties = bets.filter(tied).length;
   return `${bets.filter(won).length}-${bets.filter(lost).length}${

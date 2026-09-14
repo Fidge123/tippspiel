@@ -246,8 +246,6 @@ describe('register', () => {
     expect(response.status).toBe(502);
     expect(await response.text()).not.toContain('Erfolgreich registriert');
 
-    // An account that can never be verified can never be logged into, and its
-    // email would block the retry.
     expect(await db().selectFrom('user').selectAll().execute()).toEqual([]);
     expect(await db().selectFrom('verify').selectAll().execute()).toEqual([]);
   });

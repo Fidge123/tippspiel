@@ -3,7 +3,6 @@ import { Pool } from 'pg';
 import { databaseUrl } from '../config';
 import type { Database } from './types';
 
-/** Read by the test that pins how many queries the leaderboard costs. */
 export const queries: string[] = [];
 
 // The live schema already spells its columns in camelCase, so no naming plugin.

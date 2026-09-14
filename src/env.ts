@@ -8,7 +8,6 @@ export interface Finding {
 
 type Env = Record<string, string | undefined>;
 
-/** Signing sessions with this would let anyone mint a cookie for any account. */
 export const DEV_COOKIE_SECRET = 'insecure-development-secret';
 
 function url(value: string): URL | undefined {
@@ -91,7 +90,6 @@ export function inspect(env: Env): Finding[] {
   return findings;
 }
 
-/** Stops the process when a variable is missing in a way running cannot recover from. */
 export function checkEnvironment(env: Env = processEnv): void {
   const findings = inspect(env);
 

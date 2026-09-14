@@ -66,7 +66,6 @@ export async function mySuperbowlBet(
   return row?.teamId ?? null;
 }
 
-/** Season-scoped, so a past season lists the teams and records of that year. */
 export async function divisions(
   year: number,
 ): Promise<{ name: string; teams: DivisionTeam[] }[]> {
@@ -120,7 +119,6 @@ export async function divisions(
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/** How many players picked each team first, and for the Super Bowl. */
 export async function pickCounts(
   leagueId: string,
   year: number,

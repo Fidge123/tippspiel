@@ -15,7 +15,6 @@ export const test = base.extend({
 
 export { expect };
 
-/** Drives forms and asserts against rendered HTML, with no page.evaluate anywhere. */
 export async function login(
   page: Page,
   user: { email: string },
@@ -26,11 +25,7 @@ export async function login(
   await page.getByRole('button', { name: 'Einloggen' }).click();
 }
 
-/**
- * The winner and doubler inputs are visually hidden radios wrapped in a styled
- * label, which is the accessible pattern but not a clickable target. The label
- * is what a user clicks, so it is what the tests click too.
- */
+/** The radios are sr-only, so the label is the clickable target. */
 export function pick(scope: Locator, name: string | RegExp): Locator {
   return scope.locator('label').filter({ hasText: name });
 }
@@ -40,12 +35,10 @@ export function doublerToggle(scope: Locator): Locator {
   return scope.locator('label[title="Doppler"]');
 }
 
-/** Opens the header menu, which is a details element rather than a dropdown. */
 export async function openMenu(page: Page): Promise<void> {
   await page.locator('summary').click();
 }
 
-/** Fails loudly if a page under test ever starts shipping script. */
 export async function expectNoScript(page: Page): Promise<void> {
   expect(await page.locator('script').count()).toBe(0);
 }

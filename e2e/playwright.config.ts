@@ -26,8 +26,6 @@ export default defineConfig({
       },
     },
     {
-      // The acceptance criterion for #85: every flow, with no JavaScript at
-      // all. Flows join as their route moves to the Hono app.
       name: 'no-js',
       testMatch: /nojs\.spec\.ts/,
       use: {

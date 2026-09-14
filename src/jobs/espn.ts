@@ -22,7 +22,6 @@ export async function notify(url: string): Promise<void> {
   }).catch((error) => console.error(error));
 }
 
-/** Throws rather than returning undefined, so a caller cannot read through it. */
 export async function loadScoreboard({
   year,
   seasontype,

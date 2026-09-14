@@ -2,7 +2,6 @@ import type { FC } from 'hono/jsx';
 import { imageUrl } from '../../config';
 import type { TeamView } from '../../schedule/query';
 
-/** All three labels are rendered and the breakpoints choose between them. */
 export const TeamLabel: FC<{ team: TeamView | undefined }> = ({ team }) => (
   <>
     <span class="sm:hidden">{team?.abbreviation ?? ''}</span>

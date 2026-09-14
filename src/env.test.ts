@@ -54,8 +54,6 @@ describe('what stops the server', () => {
     ).toEqual([]);
   });
 
-  // Number('abc') reaches the queries as NaN, which matches nothing rather
-  // than failing.
   it('refuses a season or port that is not a number', () => {
     expect(fatal(inspect({ ...complete, SEASON: 'abc' }))).toEqual(['SEASON']);
     expect(fatal(inspect({ ...complete, SEASON: '26' }))).toEqual(['SEASON']);
