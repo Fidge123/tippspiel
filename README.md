@@ -1,1 +1,118 @@
 # tippspiel
+
+An American football prediction game: players bet on every game of the season, double one bet a week, and pick the division winners and the champion before kickoff.
+Live at [nfl-tippspiel.de](https://nfl-tippspiel.de/tippspiel/).
+
+Hono on Bun, Hono JSX rendered to a string, Tailwind 4, Kysely on Postgres.
+Nothing ships to the browser: every page works with JavaScript disabled because there is no JavaScript to disable.
+An SPA and a Nest API served this until #85 replaced them one route at a time.
+
+## Run it
+
+```
+bun install
+bun run migrate
+bun run build:css
+bun run dev
+```
+
+Then open http://localhost:5002/tippspiel/impressum.
+
+`DATABASE_URL` can point at an empty database: `bun run migrate` builds the schema from scratch.
+Set `INSECURE_COOKIES=true` to develop over plain HTTP, which also lets the app start without a `COOKIE_SECRET`.
+The server prints what it resolved on startup and refuses to start on a missing or unparseable variable it cannot work without; `deploy/README.md` lists them all.
+
+## Layout
+
+| Path | What |
+|---|---|
+| `src/app.tsx` | The Hono app and its routes |
+| `src/index.tsx` | The Bun entry. Adds static file serving and exports `{ fetch, port }` for `Bun.serve` |
+| `src/routes/` | Route handlers, grouped by the page they serve |
+| `src/leaderboard/` | The one leaderboard query and the assembly on top of it |
+| `src/schedule/` | The schedule read, and the bet, doubler and spoiler writes |
+| `src/division/` | Pre-season division and champion bets |
+| `src/leagues/` | League administration and its permission checks |
+| `src/account/` | The three account settings |
+| `src/scoring.ts` | The scoring rules, moved from the Nest app rather than rewritten |
+| `src/jobs/` | The ESPN imports, the bet reminder and the token cleanup, and the schedule they run on |
+| `src/views/` | Hono JSX components, rendered server-side |
+| `src/auth/` | Passwords, sessions and cookies |
+| `src/db/` | Kysely, the schema types and the migration runner |
+| `src/env.ts` | The startup check over every environment variable the app reads |
+| `src/email/` | SMTP2GO delivery and the templates the auth flows send |
+| `styles/app.css` | Tailwind source. `build:css` emits `static/app.css`, which is generated and not committed |
+| `deploy/` | systemd unit, nginx blocks, and the cut-over and rollback procedure |
+| `e2e/` | The browser tests: Playwright against a real server and a real database |
+
+## Tests
+
+`bun test`, so a test and the server run on the same runtime with the same globals:
+
+| Command | What |
+|---|---|
+| `bun run test` | Unit and route tests, no database |
+| `bun run test:integration` | The auth flows against a real Postgres, via `TEST_DATABASE_URL` |
+| `bun run test:replay` | The golden master: a recorded season imported week by week, see `test/replay` |
+| `bun run test:delivery` | One real mail through SMTP2GO, see `test/delivery` |
+| `bun run test:browser` | The Playwright suite in `e2e/`, the one thing that still runs on Node |
+| `./test/smoke.sh` | Boots the real service under Bun and walks the routes over HTTP |
+
+The first two drive `app.request()` directly rather than over HTTP, so they exercise the routes without a listening socket.
+Bun runs test files one after another unless `--parallel` says otherwise, which is what the suites sharing one database need.
+
+## The leaderboard
+
+`src/leaderboard/query.ts` reads the whole table in one query.
+The Nest controller issued two per league member on top of three collection reads, which is 43 round trips for a twenty-person league.
+`leaderboard.integration.test.ts` pins the new count at five, none of them per member.
+
+The reveal rules are applied after the read rather than folded into it, because hiding is about who is asking, not about the data.
+
+`src/scoring.ts` was moved from the Nest app byte for byte, not retyped, which is what makes the golden master in `test/replay` evidence for the port rather than for a reimplementation.
+
+## Scheduled jobs
+
+The five jobs run in the server process on `Bun.cron`, registered from `src/index.tsx` and listed in `src/jobs/registry.ts`.
+`deploy/README.md` has the schedule.
+
+A rejected `Bun.cron` handler reaches `unhandledRejection`, which ends the process, so every job is wrapped in a catch that logs and returns.
+One bad ESPN response costs a run, not the site.
+`JOBS_DISABLED=true` keeps them from registering, which is what the browser suite and the smoke test set, because the imports call ESPN for real.
+
+`bun run src/jobs/cli.ts <name>` runs one on demand in its own process.
+
+## The betting page
+
+Every bet is its own `<form method="post">`: two radios for the winner, a select for the stake, one submit.
+The doubler is a radio per game that belongs to a week-level form through the `form` attribute, because a form cannot be nested inside the per-game ones.
+
+Every deadline is checked against the server clock and nothing else.
+`schedule.integration.test.ts` covers each rejection on its own: a late bet, a doubler moved onto or off a game that has started, removing one that has started, and a league the player is not a member of.
+
+The compact layout is CSS.
+The SPA chose the team label and the statistics headers from `window.innerWidth`; all the variants are rendered and the breakpoints choose, which needs no script and cannot go stale on resize.
+
+Spoiler protection defaults to **on**, matching the SPA's `hideByDefault ?? true`.
+A user who has never touched the toggle should not be shown a score they have not watched yet.
+
+## League permissions
+
+`leagues/writes.ts` is the only place that decides who may change a league, and every branch has a test: who may rename, delete, add, kick, promote and demote, that a league keeps at least one admin and at least one member, and that a member must already be in the league to become an admin.
+
+Removing a member takes their bets for that league with them, and refuses when it would leave the league without an admin.
+Both were wrong in the Nest service: a departed member kept skewing the vote counts and the underdog bonus, and removing the sole admin left a league nobody could administer.
+
+## No JavaScript
+
+Every page here is a real form with a `303` on success.
+The two places the SPA used script are replaced rather than reimplemented:
+
+- The hamburger dropdown is a `<details>` element.
+- "Passwort vergessen?" is a second submit button on the login form, with `formaction` and `formnovalidate`, so it reuses the address already typed.
+
+## Node
+
+Bun runs everything except the browser suite.
+Playwright's test runner is the one tool that does not work under Bun, where it finds no tests and exits 0, so `.nvmrc` stays and `browser` is the only CI job that installs Node.
+That is also why the Bun runtime is opted into per script rather than through `bunfig.toml`: a repository-wide `[run] bun = true` shims `node` itself, which would have sent the browser suite to Bun and turned it into a green run of nothing.
