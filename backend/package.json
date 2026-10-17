@@ -36,7 +36,7 @@
     "@nestjs/swagger": "^7.3.0",
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/typeorm": "^10.0.2",
-    "compression": "^1.7.4",
+    "compression": "^1.8.2",
     "cookie-parser": "^1.4.6",
     "helmet": "^7.1.0",
     "passport": "^0.7.0",
