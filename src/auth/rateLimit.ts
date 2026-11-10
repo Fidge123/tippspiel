@@ -6,11 +6,26 @@ interface Bucket {
   resetAt: number;
 }
 
-const buckets = new Map<string, Bucket>();
+const SWEEP_INTERVAL_MS = 60_000;
 
+const buckets = new Map<string, Bucket>();
+let nextSweepAt = 0;
+
+// X-Forwarded-For starts with whatever the client sent; nginx sets X-Real-IP itself.
 function clientKey(c: Context, name: string): string {
-  const forwarded = c.req.header('x-forwarded-for')?.split(',')[0]?.trim();
-  return `${name}:${forwarded ?? c.req.header('x-real-ip') ?? 'unknown'}`;
+  return `${name}:${c.req.header('x-real-ip') ?? 'unknown'}`;
+}
+
+function sweep(now: number): void {
+  if (now < nextSweepAt) {
+    return;
+  }
+  nextSweepAt = now + SWEEP_INTERVAL_MS;
+  for (const [key, bucket] of buckets) {
+    if (bucket.resetAt <= now) {
+      buckets.delete(key);
+    }
+  }
 }
 
 export function rateLimit(name: string, limit: number, windowMs = 60_000) {
@@ -21,6 +36,7 @@ export function rateLimit(name: string, limit: number, windowMs = 60_000) {
 
     const key = clientKey(c, name);
     const now = Date.now();
+    sweep(now);
     const bucket = buckets.get(key);
 
     if (!bucket || bucket.resetAt <= now) {

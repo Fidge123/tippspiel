@@ -3,7 +3,11 @@ import { Pool } from 'pg';
 import { databaseUrl } from '../config';
 import type { Database } from './types';
 
-export const queries: string[] = [];
+let onQuery: (() => void) | undefined;
+
+export function observeQueries(listener: (() => void) | undefined): void {
+  onQuery = listener;
+}
 
 // The live schema already spells its columns in camelCase, so no naming plugin.
 let instance: Kysely<Database> | undefined;
@@ -16,7 +20,7 @@ export function db(): Kysely<Database> {
       }),
       log: (event) => {
         if (event.level === 'query') {
-          queries.push(event.query.sql);
+          onQuery?.();
         }
       },
     });

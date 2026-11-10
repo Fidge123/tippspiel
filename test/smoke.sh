@@ -6,7 +6,7 @@ PORT="${PORT:-5099}"
 BASE="http://127.0.0.1:${PORT}/tippspiel"
 
 # Stands up the schema, so the run does not depend on another CI step.
-bun run src/db/fixture.ts
+bun run migrate
 
 PORT="$PORT" JOBS_DISABLED=true COOKIE_SECRET=smoke-test-secret \
   bun run src/index.tsx &

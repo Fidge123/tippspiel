@@ -1,11 +1,13 @@
 import { Migrator } from 'kysely/migration';
 import * as legacy from './migrations/000-legacy-schema';
 import * as session from './migrations/001-session';
+import * as teamSeason from './migrations/002-team-season';
 import { closeDatabase, db } from './kysely';
 
 const migrations = {
   '000-legacy-schema': legacy,
   '001-session': session,
+  '002-team-season': teamSeason,
 };
 
 export async function migrateToLatest(): Promise<void> {

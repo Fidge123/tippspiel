@@ -250,11 +250,15 @@ describe('the query count', () => {
       ])
       .execute();
 
-    const { queries } = await import('../db/kysely');
-    queries.length = 0;
+    const { observeQueries } = await import('../db/kysely');
+    let queries = 0;
+    observeQueries(() => {
+      queries += 1;
+    });
     await buildLeaderboard(league, SEASON, alice);
+    observeQueries(undefined);
 
-    expect(queries.length).toBe(EXPECTED_QUERIES);
+    expect(queries).toBe(EXPECTED_QUERIES);
   });
 });
 

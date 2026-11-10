@@ -135,14 +135,16 @@ describe('login', () => {
     expect(response.status).toBe(401);
   });
 
-  it('rate limits after ten attempts in a minute', async () => {
+  it('rate limits after ten attempts in a minute, whatever X-Forwarded-For claims', async () => {
+    let forged = 1;
     const attempt = () =>
       app.request(`${BASE}/login`, {
         ...form({ email: 'nobody@example.com', password: PASSWORD }),
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
           'sec-fetch-site': 'same-origin',
-          'x-forwarded-for': '203.0.113.7',
+          'x-real-ip': '203.0.113.7',
+          'x-forwarded-for': `198.51.100.${forged++}`,
         },
       });
 
