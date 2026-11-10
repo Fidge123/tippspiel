@@ -1,0 +1,30 @@
+[Unit]
+Description=Tippspiel Hono server
+Documentation=https://github.com/Fidge123/tippspiel/blob/master/deploy/README.md
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tippspiel
+Group=tippspiel
+WorkingDirectory=/srv/tippspiel
+EnvironmentFile=/etc/tippspiel/server.env
+Environment=PORT=5002
+Environment=BASE_PATH=/tippspiel
+Environment=BACKUP_DIR=%S/tippspiel/backup
+ExecStartPre=/usr/local/bin/bun run migrate
+ExecStartPre=/usr/local/bin/bun run build:css
+ExecStart=/usr/local/bin/bun run src/index.tsx
+Restart=always
+RestartSec=2
+MemoryMax=512M
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+StateDirectory=tippspiel
+ReadWritePaths=/srv/tippspiel/static
+
+[Install]
+WantedBy=multi-user.target

@@ -1,3 +1,8 @@
 .envrc
 tippspiel/
 node_modules/
+static/*
+!static/.gitkeep
+
+# Season replay fixture cache
+/test/.corpus-cache

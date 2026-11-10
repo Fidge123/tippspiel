@@ -13,10 +13,7 @@ updates:
       prefix: ci
 
   - package-ecosystem: npm
-    directories:
-      - /
-      - /backend
-      - /frontend
+    directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

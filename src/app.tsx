@@ -1,0 +1,80 @@
+import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
+import { csrf } from 'hono/csrf';
+import { secureHeaders } from 'hono/secure-headers';
+import { currentUser, type Variables } from './auth/middleware';
+import { basePath, imageUrl, siteUrl } from './config';
+import { isDatabaseReachable } from './db/kysely';
+import { auth } from './routes/auth';
+import { leaderboard } from './routes/leaderboard';
+import { account } from './routes/account';
+import { division } from './routes/division';
+import { leagues } from './routes/leagues';
+import { rules } from './routes/rules';
+import { schedule } from './routes/schedule';
+import { Impressum } from './views/Impressum';
+import { Layout } from './views/Layout';
+
+// Links in the wild carry the trailing slash, so the app root answers both.
+export const app = new Hono<{ Variables: Variables }>({
+  strict: false,
+}).basePath(basePath);
+
+app.use(
+  '*',
+  secureHeaders({
+    contentSecurityPolicy: {
+      defaultSrc: ["'none'"],
+      // Team colours are per-team, so the buttons carry a style attribute.
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", new URL(imageUrl).origin],
+      manifestSrc: ["'self'"],
+      formAction: ["'self'"],
+      baseUri: ["'none'"],
+      frameAncestors: ["'none'"],
+    },
+    xFrameOptions: 'DENY',
+    // Without includeSubDomains, because this app does not speak for its siblings.
+    strictTransportSecurity: 'max-age=31536000',
+  }),
+);
+
+// Behind the proxy the request scheme is http, so the browser origin never matches it.
+app.use('*', csrf({ origin: new URL(siteUrl).origin }));
+
+app.get('/health', async (c) => {
+  const database = await isDatabaseReachable();
+  return c.json(
+    { status: database ? 'ok' : 'degraded', database },
+    database ? 200 : 503,
+  );
+});
+
+// The pattern takes only file names, which no page route is.
+app.get('/app.css', serveStatic({ path: './static/app.css' }));
+app.get(
+  '/:file{[^/]+\\.[a-z0-9]+}',
+  serveStatic({
+    root: './public',
+    rewriteRequestPath: (path) => path.slice(basePath.length),
+  }),
+);
+
+// Registered after /health and the assets, so neither hits the session table.
+app.use('*', currentUser);
+
+app.route('/', auth);
+app.route('/', leaderboard);
+app.route('/', schedule);
+app.route('/', account);
+app.route('/', leagues);
+app.route('/', division);
+app.route('/', rules);
+
+app.get('/impressum', (c) =>
+  c.html(
+    <Layout title="Impressum" user={c.get('user')}>
+      <Impressum />
+    </Layout>,
+  ),
+);

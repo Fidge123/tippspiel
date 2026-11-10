@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "yarn run format",
+            "command": "bun run format",
             "statusMessage": "Formatting..."
           }
         ]
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "yarn run lint",
+            "command": "bun run lint",
             "statusMessage": "Linting..."
           }
         ]

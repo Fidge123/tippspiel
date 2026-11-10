@@ -82,8 +82,7 @@ async function seedTeams(client: Client): Promise<void> {
   }
 }
 
-// Kickoffs sit days away from now so that neither deadline nor the score
-// import that follows a kickoff depends on when the suite runs.
+// Kickoffs sit days from now, so no deadline depends on when the suite runs.
 async function seedSchedule(client: Client): Promise<void> {
   const now = Date.now();
   await createWeek(client, weeks.finished, 1, now - 9 * days, now - 2 * days);
@@ -232,7 +231,7 @@ async function seedBets(
   }
 }
 
-// Same derivation as hash() in backend/src/database/user.service.ts.
+// Same derivation as hash() in src/auth/password.ts.
 async function hash(value: string, salt: Buffer): Promise<string> {
   const derived = await promisify(scrypt)(value.normalize(), salt, 128);
   return (derived as Buffer).toString('hex');

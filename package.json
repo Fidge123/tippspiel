@@ -1,12 +1,43 @@
 {
+  "name": "tippspiel",
   "private": true,
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "type": "module",
+  "packageManager": "bun@1.4.2",
   "scripts": {
-    "lint": "biome ci .",
+    "start": "bun run src/index.tsx",
+    "dev": "bun --watch src/index.tsx",
+    "migrate": "bun run src/db/migrate.ts",
+    "build:css": "tailwindcss -i styles/app.css -o static/app.css --minify",
+    "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit && tsc -p e2e --noEmit",
+    "test": "bun test src --path-ignore-patterns='**/*.integration.test.ts'",
+    "test:watch": "bun test --watch src --path-ignore-patterns='**/*.integration.test.ts'",
+    "test:integration": "bun test integration",
+    "test:replay": "bun test test/replay --timeout=600000",
+    "test:delivery": "bun test test/delivery --timeout=360000",
+    "deploy": "bun ci --production",
+    "test:browser": "playwright test --config e2e/playwright.config.ts"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.9.1",
+    "@tailwindcss/cli": "^4.2.5",
+    "hono": "^4.10.4",
+    "kysely": "^0.29.5",
+    "pg": "^8.23.0",
+    "tailwindcss": "^4.2.5",
+    "zod": "^4.6.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.12"
+    "@biomejs/biome": "2.5.12",
+    "@playwright/test": "1.56.0",
+    "@testcontainers/postgresql": "^12.1.0",
+    "@types/bun": "^1.4.2",
+    "@types/node": "^20.11.24",
+    "@types/pg": "^8.15.5",
+    "@types/pg-copy-streams": "^1.2.5",
+    "pg-copy-streams": "^7.0.0",
+    "typescript": "^7.0.2"
   }
 }

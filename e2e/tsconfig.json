@@ -1,14 +1,9 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2021",
-    "lib": ["es2023", "dom"],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": false,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "types": ["node"]
+    "lib": ["esnext", "dom"],
+    "types": ["node"],
+    "strict": false
   },
   "include": ["harness", "tests", "playwright.config.ts"]
 }
