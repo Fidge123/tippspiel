@@ -112,6 +112,34 @@ describe('login', () => {
     expect(session).toContain(`Path=${BASE}`);
   });
 
+  it('re-issues the cookie when the session slides', async () => {
+    await insertUser('player@example.com');
+    const login = await app.request(
+      `${BASE}/login`,
+      form({ email: 'player@example.com', password: PASSWORD }),
+    );
+    const cookie = cookiesFrom(login);
+
+    const fresh = await app.request(`${BASE}/`, { headers: { cookie } });
+    expect(fresh.headers.getSetCookie()).toEqual([]);
+
+    await db()
+      .updateTable('session')
+      .set({ lastSeenAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) })
+      .execute();
+    const later = await app.request(`${BASE}/`, { headers: { cookie } });
+    const renewed = later.headers
+      .getSetCookie()
+      .find((c) => c.startsWith('session='));
+    const { expiresAt } = await db()
+      .selectFrom('session')
+      .select('expiresAt')
+      .executeTakeFirstOrThrow();
+
+    expect(renewed?.split(';')[0]).toBe(cookie);
+    expect(renewed).toContain(`Expires=${expiresAt.toUTCString()}`);
+  });
+
   it('rejects a wrong password with 401 and no session', async () => {
     await insertUser('player@example.com');
 

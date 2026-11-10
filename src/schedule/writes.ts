@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { db } from '../db/kysely';
 
 export type WriteResult =
@@ -153,23 +154,14 @@ export async function setHidden(
   weekId: string,
   hidden: boolean,
 ): Promise<void> {
-  const row = await db()
-    .selectFrom('user')
-    .select('settings')
-    .where('id', '=', userId)
-    .executeTakeFirstOrThrow();
-
-  const settings = (row.settings ?? {}) as {
-    hidden?: Record<string, boolean>;
-  };
-
   await db()
     .updateTable('user')
     .set({
-      settings: JSON.stringify({
-        ...settings,
-        hidden: { ...settings.hidden, [weekId]: hidden },
-      }),
+      settings: sql`jsonb_set(
+        settings,
+        '{hidden}',
+        coalesce(settings->'hidden', '{}'::jsonb) || ${JSON.stringify({ [weekId]: hidden })}::jsonb
+      )`,
     })
     .where('id', '=', userId)
     .execute();

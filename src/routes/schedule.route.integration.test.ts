@@ -152,6 +152,32 @@ beforeEach(async () => {
 });
 afterAll(closeDatabase);
 
+describe('the betting page', () => {
+  it('shows the league the user activated, not the first by name', async () => {
+    const other = await db()
+      .insertInto('league')
+      .values({ name: 'Zweite Liga', season: SEASON })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    await db()
+      .insertInto('member')
+      .values({ leagueId: other.id, userId: alice })
+      .execute();
+
+    const before = await app.request(`${BASE}/`, { headers: { cookie } });
+    expect(await before.text()).not.toContain(other.id);
+
+    await db()
+      .updateTable('user')
+      .set({ settings: JSON.stringify({ league: other.id }) })
+      .where('id', '=', alice)
+      .execute();
+    const after = await app.request(`${BASE}/`, { headers: { cookie } });
+
+    expect(await after.text()).toContain(other.id);
+  });
+});
+
 describe('a rejected bet', () => {
   it('says so on the page instead of answering 200 with nothing', async () => {
     const response = await app.request(

@@ -1,3 +1,4 @@
+import { season } from '../config';
 import { db } from '../db/kysely';
 
 export type LeagueError =
@@ -13,8 +14,6 @@ export type LeagueError =
   | 'last-member';
 
 export type LeagueResult = { ok: true } | { ok: false; reason: LeagueError };
-
-const SEASON = 2026;
 
 async function isAdmin(leagueId: string, userId: string): Promise<boolean> {
   const row = await db()
@@ -61,7 +60,7 @@ export async function createLeague(
     .execute(async (trx) => {
       const league = await trx
         .insertInto('league')
-        .values({ name: name.trim(), season: SEASON })
+        .values({ name: name.trim(), season })
         .returning('id')
         .executeTakeFirstOrThrow();
 

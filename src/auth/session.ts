@@ -28,7 +28,7 @@ export async function createSession(
 
 export async function readSession(
   id: string,
-): Promise<{ user: SessionUser; expiresAt: Date } | undefined> {
+): Promise<{ user: SessionUser; renewedUntil?: Date } | undefined> {
   const row = await db()
     .selectFrom('session')
     .innerJoin('user', 'user.id', 'session.userId')
@@ -51,19 +51,19 @@ export async function readSession(
     return undefined;
   }
 
-  let { expiresAt } = row;
+  let renewedUntil: Date | undefined;
   if (Date.now() - row.lastSeenAt.getTime() > SLIDE_AFTER_MS) {
-    expiresAt = new Date(Date.now() + LIFETIME_MS);
+    renewedUntil = new Date(Date.now() + LIFETIME_MS);
     await db()
       .updateTable('session')
-      .set({ lastSeenAt: new Date(), expiresAt })
+      .set({ lastSeenAt: new Date(), expiresAt: renewedUntil })
       .where('id', '=', id)
       .execute();
   }
 
   return {
     user: { id: row.id, name: row.name, email: row.email },
-    expiresAt,
+    renewedUntil,
   };
 }
 

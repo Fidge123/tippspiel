@@ -299,6 +299,15 @@ describe('the spoiler toggle', () => {
     expect(settings.hidden[WEEK]).toBeUndefined();
   });
 
+  it('keeps every week when toggles overlap', async () => {
+    const weeks = Array.from({ length: 10 }, (_, i) => `${SEASON}-2-${i + 1}`);
+
+    await Promise.all(weeks.map((week) => writes.setHidden(alice, week, true)));
+
+    const { hidden } = await writes.hiddenSettings(alice);
+    expect(Object.keys(hidden).sort()).toEqual([...weeks].sort());
+  });
+
   it('toggles back off', async () => {
     await writes.setHidden(alice, WEEK, true);
     await writes.setHidden(alice, WEEK, false);

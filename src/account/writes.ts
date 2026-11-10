@@ -1,4 +1,5 @@
 import { db } from '../db/kysely';
+import { mergeSettings } from '../db/settings';
 
 export type AccountResult = { ok: true } | { ok: false; reason: 'invalid' };
 
@@ -46,35 +47,16 @@ export async function renameUser(
   return { ok: true };
 }
 
-async function merge(
-  userId: string,
-  patch: Record<string, unknown>,
-): Promise<void> {
-  const row = await db()
-    .selectFrom('user')
-    .select('settings')
-    .where('id', '=', userId)
-    .executeTakeFirstOrThrow();
-
-  await db()
-    .updateTable('user')
-    .set({
-      settings: JSON.stringify({ ...(row.settings as object), ...patch }),
-    })
-    .where('id', '=', userId)
-    .execute();
-}
-
 export async function setHideByDefault(
   userId: string,
   hideByDefault: boolean,
 ): Promise<void> {
-  await merge(userId, { hideByDefault });
+  await mergeSettings(userId, { hideByDefault });
 }
 
 export async function setSendReminder(
   userId: string,
   sendReminder: boolean,
 ): Promise<void> {
-  await merge(userId, { sendReminder });
+  await mergeSettings(userId, { sendReminder });
 }

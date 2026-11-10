@@ -8,6 +8,7 @@ import {
   seasonSchedule,
   seasonTeams,
 } from '../leaderboard/query';
+import { pickLeague } from '../leagues/query';
 import { Leaderboard } from '../views/Leaderboard/index';
 import { Layout } from '../views/Layout';
 
@@ -17,8 +18,7 @@ leaderboard.get('/leaderboard', requireUser, async (c) => {
   const user = c.get('user');
 
   const leagues = await leaguesOf(user.id);
-  const requested = c.req.query('league');
-  const league = leagues.find((l) => l.id === requested) ?? leagues[0];
+  const league = await pickLeague(user.id, leagues, c.req.query('league'));
 
   if (!league) {
     return c.html(

@@ -8,6 +8,7 @@ import {
 } from '../auth/middleware';
 import { basePath } from '../config';
 import { leaguesOf } from '../leaderboard/query';
+import { pickLeague } from '../leagues/query';
 import { scheduleFor, teamsForSeason } from '../schedule/query';
 import {
   hiddenSettings,
@@ -46,8 +47,7 @@ const hiddenForm = z.object({
 });
 
 async function activeLeague(userId: string, requested?: string) {
-  const leagues = await leaguesOf(userId);
-  return leagues.find((league) => league.id === requested) ?? leagues[0];
+  return pickLeague(userId, await leaguesOf(userId), requested);
 }
 
 const MESSAGES = {

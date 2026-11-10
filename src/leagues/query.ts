@@ -1,5 +1,6 @@
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '../db/kysely';
+import { mergeSettings } from '../db/settings';
 
 export interface LeagueMember {
   id: string;
@@ -76,20 +77,19 @@ export async function setActiveLeague(
   userId: string,
   leagueId: string,
 ): Promise<void> {
-  const row = await db()
-    .selectFrom('user')
-    .select('settings')
-    .where('id', '=', userId)
-    .executeTakeFirstOrThrow();
+  await mergeSettings(userId, { league: leagueId });
+}
 
-  await db()
-    .updateTable('user')
-    .set({
-      settings: JSON.stringify({
-        ...(row.settings as object),
-        league: leagueId,
-      }),
-    })
-    .where('id', '=', userId)
-    .execute();
+/** The requested league, else the one the user activated, else the first. */
+export async function pickLeague<T extends { id: string }>(
+  userId: string,
+  leagues: T[],
+  requested?: string,
+): Promise<T | undefined> {
+  const requestedLeague = leagues.find((league) => league.id === requested);
+  if (requestedLeague) {
+    return requestedLeague;
+  }
+  const activeId = await activeLeagueId(userId);
+  return leagues.find((league) => league.id === activeId) ?? leagues[0];
 }

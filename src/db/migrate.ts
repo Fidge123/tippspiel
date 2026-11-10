@@ -14,7 +14,7 @@ export async function migrateToLatest(): Promise<void> {
   const migrator = new Migrator({
     db: db(),
     provider: { getMigrations: async () => migrations },
-    // 000 sorts before 001 but was written after it, so both orders must apply.
+    // Databases that predate 000 already have later migrations applied.
     allowUnorderedMigrations: true,
   });
 
